@@ -9,7 +9,25 @@ Verktyget bygger vidare på Kent Lundgrens befintliga kalkyl
 och kompletterar den med bland annat LCOE, payback, NPV, IRR och den nya
 vindkraftsersättningen till närboende enligt NU20.
 
-## Kom igång
+## Live Page (kör verktyget i webbläsaren)
+
+**Klicka här för att öppna verktyget direkt:**
+**[Öppna Vindkraftskalkylen (Live Page)](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html)**
+
+Adress: `https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html`
+
+> **Obs:** Länken fungerar först när GitHub Pages är aktiverat för repot (se nedan).
+> Så länge Pages inte är aktiverat visas en 404-sida.
+
+### Så aktiverar du GitHub Pages (görs en gång)
+
+1. Gå till repot på GitHub → **Settings** (Inställningar).
+2. Välj **Pages** i menyn till vänster.
+3. Under **Build and deployment → Source**, välj **Deploy from a branch**.
+4. Under **Branch**, välj `main` och mappen `/ (root)`, klicka sedan **Save**.
+5. Vänta någon minut. Live Page-länken ovan fungerar därefter.
+
+## Kom igång lokalt
 
 Öppna filen `vindkraftskalkyl/vindkraftskalkyl.html` direkt i en webbläsare –
 inget byggsteg eller någon server behövs.
