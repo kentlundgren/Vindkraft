@@ -264,6 +264,97 @@ h2 { font-size: 1.25rem; color: var(--farg-primar); border-bottom: 2px solid var
 }
 
 /* ==========================================================================
+   TEKNIK-KNAPP & MODAL (uppdatering 2026-07-03)
+   Flytande knapp i nedre högra hörnet som öppnar en modal med originalprompten.
+   ========================================================================== */
+
+/* Flytande knapp, fast i nedre högra hörnet oavsett scroll (position: fixed) */
+.teknik-knapp {
+  position: fixed;
+  right: 1.1rem;
+  bottom: 1.1rem;
+  z-index: 1000;
+  background: var(--farg-primar);
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  padding: .7rem 1.1rem;
+  font-size: .9rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.28);
+}
+.teknik-knapp:hover { background: var(--farg-primar-ljus); }
+.teknik-knapp:focus { outline: 3px solid var(--farg-indata); outline-offset: 2px; }
+
+/* Mörk halvgenomskinlig bakgrund bakom modalen */
+.modal-overlay {
+  position: fixed;
+  inset: 0;                       /* täcker hela skärmen */
+  z-index: 1001;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+/* När attributet hidden finns på overlayn ska den inte visas alls */
+.modal-overlay[hidden] { display: none; }
+
+/* Själva modalrutan */
+.modal-ruta {
+  background: var(--farg-panel);
+  border-radius: 10px;
+  max-width: 820px;
+  width: 100%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+  overflow: hidden;
+}
+.modal-huvud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .9rem 1.2rem;
+  background: var(--farg-primar);
+  color: #fff;
+}
+.modal-huvud h2 { margin: 0; font-size: 1.15rem; color: #fff; border: none; }
+.modal-stang {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 .3rem;
+}
+.modal-stang:hover { opacity: .8; }
+
+/* Rullbart innehåll om prompten är längre än rutan */
+.modal-innehall {
+  padding: 1.2rem 1.4rem;
+  overflow-y: auto;
+}
+.modal-meta {
+  background: var(--farg-framhavd);
+  border-left: 4px solid var(--farg-primar-ljus);
+  border-radius: 4px;
+  padding: .7rem .9rem;
+  margin-top: 0;
+}
+.prompt-text h3 {
+  color: var(--farg-primar);
+  margin: 1.1rem 0 .3rem;
+  font-size: 1rem;
+}
+.prompt-text p { margin: .3rem 0 .6rem; }
+.prompt-text ul { margin: .3rem 0 .7rem; padding-left: 1.2rem; }
+.prompt-text li { margin-bottom: .25rem; }
+
+/* ==========================================================================
    RESPONSIVT
    ========================================================================== */
 @media (max-width: 600px) {

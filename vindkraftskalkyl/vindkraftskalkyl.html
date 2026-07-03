@@ -442,6 +442,93 @@
     <p>Byggt med enbart HTML, CSS och JavaScript. Diagram via Chart.js (CDN).</p>
   </footer>
 
+  <!-- ========================================================================
+       UPPDATERING (2026-07-03): TEKNIK-MODAL FÖR TRANSPARENS
+       ------------------------------------------------------------------------
+       Här skedde en uppdatering: en flytande "teknik"-knapp lades till i nedre
+       högra hörnet. När man klickar på den öppnas en modal som visar den
+       ORIGINALPROMPT som användes för att skapa detta program med språkmodellen
+       Claude Opus 4.8 High. Syftet är transparens – att visa exakt vilken
+       instruktion verktyget bygger på. Knappens/modalens formatering ligger i
+       stil.css och öppna/stäng-logiken i berakningar.js.
+       ==================================================================== -->
+
+  <!-- Flytande knapp, fast i nedre högra hörnet -->
+  <button id="teknik-knapp" class="teknik-knapp" type="button"
+          aria-haspopup="dialog" aria-controls="teknik-modal"
+          title="Visa den ursprungliga prompten (transparens)">
+    &#9881; Teknik &amp; prompt
+  </button>
+
+  <!-- Modal (dold tills knappen klickas). role="dialog" för tillgänglighet. -->
+  <div id="teknik-modal" class="modal-overlay" role="dialog" aria-modal="true"
+       aria-labelledby="teknik-modal-rubrik" hidden>
+    <div class="modal-ruta">
+      <div class="modal-huvud">
+        <h2 id="teknik-modal-rubrik">Teknik &amp; ursprunglig prompt</h2>
+        <button id="teknik-stang" class="modal-stang" type="button" aria-label="Stäng">&times;</button>
+      </div>
+
+      <div class="modal-innehall">
+        <p class="modal-meta">
+          Detta verktyg skapades med språkmodellen <strong>Claude Opus 4.8 High</strong>.
+          För full transparens visas nedan den <strong>ursprungliga prompten</strong> ordagrant –
+          instruktionen som verktyget bygger på.
+        </p>
+
+        <!-- Den ursprungliga prompten, återgiven ordagrant. -->
+        <article class="prompt-text">
+          <h3>Roll och mål</h3>
+          <p>Du är en erfaren energiekonom och frontend-utvecklare. Bygg ett interaktivt webbaserat verktyg som beräknar och visualiserar vindkraftens ekonomi ur fem perspektiv samtidigt: investeraren, markägaren, kommunen/samhället, andelsägaren och den närboende. Utgå från beräkningslogiken i min befintliga kalkyl på kentlundgren.se/kalkyler/vindkraftskalkyl.html och bygg ut den.</p>
+          <p>Använd enbart vanlig HTML, CSS och JavaScript – ingen React och inget annat ramverk. Endast Chart.js via CDN får användas, och bara om diagram behövs.</p>
+
+          <h3>Filstruktur (tre separata filer)</h3>
+          <p>Skapa projektet som tre separata filer i samma mapp:</p>
+          <ul>
+            <li>vindkraftskalkyl.html – struktur och innehåll</li>
+            <li>stil.css – all formatering</li>
+            <li>berakningar.js – all beräknings- och interaktionslogik</li>
+          </ul>
+          <p>Länka CSS i &lt;head&gt; med &lt;link rel="stylesheet" href="stil.css"&gt; och JavaScript strax före &lt;/body&gt; med &lt;script src="berakningar.js"&gt;&lt;/script&gt;, båda med relativa sökvägar så att verktyget fungerar direkt när de tre filerna ligger i samma mapp. Om Chart.js används läggs det till via CDN i HTML-filen.</p>
+
+          <h3>Indata (redigerbara fält med svenska standardvärden)</h3>
+          <p>Behåll mina nuvarande standardvärden som utgångspunkt: intäkt för elen 0,6 kr/kWh, kapacitetsfaktor 0,37, livslängd 25 år, rörlig driftskostnad 0,11 kr/kWh, fast driftskostnad 42 100 kr/MW, specifik investeringskostnad 12 000 kkr/MW, effekt 4 MW, kalkylränta 0,1215.</p>
+          <p>Lägg till: verkshöjd (m), antal verk, degradering (%/år, valfritt), nedmonteringskostnad, eventuellt restvärde, elprisbana (platt eller årlig förändring i %) och elområde (SE1–SE4). För markägare/kommun: arrende (kr/MW/år eller % av bruttointäkt) och kommunal ersättning (schablon).</p>
+
+          <h3>Beräkningar per perspektiv</h3>
+          <p><strong>Investerare:</strong> behåll mina nuvarande utdata – produktion (MWh/år), intäkt totalt per år, årlig driftskostnad, investeringsutgift, investeringsutgift per årskWh, årlig kapitalkostnad (annuitet), årlig total kostnad, kostnad per kWh och överskott per år. Komplettera med LCOE, payback, NPV och IRR över livslängden. Behåll min ursprungliga annuitetslogik för kapitalkostnaden som bas.</p>
+          <p><strong>Markägare:</strong> årlig och total arrendeintäkt samt nuvärde av arrendet.</p>
+          <p><strong>Kommun/samhälle:</strong> summerade lokala intäkter samt en transparent, tydligt schabloniserad post för samhällsnytta (t.ex. undviken CO₂ om utdata anges).</p>
+          <p><strong>Andelsägare (klassisk kooperativ modell – andelsel till självkostnadspris):</strong> Medlemmen köper ett antal andelar där en andel definieras som en fast årlig elmängd (kWh/år). Insatsen är en engångskostnad (kr/andel). Medlemmen får el till självkostnadspris (produktionskostnad plus föreningens driftpåslag i öre/kWh) i stället för marknadspris. Beräkna: årlig elmängd från andelarna, självkostnad per kWh, jämförelse mot att köpa vanlig hushållsel till marknadspris (spotpris plus påslag plus skatt/moms som indata), årlig besparing, samt hushållets nettoresultat efter alternativkostnaden för den bundna insatsen (insats gånger kalkylränta). Visa återbetalningstid på insatsen och nettonuvärde. Låt användaren mata in antal andelar och se totalen.</p>
+          <p><strong>Närboende (vindkraftsersättning enligt NU20):</strong> Modellera den nya lagen om intäktsdelning från vindkraftsanläggningar (prop. 2025/26:239, i kraft 1 juli 2026). Regler att bygga in: ersättning betalas av verksamhetsutövaren till ägare av bostadsbyggnader inom nio verkshöjder från ett verk; ersättningen är högre ju närmare bostaden ligger; den utgör en andel av de årliga intäkterna, maximalt 2,5 promille, avtagande med avståndet; och den är skattefri till den del den avser privatbostad. Indata: bostadens avstånd till närmaste verk (m) och antal verk inom fem verkshöjder. Utdata: årlig ersättning till en enskild närboende samt total årlig ersättning som belastar verksamhetsutövaren (koppla tillbaka till investerarkalkylen som en kostnadspost). Rimlighetskontroll: storleksordningen högsta belopp cirka 38 000 kr/år i SE4 och cirka 19 000 kr/år i SE1, förutsatt minst två verk inom fem verkshöjder. Markera tydligt i gränssnittet vilka tal som är lagstadgade och vilka som är antaganden eller schabloner, eftersom den exakta beräkningsmodellen fastställs i förordning.</p>
+
+          <h3>Interaktivitet (reaktiv, utan ramverk)</h3>
+          <p>Verktyget ska vara reaktivt: när användaren ändrar ett indatafält ska utdata räknas om och uppdateras automatiskt utan att sidan laddas om. Lös detta med addEventListener på inmatningsfälten, kopplat till en central omräkningsfunktion som läser alla indata, utför beräkningarna och skriver in resultaten. Kommentera detta mönster särskilt tydligt så att det framgår hur den reaktiva uppdateringen fungerar helt utan React.</p>
+
+          <h3>Jämförelsetabell med tre kolumner</h3>
+          <p>Resultatet ska visas i en tabell med tre kolumner: Senaste resultatet, Tidigare resultatet och Förändringen. Logik: när användaren ändrar en indata och lämnar fältet (händelsen change, alltså inte medan man skriver) ska det som stod i Senaste flyttas till Tidigare, det nyberäknade värdet skrivas i Senaste, och differensen (Senaste minus Tidigare) visas i Förändringen. Vid första beräkningen visas "–" i Tidigare och Förändringen. Detta gör att användaren direkt ser effekten av just den ändring hen nyss gjorde, till exempel i investeringsutgiften. Spara föregående resultat i ett JavaScript-objekt i minnet inför nästa omräkning. Färgmarkera positiv respektive negativ förändring. Kommentera denna minneslogik utförligt.</p>
+
+          <h3>Presentation</h3>
+          <p>De fem perspektiven visas som flikar – en flik i taget, där användaren klickar mellan Investerare, Markägare, Kommun/samhälle, Andelsägare och Närboende. Den sammanfattande nyckeltalsraden och jämförelsetabellen (Senaste / Tidigare / Förändringen) ligger kvar synliga oavsett vald flik, så att helhetseffekten syns även när man byter perspektiv. Inkludera minst ett diagram (t.ex. kassaflöde per år eller kostnadsnedbrytning där vindkraftsersättningen syns som egen post). Formatera alla tal med svenska tusentalsavgränsare via toLocaleString('sv-SE').</p>
+
+          <h3>Kodkrav</h3>
+          <p>Kommentera koden utförligt på svenska så att varje beräkningssteg och varje formel förklaras i detalj direkt i koden. Separera tydligt beräkningslogik från presentation, i enlighet med trefilsstrukturen.</p>
+
+          <h3>Källor (Harvardformat, klickbara och verifierade länkar)</h3>
+          <p>Ange antaganden och standardvärden med källor i Harvardformat med klickbara länkar, och kontrollera att varje länk fungerar och leder till rätt källa innan du levererar. Använd minst:</p>
+          <ul>
+            <li>Regeringen (2026) Proposition 2025/26:239 Vindkraft i kommuner. Tillgänglig: https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/vindkraft-i-kommuner_hd03239/ (hämtad 3 juli 2026).</li>
+            <li>Sveriges riksdag (2026) Vindkraft i kommuner. Betänkande 2025/26:NU20. Tillgänglig: https://www.riksdagen.se/sv/dokument-och-lagar/dokument/betankande/vindkraft-i-kommuner_hd01nu20/ (hämtad 3 juli 2026).</li>
+            <li>Komplettera med källor för LCOE- och kostnadsantaganden, förslagsvis från Energimyndigheten, och verifiera dem på samma sätt.</li>
+          </ul>
+
+          <h3>Innan du börjar koda</h3>
+          <p>Fråga mig om något är oklart, och föreslå tre korta alternativ för hur nyckeltalen (LCOE, NPV, IRR) och jämförelsetabellen bäst placeras i förhållande till fliksystemet innan du väljer ett.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+
   <!--
     Chart.js via CDN. Läggs före vår egen skriptfil så att biblioteket finns
     tillgängligt när berakningar.js körs. Endast Chart.js används, i enlighet

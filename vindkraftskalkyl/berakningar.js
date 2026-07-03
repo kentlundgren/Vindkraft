@@ -751,6 +751,48 @@ function kopplaFlikar() {
 }
 
 /* ============================================================================
+   DEL 8.5 – TEKNIK-MODAL (uppdatering 2026-07-03)
+   ----------------------------------------------------------------------------
+   Här skedde en uppdatering: logik för den flytande "teknik"-knappen och dess
+   modal som visar den ursprungliga prompten. Ren presentationsinteraktion –
+   ingen påverkan på beräkningarna.
+   Modalen öppnas när knappen klickas och stängs via stängknappen, klick på den
+   mörka bakgrunden eller tangenten Escape. Attributet `hidden` styr synlighet.
+   ============================================================================ */
+
+function kopplaTeknikModal() {
+  const knapp = document.getElementById('teknik-knapp');
+  const modal = document.getElementById('teknik-modal');
+  const stang = document.getElementById('teknik-stang');
+  if (!knapp || !modal || !stang) return;
+
+  // Öppna modalen.
+  function oppna() {
+    modal.hidden = false;
+  }
+  // Stäng modalen.
+  function stangModal() {
+    modal.hidden = true;
+  }
+
+  // Klick på knappen öppnar.
+  knapp.addEventListener('click', oppna);
+
+  // Klick på stängknappen stänger.
+  stang.addEventListener('click', stangModal);
+
+  // Klick på den mörka bakgrunden (men inte på själva rutan) stänger.
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) stangModal();
+  });
+
+  // Tangenten Escape stänger modalen om den är öppen.
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !modal.hidden) stangModal();
+  });
+}
+
+/* ============================================================================
    DEL 9 – INITIERING
    Körs när DOM är färdigladdad. Sätter upp allt och gör en första beräkning.
    ============================================================================ */
@@ -758,6 +800,7 @@ function kopplaFlikar() {
 document.addEventListener('DOMContentLoaded', () => {
   kopplaLyssnare();     // reaktiva lyssnare på indatafälten
   kopplaFlikar();       // flikväxling
+  kopplaTeknikModal();  // teknik-knapp + modal med originalprompten
 
   // Första beräkningen vid sidladdning.
   senasteResultat = omrakna();   // fyller "Senaste"
