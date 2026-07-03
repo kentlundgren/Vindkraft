@@ -268,6 +268,35 @@ h2 { font-size: 1.25rem; color: var(--farg-primar); border-bottom: 2px solid var
    Flytande knapp i nedre högra hörnet som öppnar en modal med originalprompten.
    ========================================================================== */
 
+/* Diskret GitHub-länk, fast i nedre vänstra hörnet (position: fixed).
+   Medvetet nedtonad så den inte konkurrerar med teknik-knappen till höger. */
+.github-lank {
+  position: fixed;
+  left: 1.1rem;
+  bottom: 1.1rem;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  padding: .4rem .7rem;
+  font-size: .82rem;
+  font-weight: 600;
+  font-family: "Consolas", "Courier New", monospace;
+  color: #40504d;
+  background: rgba(255,255,255,0.85);
+  border: 1px solid var(--farg-ram);
+  border-radius: 20px;
+  text-decoration: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  opacity: .8;
+}
+.github-lank:hover {
+  opacity: 1;
+  color: var(--farg-primar);
+  border-color: var(--farg-primar-ljus);
+}
+.github-lank:focus { outline: 3px solid var(--farg-indata); outline-offset: 2px; }
+
 /* Flytande knapp, fast i nedre högra hörnet oavsett scroll (position: fixed) */
 .teknik-knapp {
   position: fixed;
