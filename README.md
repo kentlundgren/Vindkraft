@@ -1,78 +1,66 @@
-# Vindkraftens ekonomi – fem perspektiv
+# Vindkraft
 
-Ett interaktivt webbaserat verktyg som beräknar och visualiserar vindkraftens
-ekonomi **samtidigt ur fem perspektiv**: investeraren, markägaren,
-kommunen/samhället, andelsägaren och den närboende.
+Det här repot handlar om **vindkraftens ekonomi** – och innehåller ett
+interaktivt verktyg som räknar på den. Nedan finns först en allmän introduktion
+till vindkraft, därefter en länk vidare till själva **vindkraftskalkylen**.
+
+## Vad är vindkraft?
+
+Vindkraft omvandlar rörelseenergin i vinden till elektricitet. Vindens kraft
+sätter rotorbladen i rörelse, som via en generator producerar el. Ju högre och
+större verk, desto mer energi kan fångas – moderna landbaserade verk är i dag
+ofta över 200 meter höga i tornhöjd plus rotorblad.
+
+Vindkraft är en av de snabbast växande förnybara energikällorna i Sverige och
+står för en betydande och ökande andel av elproduktionen. Produktionen varierar
+med vinden och beskrivs ofta med en **kapacitetsfaktor** – hur stor andel av den
+teoretiskt maximala produktionen ett verk faktiskt levererar över ett år.
+
+Sverige är indelat i fyra **elområden (SE1–SE4)**, från norr till söder, där
+elpriset kan skilja sig åt. Det påverkar i sin tur vindkraftens lönsamhet på
+olika platser i landet.
+
+## Vindkraftens ekonomi – flera perspektiv
+
+Vindkraftens ekonomi ser olika ut beroende på vem man frågar. Samma anläggning
+berör flera parter samtidigt:
+
+- **Investeraren** – som bär investeringen och söker avkastning.
+- **Markägaren** – som upplåter mark mot arrende.
+- **Kommunen/samhället** – som får lokala intäkter och samhällsnytta (t.ex.
+  undviken klimatpåverkan).
+- **Andelsägaren** – som via en kooperativ modell kan köpa el till
+  självkostnadspris.
+- **Den närboende** – som från och med 1 juli 2026 kan få del av intäkterna
+  genom den nya lagen om intäktsdelning (prop. 2025/26:239, NU20).
+
+Viktiga storheter som avgör lönsamheten är bland annat elpris, kapacitetsfaktor,
+investeringskostnad, drift- och underhållskostnader, livslängd och kalkylränta.
+För att jämföra olika projekt används ofta nyckeltalet **LCOE** (Levelized Cost
+of Energy) tillsammans med payback, nettonuvärde (NPV) och internränta (IRR).
+
+## Verktyget: Vindkraftskalkyl
+
+I mappen [`vindkraftskalkyl/`](vindkraftskalkyl/) finns ett interaktivt verktyg
+som beräknar och visualiserar vindkraftens ekonomi **samtidigt ur alla fem
+perspektiven ovan**. Ändra ett indatafält så räknas allt om direkt.
+
+- **Kör verktyget direkt (Live Page):**
+  [Öppna Vindkraftskalkylen](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html)
+- **Läs mer om verktyget:**
+  [README i mappen `vindkraftskalkyl/`](vindkraftskalkyl/README.md)
 
 Verktyget bygger vidare på Kent Lundgrens befintliga kalkyl
 ([kentlundgren.se/kalkyler/vindkraftskalkyl.html](https://kentlundgren.se/kalkyler/vindkraftskalkyl.html))
-och kompletterar den med bland annat LCOE, payback, NPV, IRR och den nya
-vindkraftsersättningen till närboende enligt NU20.
+och är byggt med enbart HTML, CSS och JavaScript (Chart.js för diagram).
 
-## Live Page (kör verktyget i webbläsaren)
+## Innehåll i repot
 
-**Klicka här för att öppna verktyget direkt:**
-**[Öppna Vindkraftskalkylen (Live Page)](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html)**
-
-Adress: `https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html`
-
-> **Obs:** Länken fungerar först när GitHub Pages är aktiverat för repot (se nedan).
-> Så länge Pages inte är aktiverat visas en 404-sida.
-
-### Så aktiverar du GitHub Pages (görs en gång)
-
-1. Gå till repot på GitHub → **Settings** (Inställningar).
-2. Välj **Pages** i menyn till vänster.
-3. Under **Build and deployment → Source**, välj **Deploy from a branch**.
-4. Under **Branch**, välj `main` och mappen `/ (root)`, klicka sedan **Save**.
-5. Vänta någon minut. Live Page-länken ovan fungerar därefter.
-
-## Kom igång lokalt
-
-Öppna filen `vindkraftskalkyl/vindkraftskalkyl.html` direkt i en webbläsare –
-inget byggsteg eller någon server behövs.
-
-## Filstruktur
-
-Projektet består av tre separata filer i mappen `vindkraftskalkyl/`:
-
-| Fil | Ansvar |
+| Sökväg | Beskrivning |
 | --- | --- |
-| `vindkraftskalkyl.html` | Struktur och innehåll (semantisk HTML5). |
-| `stil.css` | All formatering (responsiv design, gula indatafält, flikar). |
-| `berakningar.js` | All beräknings- och interaktionslogik. |
-
-CSS länkas i `<head>` och JavaScript strax före `</body>`, båda med relativa
-sökvägar. [Chart.js](https://www.chartjs.org/) laddas via CDN och används endast
-för diagrammen.
-
-## Funktioner
-
-- **Fem perspektiv som flikar** – ett i taget, medan nyckeltalsrad och
-  jämförelsetabell alltid ligger synliga.
-- **Reaktiv omräkning utan ramverk** – all utdata räknas om automatiskt när ett
-  indatafält ändras, via `addEventListener` (ingen React eller annat ramverk).
-- **Jämförelsetabell** – kolumnerna *Senaste*, *Tidigare* och *Förändring* visar
-  effekten av just den ändring man nyss gjort.
-- **Nyckeltal** – LCOE, payback, NPV och IRR över livslängden.
-- **Närboendeersättning (NU20)** – modellerar den nya lagen om intäktsdelning
-  (prop. 2025/26:239, i kraft 1 juli 2026). Lagstadgade tal och antaganden/
-  schabloner är tydligt märkta i gränssnittet.
-- **Diagram** – kassaflöde per år och kostnadsnedbrytning där
-  närboendeersättningen syns som en egen post.
-
-## Perspektiven i korthet
-
-- **Investerare** – produktion, intäkter, drifts- och kapitalkostnad
-  (annuitet), kostnad per kWh, överskott samt LCOE, payback, NPV och IRR.
-- **Markägare** – årlig och total arrendeintäkt samt nuvärde av arrendet.
-- **Kommun/samhälle** – summerade lokala intäkter och en schabloniserad post för
-  samhällsnytta (undviken CO₂).
-- **Andelsägare** – klassisk kooperativ modell där en andel ger en fast årlig
-  elmängd till självkostnadspris; besparing, nettoresultat och återbetalningstid.
-- **Närboende** – vindkraftsersättning enligt avstånd till verk, med
-  rimlighetskontroll mot lagens riktmärken (~38 000 kr/år i SE4, ~19 000 kr/år i
-  SE1).
+| [`vindkraftskalkyl/`](vindkraftskalkyl/) | Det interaktiva beräkningsverktyget (HTML/CSS/JS) med egen README. |
+| `README.md` | Denna fil – allmän introduktion till vindkraft. |
+| `.gitignore` | Ignorerar OS-/editorfiler och eventuella framtida beroenden. |
 
 ## Källor
 
@@ -80,12 +68,7 @@ för diagrammen.
   [riksdagen.se](https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/vindkraft-i-kommuner_hd03239/)
 - Sveriges riksdag (2026) *Vindkraft i kommuner. Betänkande 2025/26:NU20.*
   [riksdagen.se](https://www.riksdagen.se/sv/dokument-och-lagar/dokument/betankande/vindkraft-i-kommuner_hd01nu20/)
-- Energimyndigheten (2024) *Kostnaden för att bygga vindkraft fortsätter att öka.*
-  [energimyndigheten.se](https://www.energimyndigheten.se/nyhetsarkiv/2024/kostnaden-for-att-bygga-vindkraft-fortsatter-att-oka/)
 - Energimyndigheten (2026) *Vindkraft.*
   [energimyndigheten.se](https://www.energimyndigheten.se/fornybart/vindkraft/)
-
-## Teknik
-
-Enbart HTML, CSS och JavaScript (vanilla, ES2020-nivå). Chart.js via CDN.
-Inget byggsteg och inga övriga beroenden.
+- Energimyndigheten (2024) *Kostnaden för att bygga vindkraft fortsätter att öka.*
+  [energimyndigheten.se](https://www.energimyndigheten.se/nyhetsarkiv/2024/kostnaden-for-att-bygga-vindkraft-fortsatter-att-oka/)
