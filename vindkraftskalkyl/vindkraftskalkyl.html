@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  Vindkraftens ekonomi ur fem perspektiv
+  ----------------------------------------------------------------------------
+  Struktur- och innehållsfil (HTML). All formatering ligger i stil.css och
+  all beräknings- och interaktionslogik i berakningar.js. Filerna länkas med
+  relativa sökvägar och fungerar direkt när de tre filerna ligger i samma mapp.
+
+  Bygger vidare på Kent Lundgrens befintliga vindkraftskalkyl
+  (kentlundgren.se/kalkyler/vindkraftskalkyl.html) och utökar den med
+  perspektiven markägare, kommun/samhälle, andelsägare och närboende samt
+  nyckeltalen LCOE, payback, NPV och IRR.
+
+  Semantisk HTML5 och responsiv design används genomgående.
+  ============================================================================
+-->
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vindkraftens ekonomi – fem perspektiv</title>
+
+  <!-- Extern CSS länkas i head med relativ sökväg -->
+  <link rel="stylesheet" href="stil.css">
+</head>
+
+<body>
+
+  <header class="sidhuvud">
+    <h1>Vindkraftens ekonomi – fem perspektiv</h1>
+    <p class="ingress">
+      Ett interaktivt verktyg som beräknar och visualiserar vindkraftens ekonomi
+      samtidigt för <strong>investeraren</strong>, <strong>markägaren</strong>,
+      <strong>kommunen/samhället</strong>, <strong>andelsägaren</strong> och
+      <strong>den närboende</strong>. Ändra ett indatafält så räknas allt om
+      automatiskt.
+    </p>
+  </header>
+
+  <!-- ========================================================================
+       INDATA
+       Alla indatafält har gul bakgrund (klassen "indata") för att tydligt
+       markera att detta är värden användaren kan mata in och ändra.
+       ==================================================================== -->
+  <section class="indata-panel" aria-labelledby="indata-rubrik">
+    <h2 id="indata-rubrik">Indata</h2>
+
+    <div class="indata-grupper">
+
+      <!-- ---- Grupp: Anläggning och investering (investerarbasen) ---- -->
+      <fieldset class="indata-grupp">
+        <legend>Anläggning &amp; investering</legend>
+
+        <label>Intäkt för elen (kr/kWh)
+          <input type="number" step="0.01" id="elpris" class="indata" value="0.6">
+        </label>
+
+        <label>Elområde
+          <select id="elomrade" class="indata">
+            <option value="SE1">SE1 (norra)</option>
+            <option value="SE2">SE2</option>
+            <option value="SE3" selected>SE3 (mellersta)</option>
+            <option value="SE4">SE4 (södra)</option>
+          </select>
+          <span class="hint">Byte fyller i ett schablonpris för området (kan ändras).</span>
+        </label>
+
+        <label>Elprisbana – årlig förändring (%/år)
+          <input type="number" step="0.1" id="elprisforandring" class="indata" value="0">
+          <span class="hint">0 = platt elprisbana.</span>
+        </label>
+
+        <label>Kapacitetsfaktor (0–1)
+          <input type="number" step="0.01" id="kapfaktor" class="indata" value="0.37">
+        </label>
+
+        <label>Livslängd (år)
+          <input type="number" step="1" id="livslangd" class="indata" value="25">
+        </label>
+
+        <label>Effekt per verk (MW)
+          <input type="number" step="0.1" id="effekt" class="indata" value="4">
+        </label>
+
+        <label>Antal verk
+          <input type="number" step="1" id="antalverk" class="indata" value="5">
+        </label>
+
+        <label>Verkshöjd (m)
+          <input type="number" step="1" id="verkshojd" class="indata" value="200">
+          <span class="hint">Används för närboendes avståndszoner (5 och 9 verkshöjder).</span>
+        </label>
+
+        <label>Degradering (%/år)
+          <input type="number" step="0.1" id="degradering" class="indata" value="0.5">
+          <span class="hint">Valfri. Minskad produktion per år. 0 = ingen degradering.</span>
+        </label>
+
+        <label>Specifik investeringskostnad (kkr/MW)
+          <input type="number" step="10" id="specinv" class="indata" value="12000">
+        </label>
+
+        <label>Kalkylränta (0–1)
+          <input type="number" step="0.0001" id="kalkylranta" class="indata" value="0.1215">
+        </label>
+      </fieldset>
+
+      <!-- ---- Grupp: Drift, nedmontering och restvärde ---- -->
+      <fieldset class="indata-grupp">
+        <legend>Drift &amp; livscykel</legend>
+
+        <label>Rörlig driftskostnad (kr/kWh)
+          <input type="number" step="0.01" id="rorlig" class="indata" value="0.11">
+        </label>
+
+        <label>Fast driftskostnad (kr/MW/år)
+          <input type="number" step="100" id="fast" class="indata" value="42100">
+        </label>
+
+        <label>Nedmonteringskostnad (kkr/MW)
+          <input type="number" step="10" id="nedmontering" class="indata" value="600">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Restvärde (kkr/MW)
+          <input type="number" step="10" id="restvarde" class="indata" value="0">
+          <span class="badge antagande">antagande</span>
+        </label>
+      </fieldset>
+
+      <!-- ---- Grupp: Markägare ---- -->
+      <fieldset class="indata-grupp">
+        <legend>Markägare (arrende)</legend>
+
+        <label>Arrendemodell
+          <select id="arrendemodell" class="indata">
+            <option value="procent" selected>% av bruttointäkt</option>
+            <option value="krmw">kr/MW/år</option>
+          </select>
+        </label>
+
+        <label>Arrende (% av bruttointäkt)
+          <input type="number" step="0.1" id="arrendeprocent" class="indata" value="3.5">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Arrende (kr/MW/år)
+          <input type="number" step="1000" id="arrendekrmw" class="indata" value="40000">
+          <span class="badge antagande">antagande</span>
+        </label>
+      </fieldset>
+
+      <!-- ---- Grupp: Kommun/samhälle ---- -->
+      <fieldset class="indata-grupp">
+        <legend>Kommun &amp; samhälle</legend>
+
+        <label>Kommunal ersättning (kr/MW/år)
+          <input type="number" step="1000" id="kommunersattning" class="indata" value="15000">
+          <span class="badge antagande">schablon</span>
+        </label>
+
+        <label>CO₂-faktor, undviken (kg/kWh)
+          <input type="number" step="0.01" id="co2faktor" class="indata" value="0.3">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Värdering av CO₂ (kr/kg)
+          <input type="number" step="0.1" id="co2varde" class="indata" value="1.0">
+          <span class="badge antagande">antagande</span>
+        </label>
+      </fieldset>
+
+      <!-- ---- Grupp: Andelsägare (kooperativ modell) ---- -->
+      <fieldset class="indata-grupp">
+        <legend>Andelsägare (kooperativ)</legend>
+
+        <label>Antal andelar
+          <input type="number" step="1" id="antalandelar" class="indata" value="10">
+        </label>
+
+        <label>Elmängd per andel (kWh/år)
+          <input type="number" step="100" id="kwhperandel" class="indata" value="1000">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Insats per andel (kr)
+          <input type="number" step="100" id="insatsperandel" class="indata" value="6000">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Föreningens driftpåslag (öre/kWh)
+          <input type="number" step="0.5" id="driftpaslag" class="indata" value="3">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Spotpris hushållsel (kr/kWh)
+          <input type="number" step="0.01" id="spotpris" class="indata" value="0.6">
+        </label>
+
+        <label>Elhandelspåslag (kr/kWh)
+          <input type="number" step="0.01" id="elhandelspaslag" class="indata" value="0.08">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Energiskatt (kr/kWh, exkl. moms)
+          <input type="number" step="0.001" id="energiskatt" class="indata" value="0.428">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Moms (%)
+          <input type="number" step="1" id="momssats" class="indata" value="25">
+        </label>
+      </fieldset>
+
+      <!-- ---- Grupp: Närboende (NU20 / prop. 2025/26:239) ---- -->
+      <fieldset class="indata-grupp">
+        <legend>Närboende (vindkraftsersättning, NU20)</legend>
+
+        <label>Avstånd till närmaste verk (m)
+          <input type="number" step="10" id="avstand" class="indata" value="800">
+        </label>
+
+        <label>Antal verk inom fem verkshöjder
+          <input type="number" step="1" id="verkinom5" class="indata" value="2">
+        </label>
+
+        <label>Antal ersättningsberättigade bostäder
+          <input type="number" step="1" id="antalbostader" class="indata" value="20">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Maximal andel av intäkter (‰)
+          <input type="number" step="0.1" id="maxpromille" class="indata" value="2.5">
+          <span class="badge lagstadgat">lagstadgat tak</span>
+        </label>
+      </fieldset>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       NYCKELTALSRAD (alltid synlig, oavsett vald flik)
+       Sammanfattar de viktigaste talen från investerarperspektivet.
+       ==================================================================== -->
+  <section class="nyckeltalsrad" aria-labelledby="nyckeltal-rubrik">
+    <h2 id="nyckeltal-rubrik" class="visuellt-dold">Sammanfattande nyckeltal</h2>
+    <div class="nyckeltal-kort">
+      <div class="kort"><span class="kort-etikett">LCOE</span><span class="kort-varde" id="nt-lcoe">–</span></div>
+      <div class="kort"><span class="kort-etikett">Överskott/år</span><span class="kort-varde" id="nt-overskott">–</span></div>
+      <div class="kort"><span class="kort-etikett">Payback</span><span class="kort-varde" id="nt-payback">–</span></div>
+      <div class="kort"><span class="kort-etikett">NPV</span><span class="kort-varde" id="nt-npv">–</span></div>
+      <div class="kort"><span class="kort-etikett">IRR</span><span class="kort-varde" id="nt-irr">–</span></div>
+      <div class="kort"><span class="kort-etikett">Produktion</span><span class="kort-varde" id="nt-produktion">–</span></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       JÄMFÖRELSETABELL (alltid synlig, oavsett vald flik)
+       Kolumner: Senaste / Tidigare / Förändring.
+       Uppdateras vid "change"-händelse (när fältet lämnas), inte medan man
+       skriver. Detaljerad minneslogik finns i berakningar.js.
+       ==================================================================== -->
+  <section class="jamforelse" aria-labelledby="jamforelse-rubrik">
+    <h2 id="jamforelse-rubrik">Jämförelse mot föregående ändring</h2>
+    <p class="hint">
+      När du ändrar ett fält och lämnar det flyttas det tidigare "Senaste"-värdet
+      till "Tidigare", det nya värdet hamnar i "Senaste" och skillnaden visas i
+      "Förändring". Vid första beräkningen visas "–".
+    </p>
+    <table class="jamforelse-tabell">
+      <thead>
+        <tr>
+          <th scope="col">Nyckeltal</th>
+          <th scope="col">Senaste resultatet</th>
+          <th scope="col">Tidigare resultatet</th>
+          <th scope="col">Förändringen</th>
+        </tr>
+      </thead>
+      <!-- Rader fylls dynamiskt av berakningar.js -->
+      <tbody id="jamforelse-kropp"></tbody>
+    </table>
+  </section>
+
+  <!-- ========================================================================
+       FLIKAR – ett perspektiv i taget
+       ==================================================================== -->
+  <section class="flik-omrade" aria-labelledby="flik-rubrik">
+    <h2 id="flik-rubrik" class="visuellt-dold">Perspektiv</h2>
+
+    <!-- Flikknappar. role="tablist" för tillgänglighet. -->
+    <div class="flik-knappar" role="tablist" aria-label="Perspektiv">
+      <button class="flik-knapp aktiv" role="tab" aria-selected="true"  data-flik="investerare">Investerare</button>
+      <button class="flik-knapp"       role="tab" aria-selected="false" data-flik="markagare">Markägare</button>
+      <button class="flik-knapp"       role="tab" aria-selected="false" data-flik="kommun">Kommun/samhälle</button>
+      <button class="flik-knapp"       role="tab" aria-selected="false" data-flik="andelsagare">Andelsägare</button>
+      <button class="flik-knapp"       role="tab" aria-selected="false" data-flik="narboende">Närboende</button>
+    </div>
+
+    <!-- ---- Flik: Investerare ---- -->
+    <div class="flik-panel aktiv" id="panel-investerare" role="tabpanel">
+      <h3>Investerarperspektivet</h3>
+      <p class="hint">Basen är Kent Lundgrens ursprungliga kalkyl, kompletterad med LCOE, payback, NPV och IRR.</p>
+      <dl class="resultatlista">
+        <div><dt>Produktion</dt><dd id="inv-produktion">–</dd></div>
+        <div><dt>Intäkt totalt per år</dt><dd id="inv-intakt">–</dd></div>
+        <div><dt>Årlig driftskostnad</dt><dd id="inv-driftkostnad">–</dd></div>
+        <div><dt>Investeringsutgift</dt><dd id="inv-investering">–</dd></div>
+        <div><dt>Investeringsutgift per årskWh</dt><dd id="inv-invperkwh">–</dd></div>
+        <div><dt>Årlig kapitalkostnad (annuitet)</dt><dd id="inv-kapitalkostnad">–</dd></div>
+        <div><dt>Årlig total kostnad</dt><dd id="inv-totalkostnad">–</dd></div>
+        <div><dt>Kostnad per kWh</dt><dd id="inv-kostnadperkwh">–</dd></div>
+        <div><dt>Överskott per år (bas)</dt><dd id="inv-overskott">–</dd></div>
+        <div><dt>Överskott per år efter lokala ersättningar</dt><dd id="inv-overskottnetto">–</dd></div>
+        <div class="framhavd"><dt>LCOE</dt><dd id="inv-lcoe">–</dd></div>
+        <div class="framhavd"><dt>Payback (enkel)</dt><dd id="inv-payback">–</dd></div>
+        <div class="framhavd"><dt>NPV (nettonuvärde)</dt><dd id="inv-npv">–</dd></div>
+        <div class="framhavd"><dt>IRR (internränta)</dt><dd id="inv-irr">–</dd></div>
+      </dl>
+      <div class="diagram-ruta">
+        <h4>Kassaflöde per år (netto, nominellt)</h4>
+        <canvas id="diagram-kassaflode" height="140"></canvas>
+      </div>
+    </div>
+
+    <!-- ---- Flik: Markägare ---- -->
+    <div class="flik-panel" id="panel-markagare" role="tabpanel" hidden>
+      <h3>Markägarperspektivet</h3>
+      <dl class="resultatlista">
+        <div><dt>Årlig arrendeintäkt (år 1)</dt><dd id="mark-arrende-ar">–</dd></div>
+        <div><dt>Total arrendeintäkt (hela livslängden)</dt><dd id="mark-arrende-total">–</dd></div>
+        <div class="framhavd"><dt>Nuvärde av arrendet</dt><dd id="mark-arrende-nuvarde">–</dd></div>
+      </dl>
+    </div>
+
+    <!-- ---- Flik: Kommun/samhälle ---- -->
+    <div class="flik-panel" id="panel-kommun" role="tabpanel" hidden>
+      <h3>Kommun- och samhällsperspektivet</h3>
+      <dl class="resultatlista">
+        <div><dt>Lokala intäkter år 1 (arrende + kommun + närboende)</dt><dd id="kom-lokala-ar">–</dd></div>
+        <div><dt>Lokala intäkter totalt (hela livslängden)</dt><dd id="kom-lokala-total">–</dd></div>
+        <div><dt>Kommunal ersättning år 1</dt><dd id="kom-kommun-ar">–</dd></div>
+        <div><dt>Undviken CO₂ per år</dt><dd id="kom-co2-ton">–</dd></div>
+        <div class="framhavd"><dt>Värderad samhällsnytta (undviken CO₂)</dt><dd id="kom-samhallsnytta">–</dd></div>
+      </dl>
+      <p class="hint"><span class="badge antagande">schablon</span> Samhällsnyttan är en förenklad, tydligt schabloniserad post och ingen exakt siffra.</p>
+      <div class="diagram-ruta">
+        <h4>Kostnadsnedbrytning år 1 (investerarens perspektiv)</h4>
+        <canvas id="diagram-kostnader" height="160"></canvas>
+      </div>
+    </div>
+
+    <!-- ---- Flik: Andelsägare ---- -->
+    <div class="flik-panel" id="panel-andelsagare" role="tabpanel" hidden>
+      <h3>Andelsägarperspektivet (kooperativ modell)</h3>
+      <p class="hint">Klassisk modell: en andel = en fast årlig elmängd. Medlemmen får el till självkostnadspris i stället för marknadspris.</p>
+      <dl class="resultatlista">
+        <div><dt>Årlig elmängd från andelarna</dt><dd id="and-elmangd">–</dd></div>
+        <div><dt>Total insats (bunden)</dt><dd id="and-insats">–</dd></div>
+        <div><dt>Självkostnad per kWh</dt><dd id="and-sjalvkostnad">–</dd></div>
+        <div><dt>Marknadspris hushållsel per kWh (inkl. moms)</dt><dd id="and-marknadspris">–</dd></div>
+        <div><dt>Årlig besparing mot marknadsel</dt><dd id="and-besparing">–</dd></div>
+        <div><dt>Alternativkostnad för bunden insats</dt><dd id="and-alternativkostnad">–</dd></div>
+        <div class="framhavd"><dt>Hushållets nettoresultat per år</dt><dd id="and-netto">–</dd></div>
+        <div class="framhavd"><dt>Återbetalningstid på insatsen</dt><dd id="and-aterbetalning">–</dd></div>
+        <div class="framhavd"><dt>Nettonuvärde för hushållet</dt><dd id="and-nuvarde">–</dd></div>
+      </dl>
+    </div>
+
+    <!-- ---- Flik: Närboende ---- -->
+    <div class="flik-panel" id="panel-narboende" role="tabpanel" hidden>
+      <h3>Närboendeperspektivet – vindkraftsersättning enligt NU20</h3>
+      <p class="hint">
+        Modellerar den nya lagen om intäktsdelning
+        (<a href="https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/vindkraft-i-kommuner_hd03239/" target="_blank" rel="noopener">prop. 2025/26:239</a>,
+        i kraft 1 juli 2026). Den <em>exakta</em> beräkningsmodellen fastställs i förordning; nedan är därför delvis schabloner.
+      </p>
+      <dl class="resultatlista">
+        <div><dt>Fem verkshöjder</dt><dd id="nar-femhojder">–</dd></div>
+        <div><dt>Nio verkshöjder (yttre gräns)</dt><dd id="nar-niohojder">–</dd></div>
+        <div><dt>Inom ersättningszon (≤ 9 verkshöjder)?</dt><dd id="nar-inom">–</dd></div>
+        <div><dt>Distansfaktor (1 = närmast, 0 = vid yttre gräns)</dt><dd id="nar-faktor">–</dd></div>
+        <div class="framhavd"><dt>Årlig ersättning till en enskild närboende</dt><dd id="nar-enskild">–</dd></div>
+        <div class="framhavd"><dt>Total årlig ersättning (belastar verksamhetsutövaren)</dt><dd id="nar-total">–</dd></div>
+      </dl>
+
+      <div class="regel-lista">
+        <h4>Regler och vad som är vad</h4>
+        <ul>
+          <li><span class="badge lagstadgat">lagstadgat</span> Ersättning betalas av verksamhetsutövaren till ägare av bostadsbyggnader inom nio verkshöjder från ett verk.</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Ersättningen är högre ju närmare bostaden ligger och avtar med avståndet.</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Ersättningen utgör en andel av de årliga intäkterna, maximalt 2,5 promille.</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Ersättningen är skattefri till den del den avser privatbostad.</li>
+          <li><span class="badge antagande">antagande</span> Den linjära avståndsavtrappningen mellan 5 och 9 verkshöjder är en schablon; exakt kurva fastställs i förordning.</li>
+          <li><span class="badge antagande">antagande</span> Total ersättning skattas som antal bostäder × ersättning per bostad.</li>
+        </ul>
+        <p class="rimlighet" id="nar-rimlighet">–</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       KÄLLOR (Harvardformat, klickbara och verifierade länkar)
+       ==================================================================== -->
+  <section class="kallor" aria-labelledby="kallor-rubrik">
+    <h2 id="kallor-rubrik">Källor och antaganden</h2>
+    <ol>
+      <li>
+        Regeringen (2026) <em>Proposition 2025/26:239 Vindkraft i kommuner.</em>
+        Tillgänglig:
+        <a href="https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/vindkraft-i-kommuner_hd03239/" target="_blank" rel="noopener">https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/vindkraft-i-kommuner_hd03239/</a>
+        (hämtad 3 juli 2026).
+      </li>
+      <li>
+        Sveriges riksdag (2026) <em>Vindkraft i kommuner. Betänkande 2025/26:NU20.</em>
+        Tillgänglig:
+        <a href="https://www.riksdagen.se/sv/dokument-och-lagar/dokument/betankande/vindkraft-i-kommuner_hd01nu20/" target="_blank" rel="noopener">https://www.riksdagen.se/sv/dokument-och-lagar/dokument/betankande/vindkraft-i-kommuner_hd01nu20/</a>
+        (hämtad 3 juli 2026).
+      </li>
+      <li>
+        Energimyndigheten (2024) <em>Kostnaden för att bygga vindkraft fortsätter att öka.</em>
+        Tillgänglig:
+        <a href="https://www.energimyndigheten.se/nyhetsarkiv/2024/kostnaden-for-att-bygga-vindkraft-fortsatter-att-oka/" target="_blank" rel="noopener">https://www.energimyndigheten.se/nyhetsarkiv/2024/kostnaden-for-att-bygga-vindkraft-fortsatter-att-oka/</a>
+        (hämtad 3 juli 2026). Underlag för investerings- och kostnadsantaganden (LCOE).
+      </li>
+      <li>
+        Energimyndigheten (2026) <em>Vindkraft.</em>
+        Tillgänglig:
+        <a href="https://www.energimyndigheten.se/fornybart/vindkraft/" target="_blank" rel="noopener">https://www.energimyndigheten.se/fornybart/vindkraft/</a>
+        (hämtad 3 juli 2026). Allmänt underlag om produktion och kapacitetsfaktorer.
+      </li>
+    </ol>
+    <p class="hint">
+      Standardvärdena i verktyget bygger på Kent Lundgrens ursprungliga kalkyl
+      (<a href="https://kentlundgren.se/kalkyler/vindkraftskalkyl.html" target="_blank" rel="noopener">kentlundgren.se/kalkyler/vindkraftskalkyl.html</a>)
+      kompletterad med ovanstående källor. Fält märkta <span class="badge antagande">antagande</span>/<span class="badge antagande">schablon</span>
+      är förenklingar; fält märkta <span class="badge lagstadgat">lagstadgat</span> följer lagtexten.
+    </p>
+  </section>
+
+  <footer class="sidfot">
+    <p>Byggt med enbart HTML, CSS och JavaScript. Diagram via Chart.js (CDN).</p>
+  </footer>
+
+  <!--
+    Chart.js via CDN. Läggs före vår egen skriptfil så att biblioteket finns
+    tillgängligt när berakningar.js körs. Endast Chart.js används, i enlighet
+    med kraven, och bara för diagrammen.
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Vår egen logik länkas sist, strax före </body>, med relativ sökväg -->
+  <script src="berakningar.js"></script>
+</body>
+</html>

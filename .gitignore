@@ -1,0 +1,23 @@
+# .gitignore för hela Vindkraft-repot
+# Varför på rotnivå: en .gitignore i repo-roten gäller alla undermappar
+# (t.ex. vindkraftskalkyl/) och är standard för ett GitHub-repo. Den hindrar
+# att OS- och editorspecifika skräpfiler samt eventuella framtida beroenden
+# hamnar i versionshanteringen.
+
+# Operativsystem
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+
+# Loggar och temporära filer
+*.log
+*.tmp
+
+# Om projektet i framtiden får ett byggsteg (t.ex. Vite)
+node_modules/
+dist/

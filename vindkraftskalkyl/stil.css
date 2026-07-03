@@ -1,0 +1,274 @@
+/* ==========================================================================
+   stil.css – all formatering för vindkraftskalkylen
+   --------------------------------------------------------------------------
+   Ansvarar ENBART för presentation. Ingen beräkningslogik här.
+   Responsiv design (CSS Grid + flexbox) och tydlig markering av indatafält
+   med gul bakgrund enligt önskemål.
+   ========================================================================== */
+
+/* ---- Grundläggande variabler (färgtema) ---- */
+:root {
+  --farg-primar: #1b5e5a;        /* mörk turkos, "vind/energi" */
+  --farg-primar-ljus: #2e8b84;
+  --farg-bakgrund: #f4f6f7;
+  --farg-panel: #ffffff;
+  --farg-text: #1c2321;
+  --farg-indata: #fff6b0;        /* GUL bakgrund för indatafält */
+  --farg-indata-kant: #e0c93a;
+  --farg-positiv: #1b7a3d;       /* grön för positiv förändring */
+  --farg-negativ: #b3261e;       /* röd för negativ förändring */
+  --farg-ram: #d5dbdb;
+  --farg-framhavd: #eef7f6;
+  --skugga: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  color: var(--farg-text);
+  background: var(--farg-bakgrund);
+  line-height: 1.5;
+}
+
+/* ---- Sidhuvud ---- */
+.sidhuvud {
+  background: linear-gradient(135deg, var(--farg-primar), var(--farg-primar-ljus));
+  color: #fff;
+  padding: 1.5rem 1.25rem;
+}
+.sidhuvud h1 { margin: 0 0 .35rem; font-size: 1.7rem; }
+.sidhuvud .ingress { margin: 0; max-width: 70ch; opacity: .95; }
+
+/* Generell sektionslayout */
+section { padding: 1.25rem; max-width: 1200px; margin: 0 auto; }
+h2 { font-size: 1.25rem; color: var(--farg-primar); border-bottom: 2px solid var(--farg-ram); padding-bottom: .3rem; }
+
+/* Hjälptext och dolda rubriker */
+.hint { font-size: .82rem; color: #5a6a67; display: block; margin-top: .15rem; }
+.visuellt-dold {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* ==========================================================================
+   INDATA-PANEL
+   ========================================================================== */
+.indata-grupper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+.indata-grupp {
+  border: 1px solid var(--farg-ram);
+  border-radius: 8px;
+  background: var(--farg-panel);
+  padding: .85rem 1rem 1rem;
+  box-shadow: var(--skugga);
+}
+.indata-grupp legend {
+  font-weight: 600;
+  color: var(--farg-primar);
+  padding: 0 .4rem;
+}
+.indata-grupp label {
+  display: block;
+  font-size: .9rem;
+  margin-bottom: .7rem;
+  font-weight: 500;
+}
+
+/* GULA INDATAFÄLT – tydlig markering att detta är inmatningsbara värden */
+.indata {
+  display: block;
+  width: 100%;
+  margin-top: .25rem;
+  padding: .45rem .55rem;
+  font-size: .95rem;
+  background: var(--farg-indata);
+  border: 1px solid var(--farg-indata-kant);
+  border-radius: 5px;
+}
+.indata:focus {
+  outline: 2px solid var(--farg-primar-ljus);
+  outline-offset: 1px;
+}
+
+/* Badges: skiljer lagstadgat från antaganden/schabloner */
+.badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  padding: .1rem .4rem;
+  border-radius: 4px;
+  margin-left: .3rem;
+  vertical-align: middle;
+}
+.badge.lagstadgat { background: #d6ecff; color: #0b4a80; border: 1px solid #9fccf0; }
+.badge.antagande  { background: #ffe6c7; color: #8a4b00; border: 1px solid #f0c48a; }
+
+/* ==========================================================================
+   NYCKELTALSRAD (alltid synlig)
+   ========================================================================== */
+.nyckeltal-kort {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: .75rem;
+}
+.kort {
+  background: var(--farg-primar);
+  color: #fff;
+  border-radius: 8px;
+  padding: .7rem .8rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--skugga);
+}
+.kort-etikett { font-size: .78rem; opacity: .85; }
+.kort-varde { font-size: 1.15rem; font-weight: 700; margin-top: .2rem; }
+
+/* ==========================================================================
+   JÄMFÖRELSETABELL (alltid synlig)
+   ========================================================================== */
+.jamforelse-tabell {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--farg-panel);
+  box-shadow: var(--skugga);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.jamforelse-tabell th,
+.jamforelse-tabell td {
+  padding: .5rem .7rem;
+  text-align: right;
+  border-bottom: 1px solid var(--farg-ram);
+  font-variant-numeric: tabular-nums;
+}
+.jamforelse-tabell th:first-child,
+.jamforelse-tabell td:first-child { text-align: left; }
+.jamforelse-tabell thead th {
+  background: var(--farg-framhavd);
+  color: var(--farg-primar);
+}
+/* Färgmarkering av förändring */
+.forandring-positiv { color: var(--farg-positiv); font-weight: 600; }
+.forandring-negativ { color: var(--farg-negativ); font-weight: 600; }
+.forandring-neutral { color: #6b7573; }
+
+/* ==========================================================================
+   FLIKAR
+   ========================================================================== */
+.flik-knappar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3rem;
+  border-bottom: 2px solid var(--farg-ram);
+  margin-bottom: 1rem;
+}
+.flik-knapp {
+  border: none;
+  background: transparent;
+  padding: .6rem 1rem;
+  font-size: .95rem;
+  font-weight: 600;
+  color: #5a6a67;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  border-radius: 6px 6px 0 0;
+}
+.flik-knapp:hover { background: var(--farg-framhavd); }
+.flik-knapp.aktiv {
+  color: var(--farg-primar);
+  border-bottom-color: var(--farg-primar);
+  background: var(--farg-framhavd);
+}
+
+.flik-panel { display: none; }
+.flik-panel.aktiv { display: block; }
+.flik-panel h3 { margin-top: 0; color: var(--farg-primar); }
+
+/* ---- Resultatlistor (definition lists) ---- */
+.resultatlista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: .4rem 1.5rem;
+  margin: 0;
+}
+.resultatlista > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .45rem .6rem;
+  border-bottom: 1px dotted var(--farg-ram);
+}
+.resultatlista dt { margin: 0; color: #40504d; }
+.resultatlista dd {
+  margin: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.resultatlista .framhavd {
+  background: var(--farg-framhavd);
+  border-radius: 6px;
+  border-bottom: none;
+}
+.resultatlista .framhavd dt { color: var(--farg-primar); }
+
+/* ---- Diagramrutor ---- */
+.diagram-ruta {
+  margin-top: 1.25rem;
+  background: var(--farg-panel);
+  border: 1px solid var(--farg-ram);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: var(--skugga);
+}
+.diagram-ruta h4 { margin: 0 0 .5rem; color: var(--farg-primar); }
+
+/* ---- Regel-lista (närboende) ---- */
+.regel-lista {
+  margin-top: 1.25rem;
+  background: var(--farg-panel);
+  border: 1px solid var(--farg-ram);
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+}
+.regel-lista h4 { margin: 0 0 .5rem; color: var(--farg-primar); }
+.regel-lista ul { margin: 0; padding-left: 1.1rem; }
+.regel-lista li { margin-bottom: .4rem; }
+.rimlighet {
+  margin-top: .8rem;
+  padding: .6rem .8rem;
+  background: var(--farg-framhavd);
+  border-left: 4px solid var(--farg-primar-ljus);
+  border-radius: 4px;
+  font-size: .9rem;
+}
+
+/* ==========================================================================
+   KÄLLOR & SIDFOT
+   ========================================================================== */
+.kallor ol { padding-left: 1.2rem; }
+.kallor li { margin-bottom: .6rem; }
+.kallor a { color: var(--farg-primar); word-break: break-word; }
+.sidfot {
+  text-align: center;
+  padding: 1.5rem;
+  color: #6b7573;
+  font-size: .85rem;
+}
+
+/* ==========================================================================
+   RESPONSIVT
+   ========================================================================== */
+@media (max-width: 600px) {
+  .sidhuvud h1 { font-size: 1.35rem; }
+  .resultatlista > div { flex-direction: column; gap: .1rem; }
+  .resultatlista dd { white-space: normal; }
+  .jamforelse-tabell th, .jamforelse-tabell td { padding: .4rem .45rem; font-size: .85rem; }
+}
