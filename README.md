@@ -4,6 +4,26 @@ Det här repot handlar om **vindkraftens ekonomi** – och innehåller ett
 interaktivt verktyg som räknar på den. Nedan finns först en allmän introduktion
 till vindkraft, därefter en länk vidare till själva **vindkraftskalkylen**.
 
+---
+
+## 🗂️ Lokalt repo
+
+`C:\Users\kentl\OneDrive\Kent – Personligt\AI\Cursor\Intressen\Vindkraft`
+
+Ligger *inte* under `AI\Claude\`-strukturen där Ekonomi- och Ovrigt-repona
+finns, utan under en egen gren: `AI\Cursor\Intressen\`. Ingen av
+föräldramapparna (`Intressen`, `Cursor`, `AI`, `Kent – Personligt`) verkar
+vara ett eget git-repo – ingen `.git`-mapp syns i någon av dem när dolda
+filer visas i utforskaren (kontrollerat 2026-09-02). Repot ska alltså vara
+fristående, till skillnad från Ekonomi som ligger nästlat inuti ett annat
+repo (se [Ekonomi-repots README](https://github.com/kentlundgren/Ekonomi#%EF%B8%8F-nested-git-repo)
+för det motsatta exemplet).
+
+Vill du ha 100 % säkerhet: öppna en terminal i mappen och kör
+`git rev-parse --show-toplevel` – svaret ska vara just denna sökväg.
+
+---
+
 ## Vad är vindkraft?
 
 Vindkraft omvandlar rörelseenergin i vinden till elektricitet. Vindens kraft
