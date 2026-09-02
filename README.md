@@ -59,6 +59,7 @@ och är byggt med enbart HTML, CSS och JavaScript (Chart.js för diagram).
 | Sökväg | Beskrivning |
 | --- | --- |
 | [`vindkraftskalkyl/`](vindkraftskalkyl/) | Det interaktiva beräkningsverktyget (HTML/CSS/JS) med egen README. |
+| [`skanes-vindkraftsakademi/`](skanes-vindkraftsakademi/) | Anteckningar och research kopplat till styrelsearbete i Skånes vindkraftsakademi (ERUF/Letter of Support, iskast, vindkraftsägare i Skåne, kommunernas energi-/vindbruksplaner, Önnerupsprojektet m.m.). |
 | `README.md` | Denna fil – allmän introduktion till vindkraft. |
 | `.gitignore` | Ignorerar OS-/editorfiler och eventuella framtida beroenden. |
 
