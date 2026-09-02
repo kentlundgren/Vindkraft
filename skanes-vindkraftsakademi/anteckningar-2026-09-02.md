@@ -189,7 +189,7 @@ senare beslut från nämnden hittades.
 batterilager 10 MW/40 MWh, uppgiven årsproduktion ~39 000 MWh/år (högre än
 domstolens siffra – orsak till avvikelsen ej verifierad).
 
-**Om "3,3 MW × 3 = strax under 10 MW" (enligt Marcus Larsson):** Sannolik
+**Om "3,3 MW × 3 = strax under 10 MW" (enligt ML):** Sannolik
 förklaring: Miljöprövningsförordningen (2013:251) 21 kap. utlöser
 **tillståndsplikt** (B-verksamhet, kräver länsstyrelsens miljöprövningsdelegation)
 för verk med totalhöjd över 150 m, eller 7+ verk över 50 m – reglerna är avsedda
@@ -198,7 +198,7 @@ totalhöjd, strax under 10 MW – håller sig sannolikt medvetet under gränsen 
 den tyngre tillståndsprocessen, vilket stämmer med att ärendet hela tiden
 hanterats som bygglov hos kommunen. Ej bekräftat som medvetet designval.
 
-**Öppna frågor** (uppföljs med Marcus Larsson, tidigare Vestas):
+**Öppna frågor** (uppföljs med ML, tidigare Vestas):
 Vestas som turbinleverantör, exakt byggstart/tidsplan, ev. nytt beslut från
 Lomma kommuns nämnd efter 2022.
 
@@ -213,8 +213,8 @@ https://www.naturvardsverket.se/vagledning-och-stod/miljobalken/anmalnings--och-
 
 - Utkast till uppdateringsavsnitt för blogginlägget om Önnerupsprojektet
   (källförteckning i Harvardstil, redo att klistras in).
-- Tre alternativa LinkedIn-meddelanden till Marcus Larsson för att följa upp
+- Tre alternativa LinkedIn-meddelanden till ML för att följa upp
   samtalet (kort/rakt, utförligt, mjukt öppnande).
-- Kents faktiska skickade meddelande till Marcus (2026-09-02) refererar
+- Kents faktiska skickade meddelande till ML (2026-09-02) refererar
   MÖD-domen P 14634-20 och länkar till blogginlägget, samt föreslår
   fika/AW för uppföljning.
