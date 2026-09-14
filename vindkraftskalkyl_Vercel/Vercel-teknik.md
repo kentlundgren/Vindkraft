@@ -1,10 +1,16 @@
 # Vercel-teknik – vad en `ver2` kan som vanlig HTML/CSS/JS inte kan
 
+**Uppdatering 2026-09-14:** `vindkraftskalkyl_Vercel_ver2` är nu byggd och live på
+[https://vindkraft-ver2.vercel.app](https://vindkraft-ver2.vercel.app).
+Den här filen beskriver *principen* (statisk kod vs Vercel). Genomgången av den
+färdiga appen, med skärmbilder av hur projektet skapades, ligger i
+[../vindkraftskalkyl_Vercel_ver2/Vercel-teknik-ver2.md](../vindkraftskalkyl_Vercel_ver2/Vercel-teknik-ver2.md).
+
 Den här filen förklarar **Vercel-teknik** i förhållande till vindkraftskalkylen. Den nuvarande appen
 ([GitHub Pages](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html)
 och [vindkraft-rosy.vercel.app](https://vindkraft-rosy.vercel.app)) är tre statiska filer. Allt räknas i webbläsaren. Det är medvetet enkelt.
 
-En tänkt **`vindkraftskalkyl_Vercel_ver2`** skulle *fortfarande* kunna ha HTML, CSS och JavaScript – men *dessutom* använda saker som GitHub Pages inte har. Då blir Vercel mer än en annan adress till samma kalkyl.
+En **`vindkraftskalkyl_Vercel_ver2`** har *fortfarande* HTML, CSS och JavaScript – men *dessutom* saker som GitHub Pages inte har. Då blir Vercel mer än en annan adress till samma kalkyl.
 
 Se också README: [Kan Vercel göra kalkylen bättre](https://github.com/kentlundgren/Vindkraft/tree/main/vindkraftskalkyl_Vercel#Kan-Vercel-gora-kalkylen-battre) och [förslag på prompt](https://github.com/kentlundgren/Vindkraft/tree/main/vindkraftskalkyl_Vercel#Forslag_pa_promt).
 
@@ -132,7 +138,7 @@ Indata, LCOE, payback, NPV, IRR, fem perspektiv, jämförelsetabell, gula fält.
 3. Förval (SE4 / 5 verk) – det är mest UX och *kräver inte* Functions, men hör hemma i samma `ver2` om det gör kalkylen smidigare.
 4. Om API:t misslyckas: kalkylen fungerar ändå med manuellt pris.
 
-`ver2` är inte byggd än. Befintlig mapp ska inte rivas förrän Kent säger vilken väg: uppdatera `vindkraftskalkyl_Vercel/` eller ny mapp `vindkraftskalkyl_Vercel_ver2/`.
+`ver2` är byggd i mappen `vindkraftskalkyl_Vercel_ver2/` och som Vercel-projektet **vindkraft-ver2**. Den statiska mappen här ska inte rivas – den är fortfarande den statiska tvillingen. Se [Vercel-teknik-ver2.md](../vindkraftskalkyl_Vercel_ver2/Vercel-teknik-ver2.md).
 
 ---
 

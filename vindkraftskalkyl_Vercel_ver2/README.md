@@ -1,11 +1,18 @@
 # Vindkraftskalkyl – Vercel ver2
 
+Live: [https://vindkraft-ver2.vercel.app](https://vindkraft-ver2.vercel.app)  
+Vercel-projekt: **vindkraft-ver2** i teamet **Effektiv** (`effektiv1`)
+
 Den här mappen är **inte** samma statiska tvilling som GitHub Pages. Det är kalkylen
 plus två valfria Vercel Functions: hämta spotpris och spara/dela scenario.
 
 Programversionen (oförändrad) ligger kvar i [`../vindkraftskalkyl/`](../vindkraftskalkyl/).
 Den statiska Vercel-tvillingen ligger kvar i [`../vindkraftskalkyl_Vercel/`](../vindkraftskalkyl_Vercel/)
 och på https://vindkraft-rosy.vercel.app
+
+**Vad som är unikt med Vercel-teknik här** (Functions, hemligheter, Git→deploy)
+och hur projektet skapades, med skärmbilder:
+[Vercel-teknik-ver2.md](Vercel-teknik-ver2.md).
 
 ## 🗂️ Lokalt repo
 
@@ -79,6 +86,10 @@ Kent committar och pushar själv. Därefter:
 
 Efter första deployen: redigera i Cursor → Kent pushar → projektet bygger om.
 
+Skärmbilder av just den här första gången (New Project, Congratulations,
+dashboard, live-sidan) finns i
+[Hur man arbetar med Vercel](Vercel-teknik-ver2.md#Hur-man-arbetar-med-Vercel).
+
 Ingen hemlighet i Git. `.gitignore` i den här mappen utelämnar `.env`, `.vercel`
 och `node_modules` just därför – lokala tokens och CLI-cache ska inte publiceras.
 
@@ -123,6 +134,7 @@ Utan token svarar `/api/elpris` med ett tydligt fel. Kalkylen räknar ändå.
 ```
 vindkraftskalkyl_Vercel_ver2/
 ├── README.md
+├── Vercel-teknik-ver2.md ← vad som är unikt med Vercel, med skärmbilder
 ├── .gitignore
 ├── package.json          ← "type": "module", inga runtime-beroenden
 ├── vercel.json
@@ -130,9 +142,10 @@ vindkraftskalkyl_Vercel_ver2/
 ├── stil.css
 ├── berakningar.js        ← samma formler som programversionen
 ├── lib/falt.js
-└── api/
-    ├── elpris.js         ← GET
-    └── scenario.js       ← GET + POST
+├── Bilder/               ← skärmbilder från första deployen
+├── api/
+│   ├── elpris.js         ← GET
+│   └── scenario.js       ← GET + POST
 ```
 
 Ingen Vite, ingen React, inga relativa sökvägar som kräver `base: './'`-build.
