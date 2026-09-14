@@ -100,6 +100,9 @@ Exempel för en `ver2`:
 
 På Vercel kan du lagra nycklar i projektets **Environment Variables** (dashboard eller `vercel env`). De läses av Functions vid körning. De ska **inte** checkas in i Git ([Vercel, 2026g](https://vercel.com/docs/environment-variables)).
 
+Hur `ENTSOE_SECURITY_TOKEN` skaffas hos ENTSO-E och läggs in i projektet **vindkraft-ver2**:
+[Hur-skaffa-nyckel-hos-ENTSO-E.md](../vindkraftskalkyl_Vercel_ver2/Hur-skaffa-nyckel-hos-ENTSO-E.md).
+
 I en statisk `.js`-fil på GitHub Pages finns inget motsvarande: allt som webbläsaren behöver är synligt.
 
 ---

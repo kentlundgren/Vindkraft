@@ -14,6 +14,9 @@ och på https://vindkraft-rosy.vercel.app
 och hur projektet skapades, med skärmbilder:
 [Vercel-teknik-ver2.md](Vercel-teknik-ver2.md).
 
+**Hur man skaffar ENTSO-E-nyckeln** (konto, mejl, token, Vercel), med skärmbilder:
+[Hur-skaffa-nyckel-hos-ENTSO-E.md](Hur-skaffa-nyckel-hos-ENTSO-E.md).
+
 ## 🗂️ Lokalt repo
 
 Repo-rot lokalt:
@@ -119,11 +122,8 @@ Svenska kraftnäts öppna dataset för dagen-före-priser
 
 ### Token till ENTSO-E
 
-1. Registrera konto på https://transparency.entsoe.eu/
-2. Mejla transparency@entsoe.eu med ämnet `RESTful API access` och den
-   registrerade e-postadressen i kroppen.
-3. När tillgången är beviljad: My Account → skapa security token.
-4. Klistra in token i Vercel som `ENTSOE_SECURITY_TOKEN` (aldrig i koden).
+Steg för steg, med skärmbilder och vad ENTSO-E är:
+[Hur man skaffar nyckel hos ENTSO-E](Hur-skaffa-nyckel-hos-ENTSO-E.md#Hur-skaffa-nyckel-hos-ENTSO-E).
 
 Utan token svarar `/api/elpris` med ett tydligt fel. Kalkylen räknar ändå.
 
@@ -135,6 +135,7 @@ Utan token svarar `/api/elpris` med ett tydligt fel. Kalkylen räknar ändå.
 vindkraftskalkyl_Vercel_ver2/
 ├── README.md
 ├── Vercel-teknik-ver2.md ← vad som är unikt med Vercel, med skärmbilder
+├── Hur-skaffa-nyckel-hos-ENTSO-E.md ← token till spotprisknappen, med skärmbilder
 ├── .gitignore
 ├── package.json          ← "type": "module", inga runtime-beroenden
 ├── vercel.json

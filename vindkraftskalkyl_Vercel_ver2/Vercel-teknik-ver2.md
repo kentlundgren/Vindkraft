@@ -17,8 +17,10 @@ Skillnaden mot de två är inte färgerna eller LCOE-formlerna. Skillnaden är a
 **vissa knappar får fråga en liten server** som Vercel driver, och att
 **Git-push räcker för att publicera**. Det är det som är unikt med Vercel här.
 
-Se också [README](README.md) för deploy-steg och elpriskälla. Den äldre
-översikten (skriven *innan* ver2 fanns) ligger i
+Se också [README](README.md) för deploy-steg och elpriskälla, och
+[Hur-skaffa-nyckel-hos-ENTSO-E.md](Hur-skaffa-nyckel-hos-ENTSO-E.md) för
+ENTSO-E-nyckeln (konto, mejl, token i Vercel). Den äldre översikten (skriven
+*innan* ver2 fanns) ligger i
 [../vindkraftskalkyl_Vercel/Vercel-teknik.md](../vindkraftskalkyl_Vercel/Vercel-teknik.md).
 
 ## 🗂️ Lokalt repo
@@ -134,7 +136,7 @@ läser dem vid körning. De ska **inte** checkas in i Git
 
 | Variabel | Behövs för | Obligatorisk? |
 |----------|------------|----------------|
-| `ENTSOE_SECURITY_TOKEN` | `/api/elpris` | Ja, om knappen ska hämta skarpt pris. Utan den svarar API:t med ett tydligt fel; kalkylen räknar ändå. |
+| `ENTSOE_SECURITY_TOKEN` | `/api/elpris` | Ja, om knappen ska hämta skarpt pris. Utan den svarar API:t med ett tydligt fel; kalkylen räknar ändå. Steg och skärmbilder: [Hur-skaffa-nyckel-hos-ENTSO-E.md](Hur-skaffa-nyckel-hos-ENTSO-E.md). |
 | `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` | korta koder `?s=abc123` | Nej. Utan Redis blir delningslänken längre (`?t=...`) men fungerar. |
 
 På GitHub Pages finns inget motsvarande: allt webbläsaren behöver är synligt.

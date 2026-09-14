@@ -2,9 +2,10 @@
 
 **Repo:** [kentlundgren/Vindkraft](https://github.com/kentlundgren/Vindkraft)
 **Live (GitHub Pages):** https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html
-**Live (Vercel-app):** https://vindkraft-rosy.vercel.app
-**Senast uppdaterad:** 2026-09-14
-**Version:** 1.5
+**Live (Vercel-app, statisk):** https://vindkraft-rosy.vercel.app
+**Live (Vercel-app, Functions):** https://vindkraft-ver2.vercel.app
+**Senast uppdaterad:** 2026-09-15
+**Version:** 1.6
 
 ---
 
@@ -16,7 +17,7 @@ Samlar vindkraftsrelaterat innehåll:
 | ---- | -------- |
 | `vindkraftskalkyl/` | Interaktivt beräkningsverktyg (HTML/CSS/JS) – GitHub Pages-version. |
 | `vindkraftskalkyl_Vercel/` | Samma kalkyl som statisk Vercel-app (projektet "vindkraft", https://vindkraft-rosy.vercel.app). |
-| `vindkraftskalkyl_Vercel_ver2/` | Vercel-anpassad kalkyl med Functions (`/api/elpris`, `/api/scenario`). Nytt projekt i teamet Effektiv (`effektiv1`), inte en ersättning för den statiska appen. |
+| `vindkraftskalkyl_Vercel_ver2/` | Vercel-anpassad kalkyl med Functions (`/api/elpris`, `/api/scenario`). Nytt projekt i teamet Effektiv (`effektiv1`), inte en ersättning för den statiska appen. Live: https://vindkraft-ver2.vercel.app. Token till spotpris: `Hur-skaffa-nyckel-hos-ENTSO-E.md`. |
 | `.cursor/skills/` | Projekt-skills som Cursor läser automatiskt. Dual-publiceringsmönstret ligger här. |
 | `skanes-vindkraftsakademi/` | Anteckningar och research kopplat till styrelsearbete i Skånes vindkraftsakademi. |
 
@@ -80,6 +81,7 @@ Gällande promptavsnitt i Vercel-README: `#Forslag_pa_promt`
 
 ## Uppdateringslogg
 
+- 2026-09-15 (v1.6): `Hur-skaffa-nyckel-hos-ENTSO-E.md` i ver2; live-URL för `vindkraft-ver2`.
 - 2026-09-14 (v1.5): `vindkraftskalkyl_Vercel_ver2/` – Vercel-anpassad kalkyl med Functions, nytt projekt i teamet `effektiv1`.
 - 2026-09-14 (v1.4): Regel om djuplänkar – ett avsnitt, ett ankare, en länk (promptavsnittet är `#Forslag_pa_promt`).
 - 2026-09-14 (v1.3): Flyttat dual-publicerings-skillen till `.cursor/skills/` (rätt plats för Cursor), tagit bort den gamla `skills/`-sökvägen, och förtydligat commit/push samt att nya appar ska vara projekt i samma Vercel-team.
@@ -90,4 +92,4 @@ Gällande promptavsnitt i Vercel-README: `#Forslag_pa_promt`
 
 ---
 
-_CLAUDE.md v1.5, 2026-09-14_
+_CLAUDE.md v1.6, 2026-09-15_
