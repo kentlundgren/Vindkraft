@@ -1,0 +1,12 @@
+# Lokal Vercel-CLI-cache (skapas av `npx vercel`). Inte källkod.
+.vercel
+
+# Miljöfiler med hemligheter – t.ex. ENTSO-E-token.
+# Hemligheter ska bara ligga i Vercel environment variables, aldrig i Git.
+.env
+.env.local
+.env*.local
+
+# Node-moduler om någon kör npm install lokalt. Den här appen har
+# medvetet inga runtime-beroenden, men mappen ska ändå inte checkas in.
+node_modules

@@ -1,0 +1,6 @@
+{
+  "name": "vindkraftskalkyl-vercel-ver2",
+  "private": true,
+  "type": "module",
+  "description": "Vindkraftskalkyl anpassad för Vercel (Functions i /api/). Ingen React, ingen build."
+}

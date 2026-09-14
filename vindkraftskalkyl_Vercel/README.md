@@ -344,7 +344,9 @@ Nya modeller i detta repo bör följa samma dual-mönster. Mönstret är dokumen
 - `CLAUDE.md`
 - skill:et `.cursor/skills/vercel-github-pages-dual-publicering/`
 
-En *rikare* Vercel-app (Functions, live-data, smidigare användning) är en separat, medveten nästa version – se [Kan Vercel göra kalkylen bättre](#Kan-Vercel-gora-kalkylen-battre) och [Vercel-teknik.md](Vercel-teknik.md). Den nuvarande statiska kalkylen ska ligga kvar tills Kent ber om att bygga den versionen.
+En *rikare* Vercel-app finns nu i [`../vindkraftskalkyl_Vercel_ver2/`](../vindkraftskalkyl_Vercel_ver2/)
+(Functions för elpris och delningsscenario). Den här statiska mappen och
+https://vindkraft-rosy.vercel.app ska ligga kvar som programtvilling till GitHub Pages.
 
 ---
 
