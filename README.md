@@ -54,6 +54,21 @@ Verktyget bygger vidare på Kent Lundgrens befintliga kalkyl
 ([kentlundgren.se/kalkyler/vindkraftskalkyl.html](https://kentlundgren.se/kalkyler/vindkraftskalkyl.html))
 och är byggt med enbart HTML, CSS och JavaScript (Chart.js för diagram).
 
+## 🗂️ Lokalt repo
+
+`C:\Users\kentl\OneDrive\AI\Cursor\Intressen\Vindkraft`
+
+## Relaterade vindkraftskalkyler
+
+Kent har flera vindkraftskalkyler på olika ställen, lokalt och på GitHub:
+
+| Kalkyl | GitHub | Live Page | Lokal sökväg |
+| --- | --- | --- | --- |
+| **Vindkraftskalkyl – fem perspektiv** ← *du är här* | [kentlundgren/Vindkraft](https://github.com/kentlundgren/Vindkraft/tree/main/vindkraftskalkyl) | [Öppna](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html) | `C:\Users\kentl\OneDrive\AI\Cursor\Intressen\Vindkraft\vindkraftskalkyl` |
+| Investeringskalkylator (4 MW, Gemini 3) | [kentlundgren/AI-teknik](https://github.com/kentlundgren/AI-teknik/tree/main/Vindkraft/260814/Gemini3) | [Öppna](https://kentlundgren.github.io/AI-teknik/Vindkraft/260814/Gemini3/vindkraftskalkyl_260814.html) | `C:\Users\kentl\OneDrive\AI\AI-teknik\Vindkraft\260814\Gemini3` |
+| Ursprunglig vindkraftskalkyl | *(ej i git)* | [kentlundgren.se](https://kentlundgren.se/kalkyler/vindkraftskalkyl.html) | – |
+| Vindkraftskalkyler (Python, tidigt utkast 2024) | *(ej i git)* | – | `C:\Users\kentl\PycharmProjects\Vindkraftskalkyler` |
+
 ## Innehåll i repot
 
 | Sökväg | Beskrivning |

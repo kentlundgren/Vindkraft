@@ -19,6 +19,21 @@ vindkraftsersättningen till närboende enligt NU20.
 
 Adress: `https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html`
 
+## 🗂️ Lokalt repo
+
+`C:\Users\kentl\OneDrive\AI\Cursor\Intressen\Vindkraft\vindkraftskalkyl`
+
+## Relaterade vindkraftskalkyler
+
+Kent har flera vindkraftskalkyler på olika ställen, lokalt och på GitHub:
+
+| Kalkyl | GitHub | Live Page | Lokal sökväg |
+| --- | --- | --- | --- |
+| **Vindkraftskalkyl – fem perspektiv** ← *du är här* | [kentlundgren/Vindkraft](https://github.com/kentlundgren/Vindkraft/tree/main/vindkraftskalkyl) | [Öppna](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html) | `C:\Users\kentl\OneDrive\AI\Cursor\Intressen\Vindkraft\vindkraftskalkyl` |
+| Investeringskalkylator (4 MW, Gemini 3) | [kentlundgren/AI-teknik](https://github.com/kentlundgren/AI-teknik/tree/main/Vindkraft/260814/Gemini3) | [Öppna](https://kentlundgren.github.io/AI-teknik/Vindkraft/260814/Gemini3/vindkraftskalkyl_260814.html) | `C:\Users\kentl\OneDrive\AI\AI-teknik\Vindkraft\260814\Gemini3` |
+| Ursprunglig vindkraftskalkyl | *(ej i git)* | [kentlundgren.se](https://kentlundgren.se/kalkyler/vindkraftskalkyl.html) | – |
+| Vindkraftskalkyler (Python, tidigt utkast 2024) | *(ej i git)* | – | `C:\Users\kentl\PycharmProjects\Vindkraftskalkyler` |
+
 ## Kom igång lokalt
 
 Öppna filen `vindkraftskalkyl.html` direkt i en webbläsare – inget byggsteg
