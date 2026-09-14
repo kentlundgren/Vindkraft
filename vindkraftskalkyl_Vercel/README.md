@@ -42,14 +42,21 @@ Det är **två olika URL:er** som leder till **samma kalkyl** (samma HTML, CSS o
 
 Vercel beskriver team som ytan där man samlar projekt och resurser ([Vercel, 2026a](https://vercel.com/docs/accounts)), och projekt som appen som deployas från ett Git-repo ([Vercel, 2026b](https://vercel.com/docs/projects/overview)). Ett repo kan ge flera projekt om olika mappar har olika Root Directory.
 
-**Så hanteras det här:**
+### Ditt team: Effektiv (`effektiv1`)
 
-1. Håll ett team (Hobby räcker så länge du arbetar ensam).
-2. Lägg varje ny app som ett eget **projekt** i det teamet.
-3. Peka projektet mot rätt GitHub-repo och, vid behov, rätt Root Directory.
-4. Skapa ett till team bara om du vill ha en separat faktura, ett annat GitHub-konto eller samarbete med andra (Pro/Enterprise).
+Ja – **`effektiv1` är ditt Vercel-team.** Visningsnamnet i dashboarden är **Effektiv**. Sluggen (adressen) är `effektiv1`. Du ser det uppe till vänster i teamväljaren och i URL:en [https://vercel.com/effektiv1](https://vercel.com/effektiv1). Planen är **Hobby**. Inloggad användare är `kentlundgren`.
 
-### Detta konto (2026-09-14)
+Så ser teamet ut (skärmdump 2026-09-14):
+
+![Teamet Effektiv (effektiv1) i Vercel-dashboarden, med projekten vindkraft och vindkalkyl](Bilder/Team_effektiv1_i_Vercel.jpg)
+
+Samma bild på GitHub: [Team_effektiv1_i_Vercel.jpg](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl_Vercel/Bilder/Team_effektiv1_i_Vercel.jpg)
+
+På bilden syns bland annat:
+
+- **Effektiv** och **Hobby** uppe till vänster – det är teamet, inte en enskild app.
+- **Projects** med två kort: **vindkraft** (har production-URL `vindkraft-rosy.vercel.app`) och **vindkalkyl** (annat projekt i samma team, ännu utan production-deploy).
+- Knappen **Add New** uppe till höger – där lägger du till *nästa* projekt i samma team.
 
 | | |
 |---|---|
@@ -57,6 +64,7 @@ Vercel beskriver team som ytan där man samlar projekt och resurser ([Vercel, 20
 | **Team-slug** | `effektiv1` |
 | **Dashboard** | https://vercel.com/effektiv1 |
 | **Team-ID** | `team_I90mljXDP0cWBiwmXIU1he27` |
+| **Plan** | Hobby |
 
 Projekt i samma team just nu:
 
@@ -64,6 +72,28 @@ Projekt i samma team just nu:
 |---------|-------------|-----------|
 | **vindkraft** | [kentlundgren/Vindkraft](https://github.com/kentlundgren/Vindkraft) | Denna kalkyl. Root Directory = `vindkraftskalkyl_Vercel`. Live: https://vindkraft-rosy.vercel.app |
 | **vindkalkyl** | [kentlundgren/Codex](https://github.com/kentlundgren/Codex) | Annan app i **samma** team – ett exempel på att teamet rymmer flera projekt. |
+
+### Kan samma team användas till många GitHub-projekt?
+
+**Ja – det är poängen.** Teamet Effektiv är tänkt som *ett* utrymme för många appar. Du skapar inte ett nytt team per GitHub-repo. Du skapar ett **nytt Vercel-projekt** i `effektiv1` och kopplar det till det nya GitHub-repot (eller till en mapp i ett befintligt repo).
+
+På Hobby-planen går det att ha upp till **200 projekt** i teamet ([Vercel, 2026c](https://vercel.com/docs/plans/hobby)). Det räcker långt för personliga kalkyler och webbappar. Hobby kräver att GitHub-repot ligger under ett **personligt GitHub-konto** (här: `kentlundgren/...`), inte under en GitHub-organisation ([Vercel, 2026d](https://vercel.com/docs/limits)). Kents vanliga repon passar alltså här.
+
+Skapa ett *nytt* Vercel-team bara om du behöver separat faktura, ett annat GitHub-konto eller samarbete med andra (Pro).
+
+### Koppla ett nytt Git/GitHub-projekt till teamet i framtiden
+
+Gör så här när en ny modell eller app ska få en Vercel-app:
+
+1. **Ha koden i Git och på GitHub** under `kentlundgren/...`. Committa och pusha som vanligt från Cursor.
+2. Öppna teamets dashboard: [https://vercel.com/effektiv1](https://vercel.com/effektiv1). Kontrollera att **Effektiv** är valt uppe till vänster – annars hamnar projektet i fel team.
+3. Klicka **Add New** → **Project** (samma knapp som på skärmdumpen).
+4. **Importa** GitHub-repot. GitHub-kontot `kentlundgren` ska redan vara kopplat till Vercel.
+5. Om appen **inte** ligger i repo-roten: sätt **Root Directory** till rätt mapp (så som `vindkraftskalkyl_Vercel` är satt för det här projektet). Lämna tomt om hela repot *är* appen.
+6. Klicka **Deploy**. Vercel skapar projektet i teamet Effektiv och bygger en första version ([Vercel, 2026e](https://vercel.com/docs/getting-started-with-vercel/import)).
+7. Därefter: redigera i Cursor → Kent committar och pushar själv → Vercel deployar automatiskt till det projektet.
+
+Du behöver alltså **inte** skapa ett nytt team. Du återanvänder `effektiv1` och lägger till ett projekt.
 
 ---
 
@@ -171,7 +201,9 @@ vindkraftskalkyl_Vercel/
 ├── README.md          ← den här filen
 ├── index.html         ← startsidan
 ├── stil.css
-└── berakningar.js
+├── berakningar.js
+└── Bilder/
+    └── Team_effektiv1_i_Vercel.jpg
 ```
 
 Ingen build behövs. Vercel serverar filerna direkt.
@@ -202,6 +234,12 @@ Vercel (2026a) *Account Management.* Tillgänglig: https://vercel.com/docs/accou
 
 Vercel (2026b) *Projects overview.* Tillgänglig: https://vercel.com/docs/projects/overview (hämtad 14 september 2026). *(Definierar projekt som en app kopplad till ett Git-repo, med flera deployments under samma projekt.)*
 
+Vercel (2026c) *Hobby Plan.* Tillgänglig: https://vercel.com/docs/plans/hobby (hämtad 14 september 2026). *(Hobby tillåter upp till 200 projekt i ett team.)*
+
+Vercel (2026d) *Limits.* Tillgänglig: https://vercel.com/docs/limits (hämtad 14 september 2026). *(Hobby kan kopplas till Git-repon under ett personligt konto, inte under en GitHub-organisation.)*
+
+Vercel (2026e) *Getting started with Vercel.* Tillgänglig: https://vercel.com/docs/getting-started-with-vercel/import (hämtad 14 september 2026). *(Hur ett GitHub-repo importeras som nytt Vercel-projekt från dashboarden.)*
+
 ---
 
-*Uppdaterad 2026-09-14 – team/projekt förklarade, GitHub-länk och Teknik-modal markerade som gjorda.*
+*Uppdaterad 2026-09-14 – teamet effektiv1 visat med skärmdump, och steg för att koppla nya GitHub-projekt till samma team.*
