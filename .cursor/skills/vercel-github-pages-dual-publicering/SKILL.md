@@ -1,15 +1,23 @@
 ---
 name: vercel-github-pages-dual-publicering
-description: Mönster för dual publicering av statiska webbappar – samma HTML/CSS/JS både via GitHub Pages (programversion) och Vercel (appversion). Används när användaren publicerar interaktiva kalkyler eller webbverktyg, vill ha automatisk deploy via Cursor + Git, eller jämför Vercel med alternativ som Vite + React. Triggerord inkluderar Vercel app, dual publicering, GitHub Pages vs Vercel, view-source samma, relativa länkar, build Vite React, automatisk deploy.
+description: >
+  Mönster för dual publicering av statiska webbappar – samma HTML/CSS/JS
+  både via GitHub Pages (programversion) och Vercel (appversion). Används
+  när användaren publicerar interaktiva kalkyler eller webbverktyg, vill ha
+  automatisk deploy via Cursor + Git, eller jämför Vercel med alternativ
+  som Vite + React. Triggerord inkluderar Vercel app, dual publicering,
+  GitHub Pages vs Vercel, view-source samma, relativa länkar, build Vite
+  React, automatisk deploy.
 metadata:
   type: workflow
-  version: "1.0"
+  version: "1.1"
   created_via: conversation
   purpose: dokumentera och återanvända mönstret för dual publicering (GitHub Pages + Vercel) samt förklara build-begreppet och alternativ
-  last_updated: 2026-09-14 15:15 CEST (Stockholm)
+  last_updated: 2026-09-14 15:21 CEST (Stockholm)
 ---
 
 ## Senaste ändringar
+- **2026-09-14 15:21 CEST (Stockholm)**: Flyttad från `skills/` till `.cursor/skills/` så att Cursor faktiskt upptäcker skillen som projekt-skill. Den gamla sökvägen raderad.
 - **2026-09-14 15:15 CEST (Stockholm)**: Kopierad in i Vindkraft-repot under skills/ så att Claude och Cursor kan läsa det lokalt i projektet.
 - **2026-09-14 14:15 CEST (Stockholm)**: Skapad globalt. Innehåller dual-publiceringsmönstret från vindkraftskalkyl_Vercel, förklaring av view-source/relativa länkar, Cursor-arbetssätt, alternativ till Vercel (Vite m.fl.) och build-begreppet.
 
@@ -37,7 +45,7 @@ Samma tre filer (index.html / *.html + stil.css + *.js)
 
 ## Arbetssätt via Cursor
 1. Redigera i Cursor (med Claude eller annan AI).
-2. Commit + push från Cursor.
+2. Kent committar och pushar själv från Cursor (om han inte uttryckligen ber agenten göra det).
 3. Vercel (om kopplat till repot med rätt Root Directory) deployar automatiskt.
 4. GitHub Pages uppdateras också via samma push.
 
@@ -70,10 +78,11 @@ Vercel utmärker sig med extremt enkel Git-integration och preview-deployments p
 
 ## Konkreta regler för detta repo (Vindkraft)
 - Mapp `vindkraftskalkyl/` = GitHub Pages-version.
-- Mapp `vindkraftskalkyl_Vercel/` = Vercel-version (Root Directory i Vercel-projektet "vindkraft").
+- Mapp `vindkraftskalkyl_Vercel/` = Vercel-version (Root Directory i Vercel-projektet "vindkraft", team Effektiv / slug `effektiv1`).
 - GitHub-länken i Vercel-appen ska peka på `.../tree/main/vindkraftskalkyl_Vercel`.
 - Teknik-modalen bör nämna att det finns både programversion (GitHub Pages) och appversion (Vercel).
 - Nya modeller i framtiden bör följa samma dual-mönster och dokumenteras i CLAUDE.md + README.
+- Nya appar ska bli **nya Vercel-projekt i samma team**, inte ett nytt team per app.
 
 ## Cross-references
 - Använd tillsammans med `vindkrafts-kalkyl` när beräkningslogik diskuteras.

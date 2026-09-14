@@ -4,7 +4,7 @@
 **Live (GitHub Pages):** https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html
 **Live (Vercel-app):** https://vindkraft-rosy.vercel.app
 **Senast uppdaterad:** 2026-09-14
-**Version:** 1.2
+**Version:** 1.3
 
 ---
 
@@ -16,7 +16,7 @@ Samlar vindkraftsrelaterat innehåll:
 | ---- | -------- |
 | `vindkraftskalkyl/` | Interaktivt beräkningsverktyg (HTML/CSS/JS) – GitHub Pages-version. |
 | `vindkraftskalkyl_Vercel/` | Samma kalkyl deployad som app via Vercel (Root Directory för projektet "vindkraft"). |
-| `skills/` | Lokala skills för Claude/Cursor, bl.a. dual-publiceringsmönstret. |
+| `.cursor/skills/` | Projekt-skills som Cursor läser automatiskt. Dual-publiceringsmönstret ligger här. |
 | `skanes-vindkraftsakademi/` | Anteckningar och research kopplat till styrelsearbete i Skånes vindkraftsakademi. |
 
 ---
@@ -28,17 +28,17 @@ Det finns **två live-URL:er** till samma kalkyl:
 - GitHub Pages = den "vanliga" programversionen
 - Vercel = den deployade app-versionen
 
-För användaren ska de kännas identiska (samma HTML/CSS/JS, relativa länkar).  
+För användaren ska de kännas identiska (samma HTML/CSS/JS, relativa länkar).
 Skillnaden ligger bakom kulisserna: Vercel ger automatisk deploy vid push, bättre CDN och enklare vidareutveckling.
 
-**Lokalt skill i detta repo:**  
-`skills/vercel-github-pages-dual-publicering/SKILL.md`
+**Projekt-skill (Cursor upptäcker den härifrån):**
+`.cursor/skills/vercel-github-pages-dual-publicering/SKILL.md`
 
-Claude och Cursor ska läsa detta skill när de arbetar med publicering, deploy eller jämförelser mellan GitHub Pages och Vercel i detta projekt.
+Cursor ska använda detta skill när arbetet handlar om publicering, deploy eller jämförelser mellan GitHub Pages och Vercel. Sökvägen är den som Cursor faktiskt läser – inte en fristående `skills/`-mapp i repo-roten.
 
-När nya modeller/program skapas i detta repo är intentionen att de också ska kunna få en motsvarande Vercel-app (via Git-integration + Root Directory). Dokumentera nya appar i README och här.
+När nya modeller/program skapas i detta repo är intentionen att de också ska kunna få en motsvarande Vercel-app (via Git-integration + Root Directory), som **nytt projekt i samma Vercel-team** (Effektiv / `effektiv1`), inte som ett nytt team. Dokumentera nya appar i README och här.
 
-Arbete sker bäst via **Cursor** (med Claude): redigera → commit/push från Cursor → Vercel deployar automatiskt.
+Arbete sker bäst via **Cursor**: redigera → Kent committar och pushar själv → Vercel deployar automatiskt.
 
 ---
 
@@ -64,12 +64,13 @@ Ovrigt-repots `CLAUDE.md`, och bör även finnas i den globala filen
 
 ## 📌 Regel – Commit och push
 
-**Kent commitar och pushar själv.** Claude commitar endast om Kent uttryckligen ber om det.
+**Kent commitar och pushar själv.** Claude/Cursor commitar endast om Kent uttryckligen ber om det. Push kräver en egen, separat begäran – en begäran om commit är inte en begäran om push.
 
 ---
 
 ## Uppdateringslogg
 
+- 2026-09-14 (v1.3): Flyttat dual-publicerings-skillen till `.cursor/skills/` (rätt plats för Cursor), tagit bort den gamla `skills/`-sökvägen, och förtydligat commit/push samt att nya appar ska vara projekt i samma Vercel-team.
 - 2026-09-14 (v1.2): Lagt till lokal skill under `skills/vercel-github-pages-dual-publicering/` och pekat ut den i CLAUDE.md.
 - 2026-09-14 (v1.1): Lagt till Vercel-appen, dual-publiceringsmönster och Cursor-arbetssätt.
 - 2026-09-02 (v1.0): Skapad, med regeln om initialer för personnamn i
@@ -77,4 +78,4 @@ Ovrigt-repots `CLAUDE.md`, och bör även finnas i den globala filen
 
 ---
 
-_CLAUDE.md v1.2, 2026-09-14_
+_CLAUDE.md v1.3, 2026-09-14_

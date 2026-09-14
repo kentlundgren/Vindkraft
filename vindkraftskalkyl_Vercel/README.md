@@ -192,7 +192,7 @@ Teknik-modalen nämner att det finns både en programversion (GitHub Pages) och 
 Nya modeller i detta repo bör följa samma dual-mönster. Mönstret är dokumenterat i:
 - denna README
 - `CLAUDE.md`
-- skill:et `vercel-github-pages-dual-publicering`
+- skill:et `.cursor/skills/vercel-github-pages-dual-publicering/`
 
 ---
 
