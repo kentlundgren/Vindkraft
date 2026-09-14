@@ -11,20 +11,47 @@ https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html
 
 | Plattform       | URL                                                                 | Kommentar |
 |-----------------|---------------------------------------------------------------------|-----------|
-| **Vercel**      | https://vindkraft-rosy.vercel.app                                   | Ny deployment under teamet Effektiv. CDN + automatisk deploy. |
+| **Vercel**      | https://vindkraft-rosy.vercel.app                                   | Ny deployment under teamet Effektiv. |
 | **GitHub Pages**| https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html | Ursprunglig live-sida. |
 
-Det är **två olika URL:er** som leder till **samma kalkyl** (samma HTML/CSS/JS). Skillnaden ligger bara i hur de serveras.
+Det är **två olika URL:er** som leder till **samma kalkyl** (samma HTML, CSS och JavaScript).
 
 ---
 
-## Vad som gjordes 2026-09-14
+## Upplever användaren någon skillnad?
 
-1. Skapade mappen `vindkraftskalkyl_Vercel/`.
-2. Skrev denna README som förklarar arbetssättet.
-3. Kopplade Vercel-projektet **vindkraft** (team Effektiv) till GitHub-repot med Root Directory = `vindkraftskalkyl_Vercel`.
-4. Kopierade de tre filerna från den gamla mappen (index.html, stil.css, berakningar.js).
-5. Första deployen gav 404 tills index.html fanns på plats.
+**Nej – som vanlig användare/läsare ska man i princip inte märka någon skillnad.**
+
+När du öppnar antingen
+- https://vindkraft-rosy.vercel.app  eller
+- https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html
+
+så ser du **exakt samma kalkyl**, samma flikar, samma beräkningar, samma diagram och samma gula indatafält. Kalkylen beter sig identiskt.
+
+Det är medvetet. En välgjord webbapp ska kännas densamma oavsett vilken plattform som serverar den. Användaren ska tänka på *innehållet* (vindkraftens ekonomi), inte på *hur* sidan hostas.
+
+### Vad skiljer sig då – och varför har man Vercel?
+
+Skillnaden ligger **bakom kulisserna**, inte i det användaren ser:
+
+| Aspekt                    | GitHub Pages                              | Vercel                                      |
+|---------------------------|-------------------------------------------|---------------------------------------------|
+| **Vad användaren ser**    | Samma kalkyl                              | Samma kalkyl                                |
+| **Hosting**               | Enkel statisk hosting från GitHub         | Professionell plattform med globalt CDN     |
+| **Deploy**                | Manuell / via GitHub Actions              | Automatisk vid varje `git push`             |
+| **Preview**               | Begränsat                                 | Varje branch får egen preview-URL           |
+| **Prestanda & tillförlitlighet** | Bra för enkla sidor                  | Oftast snabbare och mer robust              |
+| **Framtidssäkring**       | Begränsat (mest statiskt)                 | Lätt att lägga till mer (API, auth, analytics, AI-funktioner m.m.) |
+| **Arbetssätt**            | Bra för enkla publiceringar               | Bättre när man vill bygga vidare på appen   |
+
+**Kort sagt:**
+
+- För **användaren** ska det inte spela någon roll vilken URL man öppnar.
+- För **dig som skapare** ger Vercel ett modernare, mer automatiserat och framtidssäkert sätt att publicera och vidareutveckla appen.
+
+Poängen med Vercel är alltså **inte** att kalkylen ska se annorlunda ut. Poängen är att du får en stabil, snabb och automatiserad publiceringskedja, och att det blir lättare att växa appen över tid (t.ex. lägga till mer interaktivitet, datahämtning, inloggning eller AI-stöd senare) utan att byta plattform.
+
+En bra Vercel-app (och en bra webbapp överhuvudtaget) ska kännas som "bara en vanlig bra webbsida" för den som använder den. All teknik under huven ska vara osynlig för användaren.
 
 ---
 
@@ -92,10 +119,14 @@ Ingen build behövs. Vercel serverar filerna direkt som statisk webbplats.
 
 ---
 
-## Nästa steg
+## Vad som gjordes 2026-09-14
 
-- Kontrollera att https://vindkraft-rosy.vercel.app fungerar efter att filerna är på plats.
-- Uppdatera Claude-kompassen när flödet känns stabilt.
-- Eventuellt lägga till custom domain senare.
+1. Skapade mappen `vindkraftskalkyl_Vercel/`.
+2. Skrev och förbättrade denna README.
+3. Kopplade Vercel-projektet **vindkraft** (team Effektiv) till GitHub-repot med Root Directory = `vindkraftskalkyl_Vercel`.
+4. Kopierade de tre filerna från den gamla mappen.
+5. Första deployen gav 404 tills index.html fanns på plats. Nu fungerar https://vindkraft-rosy.vercel.app.
 
-*Uppdaterad 2026-09-14.*
+---
+
+*Uppdaterad 2026-09-14 – tydligare förklaring av vad användaren upplever (och inte upplever).*
