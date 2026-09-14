@@ -289,7 +289,7 @@
       <div class="kort"><span class="kort-etikett">Produktion</span><span class="kort-varde" id="nt-produktion">–</span></div>
     </div>
     <div class="dela-vid-nyckeltal">
-      <button type="button" id="spara-scenario" class="verktyg-knapp"
+      <button type="button" id="spara-scenario" class="verktyg-knapp verktyg-knapp-gul"
         title="Kopierar en länk med alla gula indatafält. Resultaten räknas om när länken öppnas.">
         Spara och kopiera länk
       </button>
@@ -298,6 +298,9 @@
         med mera) ligger <em>inte</em> i länken – de räknas om när någon öppnar den.
         Utan kort kod blir länken lång (<code>?t=…</code>), eftersom värdena ligger
         i adressen.
+        Detta är <strong>Vercel-teknik</strong>: en Function på servern validerar och
+        packar fälten så att de ryms i adressen.
+        <a href="https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl_Vercel_ver2/Vercel-teknik-ver2.md#Dela-kalkyl-som-lank" target="_blank" rel="noopener">Hur delningslänken fungerar</a>.
       </p>
       <p id="dela-status" class="verktyg-status" role="status"></p>
     </div>
@@ -585,7 +588,7 @@
           <p>Du tittar på <strong>vindkraftskalkyl_Vercel_ver2</strong>: samma kalkyl (gula fält, fem perspektiv, jämförelsetabell) plus två valfria serveranrop som GitHub Pages inte har.</p>
           <ul>
             <li><code>/api/elpris</code> – dygnssnitt för dagen-före-pris från ENTSO-E, omräknat till kr/kWh med Riksbanken. Nyckeln ligger i Vercel, inte i JavaScript-filen.</li>
-            <li><code>/api/scenario</code> – knappen <em>Spara och kopiera länk</em> ligger efter indata, vid nyckeltalen. Den kopierar en länk med alla gula indatafält (inte uträknade resultat). Kort kod <code>?s=</code> om Redis är kopplat; annars en lång <code>?t=</code>-länk där värdena är komprimerade i adressen.</li>
+            <li><code>/api/scenario</code> – knappen <em>Spara och kopiera länk</em> ligger efter indata, vid nyckeltalen. Den kopierar en länk med alla gula indatafält (inte uträknade resultat). Kort kod <code>?s=</code> om Redis är kopplat; annars en lång <code>?t=</code>-länk där värdena är komprimerade i adressen. Beskrivning: <a href="https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl_Vercel_ver2/Vercel-teknik-ver2.md#Dela-kalkyl-som-lank" target="_blank" rel="noopener">Dela kalkyl som länk</a>.</li>
           </ul>
           <p>Om ett anrop misslyckas räknar kalkylen vidare med det du skrivit in. Beräkningsformlerna är desamma som i programversionen.</p>
         </section>

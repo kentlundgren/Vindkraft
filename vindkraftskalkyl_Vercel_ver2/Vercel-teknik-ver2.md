@@ -114,7 +114,7 @@ Det som *finns* i ver2:
 | Adress | Gör | Kan statisk HTML/JS göra det ensam? |
 |--------|-----|--------------------------------------|
 | `GET /api/elpris` | Dygnssnitt för dagen-före-pris + källa | Nej, inte säkert mot ENTSO-E (nyckel) |
-| `POST /api/scenario` | Validerar och packar ett indata-set | Bara delvis (localStorage / lång URL) |
+| `POST /api/scenario` | Validerar och packar ett indata-set | Bara delvis (localStorage / lång URL). Se [Dela kalkyl som länk](#Dela-kalkyl-som-lank). |
 | `GET /api/scenario` | Läser tillbaka setet (`?id=` eller `?token=`) | Samma begränsning |
 
 “Tunn” betyder: **två endpoints, en uppgift var**, ingen egen webbserver att driva.
@@ -188,9 +188,53 @@ Samma formler som i `vindkraftskalkyl/berakningar.js`.
    är av medvetet: ett dygnssnitt är inte ett 25-årsantagande.
 2. **Spara och kopiera länk** → `POST /api/scenario`. Mottagaren öppnar samma
    indata via `?s=` (kort kod, om Redis) eller `?t=` (komprimerad länk).
+   Hur det fungerar: [Dela kalkyl som länk](#Dela-kalkyl-som-lank).
 3. Om API:t misslyckas: kalkylen fungerar med manuellt inskrivet pris.
 
-Det syns redan på startsidan: raden **Hämta pris och dela kalkyl** finns bara i ver2.
+Knappen *Hämta aktuellt spotpris* ligger högst upp. *Spara och kopiera länk*
+ligger efter indata, vid nyckeltalen.
+
+---
+
+<a id="Dela-kalkyl-som-lank"></a>
+
+## Dela kalkyl som länk – vad det är för teknik [#](#Dela-kalkyl-som-lank)
+
+Det här är **inte** att servern sparar hela kalkylen som en fil. Det är en
+**Vercel Function** som packar de gula indatafälten så att de får plats i
+själva webbadressen.
+
+Live-knappen: [https://vindkraft-ver2.vercel.app](https://vindkraft-ver2.vercel.app)
+(efter indata, under nyckeltalen).
+
+### Vad som händer när du klickar
+
+1. Webbläsaren skickar **POST** `/api/scenario` med de gula fälten som JSON.
+2. Functionen `api/scenario.js` släpper bara kända fält-id (se `lib/falt.js`)
+   och avvisar extra data.
+3. Fälten komprimeras med gzip och kodas till en textsträng (Base64).
+   Därför börjar en lång länk ofta med `H4sI…` – det är gzip-huvudet.
+4. Kalkylen kopierar `https://vindkraft-ver2.vercel.app/?t=…` till urklipp.
+5. När någon öppnar länken gör sidan **GET** `/api/scenario?token=…`.
+   Functionen packar upp strängen, fyller de gula fälten, och JavaScript
+   **räknar om** LCOE, NPV och resten. Resultaten ligger alltså inte i länken.
+
+Utan Redis (läget nu) är det `?t=` – värdena *är* länken, därför blir den lång.
+Med Upstash Redis skulle Functionen också kunna ge en kort kod `?s=abc123`
+som pekar på samma paket i 30 dagar. Det är tillval, inte krav.
+
+### Varför det kallas Vercel-teknik
+
+GitHub Pages kan bara servera filer. Där finns ingen `/api/scenario`.
+På Vercel är `api/scenario.js` en liten server som startar när knappen anropas
+och släcks när det är tyst – se [Vercel Functions](#Vercel-Functions).
+
+Att *klistra indata i URL:en* går i princip även i ren JavaScript. Det Vercel
+tillför här är att packningen och uppackningen sker **på servern**, med
+validering, och att samma Function senare kan byta den långa strängen mot en
+kort kod om Redis kopplas på.
+
+Detaljer om den tunna API-ytan: [Tunn API-yta](#Tunn-API-yta).
 
 ---
 

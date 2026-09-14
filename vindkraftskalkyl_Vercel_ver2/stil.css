@@ -71,6 +71,15 @@ body {
   opacity: .65;
   cursor: wait;
 }
+/* Här skedde en uppdatering (2026-09-15): dela-knappen gul som indatafälten. */
+.verktyg-knapp-gul {
+  background: var(--farg-indata);
+  color: var(--farg-text);
+  border: 1px solid var(--farg-indata-kant);
+}
+.verktyg-knapp-gul:hover {
+  background: #ffe56a;
+}
 .verktyg-kryss {
   font-size: .88rem;
   display: flex;
