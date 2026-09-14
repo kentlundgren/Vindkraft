@@ -806,8 +806,8 @@ function kopplaTeknikModal() {
    Ingen beräkningsformel ändras här.
    ============================================================================ */
 
-function visaVerktygStatus(text, klass) {
-  const el = document.getElementById('verktyg-status');
+function visaVerktygStatus(text, klass, statusId) {
+  const el = document.getElementById(statusId || 'verktyg-status');
   if (!el) return;
   el.textContent = text;
   el.classList.remove('ok', 'fel');
@@ -901,7 +901,7 @@ async function hamtaAktuelltElpris() {
 
 async function sparaOchKopieraLank() {
   const knapp = document.getElementById('spara-scenario');
-  visaVerktygStatus('Sparar scenario …');
+  visaVerktygStatus('Sparar scenario …', null, 'dela-status');
   if (knapp) knapp.disabled = true;
   try {
     const res = await fetch('./api/scenario', {
@@ -912,7 +912,7 @@ async function sparaOchKopieraLank() {
     const data = await res.json().catch(() => null);
     if (!res.ok || !data || data.ok === false) {
       const fel = (data && data.fel) || 'Kunde inte spara (' + res.status + ').';
-      visaVerktygStatus(fel, 'fel');
+      visaVerktygStatus(fel, 'fel', 'dela-status');
       return;
     }
 
@@ -923,16 +923,16 @@ async function sparaOchKopieraLank() {
     lank.searchParams.set(nyckel, varde);
     await navigator.clipboard.writeText(lank.toString());
 
-    /* Här skedde en uppdatering (2026-09-15): statusraden säger rakt ut att
-       länken bär gula indatafält, inte LCOE/NPV, och varför ?t=-länken är lång. */
+    /* Här skedde en uppdatering (2026-09-15): status vid dela-knappen (efter indata). */
     const kort = data.id
       ? 'Kort länk kopierad (kod ' + data.id + '). Den bär med sig alla gula indatafält; resultaten räknas om när länken öppnas.'
       : 'Länk kopierad. Den innehåller alla gula indatafält (inte uträknade resultat – de räknas om när någon öppnar länken). Länken är lång för att värdena ligger i adressen (?t=…).';
-    visaVerktygStatus(kort, 'ok');
+    visaVerktygStatus(kort, 'ok', 'dela-status');
   } catch (err) {
     visaVerktygStatus(
       'Nätfel mot /api/scenario. Lokalt utan Vercel går det inte att spara på servern.',
-      'fel'
+      'fel',
+      'dela-status'
     );
   } finally {
     if (knapp) knapp.disabled = false;

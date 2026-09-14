@@ -48,24 +48,16 @@
        UPPDATERING (2026-09-14): Vercel-verktyg
        ------------------------------------------------------------------------
        Här skedde en uppdatering: en valfri verktygsrad för det som GitHub
-       Pages inte kan – hämta spotpris via /api/elpris och spara/dela scenario
-       via /api/scenario. Kalkylen räknar även om knapparna misslyckas.
+       Pages inte kan – hämta spotpris via /api/elpris. Knappen för att
+       spara/dela ligger längre ner, efter indata vid nyckeltalen
+       (uppdatering 2026-09-15). Kalkylen räknar även om knapparna misslyckas.
        ==================================================================== -->
   <section class="vercel-verktyg" aria-labelledby="vercel-verktyg-rubrik">
-    <h2 id="vercel-verktyg-rubrik">Hämta pris och dela kalkyl</h2>
+    <h2 id="vercel-verktyg-rubrik">Hämta pris</h2>
     <p class="hint">
       Valfritt och kopplat till Vercel. Spotpriset är dagens dygnssnitt på
       dagen-före-marknaden – inte ett 25-årsantagande. Misslyckas hämtningen
       skriver du in priset i det gula fältet som vanligt.
-    </p>
-    <!-- Här skedde en uppdatering (2026-09-15): förtydligat att delningslänken
-         bär med sig de gula indatafälten, inte uträknade resultat, och att
-         en lång ?t=-länk betyder att värdena ligger i adressen. -->
-    <p class="hint">
-      <strong>Spara och kopiera länk</strong> lägger <em>alla gula indatafält</em>
-      i en länk. Uträknade tal (LCOE, NPV, diagram med mera) ligger
-      <em>inte</em> i länken – de räknas om när någon öppnar den. Utan kort kod
-      blir länken lång (<code>?t=…</code>), eftersom värdena packas in i adressen.
     </p>
     <div class="verktyg-rad">
       <button type="button" id="hamta-elpris" class="verktyg-knapp">Hämta aktuellt spotpris</button>
@@ -73,10 +65,6 @@
         <input type="checkbox" id="elpris-som-intakt">
         Använd också som intäkt för elen (år 1)
       </label>
-      <button type="button" id="spara-scenario" class="verktyg-knapp"
-        title="Kopierar en länk med alla gula indatafält. Resultaten räknas om när länken öppnas.">
-        Spara och kopiera länk
-      </button>
     </div>
     <p id="verktyg-status" class="verktyg-status" role="status"></p>
   </section>
@@ -286,6 +274,9 @@
   <!-- ========================================================================
        NYCKELTALSRAD (alltid synlig, oavsett vald flik)
        Sammanfattar de viktigaste talen från investerarperspektivet.
+       Här skedde en uppdatering (2026-09-15): "Spara och kopiera länk"
+       ligger här, efter indata, eftersom delning hör ihop med en ifylld
+       kalkyl – inte med att hämta spotpris högst upp.
        ==================================================================== -->
   <section class="nyckeltalsrad" aria-labelledby="nyckeltal-rubrik">
     <h2 id="nyckeltal-rubrik" class="visuellt-dold">Sammanfattande nyckeltal</h2>
@@ -296,6 +287,19 @@
       <div class="kort"><span class="kort-etikett">NPV</span><span class="kort-varde" id="nt-npv">–</span></div>
       <div class="kort"><span class="kort-etikett">IRR</span><span class="kort-varde" id="nt-irr">–</span></div>
       <div class="kort"><span class="kort-etikett">Produktion</span><span class="kort-varde" id="nt-produktion">–</span></div>
+    </div>
+    <div class="dela-vid-nyckeltal">
+      <button type="button" id="spara-scenario" class="verktyg-knapp"
+        title="Kopierar en länk med alla gula indatafält. Resultaten räknas om när länken öppnas.">
+        Spara och kopiera länk
+      </button>
+      <p class="hint dela-hint">
+        Packar in <em>alla gula indatafält</em> i en länk. Uträknade tal (LCOE, NPV
+        med mera) ligger <em>inte</em> i länken – de räknas om när någon öppnar den.
+        Utan kort kod blir länken lång (<code>?t=…</code>), eftersom värdena ligger
+        i adressen.
+      </p>
+      <p id="dela-status" class="verktyg-status" role="status"></p>
     </div>
   </section>
 
@@ -581,7 +585,7 @@
           <p>Du tittar på <strong>vindkraftskalkyl_Vercel_ver2</strong>: samma kalkyl (gula fält, fem perspektiv, jämförelsetabell) plus två valfria serveranrop som GitHub Pages inte har.</p>
           <ul>
             <li><code>/api/elpris</code> – dygnssnitt för dagen-före-pris från ENTSO-E, omräknat till kr/kWh med Riksbanken. Nyckeln ligger i Vercel, inte i JavaScript-filen.</li>
-            <li><code>/api/scenario</code> – kopierar en länk med <em>alla gula indatafält</em> (inte uträknade resultat). Kort kod <code>?s=</code> om Redis är kopplat; annars en lång <code>?t=</code>-länk där värdena är komprimerade i adressen.</li>
+            <li><code>/api/scenario</code> – knappen <em>Spara och kopiera länk</em> ligger efter indata, vid nyckeltalen. Den kopierar en länk med alla gula indatafält (inte uträknade resultat). Kort kod <code>?s=</code> om Redis är kopplat; annars en lång <code>?t=</code>-länk där värdena är komprimerade i adressen.</li>
           </ul>
           <p>Om ett anrop misslyckas räknar kalkylen vidare med det du skrivit in. Beräkningsformlerna är desamma som i programversionen.</p>
         </section>

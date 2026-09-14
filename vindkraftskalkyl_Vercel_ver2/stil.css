@@ -177,6 +177,24 @@ h2 { font-size: 1.25rem; color: var(--farg-primar); border-bottom: 2px solid var
 .kort-etikett { font-size: .78rem; opacity: .85; }
 .kort-varde { font-size: 1.15rem; font-weight: 700; margin-top: .2rem; }
 
+/* Här skedde en uppdatering (2026-09-15): dela-knappen efter indata, vid nyckeltalen. */
+.dela-vid-nyckeltal {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: .5rem 1rem;
+}
+.dela-hint {
+  flex: 1 1 18rem;
+  margin: 0;
+  max-width: 40rem;
+}
+.dela-vid-nyckeltal .verktyg-status {
+  flex: 1 1 100%;
+  margin: 0;
+}
+
 /* ==========================================================================
    JÄMFÖRELSETABELL (alltid synlig)
    ========================================================================== */
