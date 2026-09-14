@@ -43,11 +43,10 @@ Tillval (kalkylen dör inte om de strular):
 1. **Hämta aktuellt spotpris** – fyller *Spotpris hushållsel* med dygnssnitt
    för valt elområde. Kryssrutan “Använd också som intäkt för elen” är av
    medvetet, för att dagens spot inte är ett 25-årsantagande.
-2. **Spara och kopiera länk** – någon annan kan öppna samma indata.
-   Tekniken (Function + `?t=` i adressen) förklaras i
+2. **Kort länk (30 dagar)** eller **Lång länk (håller)** – någon annan kan
+   öppna samma indata. Kort: `?s=` i Redis. Lång: värdena i adressen (`?t=`),
+   ingen tidsgräns. Tekniken förklaras i
    [Vercel-teknik-ver2.md – Dela kalkyl som länk](Vercel-teknik-ver2.md#Dela-kalkyl-som-lank).
-3. **Kort kod** (`?s=abc123`) om Upstash Redis är kopplat; annars en längre
-   men fungerande länk (`?t=...`).
 
 ---
 

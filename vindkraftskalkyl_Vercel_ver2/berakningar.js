@@ -799,8 +799,9 @@ function kopplaTeknikModal() {
 /* ============================================================================
    DEL 8.6 – VERCEL-FUNKTIONER (uppdatering 2026-09-14)
    ----------------------------------------------------------------------------
-   Här skedde en uppdatering: knapparna "Hämta aktuellt spotpris" och
-   "Spara och kopiera länk" anropar /api/elpris och /api/scenario.
+   Här skedde en uppdatering: "Hämta aktuellt spotpris" anropar /api/elpris.
+   Delning: två knappar anropar /api/scenario – kort länk (Redis, 30 dagar)
+   eller lång länk (fält i adressen, ingen tidsgräns).
    Om anropet misslyckas (ingen deploy, saknad nyckel, nätfel) visas ett
    meddelande. Kalkylen fortsätter med de gula fälten som de är.
    Ingen beräkningsformel ändras här.
@@ -844,9 +845,13 @@ function bekraftaAndring() {
 
 function kopplaVercelVerktyg() {
   const hamta = document.getElementById('hamta-elpris');
-  const spara = document.getElementById('spara-scenario');
+  const kort = document.getElementById('spara-lank-kort');
+  const lang = document.getElementById('spara-lank-lang');
   if (hamta) hamta.addEventListener('click', hamtaAktuelltElpris);
-  if (spara) spara.addEventListener('click', sparaOchKopieraLank);
+  /* Här skedde en uppdatering (2026-09-15): två knappar – kort Redis-länk
+     eller lång länk med fälten i adressen. */
+  if (kort) kort.addEventListener('click', () => sparaOchKopieraLank('kort'));
+  if (lang) lang.addEventListener('click', () => sparaOchKopieraLank('lang'));
 }
 
 async function hamtaAktuelltElpris() {
@@ -899,10 +904,15 @@ async function hamtaAktuelltElpris() {
   }
 }
 
-async function sparaOchKopieraLank() {
-  const knapp = document.getElementById('spara-scenario');
+/* Här skedde en uppdatering (2026-09-15): lage är 'kort' eller 'lang'.
+   POST ger både Redis-id och gzip-token; vi kopierar den användaren valt.
+   Saknas Redis vid kort-val faller vi tillbaka till lång länk. */
+async function sparaOchKopieraLank(lage) {
+  const kortKnapp = document.getElementById('spara-lank-kort');
+  const langKnapp = document.getElementById('spara-lank-lang');
   visaVerktygStatus('Sparar scenario …', null, 'dela-status');
-  if (knapp) knapp.disabled = true;
+  if (kortKnapp) kortKnapp.disabled = true;
+  if (langKnapp) langKnapp.disabled = true;
   try {
     const res = await fetch('./api/scenario', {
       method: 'POST',
@@ -916,18 +926,27 @@ async function sparaOchKopieraLank() {
       return;
     }
 
-    const nyckel = data.id ? 's' : 't';
-    const varde = data.id || data.token;
+    const villKort = lage === 'kort';
+    const kanKort = Boolean(data.id);
+    let nyckel = 't';
+    let varde = data.token;
+    let statusText = '';
+
+    if (villKort && kanKort) {
+      nyckel = 's';
+      varde = data.id;
+      statusText = 'Kort länk kopierad (kod ' + data.id + ', 30 dagar). Alla gula indatafält; resultaten räknas om när länken öppnas.';
+    } else if (villKort && !kanKort) {
+      statusText = 'Kort länk kräver Redis, som inte svarade. Lång länk kopierad i stället (?t=…). Den har ingen tidsgräns.';
+    } else {
+      statusText = 'Lång länk kopierad. Alla gula indatafält ligger i adressen (?t=…). Ingen tidsgräns i koden; resultaten räknas om när länken öppnas.';
+    }
+
     const lank = new URL(window.location.href);
     lank.search = '';
     lank.searchParams.set(nyckel, varde);
     await navigator.clipboard.writeText(lank.toString());
-
-    /* Här skedde en uppdatering (2026-09-15): status vid dela-knappen (efter indata). */
-    const kort = data.id
-      ? 'Kort länk kopierad (kod ' + data.id + '). Den bär med sig alla gula indatafält; resultaten räknas om när länken öppnas.'
-      : 'Länk kopierad. Den innehåller alla gula indatafält (inte uträknade resultat – de räknas om när någon öppnar länken). Länken är lång för att värdena ligger i adressen (?t=…).';
-    visaVerktygStatus(kort, 'ok', 'dela-status');
+    visaVerktygStatus(statusText, 'ok', 'dela-status');
   } catch (err) {
     visaVerktygStatus(
       'Nätfel mot /api/scenario. Lokalt utan Vercel går det inte att spara på servern.',
@@ -935,7 +954,8 @@ async function sparaOchKopieraLank() {
       'dela-status'
     );
   } finally {
-    if (knapp) knapp.disabled = false;
+    if (kortKnapp) kortKnapp.disabled = false;
+    if (langKnapp) langKnapp.disabled = false;
   }
 }
 

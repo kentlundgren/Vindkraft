@@ -93,8 +93,9 @@ I den här mappen ligger funktionerna som vanliga filer:
 
 - Knappen **Hämta aktuellt spotpris** fyller fältet via `/api/elpris`. Nyckeln
   `ENTSOE_SECURITY_TOKEN` ligger i Vercel, inte i JavaScript-filen.
-- Knappen **Spara och kopiera länk** skickar indata till `/api/scenario`. Servern
-  validerar fälten och ger tillbaka en delningskod.
+- Knapparna **Kort länk (30 dagar)** och **Lång länk (håller)** skickar indata
+  till `/api/scenario`. Servern validerar fälten; webbläsaren kopierar `?s=`
+  eller `?t=` beroende på valet.
 
 **Vad det *inte* är:** en ersättning för LCOE/NPV-räkningen. Den ligger kvar i
 webbläsaren, så kalkylen är snabb även om API:t strular. Misslyckas hämtningen
@@ -186,12 +187,12 @@ Samma formler som i `vindkraftskalkyl/berakningar.js`.
 1. **Hämta aktuellt spotpris** → `GET /api/elpris` (ENTSO-E + Riksbanken).
    Fyller *Spotpris hushållsel*. Kryssrutan “använd också som intäkt för elen”
    är av medvetet: ett dygnssnitt är inte ett 25-årsantagande.
-2. **Spara och kopiera länk** → `POST /api/scenario`. Mottagaren öppnar samma
-   indata via kort kod `?s=` (Redis, påslaget) eller, om Redis saknas, lång
-   `?t=`-länk. Hur det fungerar: [Dela kalkyl som länk](#Dela-kalkyl-som-lank).
+2. **Kort länk / Lång länk** → `POST /api/scenario`. Mottagaren öppnar samma
+   indata via `?s=` (Redis, 30 dagar) eller `?t=` (värdena i adressen, ingen
+   tidsgräns). Hur det fungerar: [Dela kalkyl som länk](#Dela-kalkyl-som-lank).
 3. Om API:t misslyckas: kalkylen fungerar med manuellt inskrivet pris.
 
-Knappen *Hämta aktuellt spotpris* ligger högst upp. *Spara och kopiera länk*
+Knappen *Hämta aktuellt spotpris* ligger högst upp. De två delningsknapparna
 ligger efter indata, vid nyckeltalen.
 
 ---
@@ -226,16 +227,20 @@ anropar över HTTP ([Vercel, 2026h](https://vercel.com/docs/redis)). Det är
 Vercel-teknik i meningen att Vercel skapar databasen, kopplar den till
 projektet och fyller i hemliga variabler. Motorn bakom är Upstash, Redis-protokollet.
 
-### Två lägen när du klickar *Spara och kopiera länk*
+### Två lägen när du kopierar en länk
+
+Användaren väljer **Kort länk (30 dagar)** eller **Lång länk (håller)**. Båda
+anropar samma Function. Skillnaden är vad som kopieras till urklipp.
 
 1. Webbläsaren skickar **POST** `/api/scenario` med de gula fälten som JSON.
 2. Functionen `api/scenario.js` släpper bara kända fält-id (se `lib/falt.js`).
-3. **Om Redis är kopplat (läget nu):** Functionen slumpar en sex-teckens kod,
-   sparar JSON i Redis i 30 dagar och kopierar
-   `https://vindkraft-ver2.vercel.app/?s=……`.
-4. **Om Redis saknas:** fälten gzip-komprimeras och Base64-kodas in i adressen
-   (`?t=…`, ofta med början `H4sI` som är gzip-huvudet).
-5. När någon öppnar länken gör sidan **GET** `/api/scenario?id=…` eller
+3. Svaret innehåller *både* en Redis-kod (`id`) och en gzip-token.
+4. **Kort:** kopierar `?s=……`. Redis håller paketet 30 dagar.
+5. **Lång:** kopierar `?t=…` (ofta med början `H4sI`). Värdena ligger i
+   adressen, ingen tidsgräns i koden.
+6. Om användaren ber om kort länk men Redis inte svarar kopieras den långa
+   i stället, med ett tydligt meddelande.
+7. När någon öppnar länken gör sidan **GET** `/api/scenario?id=…` eller
    `?token=…`. Fälten fylls i, och JavaScript **räknar om** LCOE, NPV och resten.
 
 ### Vad som gjordes för att Redis skulle fungera (15 september 2026)

@@ -274,9 +274,9 @@
   <!-- ========================================================================
        NYCKELTALSRAD (alltid synlig, oavsett vald flik)
        Sammanfattar de viktigaste talen från investerarperspektivet.
-       Här skedde en uppdatering (2026-09-15): "Spara och kopiera länk"
-       ligger här, efter indata, eftersom delning hör ihop med en ifylld
-       kalkyl – inte med att hämta spotpris högst upp.
+       Här skedde en uppdatering (2026-09-15): delningsknapparna ligger här,
+       efter indata. Senare samma dag: två knappar – kort länk (30 dagar)
+       eller lång länk (håller).
        ==================================================================== -->
   <section class="nyckeltalsrad" aria-labelledby="nyckeltal-rubrik">
     <h2 id="nyckeltal-rubrik" class="visuellt-dold">Sammanfattande nyckeltal</h2>
@@ -288,18 +288,24 @@
       <div class="kort"><span class="kort-etikett">IRR</span><span class="kort-varde" id="nt-irr">–</span></div>
       <div class="kort"><span class="kort-etikett">Produktion</span><span class="kort-varde" id="nt-produktion">–</span></div>
     </div>
+    <!-- Här skedde en uppdatering (2026-09-15): användaren väljer kort länk
+         (Redis, 30 dagar) eller lång länk (värdena i adressen, ingen tidsgräns). -->
     <div class="dela-vid-nyckeltal">
-      <button type="button" id="spara-scenario" class="verktyg-knapp verktyg-knapp-gul"
-        title="Kopierar en länk med alla gula indatafält. Resultaten räknas om när länken öppnas.">
-        Spara och kopiera länk
-      </button>
+      <div class="dela-knappar">
+        <button type="button" id="spara-lank-kort" class="verktyg-knapp verktyg-knapp-gul"
+          title="Kort adress via Redis. Gäller 30 dagar.">
+          Kort länk (30 dagar)
+        </button>
+        <button type="button" id="spara-lank-lang" class="verktyg-knapp verktyg-knapp-gul"
+          title="Längre adress med alla gula fält i URL:en. Ingen tidsgräns i koden.">
+          Lång länk (håller)
+        </button>
+      </div>
       <p class="hint dela-hint">
-        Packar in <em>alla gula indatafält</em> i en länk. Uträknade tal (LCOE, NPV
-        med mera) ligger <em>inte</em> i länken – de räknas om när någon öppnar den.
-        Utan kort kod blir länken lång (<code>?t=…</code>), eftersom värdena ligger
-        i adressen.
-        Detta är <strong>Vercel-teknik</strong>: en Function på servern validerar och
-        packar fälten så att de ryms i adressen.
+        Båda packar in <em>alla gula indatafält</em> – inte LCOE/NPV (de räknas om
+        när länken öppnas). <strong>Kort</strong> använder Redis (<code>?s=…</code>,
+        30 dagar). <strong>Lång</strong> lägger värdena i adressen (<code>?t=…</code>,
+        ingen tidsgräns). Detta är <strong>Vercel-teknik</strong>.
         <a href="https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl_Vercel_ver2/Vercel-teknik-ver2.md#Dela-kalkyl-som-lank" target="_blank" rel="noopener">Hur delningslänken fungerar</a>.
       </p>
       <p id="dela-status" class="verktyg-status" role="status"></p>
@@ -588,7 +594,7 @@
           <p>Du tittar på <strong>vindkraftskalkyl_Vercel_ver2</strong>: samma kalkyl (gula fält, fem perspektiv, jämförelsetabell) plus två valfria serveranrop som GitHub Pages inte har.</p>
           <ul>
             <li><code>/api/elpris</code> – dygnssnitt för dagen-före-pris från ENTSO-E, omräknat till kr/kWh med Riksbanken. Nyckeln ligger i Vercel, inte i JavaScript-filen.</li>
-            <li><code>/api/scenario</code> – knappen <em>Spara och kopiera länk</em> ligger efter indata, vid nyckeltalen. Den kopierar en länk med alla gula indatafält (inte uträknade resultat). Kort kod <code>?s=</code> om Redis är kopplat; annars en lång <code>?t=</code>-länk där värdena är komprimerade i adressen. Beskrivning: <a href="https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl_Vercel_ver2/Vercel-teknik-ver2.md#Dela-kalkyl-som-lank" target="_blank" rel="noopener">Dela kalkyl som länk</a>.</li>
+            <li><code>/api/scenario</code> – två knappar vid nyckeltalen: <em>Kort länk (30 dagar)</em> (<code>?s=</code> i Redis) eller <em>Lång länk (håller)</em> (värdena i adressen, <code>?t=</code>). Båda bär med sig gula indatafält, inte uträknade resultat. Beskrivning: <a href="https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl_Vercel_ver2/Vercel-teknik-ver2.md#Dela-kalkyl-som-lank" target="_blank" rel="noopener">Dela kalkyl som länk</a>.</li>
           </ul>
           <p>Om ett anrop misslyckas räknar kalkylen vidare med det du skrivit in. Beräkningsformlerna är desamma som i programversionen.</p>
         </section>
