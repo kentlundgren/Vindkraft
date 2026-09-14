@@ -151,6 +151,106 @@ Poängen med Vercel är **inte** att kalkylen ska se annorlunda ut. Poängen är
 
 ---
 
+## Kan Vercel göra kalkylen bättre – om man kodar för plattformen?
+
+Den nuvarande kalkylen på GitHub Pages
+([vindkraftskalkyl.html](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html))
+är medvetet ett **statiskt program**: tre filer, beräkning i webbläsaren, ingen server. Samma kod ligger på Vercel. Därför blir appen **inte** bättre bara för att den deployas där.
+
+Frågan är en annan: *om man från början visste att kalkylen skulle ligga på Vercel – hade den kunnat kodas klokare, så att den blev lättare och smidigare att använda?*
+
+**Kort svar:** Ja, men bara om man *använder* det Vercel kan som GitHub Pages inte kan. Att byta host räcker inte. Att skriva om allt i React räcker heller inte i sig. Det som gör skillnad för användaren är nya *förmågor* – inte ett nytt ramverk för samma kalkyl.
+
+| Nivå | Vad det är | Blir kalkylen bättre för användaren? |
+|------|------------|--------------------------------------|
+| **1. Samma statiska kod på Vercel** (nu) | HTML + CSS + JS, identisk med GitHub Pages | Nej. Samma klick, samma fält, samma resultat. |
+| **2. Bättre gränssnitt, fortfarande statiskt** | T.ex. spara scenario i webbläsaren, dela via URL, tydligare flöde, bättre mobil | Ja – men det fungerar lika bra på GitHub Pages. Kräver inte Vercel. |
+| **3. Kod skriven för Vercel** | Vercel Functions (en liten server), hemliga nycklar, ev. lagring | Ja, för saker som *inte går* på GitHub Pages: aktuella elpriser från en källa, spara/dela scenario på servern, PDF/export på servern, valfri AI-hjälp utan att läcka nycklar i webbläsaren. |
+
+Vercel Functions är serverkod som körs vid behov, utan att du driver en egen server ([Vercel, 2026f](https://vercel.com/docs/functions)). GitHub Pages kan inte det. Det är den egentliga öppningen.
+
+**Vad som är klokt att behålla även i en Vercel-anpassad app**
+
+- Beräkningarna i webbläsaren (snabbt, fungerar utan väntan på server).
+- Gula indatafält, fem perspektiv, jämförelsetabellen – det användaren redan förstår.
+- Programversionen på GitHub Pages som en enkel, alltid-tillgänglig kalkyl.
+
+**Vad som vore klokare *för att* det ska vara en Vercel-app**
+
+- En tunn API-yta (`/api/...`) för sådant som kräver server: hämta elpris, spara ett scenario, exportera.
+- Hemligheter (API-nycklar) i Vercels environment variables – aldrig i JavaScript-filen.
+- Appen ska fungera även om API:t tillfälligt strular (progressiv förbättring: kalkylen räknar som idag, extrafunktionerna är tillval).
+- Inte bygga ett nytt team. Nytt *projekt* i teamet Effektiv (`effektiv1`), eller vidareutveckling av projektet `vindkraft`.
+
+Det här är en **önskan framåt**, inte något som är byggt än. Befintlig kalkyl ska inte rivas förrän Kent uttryckligen ber om en ny version (befintlig mapp eller ny `..._verX`).
+
+### Förslag på prompt (för en Vercel-anpassad, smidigare kalkyl)
+
+Kopiera och anpassa vid behov. Prompten är skriven så att agenten ska *fråga* innan den kodar, och inte blanda ihop GitHub Pages-programmet med en rikare Vercel-app.
+
+```text
+Mål
+Gör vindkraftskalkylen lättare och smidigare att använda, genom att koda en
+version som är anpassad för att deployas på Vercel – inte bara flytta samma
+statiska filer. Behåll beräkningslogiken och de fem perspektiven. Gör inte
+om allt i React om det inte behövs för målet.
+
+Utgångspunkt (ändra inte förrän jag sagt ja)
+- Programversion (GitHub Pages):
+  https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html
+- Nuvarande Vercel-app (samma statiska kod):
+  https://vindkraft-rosy.vercel.app
+- Lokal mapp: vindkraftskalkyl_Vercel/
+- Vercel-team: Effektiv (slug effektiv1). Nytt blir ett projekt i SAMMA team,
+  inte ett nytt team.
+
+Innan du kodar – fråga mig
+1. Ska den befintliga mappen vindkraftskalkyl_Vercel/ uppdateras, eller ska en
+   ny mapp skapas (t.ex. vindkraftskalkyl_Vercel_ver2/)?
+2. Vilka tre förbättringar ska med i första steget? Föreslå en kort lista med
+   (A) det som ger mest nytta för användaren och (B) det som faktiskt kräver
+   Vercel. Jag väljer.
+3. Vilken officiell källa ska användas för ev. aktuellt elpris? Verifiera
+   länken innan du lovar den.
+
+Så ska appen kännas
+- Fortfarande en kalkyl man förstår: gula indatafält, resultat som räknas om
+  direkt, flikar för de fem perspektiven, jämförelsetabell Senaste / Tidigare /
+  Förändring.
+- Smidigare än idag, t.ex. minst tre av:
+  • spara/återställ scenario (minst i webbläsaren; gärna även via länk)
+  • förval / startlägen (t.ex. SE4, 5 verk) med en klick
+  • hämta ett aktuellt elpris via Vercel Function (valfritt att använda)
+  • dela resultatet som länk
+  • tydligare första vy på mobil (indata inte i vägen för nyckeltalen)
+- Om ett API-anrop misslyckas ska kalkylen ändå fungera med manuellt inskrivet
+  elpris – ingen död sida.
+
+Teknik (anpassad för Vercel, men enkel)
+- HTML, CSS och JavaScript i separata filer. Kommentera på svenska.
+- Indatafält har gul bakgrund.
+- Ingen React om du inte kan visa att det behövs för just de valda
+  funktionerna. Föredra vanilla JS + eventuella Vercel Functions i /api/.
+- Hemligheter bara i Vercel environment variables, aldrig i klientkoden.
+- Relativa sökvägar. Om Vite används: base: './' och build.outDir = 'dist',
+  emptyOutDir: true.
+- Rör inte beräkningsformlerna utan att förklara varför.
+- GitHub-hörna + Teknik-modal. GitHub-länken ska peka på den mapp som gäller
+  för Vercel-versionen. Modalens originalprompt ska vara oförändrad om du
+  bygger vidare på befintlig sida; lägg nya saker i en egen sektion.
+- Kent committar och pushar själv, om han inte uttryckligen ber om annat.
+  PowerShell: använd inte && mellan kommandon.
+
+Leverans
+1. Kort plan (vad som blir bättre för användaren, vad som är Vercel-specifikt).
+2. Kod i överenskommen mapp.
+3. Verifiera i webbläsaren: kalkyl + minst en Vercel-funktion (eller förklara
+   vad som inte kunde verifieras lokalt).
+4. Uppdatera README med hur man deployar till teamet effektiv1.
+```
+
+---
+
 ## Alternativ till Vercel – och vad "build" betyder
 
 Du kan skapa en liknande app på flera sätt. Vercel är ett av alternativen.
@@ -226,6 +326,8 @@ Nya modeller i detta repo bör följa samma dual-mönster. Mönstret är dokumen
 - `CLAUDE.md`
 - skill:et `.cursor/skills/vercel-github-pages-dual-publicering/`
 
+En *rikare* Vercel-app (Functions, live-data, smidigare användning) är en separat, medveten nästa version – se avsnittet [Kan Vercel göra kalkylen bättre](#kan-vercel-göra-kalkylen-bättre--om-man-kodar-för-plattformen). Den nuvarande statiska kalkylen ska ligga kvar tills Kent ber om att bygga den versionen.
+
 ---
 
 ## Källor
@@ -240,6 +342,8 @@ Vercel (2026d) *Limits.* Tillgänglig: https://vercel.com/docs/limits (hämtad 1
 
 Vercel (2026e) *Getting started with Vercel.* Tillgänglig: https://vercel.com/docs/getting-started-with-vercel/import (hämtad 14 september 2026). *(Hur ett GitHub-repo importeras som nytt Vercel-projekt från dashboarden.)*
 
+Vercel (2026f) *Vercel Functions.* Tillgänglig: https://vercel.com/docs/functions (hämtad 14 september 2026). *(Serverkod som körs vid behov – det GitHub Pages saknar, och det som kan göra en Vercel-app mer än en statisk kalkyl.)*
+
 ---
 
-*Uppdaterad 2026-09-14 – teamet effektiv1 visat med skärmdump, och steg för att koppla nya GitHub-projekt till samma team.*
+*Uppdaterad 2026-09-14 – avsnitt om att koda kalkylen för Vercel (inte bara hosta den) plus förslag på prompt.*
