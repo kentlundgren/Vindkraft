@@ -137,7 +137,7 @@ läser dem vid körning. De ska **inte** checkas in i Git
 | Variabel | Behövs för | Obligatorisk? |
 |----------|------------|----------------|
 | `ENTSOE_SECURITY_TOKEN` | `/api/elpris` | Ja, om knappen ska hämta skarpt pris. Utan den svarar API:t med ett tydligt fel; kalkylen räknar ändå. Steg och skärmbilder: [Hur-skaffa-nyckel-hos-ENTSO-E.md](Hur-skaffa-nyckel-hos-ENTSO-E.md). |
-| `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` | korta koder `?s=abc123` | Nej. Utan Redis blir delningslänken längre (`?t=...`) men fungerar. |
+| `KV_REST_API_URL` + `KV_REST_API_TOKEN` (eller `UPSTASH_REDIS_REST_*`) | korta koder `?s=abc123` | Nej för att kalkylen ska räkna. Ja för korta länkar. Kopplat 15 september 2026 via Upstash Redis i Storage. Se [Dela kalkyl som länk](#Dela-kalkyl-som-lank). |
 
 På GitHub Pages finns inget motsvarande: allt webbläsaren behöver är synligt.
 
@@ -163,7 +163,7 @@ jämfört med GitHub Pages** och **om ver2 använder det nu**.
 | **Dashboard** (Overview, Logs, Rollback, Visit) | Se status, loggar, backa en deploy | Ja. [vindkraft-ver2](https://vercel.com/effektiv1/vindkraft-ver2) |
 | **Preview-URL per branch** | Testa utan att röra production | Möjligt; används när en annan branch pushas |
 | **Cron Jobs** | Anropa en Function på schema | Nej, inte i ver2 |
-| **Upstash Redis / Blob** | Kort kod som överlever mellan anrop | Valfritt, inte krav |
+| **Upstash Redis** | Kort kod som överlever mellan Function-anrop | Ja, från 15 september 2026. Se [Dela kalkyl som länk](#Dela-kalkyl-som-lank). |
 | **Auth** | Inloggning | Nej – överkurs |
 
 Hobby-teamet Effektiv (`effektiv1`) räcker. ver2 är ett **nytt projekt i samma team**,
@@ -187,8 +187,8 @@ Samma formler som i `vindkraftskalkyl/berakningar.js`.
    Fyller *Spotpris hushållsel*. Kryssrutan “använd också som intäkt för elen”
    är av medvetet: ett dygnssnitt är inte ett 25-årsantagande.
 2. **Spara och kopiera länk** → `POST /api/scenario`. Mottagaren öppnar samma
-   indata via `?s=` (kort kod, om Redis) eller `?t=` (komprimerad länk).
-   Hur det fungerar: [Dela kalkyl som länk](#Dela-kalkyl-som-lank).
+   indata via kort kod `?s=` (Redis, påslaget) eller, om Redis saknas, lång
+   `?t=`-länk. Hur det fungerar: [Dela kalkyl som länk](#Dela-kalkyl-som-lank).
 3. Om API:t misslyckas: kalkylen fungerar med manuellt inskrivet pris.
 
 Knappen *Hämta aktuellt spotpris* ligger högst upp. *Spara och kopiera länk*
@@ -200,43 +200,78 @@ ligger efter indata, vid nyckeltalen.
 
 ## Dela kalkyl som länk – vad det är för teknik [#](#Dela-kalkyl-som-lank)
 
-Det här är **inte** att servern sparar hela kalkylen som en fil. Det är en
-**Vercel Function** som packar de gula indatafälten så att de får plats i
-själva webbadressen.
+Det här är **inte** att servern sparar en PDF eller en ögonblicksbild av LCOE.
+Det är en **Vercel Function** plus, sedan 15 september 2026, en **Redis**-låda
+för korta koder.
 
-Live-knappen: [https://vindkraft-ver2.vercel.app](https://vindkraft-ver2.vercel.app)
-(efter indata, under nyckeltalen).
+Live: [https://vindkraft-ver2.vercel.app](https://vindkraft-ver2.vercel.app)
+(knappen efter indata, under nyckeltalen). Ett exempel på kort länk när Redis
+är på: [https://vindkraft-ver2.vercel.app/?s=wqdmm7](https://vindkraft-ver2.vercel.app/?s=wqdmm7)
+(koden `wqdmm7` lever 30 dagar, sedan är just den länken död).
 
-### Vad som händer när du klickar
+### Vad Redis betyder
+
+**Redis** är *Remote Dictionary Server* – en snabb nyckel–värde-databas i minnet
+([Redis, 2026](https://redis.io/about/)). Tänk en digital garderobbricka: du
+lämnar in ett paket (de gula indatafälten) och får en kort kod tillbaka. Nästa
+gång någon visar koden hämtas paketet. Du behöver inte bära hela paketet i
+själva adressen.
+
+Utan Redis: länken *är* paketet (`?t=H4sI…`, lång).  
+Med Redis: länken är brickan (`?s=wqdmm7`, kort). Värdet ligger i databasen.
+
+På Vercel körs inte Redis på en egen maskin som Kent sköter. Det är **Upstash
+Redis** via Vercels Storage/Marketplace: en serverless Redis som Functionen
+anropar över HTTP ([Vercel, 2026h](https://vercel.com/docs/redis)). Det är
+Vercel-teknik i meningen att Vercel skapar databasen, kopplar den till
+projektet och fyller i hemliga variabler. Motorn bakom är Upstash, Redis-protokollet.
+
+### Två lägen när du klickar *Spara och kopiera länk*
 
 1. Webbläsaren skickar **POST** `/api/scenario` med de gula fälten som JSON.
-2. Functionen `api/scenario.js` släpper bara kända fält-id (se `lib/falt.js`)
-   och avvisar extra data.
-3. Fälten komprimeras med gzip och kodas till en textsträng (Base64).
-   Därför börjar en lång länk ofta med `H4sI…` – det är gzip-huvudet.
-4. Kalkylen kopierar `https://vindkraft-ver2.vercel.app/?t=…` till urklipp.
-5. När någon öppnar länken gör sidan **GET** `/api/scenario?token=…`.
-   Functionen packar upp strängen, fyller de gula fälten, och JavaScript
-   **räknar om** LCOE, NPV och resten. Resultaten ligger alltså inte i länken.
+2. Functionen `api/scenario.js` släpper bara kända fält-id (se `lib/falt.js`).
+3. **Om Redis är kopplat (läget nu):** Functionen slumpar en sex-teckens kod,
+   sparar JSON i Redis i 30 dagar och kopierar
+   `https://vindkraft-ver2.vercel.app/?s=……`.
+4. **Om Redis saknas:** fälten gzip-komprimeras och Base64-kodas in i adressen
+   (`?t=…`, ofta med början `H4sI` som är gzip-huvudet).
+5. När någon öppnar länken gör sidan **GET** `/api/scenario?id=…` eller
+   `?token=…`. Fälten fylls i, och JavaScript **räknar om** LCOE, NPV och resten.
 
-Utan Redis (läget innan Storage kopplats) är det `?t=` – värdena *är* länken, därför blir den lång.
-Med Upstash Redis ger Functionen en kort kod `?s=abc123` som pekar på samma paket i 30 dagar.
+### Vad som gjordes för att Redis skulle fungera (15 september 2026)
 
-Vercels Redis-integration sätter ofta variablerna `KV_REST_API_URL` och `KV_REST_API_TOKEN`
-(äldre namn från Vercel KV). Functionen läser dem, eller `UPSTASH_REDIS_REST_*` om de finns.
-Getting started-sidan med `npm install @upstash/redis` behövs **inte** i den här kalkylen –
-vi anropar Redis REST-API direkt.
+Koden för korta koder fanns redan. Det som saknades var databasen, plus att
+Vercel och koden inte använde samma variabelnamn.
+
+1. I dashboarden för **vindkraft-ver2**: **Storage** → **Create Database**
+   (inte *Connect Database* – det fanns ingen databas i teamet än).
+   Sökfältet måste vara tomt; en sökning på `*` visade *No Results Found*
+   och såg ut som att Redis saknades.
+2. Val: **Upstash Redis**, inte Neon/Postgres.
+3. Vercel skapade resursen (visningsnamn i stil med `upstash-kv-orange-grass`)
+   och kopplade den till projektet.
+4. **Getting started-sidan med Next.js** (`npm install @upstash/redis`,
+   `vercel env pull`) hoppades över. Den här kalkylen är vanilla HTML/JS och
+   anropar Redis REST-API direkt med `fetch` i `api/scenario.js`.
+5. Vercel satte variablerna **`KV_REST_API_URL`** och **`KV_REST_API_TOKEN`**
+   (äldre namn från Vercel KV). Functionen tittade först bara efter
+   `UPSTASH_REDIS_REST_URL` och `UPSTASH_REDIS_REST_TOKEN`, så den korta
+   länken slogs inte på. Functionen läser nu **båda** namnparen.
+6. Ny deploy (push). Därefter ger knappen `?s=` i stället för lång `?t=`.
+
+Kontroll: **Environment Variables** på projektet ska visa `KV_REST_API_URL`
+och `KV_REST_API_TOKEN` för Production. Själva värdena ska inte ligga i Git.
 
 ### Varför det kallas Vercel-teknik
 
-GitHub Pages kan bara servera filer. Där finns ingen `/api/scenario`.
-På Vercel är `api/scenario.js` en liten server som startar när knappen anropas
-och släcks när det är tyst – se [Vercel Functions](#Vercel-Functions).
+GitHub Pages kan bara servera filer. Där finns ingen `/api/scenario` och ingen
+Storage. På Vercel är Functionen en liten server som startar vid anrop –
+se [Vercel Functions](#Vercel-Functions) – och Redis är en tillkopplad låda
+som överlever mellan anropen.
 
-Att *klistra indata i URL:en* går i princip även i ren JavaScript. Det Vercel
-tillför här är att packningen och uppackningen sker **på servern**, med
-validering, och att samma Function senare kan byta den långa strängen mot en
-kort kod om Redis kopplas på.
+Att *klistra indata i URL:en* (`?t=`) går i princip även i ren JavaScript.
+Det Vercel tillför är validering på servern och, med Redis, en kort kod som
+inte bär med sig hela paketet i adressen.
 
 Detaljer om den tunna API-ytan: [Tunn API-yta](#Tunn-API-yta).
 
@@ -363,12 +398,16 @@ veta skillnaden mellan “skapa projektet” (bilderna ovan) och “ändra kalky
 
 ## Källor
 
+Redis (2026) *About Redis.* Tillgänglig: https://redis.io/about/ (hämtad 15 september 2026). *(Vad Redis är: snabb nyckel–värde-databas i minnet – brickan, inte paketet i adressen.)*
+
 Vercel (2026e) *Getting started with Vercel.* Tillgänglig: https://vercel.com/docs/getting-started-with-vercel/import (hämtad 14 september 2026). *(Hur ett GitHub-repo importeras som nytt projekt – det som bild 1 visar för vindkraft-ver2.)*
 
 Vercel (2026f) *Vercel Functions.* Tillgänglig: https://vercel.com/docs/functions (hämtad 14 september 2026). *(Request-driven serverkod utan egen server – det GitHub Pages saknar, och det ver2 använder i `/api/`.)*
 
 Vercel (2026g) *Environment Variables.* Tillgänglig: https://vercel.com/docs/environment-variables (hämtad 14 september 2026). *(Hemligheter som Functions kan läsa, men som inte ska ligga i klientens JavaScript.)*
 
+Vercel (2026h) *Redis on Vercel.* Tillgänglig: https://vercel.com/docs/redis (hämtad 15 september 2026). *(Redis via Marketplace; Vercel KV är ersatt av Upstash Redis, som injicerar inloggningsuppgifter som miljövariabler.)*
+
 ---
 
-*Skapad 2026-09-14. Projektet vindkraft-ver2 i teamet Effektiv, live https://vindkraft-ver2.vercel.app.*
+*Skapad 2026-09-14, uppdaterad 2026-09-15 med Redis (korta `?s=`-länkar). Projektet vindkraft-ver2 i teamet Effektiv, live https://vindkraft-ver2.vercel.app.*
