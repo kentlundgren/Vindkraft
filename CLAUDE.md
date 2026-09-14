@@ -4,7 +4,7 @@
 **Live (GitHub Pages):** https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html
 **Live (Vercel-app):** https://vindkraft-rosy.vercel.app
 **Senast uppdaterad:** 2026-09-14
-**Version:** 1.1
+**Version:** 1.2
 
 ---
 
@@ -16,6 +16,7 @@ Samlar vindkraftsrelaterat innehåll:
 | ---- | -------- |
 | `vindkraftskalkyl/` | Interaktivt beräkningsverktyg (HTML/CSS/JS) – GitHub Pages-version. |
 | `vindkraftskalkyl_Vercel/` | Samma kalkyl deployad som app via Vercel (Root Directory för projektet "vindkraft"). |
+| `skills/` | Lokala skills för Claude/Cursor, bl.a. dual-publiceringsmönstret. |
 | `skanes-vindkraftsakademi/` | Anteckningar och research kopplat till styrelsearbete i Skånes vindkraftsakademi. |
 
 ---
@@ -29,6 +30,11 @@ Det finns **två live-URL:er** till samma kalkyl:
 
 För användaren ska de kännas identiska (samma HTML/CSS/JS, relativa länkar).  
 Skillnaden ligger bakom kulisserna: Vercel ger automatisk deploy vid push, bättre CDN och enklare vidareutveckling.
+
+**Lokalt skill i detta repo:**  
+`skills/vercel-github-pages-dual-publicering/SKILL.md`
+
+Claude och Cursor ska läsa detta skill när de arbetar med publicering, deploy eller jämförelser mellan GitHub Pages och Vercel i detta projekt.
 
 När nya modeller/program skapas i detta repo är intentionen att de också ska kunna få en motsvarande Vercel-app (via Git-integration + Root Directory). Dokumentera nya appar i README och här.
 
@@ -64,10 +70,11 @@ Ovrigt-repots `CLAUDE.md`, och bör även finnas i den globala filen
 
 ## Uppdateringslogg
 
+- 2026-09-14 (v1.2): Lagt till lokal skill under `skills/vercel-github-pages-dual-publicering/` och pekat ut den i CLAUDE.md.
 - 2026-09-14 (v1.1): Lagt till Vercel-appen, dual-publiceringsmönster och Cursor-arbetssätt.
 - 2026-09-02 (v1.0): Skapad, med regeln om initialer för personnamn i
   GitHub-innehåll.
 
 ---
 
-_CLAUDE.md v1.1, 2026-09-14_
+_CLAUDE.md v1.2, 2026-09-14_
