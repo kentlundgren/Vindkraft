@@ -22,15 +22,25 @@ Det är **två olika URL:er** som leder till **samma kalkyl** (samma HTML, CSS o
 
 **Nej – som vanlig användare/läsare ska man i princip inte märka någon skillnad.**
 
-När du öppnar antingen
-- https://vindkraft-rosy.vercel.app  eller
-- https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html
+När du öppnar antingen Vercel-URL:en eller GitHub Pages-URL:en ser du **exakt samma kalkyl** – samma flikar, samma beräkningar, samma diagram och samma gula indatafält. Det är medvetet. En välgjord webbapp ska kännas densamma oavsett vilken plattform som serverar den.
 
-så ser du **exakt samma kalkyl**, samma flikar, samma beräkningar, samma diagram och samma gula indatafält. Kalkylen beter sig identiskt.
+### Varför ser view-source likadan ut – och hur hittar appen CSS och JavaScript?
 
-Det är medvetet. En välgjord webbapp ska kännas densamma oavsett vilken plattform som serverar den. Användaren ska tänka på *innehållet* (vindkraftens ekonomi), inte på *hur* sidan hostas.
+Om du öppnar **view-source** på båda adresserna ser du i princip samma HTML. Det beror på att det *är* samma HTML-fil (bara serverad från olika ställen).
 
-### Vad skiljer sig då – och varför har man Vercel?
+Appen får reda på stil och funktionalitet genom **relativa länkar** i HTML-filen:
+
+```html
+<link rel="stylesheet" href="stil.css">
+...
+<script src="berakningar.js"></script>
+```
+
+När webbläsaren laddar `index.html` (eller `vindkraftskalkyl.html`) frågar den efter `stil.css` och `berakningar.js` **i samma mapp**. Det spelar ingen roll om sidan ligger på GitHub Pages eller på Vercel – så länge de tre filerna ligger tillsammans fungerar länkarna. Därför ser både källkoden och beteendet likadana ut.
+
+---
+
+## Vad skiljer sig då – och varför har man Vercel?
 
 Skillnaden ligger **bakom kulisserna**, inte i det användaren ser:
 
@@ -44,14 +54,15 @@ Skillnaden ligger **bakom kulisserna**, inte i det användaren ser:
 | **Framtidssäkring**       | Begränsat (mest statiskt)                 | Lätt att lägga till mer (API, auth, analytics, AI-funktioner m.m.) |
 | **Arbetssätt**            | Bra för enkla publiceringar               | Bättre när man vill bygga vidare på appen   |
 
+**Cursor gör skillnaden ännu tydligare.**  
+När du arbetar via **Cursor** (med Claude eller annan AI) får du ett kraftfullt sätt att hantera Git och GitHub: redigera, committa, pusha och granska skillnader direkt i editorn. Det betyder att fördelarna under *Hosting / Deploy / Preview* i tabellen ovan blir praktiska i vardagen – du pushar från Cursor och Vercel deployar automatiskt. Du behöver inte lämna editorn för att få ut en ny version av appen.
+
 **Kort sagt:**
 
 - För **användaren** ska det inte spela någon roll vilken URL man öppnar.
-- För **dig som skapare** ger Vercel ett modernare, mer automatiserat och framtidssäkert sätt att publicera och vidareutveckla appen.
+- För **dig som skapare** ger Vercel + Cursor en stabilare, mer automatiserad och framtidssäker publiceringskedja.
 
-Poängen med Vercel är alltså **inte** att kalkylen ska se annorlunda ut. Poängen är att du får en stabil, snabb och automatiserad publiceringskedja, och att det blir lättare att växa appen över tid (t.ex. lägga till mer interaktivitet, datahämtning, inloggning eller AI-stöd senare) utan att byta plattform.
-
-En bra Vercel-app (och en bra webbapp överhuvudtaget) ska kännas som "bara en vanlig bra webbsida" för den som använder den. All teknik under huven ska vara osynlig för användaren.
+Poängen med Vercel är alltså **inte** att kalkylen ska se annorlunda ut. Poängen är att du får en modern deploy-pipeline medan användaren fortfarande bara upplever "en vanlig bra webbapp".
 
 ---
 
@@ -66,42 +77,25 @@ Vindkraftskalkylen är både ett **program** (beräkningsmotor) och en **webbapp
 
 ---
 
-## Hur Vercel, Git och GitHub arbetar ihop
+## Hur Vercel, Git och GitHub arbetar ihop (via Cursor)
 
 ```
-Cursor / Claude  →  lokala filer  →  git commit + push  →  GitHub
-                                                              ↓
-                                                         Vercel (lyssnar)
-                                                              ↓
-                                                    Automatisk deploy
-                                                              ↓
-                                                    Publik URL (*.vercel.app)
+Cursor / Claude  →  lokala filer  →  git commit + push (från Cursor)  →  GitHub
+                                                                          ↓
+                                                                     Vercel (lyssnar)
+                                                                          ↓
+                                                                Automatisk deploy
+                                                                          ↓
+                                                                Publik URL (*.vercel.app)
 ```
 
-1. **Git** = versionshantering lokalt.
+1. **Git** = versionshantering lokalt (hanteras smidigt via Cursor).
 2. **GitHub** = central lagring + källa som Vercel hämtar från.
 3. **Vercel** = tar koden, serverar den som webbapp med HTTPS och CDN.
 
-### Rekommenderat arbetssätt (Cursor + Claude + Vercel)
-
-| Steg | Verktyg              | Vad du gör |
-|------|----------------------|------------|
-| 1    | Claude (Cursor/chatt)| Idé, design, kod |
-| 2    | Cursor               | Redigera filer i rätt mapp |
-| 3    | Git                  | commit + push |
-| 4    | GitHub               | Koden landar i repot |
-| 5    | Vercel               | Automatisk deploy → URL |
-| 6    | Webbläsare           | Testa resultatet |
-
 Vercel *deployar* kod – den skapar inte koden åt dig på samma sätt som Claude. Bästa långsiktiga rutinen är:
 
-> Claude/Cursor skriver koden → du pushar till GitHub → Vercel deployar.
-
-Detta behåller din kontroll och Claude-kompassen.
-
-### Claude-kompassen
-
-Claude-kompassen (se [AI-teknik / Claude-modeller](https://github.com/kentlundgren/AI-teknik/tree/main/AI_modeller/Claude/olika_Claude_modeller)) behöver uppdateras med Vercel som deploy-yta. Det är en naturlig utveckling – inte en ersättning av arbetssättet.
+> Claude/Cursor skriver koden → du pushar till GitHub (från Cursor) → Vercel deployar.
 
 ---
 
@@ -110,7 +104,7 @@ Claude-kompassen (se [AI-teknik / Claude-modeller](https://github.com/kentlundgr
 ```
 vindkraftskalkyl_Vercel/
 ├── README.md          ← den här filen
-├── index.html         ← startsidan (kopierad från vindkraftskalkyl.html)
+├── index.html         ← startsidan (samma innehåll som vindkraftskalkyl.html)
 ├── stil.css
 └── berakningar.js
 ```
@@ -119,14 +113,27 @@ Ingen build behövs. Vercel serverar filerna direkt som statisk webbplats.
 
 ---
 
-## Vad som gjordes 2026-09-14
+## GitHub-länk och Teknik-modal i appen
 
-1. Skapade mappen `vindkraftskalkyl_Vercel/`.
-2. Skrev och förbättrade denna README.
-3. Kopplade Vercel-projektet **vindkraft** (team Effektiv) till GitHub-repot med Root Directory = `vindkraftskalkyl_Vercel`.
-4. Kopierade de tre filerna från den gamla mappen.
-5. Första deployen gav 404 tills index.html fanns på plats. Nu fungerar https://vindkraft-rosy.vercel.app.
+I den ursprungliga versionen finns:
+- en diskret **GitHub-länk** nere till vänster
+- en **Teknik & prompt**-knapp nere till höger som öppnar en modal med originalprompten
+
+I Vercel-versionen bör GitHub-länken peka på just denna mapp:
+https://github.com/kentlundgren/Vindkraft/tree/main/vindkraftskalkyl_Vercel
+
+Teknik-modalen kan i framtiden utökas så att den tydligt nämner att det finns både en programversion (GitHub Pages) och en appversion (Vercel). Det är en naturlig vidareutveckling när fler modeller läggs till i repot.
 
 ---
 
-*Uppdaterad 2026-09-14 – tydligare förklaring av vad användaren upplever (och inte upplever).*
+## Framåtblick – automatisk app när nya modeller skapas
+
+När nya vindkraftskalkyl-modeller/program skapas i detta repo i framtiden är intentionen att de också ska kunna få en motsvarande Vercel-app automatiskt (via samma Git-integration). Det bör dokumenteras i `CLAUDE.md` (och eventuellt i relevant skill) så att både Claude, Cursor och Grok känner till mönstret:
+
+- Kod i mapp under `Vindkraft/`
+- Vercel-projekt kopplat till repot (med lämplig Root Directory)
+- Automatisk deploy vid push
+
+---
+
+*Uppdaterad 2026-09-14 – Cursor-fördelar, view-source-förklaring och framåtblick tillagda.*
