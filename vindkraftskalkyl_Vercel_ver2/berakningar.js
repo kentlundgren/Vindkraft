@@ -923,9 +923,11 @@ async function sparaOchKopieraLank() {
     lank.searchParams.set(nyckel, varde);
     await navigator.clipboard.writeText(lank.toString());
 
+    /* Här skedde en uppdatering (2026-09-15): statusraden säger rakt ut att
+       länken bär gula indatafält, inte LCOE/NPV, och varför ?t=-länken är lång. */
     const kort = data.id
-      ? 'Kort länk kopierad (kod ' + data.id + ').'
-      : 'Delningslänk kopierad (utan Redis blir länken längre).';
+      ? 'Kort länk kopierad (kod ' + data.id + '). Den bär med sig alla gula indatafält; resultaten räknas om när länken öppnas.'
+      : 'Länk kopierad. Den innehåller alla gula indatafält (inte uträknade resultat – de räknas om när någon öppnar länken). Länken är lång för att värdena ligger i adressen (?t=…).';
     visaVerktygStatus(kort, 'ok');
   } catch (err) {
     visaVerktygStatus(

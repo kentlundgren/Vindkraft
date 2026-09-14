@@ -82,6 +82,8 @@ body {
   font-size: .88rem;
   color: #5a6a67;
   min-height: 1.2em;
+  line-height: 1.4;
+  max-width: 52rem;
 }
 .verktyg-status.ok { color: var(--farg-positiv); }
 .verktyg-status.fel { color: var(--farg-negativ); }

@@ -58,13 +58,25 @@
       dagen-före-marknaden – inte ett 25-årsantagande. Misslyckas hämtningen
       skriver du in priset i det gula fältet som vanligt.
     </p>
+    <!-- Här skedde en uppdatering (2026-09-15): förtydligat att delningslänken
+         bär med sig de gula indatafälten, inte uträknade resultat, och att
+         en lång ?t=-länk betyder att värdena ligger i adressen. -->
+    <p class="hint">
+      <strong>Spara och kopiera länk</strong> lägger <em>alla gula indatafält</em>
+      i en länk. Uträknade tal (LCOE, NPV, diagram med mera) ligger
+      <em>inte</em> i länken – de räknas om när någon öppnar den. Utan kort kod
+      blir länken lång (<code>?t=…</code>), eftersom värdena packas in i adressen.
+    </p>
     <div class="verktyg-rad">
       <button type="button" id="hamta-elpris" class="verktyg-knapp">Hämta aktuellt spotpris</button>
       <label class="verktyg-kryss">
         <input type="checkbox" id="elpris-som-intakt">
         Använd också som intäkt för elen (år 1)
       </label>
-      <button type="button" id="spara-scenario" class="verktyg-knapp">Spara och kopiera länk</button>
+      <button type="button" id="spara-scenario" class="verktyg-knapp"
+        title="Kopierar en länk med alla gula indatafält. Resultaten räknas om när länken öppnas.">
+        Spara och kopiera länk
+      </button>
     </div>
     <p id="verktyg-status" class="verktyg-status" role="status"></p>
   </section>
@@ -569,7 +581,7 @@
           <p>Du tittar på <strong>vindkraftskalkyl_Vercel_ver2</strong>: samma kalkyl (gula fält, fem perspektiv, jämförelsetabell) plus två valfria serveranrop som GitHub Pages inte har.</p>
           <ul>
             <li><code>/api/elpris</code> – dygnssnitt för dagen-före-pris från ENTSO-E, omräknat till kr/kWh med Riksbanken. Nyckeln ligger i Vercel, inte i JavaScript-filen.</li>
-            <li><code>/api/scenario</code> – spara indata och kopiera en delningslänk. Kort kod om Redis är kopplat, annars en komprimerad länk.</li>
+            <li><code>/api/scenario</code> – kopierar en länk med <em>alla gula indatafält</em> (inte uträknade resultat). Kort kod <code>?s=</code> om Redis är kopplat; annars en lång <code>?t=</code>-länk där värdena är komprimerade i adressen.</li>
           </ul>
           <p>Om ett anrop misslyckas räknar kalkylen vidare med det du skrivit in. Beräkningsformlerna är desamma som i programversionen.</p>
         </section>
