@@ -106,15 +106,26 @@ function packaUpp(token) {
   }
 }
 
+/* Här skedde en uppdatering (2026-09-15): Vercels Upstash-integration
+   sätter ofta KV_REST_API_URL / KV_REST_API_TOKEN (gamla Vercel KV-namn).
+   Upstash SDK:n faller tillbaka till dem; vi gör samma sak. */
+function redisUrl() {
+  return process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL || '';
+}
+
+function redisToken() {
+  return process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN || '';
+}
+
 function redisFinns() {
-  return Boolean(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
+  return Boolean(redisUrl() && redisToken());
 }
 
 async function redisKommando(args) {
-  const res = await fetch(process.env.UPSTASH_REDIS_REST_URL, {
+  const res = await fetch(redisUrl(), {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${process.env.UPSTASH_REDIS_REST_TOKEN}`,
+      Authorization: 'Bearer ' + redisToken(),
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(args)

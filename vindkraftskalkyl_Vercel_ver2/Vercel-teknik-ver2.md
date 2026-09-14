@@ -219,9 +219,13 @@ Live-knappen: [https://vindkraft-ver2.vercel.app](https://vindkraft-ver2.vercel.
    Functionen packar upp strängen, fyller de gula fälten, och JavaScript
    **räknar om** LCOE, NPV och resten. Resultaten ligger alltså inte i länken.
 
-Utan Redis (läget nu) är det `?t=` – värdena *är* länken, därför blir den lång.
-Med Upstash Redis skulle Functionen också kunna ge en kort kod `?s=abc123`
-som pekar på samma paket i 30 dagar. Det är tillval, inte krav.
+Utan Redis (läget innan Storage kopplats) är det `?t=` – värdena *är* länken, därför blir den lång.
+Med Upstash Redis ger Functionen en kort kod `?s=abc123` som pekar på samma paket i 30 dagar.
+
+Vercels Redis-integration sätter ofta variablerna `KV_REST_API_URL` och `KV_REST_API_TOKEN`
+(äldre namn från Vercel KV). Functionen läser dem, eller `UPSTASH_REDIS_REST_*` om de finns.
+Getting started-sidan med `npm install @upstash/redis` behövs **inte** i den här kalkylen –
+vi anropar Redis REST-API direkt.
 
 ### Varför det kallas Vercel-teknik
 
