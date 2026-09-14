@@ -461,10 +461,15 @@
        lades till fast i nedre vänstra hörnet (samma idé som på sidan för
        Bjerreds Saltsjöbad). Det är en vanlig länk (ingen JavaScript behövs).
        ==================================================================== -->
+  <!--
+       UPPDATERING (2026-09-14): GitHub-länken pekar nu på mappen
+       vindkraftskalkyl_Vercel i stället för repo-roten, så att den
+       öppnar källkoden för just denna Vercel-version.
+  -->
   <a id="github-lank" class="github-lank"
-     href="https://github.com/kentlundgren/Vindkraft"
+     href="https://github.com/kentlundgren/Vindkraft/tree/main/vindkraftskalkyl_Vercel"
      target="_blank" rel="noopener"
-     title="Öppna projektets kod på GitHub">
+     title="Öppna källkoden för Vercel-versionen på GitHub">
     &#123; &#125; GitHub
   </a>
 
@@ -490,6 +495,27 @@
           För full transparens visas nedan den <strong>ursprungliga prompten</strong> ordagrant –
           instruktionen som verktyget bygger på.
         </p>
+
+        <!--
+          UPPDATERING (2026-09-14): Två versioner av kalkylen
+          Här skedde en uppdatering: en kort sektion lades till i Teknik-modalen
+          som förklarar att kalkylen finns som GitHub Pages-programversion och
+          som Vercel-app. Originalprompten nedan är oförändrad.
+        -->
+        <section class="prompt-text" aria-labelledby="tva-versioner-rubrik">
+          <h3 id="tva-versioner-rubrik">Två versioner av kalkylen</h3>
+          <p>Denna kalkyl finns i två versioner:</p>
+          <ul>
+            <li>Programversion (GitHub Pages):
+              <a href="https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html" target="_blank" rel="noopener">https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html</a>
+            </li>
+            <li>Appversion (Vercel):
+              <a href="https://vindkraft-rosy.vercel.app" target="_blank" rel="noopener">https://vindkraft-rosy.vercel.app</a>
+            </li>
+          </ul>
+          <p>För dig som användare ser de likadana ut – samma beräkningar, samma gränssnitt.</p>
+          <p>Fördelen med Vercel-appen är automatisk deploy vid varje push från Cursor/GitHub, bättre CDN och enklare att växa appen vidare över tid. Källkoden för just denna Vercel-version ligger i mappen <code>vindkraftskalkyl_Vercel</code>.</p>
+        </section>
 
         <!-- Den ursprungliga prompten, återgiven ordagrant. -->
         <article class="prompt-text">
