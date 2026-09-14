@@ -5,6 +5,18 @@ Denna mapp innehåller den version av vindkraftskalkylen som deployas via **Verc
 Den äldre (fortfarande levande) versionen finns i [`../vindkraftskalkyl/`](../vindkraftskalkyl/) och körs via **GitHub Pages**:
 https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html
 
+## 🗂️ Lokalt repo
+
+Repo-rot lokalt:
+
+`C:\Users\kentl\OneDrive\AI\Cursor\Intressen\Vindkraft`
+
+Den här mappen lokalt:
+
+`C:\Users\kentl\OneDrive\AI\Cursor\Intressen\Vindkraft\vindkraftskalkyl_Vercel`
+
+På GitHub: <https://github.com/kentlundgren/Vindkraft/tree/main/vindkraftskalkyl_Vercel>
+
 ---
 
 ## Live-URL:er (två olika adresser till samma kalkyl)
@@ -18,15 +30,52 @@ Det är **två olika URL:er** som leder till **samma kalkyl** (samma HTML, CSS o
 
 ---
 
+## Team och projekt på Vercel
+
+**Ett team är inte en app.** Ett team är ett *konto/utrymme* på Vercel – ungefär en katalog – där flera **projekt** (appar) kan ligga. Ett nytt kalkylprogram ska alltså bli ett **nytt projekt i samma team**, inte ett nytt team.
+
+| Begrepp | Vad det är | Analogi | Vad du gör |
+|---------|------------|---------|------------|
+| **Team** | Ett konto/utrymme med gemensam faktura, medlemmar och projektlista. Även ett Hobby-konto kallas *Hobby team*. | En katalog, eller en GitHub-organisation | Byt team uppe till vänster i dashboarden. Skapa inte ett nytt team för varje app. |
+| **Projekt** | En app kopplad till ett Git-repo (eller en mapp i ett repo). Har egen URL, egna deployments och egna inställningar. | En app / ett GitHub-repo (eller en Root Directory i ett repo) | Skapa ett **nytt projekt** när en ny modell ska deployas. |
+| **Deployment** | En enskild utgåva av projektet (production eller preview). | En publicerad version av appen | Skapas automatiskt vid `git push`. |
+
+Vercel beskriver team som ytan där man samlar projekt och resurser ([Vercel, 2026a](https://vercel.com/docs/accounts)), och projekt som appen som deployas från ett Git-repo ([Vercel, 2026b](https://vercel.com/docs/projects/overview)). Ett repo kan ge flera projekt om olika mappar har olika Root Directory.
+
+**Så hanteras det här:**
+
+1. Håll ett team (Hobby räcker så länge du arbetar ensam).
+2. Lägg varje ny app som ett eget **projekt** i det teamet.
+3. Peka projektet mot rätt GitHub-repo och, vid behov, rätt Root Directory.
+4. Skapa ett till team bara om du vill ha en separat faktura, ett annat GitHub-konto eller samarbete med andra (Pro/Enterprise).
+
+### Detta konto (2026-09-14)
+
+| | |
+|---|---|
+| **Team-namn** | Effektiv |
+| **Team-slug** | `effektiv1` |
+| **Dashboard** | https://vercel.com/effektiv1 |
+| **Team-ID** | `team_I90mljXDP0cWBiwmXIU1he27` |
+
+Projekt i samma team just nu:
+
+| Projekt | GitHub-repo | Kommentar |
+|---------|-------------|-----------|
+| **vindkraft** | [kentlundgren/Vindkraft](https://github.com/kentlundgren/Vindkraft) | Denna kalkyl. Root Directory = `vindkraftskalkyl_Vercel`. Live: https://vindkraft-rosy.vercel.app |
+| **vindkalkyl** | [kentlundgren/Codex](https://github.com/kentlundgren/Codex) | Annan app i **samma** team – ett exempel på att teamet rymmer flera projekt. |
+
+---
+
 ## Status – vad som redan är gjort (2026-09-14)
 
 - Mappen `vindkraftskalkyl_Vercel/` skapad.
 - De tre filerna (`index.html`, `stil.css`, `berakningar.js`) på plats.
-- Vercel-projektet **vindkraft** (team Effektiv) kopplat till repot med Root Directory = denna mapp.
+- Vercel-**projektet** **vindkraft** ligger i **teamet** Effektiv (`effektiv1`) och är kopplat till det här GitHub-repot med Root Directory = denna mapp.
 - https://vindkraft-rosy.vercel.app fungerar.
 - README och CLAUDE.md uppdaterade med dual-publiceringsmönstret.
 - Skill `vercel-github-pages-dual-publicering` skapat för att dokumentera mönstret globalt.
-- **Återstår (görs via Cursor):** uppdatera GitHub-länken nere till vänster så den pekar på denna mapp, och anpassa Teknik-modalen så den nämner både programversion och Vercel-app.
+- GitHub-länken nere till vänster pekar på denna mapp, och Teknik-modalen nämner både programversion (GitHub Pages) och appversion (Vercel).
 
 ---
 
@@ -129,14 +178,12 @@ Ingen build behövs. Vercel serverar filerna direkt.
 
 ---
 
-## GitHub-länk och Teknik-modal (återstår)
+## GitHub-länk och Teknik-modal
 
-GitHub-länken nere till vänster bör peka på:
+Gjort (2026-09-14). GitHub-länken nere till vänster pekar på:
 https://github.com/kentlundgren/Vindkraft/tree/main/vindkraftskalkyl_Vercel
 
-Teknik-modalen bör nämna att det finns både en programversion (GitHub Pages) och en appversion (Vercel), och kort förklara fördelen med den automatiska deployen.
-
-Detta görs enklast via Cursor (se prompt i chatten).
+Teknik-modalen nämner att det finns både en programversion (GitHub Pages) och en appversion (Vercel), och förklarar kort fördelen med den automatiska deployen.
 
 ---
 
@@ -149,4 +196,12 @@ Nya modeller i detta repo bör följa samma dual-mönster. Mönstret är dokumen
 
 ---
 
-*Uppdaterad 2026-09-14 – status, alternativ till Vercel och build-förklaring tillagda.*
+## Källor
+
+Vercel (2026a) *Account Management.* Tillgänglig: https://vercel.com/docs/accounts (hämtad 14 september 2026). *(Vercels översikt över konton och team: ett team är utrymmet där projekt och resurser samlas, även på Hobby-planen.)*
+
+Vercel (2026b) *Projects overview.* Tillgänglig: https://vercel.com/docs/projects/overview (hämtad 14 september 2026). *(Definierar projekt som en app kopplad till ett Git-repo, med flera deployments under samma projekt.)*
+
+---
+
+*Uppdaterad 2026-09-14 – team/projekt förklarade, GitHub-länk och Teknik-modal markerade som gjorda.*
