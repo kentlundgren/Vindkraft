@@ -4,7 +4,7 @@
 **Live (GitHub Pages):** https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html
 **Live (Vercel-app):** https://vindkraft-rosy.vercel.app
 **Senast uppdaterad:** 2026-09-14
-**Version:** 1.3
+**Version:** 1.4
 
 ---
 
@@ -68,8 +68,18 @@ Ovrigt-repots `CLAUDE.md`, och bör även finnas i den globala filen
 
 ---
 
+## 📌 Regel – Ett avsnitt, en djuplänk
+
+När ett README-avsnitt ska kunna länkas med `#` (t.ex. ett promptavsnitt): **ett avsnitt får bara ha ett ankare och en publicerad länk.** Skapa inte ett extra id, alias eller en andra rad i länktabellen till samma text – även om flera URL-förslag dyker upp i chatten. Välj ett id, skriv in det, och återanvänd den länken överallt.
+
+Gällande promptavsnitt i Vercel-README: `#Forslag_pa_promt`
+(https://github.com/kentlundgren/Vindkraft/tree/main/vindkraftskalkyl_Vercel#Forslag_pa_promt).
+
+---
+
 ## Uppdateringslogg
 
+- 2026-09-14 (v1.4): Regel om djuplänkar – ett avsnitt, ett ankare, en länk (promptavsnittet är `#Forslag_pa_promt`).
 - 2026-09-14 (v1.3): Flyttat dual-publicerings-skillen till `.cursor/skills/` (rätt plats för Cursor), tagit bort den gamla `skills/`-sökvägen, och förtydligat commit/push samt att nya appar ska vara projekt i samma Vercel-team.
 - 2026-09-14 (v1.2): Lagt till lokal skill under `skills/vercel-github-pages-dual-publicering/` och pekat ut den i CLAUDE.md.
 - 2026-09-14 (v1.1): Lagt till Vercel-appen, dual-publiceringsmönster och Cursor-arbetssätt.
@@ -78,4 +88,4 @@ Ovrigt-repots `CLAUDE.md`, och bör även finnas i den globala filen
 
 ---
 
-_CLAUDE.md v1.3, 2026-09-14_
+_CLAUDE.md v1.4, 2026-09-14_

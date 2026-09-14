@@ -10,13 +10,14 @@ description: >
   React, automatisk deploy.
 metadata:
   type: workflow
-  version: "1.1"
+  version: "1.2"
   created_via: conversation
   purpose: dokumentera och återanvända mönstret för dual publicering (GitHub Pages + Vercel) samt förklara build-begreppet och alternativ
-  last_updated: 2026-09-14 15:21 CEST (Stockholm)
+  last_updated: 2026-09-14 20:15 CEST (Stockholm)
 ---
 
 ## Senaste ändringar
+- **2026-09-14 20:15 CEST (Stockholm)**: Regel – ett README-avsnitt får bara ett `#`-ankare och en länk. Promptavsnittet är enbart `#Forslag_pa_promt`.
 - **2026-09-14 15:21 CEST (Stockholm)**: Flyttad från `skills/` till `.cursor/skills/` så att Cursor faktiskt upptäcker skillen som projekt-skill. Den gamla sökvägen raderad.
 - **2026-09-14 15:15 CEST (Stockholm)**: Kopierad in i Vindkraft-repot under skills/ så att Claude och Cursor kan läsa det lokalt i projektet.
 - **2026-09-14 14:15 CEST (Stockholm)**: Skapad globalt. Innehåller dual-publiceringsmönstret från vindkraftskalkyl_Vercel, förklaring av view-source/relativa länkar, Cursor-arbetssätt, alternativ till Vercel (Vite m.fl.) och build-begreppet.
@@ -83,6 +84,7 @@ Vercel utmärker sig med extremt enkel Git-integration och preview-deployments p
 - Teknik-modalen bör nämna att det finns både programversion (GitHub Pages) och appversion (Vercel).
 - Nya modeller i framtiden bör följa samma dual-mönster och dokumenteras i CLAUDE.md + README.
 - Nya appar ska bli **nya Vercel-projekt i samma team**, inte ett nytt team per app.
+- **Djuplänkar i README:** ett avsnitt = ett ankare = en länk. Inga alias-id:n till samma prompt. Gällande prompt: `#Forslag_pa_promt`.
 
 ## Cross-references
 - Använd tillsammans med `vindkrafts-kalkyl` när beräkningslogik diskuteras.

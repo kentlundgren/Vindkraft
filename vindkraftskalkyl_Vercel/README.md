@@ -149,9 +149,22 @@ Skillnaden ligger **bakom kulisserna**:
 
 Poängen med Vercel är **inte** att kalkylen ska se annorlunda ut. Poängen är en modern, automatiserad deploy-pipeline medan användaren fortfarande bara upplever "en vanlig bra webbapp".
 
+### Djuplänkar i den här README:n
+
+GitHub hoppar till avsnittet efter `#` i adressen. **Ett avsnitt = ett ankare = en länk.** Döpa inte om id:n, och skapa inte ett andra id till samma text.
+
+| Avsnitt | Länk |
+|---------|------|
+| Kan Vercel göra kalkylen bättre | https://github.com/kentlundgren/Vindkraft/tree/main/vindkraftskalkyl_Vercel#Kan-Vercel-gora-kalkylen-battre |
+| Förslag på prompt | https://github.com/kentlundgren/Vindkraft/tree/main/vindkraftskalkyl_Vercel#Forslag_pa_promt |
+
+Mer om Functions, API-yta och `vindkraftskalkyl_Vercel_ver2` finns i [Vercel-teknik.md](Vercel-teknik.md).
+
 ---
 
-## Kan Vercel göra kalkylen bättre – om man kodar för plattformen?
+<a id="Kan-Vercel-gora-kalkylen-battre"></a>
+
+## Kan Vercel göra kalkylen bättre – om man kodar för plattformen? [#](#Kan-Vercel-gora-kalkylen-battre)
 
 Den nuvarande kalkylen på GitHub Pages
 ([vindkraftskalkyl.html](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html))
@@ -182,9 +195,11 @@ Vercel Functions är serverkod som körs vid behov, utan att du driver en egen s
 - Appen ska fungera även om API:t tillfälligt strular (progressiv förbättring: kalkylen räknar som idag, extrafunktionerna är tillval).
 - Inte bygga ett nytt team. Nytt *projekt* i teamet Effektiv (`effektiv1`), eller vidareutveckling av projektet `vindkraft`.
 
-Det här är en **önskan framåt**, inte något som är byggt än. Befintlig kalkyl ska inte rivas förrän Kent uttryckligen ber om en ny version (befintlig mapp eller ny `..._verX`).
+Det här är en **önskan framåt**, inte något som är byggt än. Befintlig kalkyl ska inte rivas förrän Kent uttryckligen ber om en ny version (befintlig mapp eller ny `..._verX`). Vad Functions, API-yta och liknande faktiskt *är* förklaras i [Vercel-teknik.md](Vercel-teknik.md).
 
-### Förslag på prompt (för en Vercel-anpassad, smidigare kalkyl)
+<a id="Forslag_pa_promt"></a>
+
+### Förslag på prompt (för en Vercel-anpassad, smidigare kalkyl) [#](#Forslag_pa_promt)
 
 Kopiera och anpassa vid behov. Prompten är skriven så att agenten ska *fråga* innan den kodar, och inte blanda ihop GitHub Pages-programmet med en rikare Vercel-app.
 
@@ -249,6 +264,8 @@ Leverans
 4. Uppdatera README med hur man deployar till teamet effektiv1.
 ```
 
+**Kan samma prompt köras i Claude, Cursor och Grok?** Ja som *text* – den är vanlig svenska, inte bunten till ett enda verktyg. **Utförandet** skiljer sig: Cursor (oavsett modell) kan skriva i repot och verifiera i webbläsaren; Claude.ai och Grok på webben kan skriva kodförslag som du klistrar in. Full förklaring: [Vercel-teknik.md – Prompten i Claude, Cursor och Grok](Vercel-teknik.md#Prompten-i-Claude-Cursor-och-Grok).
+
 ---
 
 ## Alternativ till Vercel – och vad "build" betyder
@@ -299,6 +316,7 @@ Vindkraftskalkylen är både ett program och en webbapp.
 ```
 vindkraftskalkyl_Vercel/
 ├── README.md          ← den här filen
+├── Vercel-teknik.md   ← Functions, API-yta, vad ver2 kan som statisk HTML inte kan
 ├── index.html         ← startsidan
 ├── stil.css
 ├── berakningar.js
@@ -326,7 +344,7 @@ Nya modeller i detta repo bör följa samma dual-mönster. Mönstret är dokumen
 - `CLAUDE.md`
 - skill:et `.cursor/skills/vercel-github-pages-dual-publicering/`
 
-En *rikare* Vercel-app (Functions, live-data, smidigare användning) är en separat, medveten nästa version – se avsnittet [Kan Vercel göra kalkylen bättre](#kan-vercel-göra-kalkylen-bättre--om-man-kodar-för-plattformen). Den nuvarande statiska kalkylen ska ligga kvar tills Kent ber om att bygga den versionen.
+En *rikare* Vercel-app (Functions, live-data, smidigare användning) är en separat, medveten nästa version – se [Kan Vercel göra kalkylen bättre](#Kan-Vercel-gora-kalkylen-battre) och [Vercel-teknik.md](Vercel-teknik.md). Den nuvarande statiska kalkylen ska ligga kvar tills Kent ber om att bygga den versionen.
 
 ---
 
@@ -346,4 +364,4 @@ Vercel (2026f) *Vercel Functions.* Tillgänglig: https://vercel.com/docs/functio
 
 ---
 
-*Uppdaterad 2026-09-14 – avsnitt om att koda kalkylen för Vercel (inte bara hosta den) plus förslag på prompt.*
+*Uppdaterad 2026-09-14 – djuplänkar (#-ankare), Vercel-teknik.md och hur prompten fungerar i Claude, Cursor och Grok.*
