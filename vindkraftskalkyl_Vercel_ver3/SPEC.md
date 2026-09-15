@@ -4,7 +4,7 @@
 **Plats:** `vindkraftskalkyl_Vercel_ver3/SPEC.md`  
 **Skapad:** 2026-09-15  
 **Gäller:** fryst [PRD v1.14](PRD_vindkraftskalkyl_vercel_ver3.md)  
-**Status:** Stomme, `/`, `/om`, `/kalkyl`, de fem perspektiv-URL:erna och `GET /api/elpris` (dygn/månad/år, Redis-cache, felvägar). Paritetstestet är grönt. Kvar: `/api/scenario` med `?s=`/`?t=` och OG-bild.
+**Status:** Stomme, `/`, `/om`, `/kalkyl`, de fem perspektiv-URL:erna, `GET /api/elpris` (dygn/månad/år, Redis-cache, felvägar) och `/api/scenario` med delningslänkar `?s=`/`?t=`. Paritetstestet är grönt. Kvar: OG-bild.
 
 Det här dokumentet är agentens ritning: *exakt hur*, inte *vad och varför*. Vad och varför står i PRD:n. Gissa inte luckor — om något saknas här, fråga Kent.
 

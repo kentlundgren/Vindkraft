@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { Suspense, type ReactNode } from 'react';
 import { KalkylProvider } from '@/components/KalkylProvider';
 
 /**
@@ -8,7 +8,20 @@ import { KalkylProvider } from '@/components/KalkylProvider';
  * indatafältens state här (i KalkylProvider) – då följer värdena med när man
  * klickar mellan Översikt, Investerare, Markägare, Kommun, Andelsägare och
  * Närboende, utan att kalkylen räknas om från standardvärden.
+ *
+ * Suspense behövs eftersom providern läser adressens `?s=`/`?t=` och kan
+ * behöva vänta in ett svar från /api/scenario innan fälten kan fyllas.
  */
 export default function KalkylLayout({ children }: { children: ReactNode }) {
-  return <KalkylProvider>{children}</KalkylProvider>;
+  return (
+    <Suspense
+      fallback={
+        <main className="mx-auto max-w-6xl px-4 py-8 text-slate-600">
+          Laddar kalkylen …
+        </main>
+      }
+    >
+      <KalkylProvider>{children}</KalkylProvider>
+    </Suspense>
+  );
 }

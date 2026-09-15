@@ -14,6 +14,7 @@
 
 import { useState, type ReactNode } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { DEFAULTS, ELOMRADE_PRIS } from '@/lib/defaults';
 import { beraknaAllt, lasIndata, fmt, type Resultat } from '@/lib/calculations';
 import type { FaltId } from '@/lib/falt';
@@ -380,7 +381,8 @@ export default function CalculatorForm({
 }) {
   // Fälten och jämförelseminnet bor i /kalkyl-layouten (KalkylProvider), inte
   // här. Därför nollställs inget när man byter perspektiv-adress.
-  const { falt, setFalt, senaste, tidigare, bekrafta } = useKalkyl();
+  const { falt, setFalt, senaste, tidigare, bekrafta, delningsFel } =
+    useKalkyl();
 
   const resultat = beraknaAllt(lasIndata(falt));
   const rader = perspektivRader(resultat);
@@ -423,6 +425,16 @@ export default function CalculatorForm({
 
   return (
     <div className="space-y-8">
+      {/* Trasig delningslänk: säg det rakt ut, behåll standardvärdena. */}
+      {delningsFel ? (
+        <p
+          role="status"
+          className="rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800"
+        >
+          {delningsFel}
+        </p>
+      ) : null}
+
       {/* ---- Perspektivväljare: adresser, inte flikar ---- */}
       <nav aria-label="Perspektiv" className="flex flex-wrap gap-2">
         <PerspektivLank href="/kalkyl" aktiv={!perspektiv}>
@@ -473,6 +485,9 @@ export default function CalculatorForm({
           />
         </div>
       </section>
+
+      {/* ---- Dela kalkylen: kort kod eller lång token ---- */}
+      <Delningsknappar falt={falt} />
 
       {/* ---- Förgrunden: det valda perspektivet ligger överst ---- */}
       {valt ? (
@@ -703,6 +718,117 @@ function PerspektivLank({
     >
       {children}
     </Link>
+  );
+}
+
+/**
+ * Delningsknappar – kort länk (Redis, 30 dagar) eller lång länk (allt i URL:en).
+ *
+ * Båda packar in alla gula indatafält, aldrig nyckeltalen: LCOE, NPV och IRR
+ * räknas om när mottagaren öppnar länken. Länken behåller det perspektiv man
+ * står på, så `/kalkyl/narboende?s=…` öppnar närboendevyn med rätt indata.
+ */
+function Delningsknappar({ falt }: { falt: Record<FaltId, string> }) {
+  const sokvag = usePathname();
+  const [status, setStatus] = useState<string | null>(null);
+  const [lank, setLank] = useState<string | null>(null);
+  const [jobbar, setJobbar] = useState(false);
+
+  async function dela(onskad: 'kort' | 'lang') {
+    setJobbar(true);
+    setStatus(null);
+    setLank(null);
+
+    try {
+      const svar = await fetch('/api/scenario', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ falt }),
+      });
+      const kropp = await svar.json();
+
+      if (!svar.ok || !kropp?.ok) {
+        setStatus(kropp?.fel ?? 'Kunde inte skapa länken just nu.');
+        return;
+      }
+
+      // Kort kod finns bara om servern har Redis. Annars blir det lång länk.
+      const kort = onskad === 'kort' && kropp.id;
+      const url = new URL(sokvag, window.location.origin);
+      url.searchParams.set(kort ? 's' : 't', kort ? kropp.id : kropp.token);
+      const text = url.toString();
+
+      setLank(text);
+
+      const beskrivning = kort
+        ? `Kort länk skapad. Den gäller ${kropp.ttlDagar} dagar.`
+        : onskad === 'kort'
+          ? 'Ingen databas kopplad, så du fick en lång länk i stället. Den har ingen tidsgräns.'
+          : 'Lång länk skapad. Den har ingen tidsgräns.';
+
+      try {
+        await navigator.clipboard.writeText(text);
+        setStatus(`${beskrivning} Den ligger nu i urklipp.`);
+      } catch {
+        // Webbläsaren kan neka kopiering. Länken syns ändå i rutan nedan.
+        setStatus(`${beskrivning} Kopiera den från rutan nedan.`);
+      }
+    } catch {
+      setStatus('Ingen kontakt med servern. Försök igen senare.');
+    } finally {
+      setJobbar(false);
+    }
+  }
+
+  return (
+    <section
+      aria-labelledby="dela-rubrik"
+      className="rounded-xl border border-slate-200 bg-white p-4"
+    >
+      <h2 id="dela-rubrik" className="text-xl font-semibold">
+        Dela kalkylen genom att kopiera indata
+      </h2>
+      <p className="mt-1 text-sm text-slate-600">
+        Båda länkarna packar in <em>alla gula indatafält</em> – inte LCOE eller
+        NPV, för de räknas om när länken öppnas. Länken pekar på det perspektiv
+        du står på.
+      </p>
+
+      <div className="mt-3 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => dela('kort')}
+          disabled={jobbar}
+          className="rounded-md border border-slate-300 bg-[#fff3b0] px-3 py-1.5 text-sm font-medium hover:border-teal-700 disabled:opacity-60"
+        >
+          Kort länk (30 dagar)
+        </button>
+        <button
+          type="button"
+          onClick={() => dela('lang')}
+          disabled={jobbar}
+          className="rounded-md border border-slate-300 bg-[#fff3b0] px-3 py-1.5 text-sm font-medium hover:border-teal-700 disabled:opacity-60"
+        >
+          Lång länk (håller)
+        </button>
+      </div>
+
+      {status ? (
+        <p role="status" className="mt-3 text-sm text-slate-700">
+          {status}
+        </p>
+      ) : null}
+
+      {lank ? (
+        <input
+          readOnly
+          value={lank}
+          onFocus={(e) => e.currentTarget.select()}
+          aria-label="Delningslänk"
+          className="mt-2 w-full rounded-md border border-slate-300 bg-slate-50 px-2 py-1 font-mono text-xs"
+        />
+      ) : null}
+    </section>
   );
 }
 

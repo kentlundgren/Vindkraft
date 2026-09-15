@@ -13,6 +13,8 @@ Beräkningen är portad från ver2 och ligger i `lib/calculations.ts`. `npm test
 
 För att testa hämtningen lokalt: lägg `ENTSOE_SECURITY_TOKEN=…` i `.env.local` (den filen är ignorerad av Git). Utan nyckel svarar rutten 503 med en begriplig text och kalkylen fungerar som vanligt med manuellt pris. Så skaffar man nyckeln: [Hur-skaffa-nyckel-hos-ENTSO-E.md](../vindkraftskalkyl_Vercel_ver2/Hur-skaffa-nyckel-hos-ENTSO-E.md).
 
+Kalkylen går att dela som länk. `POST /api/scenario` packar de gula fälten och ger antingen en kort kod (`?s=`, sparad i Redis i 30 dagar) eller en lång token (`?t=`, hela fältbilden gzippad i adressen, ingen tidsgräns). Utan Redis blir det alltid en lång länk — inget går sönder. Länken behåller det perspektiv du står på, så `/kalkyl/narboende?s=…` öppnar närboendevyn med rätt indata. Nyckeltalen delas aldrig; de räknas om hos mottagaren.
+
 Varje perspektiv har en egen adress som går att länka till: `/kalkyl/investerare`, `/kalkyl/markagare`, `/kalkyl/kommun`, `/kalkyl/andelsagare` och `/kalkyl/narboende`. Ver2:s flikar är alltså ersatta av riktiga URL:er. Indata följer med när man byter perspektiv, eftersom fältens state ligger i den delade layouten `app/kalkyl/layout.tsx`.
 
 **Krav:** [PRD_vindkraftskalkyl_vercel_ver3.md](PRD_vindkraftskalkyl_vercel_ver3.md) (fryst v1.14)  
