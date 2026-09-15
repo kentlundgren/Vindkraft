@@ -135,7 +135,86 @@ Det handlar om vad som händer *utanför* kalkylen, när du klistrar in adressen
 
 På Pages (och i ver2) är en delad länk oftast bara en adress. Förhandsvisningen blir i bästa fall sidans titel. Inte “payback 9 år”.
 
-Till fullo kan servern rita ett **kort** med de nyckeltal som just det scenariot gav: LCOE, payback, kanske närboendes kr/år. Då syns kalkylens *resultat* redan i mejlet, innan någon öppnar länken. Det går inte med bara statiska filer, för kortet måste ritas utifrån just de siffrorna, på servern, när mejlprogrammet ber om förhandsvisningen ([Next.js, 2026b](https://nextjs.org/docs/app/getting-started/metadata-and-og-images)).
+Till fullo kan servern rita ett **kort** med de nyckeltal som just det scenariot gav: LCOE, payback, kanske närboendes kr/år. Då syns kalkylens *resultat* redan i mejlet, innan någon öppnar länken. Hur det går till tekniskt: [Hur delningskortet görs](#Hur-delningskortet-gors).
+
+---
+
+<a id="Hur-delningskortet-gors"></a>
+
+## Hur delningskortet görs (Vercel till fullo) [#](#Hur-delningskortet-gors)
+
+### Vad Teams och LinkedIn egentligen gör
+
+När du klistrar en länk i Teams, LinkedIn eller vissa mejlprogram skickar *det programmet* (inte du) en förfrågan till webbadressen. Det är en robot, inte en webbläsare med JavaScript påslaget. Robotens jobb är: “Ge mig titel, beskrivning och en bild, så ritar jag ett kort.”
+
+Standarden heter **Open Graph**: små rader i HTML-huvudet, till exempel `og:title` och `og:image` ([Open Graph, 2026](https://ogp.me/)).
+
+Robotens regel är brutal: **den kör inte din kalkyl.** Den läser det servern skickar. Gula fält, `berakningar.js` och “räkna om när fältet ändras” syns inte för den.
+
+### Vad vanlig HTML/CSS/JS *kan* — och var det tar slut
+
+På GitHub Pages kan du lägga in:
+
+```html
+<meta property="og:image" content="https://…/en-fast-bild.png">
+```
+
+Då får *alla* delningar **samma** bild: en logga, en skärmdump du sparat för hand. Det är ett kort. Det är inte *det här casets* LCOE.
+
+Du kan inte, i ren klientside-JavaScript:
+
+- räkna LCOE i webbläsaren och få LinkedIn att visa just det talet — roboten väntar inte på att någon klickar i gula rutor
+- rita en PNG med canvas och lita på att roboten kör den koden — den gör inte det
+- slå upp ett sparat scenario i Redis, eller en hemlig nyckel — det finns ingen server
+
+Därför är “ett kort med just det här scenariots payback” något Pages inte kan. En fast PNG kan den.
+
+### Vad Vercel gör i stället
+
+Vercel har en färdig väg: servern **ritar en PNG när någon (roboten) ber om den** ([Vercel, 2026g](https://vercel.com/docs/og-image-generation)). I Next.js (App Router) heter verktyget `ImageResponse` från `next/og` — samma bibliotek som `@vercel/og`, inbyggt i App Router ([Next.js, 2026b](https://nextjs.org/docs/app/getting-started/metadata-and-og-images)).
+
+Kedjan för *den här* kalkylen, när den är byggd:
+
+```
+Du kopierar   https://vindkraft-ver3.vercel.app/kalkyl/narboende?s=wqdmm7
+        │
+        ▼
+Klistrar i Teams / LinkedIn / visst mejl
+        │
+        ▼
+Deras robot hämtar sidan (ingen JavaScript-kalkyl)
+        │
+        ▼
+Vercel svarar med HTML-huvud:
+  og:title  = "Närboende — LCOE 48 öre/kWh"
+  og:image  = "https://…/kalkyl/narboende/opengraph-image?s=wqdmm7"
+        │
+        ▼
+Roboten hämtar og:image
+        │
+        ▼
+En Vercel Function (ImageResponse) gör tre saker:
+  1. Läser koden wqdmm7 (Redis eller lång token) — samma paket som kalkylen
+  2. Räknar LCOE, payback, närboende  (samma formler som i lib/)
+  3. Ritar en bild, typ 1200×630 px, med de talen som text
+        │
+        ▼
+Kortet i Teams visar talen. Först därefter kan någon klicka och få de gula fälten.
+```
+
+Det som är **Vercel till fullo** här är inte “en snygg mall”. Det är tre saker som måste sitta ihop:
+
+1. **En adress som betyder ett case** (`?s=` eller `?t=`), inte bara “hemsidan”.
+2. **En Function som får rita bilder** vid anrop — `ImageResponse` tar layout (ungefär HTML/CSS, bara flexbox) och lämnar en PNG ([Vercel, 2026g](https://vercel.com/docs/og-image-generation)).
+3. **Samma indata som kalkylen**, hämtade på servern. Annars blir kortet en lögn: snygga siffror som inte stämmer när man öppnar länken.
+
+I App Router läggs det ofta som en fil `opengraph-image.tsx` bredvid sidan, eller som `app/api/og/route.tsx`. Vercel cache:ar gärna den färdiga bilden en stund på CDN, så samma länk inte ritas om i onödan.
+
+### Vad som *inte* är lovat
+
+Inte alla mejlprogram visar kort. LinkedIn och Teams gör det oftare. Gmail och Outlook varierar. Kortet är alltså extra tydligt där förhandsvisning finns — inte ett löfte att varje inkorg ritar LCOE.
+
+Och: en robot som hämtar `opengraph-image` måste få tillåtelse (t.ex. i `robots.txt`). Annars kan LinkedIn missa bilden.
 
 ---
 
@@ -189,11 +268,15 @@ GitHub (2026) *GitHub Pages documentation.* Tillgänglig: https://docs.github.co
 
 Next.js (2026b) *Metadata and OG images.* Next.js Documentation (App Router). Tillgänglig: https://nextjs.org/docs/app/getting-started/metadata-and-og-images (hämtad 15 september 2026). *(Hur servern kan rita ett förhandsvisningskort med tal — det en statisk fil inte gör när mejl eller Teams bara hämtar metadata.)*
 
+Open Graph (2026) *The Open Graph protocol.* Tillgänglig: https://ogp.me/ (hämtad 15 september 2026). *(Standarden för og:title och og:image — det Teams och LinkedIn läser, utan att köra kalkylens JavaScript.)*
+
 Vercel (2026a) *Vercel Functions.* Tillgänglig: https://vercel.com/docs/functions (hämtad 15 september 2026). *(Den lilla servern som startar vid anrop: nyckel, hämtning, delning.)*
 
 Vercel (2026c) *Environment Variables.* Tillgänglig: https://vercel.com/docs/environment-variables (hämtad 15 september 2026). *(Hemligheter utanför koden — skälet att spotpris går på Vercel men inte i Pages-JavaScript.)*
 
 Vercel (2026d) *Cron Jobs.* Tillgänglig: https://vercel.com/docs/cron-jobs (hämtad 15 september 2026). *(Kod på en klockslag, även om ingen har kalkylen öppen.)*
+
+Vercel (2026g) *Open Graph (OG) Image Generation.* Tillgänglig: https://vercel.com/docs/og-image-generation (hämtad 15 september 2026). *(ImageResponse / @vercel/og: servern ritar en PNG vid anrop, med cache på CDN — det dynamiska delningskortet.)*
 
 **Interna referenser**
 
@@ -203,4 +286,4 @@ Vercel (2026d) *Cron Jobs.* Tillgänglig: https://vercel.com/docs/cron-jobs (hä
 
 ---
 
-*Första utkast 2026-09-15. Bara den här förklaringen — ingen app, inga skärmbilder. Ska uppdateras när ver3 finns live.*
+*Första utkast 2026-09-15. Bara förklaring — ingen app, inga skärmbilder. Ska uppdateras när ver3 finns live. Samma dag: avsnitt om hur delningskortet ritas (Open Graph + ImageResponse).*
