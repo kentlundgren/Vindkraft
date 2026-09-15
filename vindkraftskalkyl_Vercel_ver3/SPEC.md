@@ -4,7 +4,7 @@
 **Plats:** `vindkraftskalkyl_Vercel_ver3/SPEC.md`  
 **Skapad:** 2026-09-15  
 **Gäller:** fryst [PRD v1.14](PRD_vindkraftskalkyl_vercel_ver3.md)  
-**Status:** Stomme + `/` `/om` `/kalkyl`-platshållare. Kalkylen räknar inte än.
+**Status:** Stomme, `/` `/om`, samt `lib/calculations.ts` med grönt paritetstest. `/kalkyl` är ännu en platshållare utan fält.
 
 Det här dokumentet är agentens ritning: *exakt hur*, inte *vad och varför*. Vad och varför står i PRD:n. Gissa inte luckor — om något saknas här, fråga Kent.
 
@@ -90,7 +90,9 @@ vindkraftskalkyl_Vercel_ver3/
 
 Perspektiv-sidorna ska **återanvända** `CalculatorForm` med prop `perspektiv`. Inte fem kopior av formlerna.
 
-Tester (när första beräkningen finns): `lib/calculations.test.ts` eller motsvarande som Next/ Vitest tillåter utan att byta stack. Minst en fixture mot ver2:s defaults.
+Tester: `lib/calculations.test.ts`, kört med Node:s inbyggda testlöpare (`npm test` → `node --experimental-strip-types --test`). Ingen ny testram installerad. Fixturen är tagen genom att köra ver2:s `berakningar.js` mot ver2:s defaults, inte handräknad.
+
+Relativa importer inuti `lib/` skrivs med `.ts`-ändelse (och `allowImportingTsExtensions` i `tsconfig.json`), annars hittar Node:s testlöpare inte filerna. App-kod importerar som vanligt via `@/lib/...`.
 
 ---
 
