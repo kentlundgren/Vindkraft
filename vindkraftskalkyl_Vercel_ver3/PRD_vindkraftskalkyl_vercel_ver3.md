@@ -3,8 +3,8 @@
 **Namn:** PRD_vindkraftskalkyl_vercel_ver3
 **Plats:** `vindkraftskalkyl_Vercel_ver3/PRD_vindkraftskalkyl_vercel_ver3.md`
 **Skapad:** 2026-09-15
-**Version:** 1.12 (fryst efter fräscha-ögon-genomläsning; SPEC.md skriven samma kväll)
-**Status:** **Fryst 2026-09-15.** Avsnitt 4 beslutat. SPEC.md finns. Ingen appkod. Inget Vercel-projekt skapat. Ingen live-URL.
+**Version:** 1.14 (gula indatafält alltid, User Rules punkt 18)
+**Status:** **Fryst 2026-09-15** (tillägg v1.14 samma kväll). Avsnitt 4 beslutat. SPEC.md finns. Ingen appkod. Inget Vercel-projekt skapat. Ingen live-URL.
 **Typ:** Grund-PRD (helt ny app i befintligt repo), inte en tilläggs-PRD till ver2.
 
 > Det här dokumentet följer mallen i
@@ -140,7 +140,7 @@ Punkterna nedan gäller den frysta PRD:n. 4a–4k är beslutade. 4l:s metod är 
 - PDF-export (nämnd som möjlig Function i ver2, inte byggd där heller).
 - Att agenten committar eller pushar, eller skapar Vercel-projektet åt Kent.
 - Att köra `create-next-app` innan SPEC.md är skriven (4g).
-- Vite-regler (`base: './'`, `outDir: 'dist'`) — de gäller Vite-projekt. Next.js har eget byggsteg (`next build`, `.next/`). Medvetet undantag, inte ett glömt krav.
+- Vite (`vite.config.js`, `base: './'`, `outDir: 'dist'`). Kent arbetar inte med Vite i den här appen. User Rules (Customize → Rules) säger att Vite-punkterna bara gäller *om ni har börjat arbeta med Vite*. ver3 har inte det. Next.js bygger till `.next/`.
 
 ---
 
@@ -167,6 +167,8 @@ När Vercel-teknik ska användas **till fullo** ska Next.js (App Router) använd
 Kent invände mot v1:s försiktighet (“anta inte Next.js bara för att du sa Vercel”). Överens: *till fullo* inkluderar App Router. Skillen är rättad så att framtida agenter inte gör om samma miss.
 
 **Beslut:** Next.js (App Router) + TypeScript + Tailwind CSS. Aktuell docs-linje vid skrivandet: Next.js 16.x via [llms.txt](https://nextjs.org/docs/llms.txt) ([Next.js, 2026c](https://nextjs.org/docs/llms.txt); agentindex visade 16.3.5 den 15 september 2026). Exakt `create-next-app`-version låses i SPEC.md / vid scaffolding, inte mot träningsdata.
+
+Samma kväll skrev Kent om Cursor User Rules (Customize → Rules): vanlig enkel HTML är ett spår; när Vercel används för appar ska det vara *till fullo*, med Next.js (App Router). Det stämmer med det här beslutet. Vite är inte längre en stående default.
 
 Arbete *i ver2* är ett annat uppdrag och stannar på HTML tills någon uttryckligen ber om att flytta den appen.
 
@@ -265,6 +267,8 @@ Kent: Vercel till fullo betyder **ny app-känsla**, inte en HTML-kalkyl i ny kos
 
 **Beslut:** ny yta (Tailwind, kortlayout, egna URL:er per perspektiv). Inte ver2:s palett i övrigt. Gula indatafält + defaults är krav, inte ett färgtema att kopiera rakt av.
 
+Gula indatafält gäller **alltid** när det är fält man ska knappa i — User Rules punkt 18, oberoende av Vite. Samma krav här.
+
 ---
 
 <a id="4i-Rutter"></a>
@@ -312,9 +316,13 @@ Gemensamt skal: `app/layout.tsx` (Server Component så långt det går). `'use c
 
 <a id="4j-Vite-undantag"></a>
 
-**j) Kents Vite-regler (`base: './'`, `dist/`)? — BESLUTAT ✓ (för den här PRD:n)** [#](#4j-Vite-undantag)
+**j) Kents Vite-regler (`base: './'`, `dist/`)? — BESLUTAT ✓ (2026-09-15, förtydligat v1.13)** [#](#4j-Vite-undantag)
 
-De reglerna gäller Vite-projekt. ver3 är Next.js (4b). Då är `next.config.ts` (eller motsvarande) konfigurationsfilen, inte `vite.config.js`. Relativa sökvägar på GitHub Pages är inte målet (4c: Vercel-only). Dokumenterat så att en framtida agent inte “rättar” Next.js till Vite.
+Kent arbetade tidigare med React och Vite. Han gör inte det nu. 15 september 2026 skrevs User Rules om (Cursor: Customize → Rules → User 1): punkt 16–17 gäller **bara om ni har börjat arbeta med Vite**.
+
+ver3 har inte börjat med Vite. ver3 är Next.js (4b) och Vercel till fullo. Då är `next.config.ts` konfigurationsfilen, inte `vite.config.js`. Ingen `base: './'`, ingen `dist/`. Relativa sökvägar för GitHub Pages är inte målet (4c: Vercel-only).
+
+Det är inte längre ett “undantag från en alltid-på-Vite-regel”. Regeln slår inte till här. Skapa inte `vite.config.js` för att “reglerna kräver det”.
 
 ---
 
@@ -390,7 +398,7 @@ Implementation: när `/api/elpris` skrivs i ver3, inte som en tredje grund-PRD. 
 
 Checklista. Avbockning ska spegla avsnitt 4 — inget här är “klart” bara för att det står i PRD:n.
 
-**Den här omgången (v1–v1.12):**
+**Den här omgången (v1–v1.14):**
 
 - [x] Skapa mappen `vindkraftskalkyl_Vercel_ver3/` (lokalt, 2026-09-15).
 - [x] Första utkast till denna PRD.
@@ -407,6 +415,8 @@ Checklista. Avbockning ska spegla avsnitt 4 — inget här är “klart” bara 
 - [x] v1.10: Kent nickade 4f:s faser (första live = sidor + elpris/scenario + Redis; cron/cache i fas 2). 4k närboendelänk ja. OG-kortets tidpunkt öppen tills “vad är OG?” är svarat.
 - [x] v1.11: Kent: OG-kort i första live. 4g SPEC.md ja, efter frysning, innan scaffolding. Avsnitt 4 nickat.
 - [x] v1.12: Fräscha-ögon-genomläsning. Rättat eftersläpning (OG som “fas 2” i källor och produktionsordning; “om 4c står fast”). PRD fryst. SPEC.md skriven.
+- [x] v1.13: User Rules omskrivna: Vite bara om projektet är Vite. 4j och “Ingår inte” ändrade från “undantag” till “slår inte till”. Gula fält i ver3 oförändrade (4h).
+- [x] v1.14: Kent: User Rules punkt 18 — gula indatafält gäller alltid, inte bara Vite. 4h rättad.
 
 **Nästa, innan kod:**
 
@@ -507,7 +517,7 @@ Vercel (2026f) *Redis on Vercel.* Tillgänglig: https://vercel.com/docs/redis (h
 
 ## 8. Status [#](#8-Status)
 
-15 september 2026 kväll: **PRD fryst (v1.12)** efter fräscha-ögon-genomläsning. Avsnitt 4 nickat. SPEC.md skriven samma kväll. Ingen appkod. Inget Vercel-projekt skapat. Ingen live-URL.
+15 september 2026 kväll: **PRD fryst (v1.14)**. Avsnitt 4 nickat. SPEC.md skriven. User Rules: Vite är inte default; gula indatafält gäller alltid. Ingen appkod. Inget Vercel-projekt skapat. Ingen live-URL.
 
 Nästa handling: scaffolda Next.js (App Router) i den här mappen enligt SPEC.md. Visa filträdet innan mängder av filer skrivs. Inte `create-next-app` utan att följa SPEC. Kent committar och pushar själv.
 
@@ -528,3 +538,5 @@ Nästa handling: scaffolda Next.js (App Router) i den här mappen enligt SPEC.md
 - 2026-09-15 (v1.10): Kent nickade 4f:s faser. 4k: närboendelänk ja. OG-kort förklaras innan tidpunkten låses (Kent frågade vad det är, och kryssade både fas 2 i 4f och “första live” i 4k).
 - 2026-09-15 (v1.11): Kent: OG-kort i första live. 4g SPEC.md ja — efter frysning, innan scaffolding. Avsnitt 4 nickat.
 - 2026-09-15 (v1.12): Fräscha-ögon-genomläsning (Regel 7). Rättat: dual-publicering/4c som redan beslutad; 4e inte längre “förslag”; OG inte fas 2 i källan Next.js 2026b eller i produktionsordning steg 8; Vite-undantaget utan “om 4c står fast”. PRD fryst. SPEC.md skriven.
+- 2026-09-15 (v1.13): Kent skrev om Cursor User Rules (Customize → Rules). Vite (`base: './'`, `dist/`) gäller bara om arbetet redan är Vite — inte som default. 4j och “Ingår inte” omformulerade. Gula fält i den här appen står kvar via 4h.
+- 2026-09-15 (v1.14): Kent rättade User Rules punkt 18: gula indatafält gäller alltid. 4h och SPEC uppdaterade.
