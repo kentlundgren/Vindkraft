@@ -1,0 +1,21 @@
+# Lokal Vercel-CLI-cache (skapas av `npx vercel` eller `vercel link`).
+.vercel
+
+# Miljöfiler med hemligheter – t.ex. ENTSO-E-token.
+# Hemligheter ska bara ligga i Vercel environment variables, aldrig i Git.
+.env
+.env.local
+.env*.local
+
+# Next.js-byggutdata och cache (skapas när appen scaffoldas).
+.next
+out
+dist
+
+# Node-moduler. Ska aldrig checkas in.
+node_modules
+
+# OS- och editorfiler.
+.DS_Store
+Thumbs.db
+*.swp
