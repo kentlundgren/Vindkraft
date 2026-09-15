@@ -4,7 +4,7 @@
 **Plats:** `vindkraftskalkyl_Vercel_ver3/SPEC.md`  
 **Skapad:** 2026-09-15  
 **Gäller:** fryst [PRD v1.14](PRD_vindkraftskalkyl_vercel_ver3.md)  
-**Status:** Stomme, `/` `/om`, samt `lib/calculations.ts` med grönt paritetstest. `/kalkyl` är ännu en platshållare utan fält.
+**Status:** Stomme, `/` `/om` och `/kalkyl` med alla 33 gula fält, nyckeltal, jämförelsetabell och de fem perspektiven. Paritetstestet är grönt. Kvar: perspektiv-URL:er, Route Handlers (elpris, scenario) och OG-bild.
 
 Det här dokumentet är agentens ritning: *exakt hur*, inte *vad och varför*. Vad och varför står i PRD:n. Gissa inte luckor — om något saknas här, fråga Kent.
 
