@@ -94,6 +94,9 @@ Kent har flera vindkraftskalkyler på olika ställen, lokalt och på GitHub:
 | Sökväg | Beskrivning |
 | --- | --- |
 | [`vindkraftskalkyl/`](vindkraftskalkyl/) | Det interaktiva beräkningsverktyget (HTML/CSS/JS) med egen README. |
+| [`vindkraftskalkyl_Vercel/`](vindkraftskalkyl_Vercel/) | Samma kalkyl som statisk Vercel-app. Live: [vindkraft-rosy.vercel.app](https://vindkraft-rosy.vercel.app). |
+| [`vindkraftskalkyl_Vercel_ver2/`](vindkraftskalkyl_Vercel_ver2/) | Kalkylen med två Vercel Functions (elpris, delningslänkar). Live: [vindkraft-ver2.vercel.app](https://vindkraft-ver2.vercel.app). |
+| [`vindkraftskalkyl_Vercel_ver3/`](vindkraftskalkyl_Vercel_ver3/) | Kalkylen ombyggd som Next.js-app (App Router) med egna adresser per perspektiv, elpris från ENTSO-E, delningslänkar och serverritade förhandsvisningsbilder. Live: [vindkraft-ver3.vercel.app](https://vindkraft-ver3.vercel.app). |
 | [`skanes-vindkraftsakademi/`](skanes-vindkraftsakademi/) | Anteckningar och research kopplat till styrelsearbete i Skånes vindkraftsakademi (ERUF/Letter of Support, iskast, vindkraftsägare i Skåne, kommunernas energi-/vindbruksplaner, Önnerupsprojektet m.m.). |
 | `README.md` | Denna fil – allmän introduktion till vindkraft. |
 | `.gitignore` | Ignorerar OS-/editorfiler och eventuella framtida beroenden. |

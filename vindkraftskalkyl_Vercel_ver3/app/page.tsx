@@ -41,7 +41,7 @@ export default function Hem() {
         >
           <h2 className="font-semibold">Öppna kalkylen</h2>
           <p className="mt-2 text-sm text-slate-600">
-            Gula fält och nyckeltal byggs i nästa avsnitt. Länken finns redan.
+            Gula fält, nyckeltal och fem perspektiv — med länk att dela.
           </p>
         </Link>
         <Link

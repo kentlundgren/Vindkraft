@@ -1,9 +1,9 @@
 # Vad som blir annorlunda när Vercel används till fullo
 
-Det här är **texten om skillnaden mot GitHub Pages** — skriven så att den ska gå att läsa utan att kunna Next.js. Appen ver3 är inte byggd än. Filen ska fyllas på senare (deploy, skärmbilder, exakta adresser). Just nu är poängen: *vad kalkylen kan göra då, som en sida med bara filer inte kan.*
+Det här är **texten om skillnaden mot GitHub Pages** — skriven så att den ska gå att läsa utan att kunna Next.js. Poängen: *vad kalkylen kan göra som en sida med bara filer inte kan.*
 
-Live: *ingen ännu.*  
-Tänkt app: **vindkraft-ver3** i teamet Effektiv.  
+Live: <https://vindkraft-ver3.vercel.app>  
+Appen: **vindkraft-ver3** i teamet Effektiv.  
 Programversionen (GitHub Pages, bara filer) ligger kvar: [vindkraftskalkyl.html](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html).
 
 ## 🗂️ Lokalt repo

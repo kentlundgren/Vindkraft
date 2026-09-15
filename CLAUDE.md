@@ -4,8 +4,9 @@
 **Live (GitHub Pages):** https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html
 **Live (Vercel-app, statisk):** https://vindkraft-rosy.vercel.app
 **Live (Vercel-app, Functions):** https://vindkraft-ver2.vercel.app
-**Senast uppdaterad:** 2026-09-15
-**Version:** 1.6
+**Live (Vercel-app, Next.js App Router):** https://vindkraft-ver3.vercel.app
+**Senast uppdaterad:** 2026-09-16
+**Version:** 1.7
 
 ---
 
@@ -18,6 +19,7 @@ Samlar vindkraftsrelaterat innehåll:
 | `vindkraftskalkyl/` | Interaktivt beräkningsverktyg (HTML/CSS/JS) – GitHub Pages-version. |
 | `vindkraftskalkyl_Vercel/` | Samma kalkyl som statisk Vercel-app (projektet "vindkraft", https://vindkraft-rosy.vercel.app). |
 | `vindkraftskalkyl_Vercel_ver2/` | Vercel-anpassad kalkyl med Functions (`/api/elpris`, `/api/scenario`). Nytt projekt i teamet Effektiv (`effektiv1`), inte en ersättning för den statiska appen. Live: https://vindkraft-ver2.vercel.app. Token till spotpris: `Hur-skaffa-nyckel-hos-ENTSO-E.md`. |
+| `vindkraftskalkyl_Vercel_ver3/` | Kalkylen ombyggd som Next.js-app (App Router, TypeScript, Tailwind). Egna adresser per perspektiv, `/api/elpris`, `/api/scenario` med delningslänkar och serverritad OG-bild. Projektet `vindkraft-ver3` i teamet Effektiv, Root Directory = mappen. Live: https://vindkraft-ver3.vercel.app. Formlerna är portade från ver2 och testas mot ver2:s egna tal (`npm test`). |
 | `.cursor/skills/` | Projekt-skills som Cursor läser automatiskt. Dual-publiceringsmönstret ligger här. |
 | `skanes-vindkraftsakademi/` | Anteckningar och research kopplat till styrelsearbete i Skånes vindkraftsakademi. |
 
@@ -81,6 +83,7 @@ Gällande promptavsnitt i Vercel-README: `#Forslag_pa_promt`
 
 ## Uppdateringslogg
 
+- 2026-09-16 (v1.7): `vindkraftskalkyl_Vercel_ver3/` live på https://vindkraft-ver3.vercel.app. Ver3 är en Next.js-app (App Router) och den enda av lagren som *inte* går att spegla på GitHub Pages — den behöver en server. Rot-README:n fick en rad per Vercel-app.
 - 2026-09-15 (v1.6): `Hur-skaffa-nyckel-hos-ENTSO-E.md` i ver2; live-URL för `vindkraft-ver2`.
 - 2026-09-14 (v1.5): `vindkraftskalkyl_Vercel_ver2/` – Vercel-anpassad kalkyl med Functions, nytt projekt i teamet `effektiv1`.
 - 2026-09-14 (v1.4): Regel om djuplänkar – ett avsnitt, ett ankare, en länk (promptavsnittet är `#Forslag_pa_promt`).
@@ -92,4 +95,4 @@ Gällande promptavsnitt i Vercel-README: `#Forslag_pa_promt`
 
 ---
 
-_CLAUDE.md v1.6, 2026-09-15_
+_CLAUDE.md v1.7, 2026-09-16_

@@ -1,7 +1,13 @@
 # Vindkraftskalkyl – Vercel ver3
 
-Live: *ingen ännu – appen är inte deployad.*  
-Tänkt Vercel-projekt: **vindkraft-ver3** i teamet **Effektiv** (`effektiv1`) — se [PRD, delfråga 4d](PRD_vindkraftskalkyl_vercel_ver3.md#4d-Vercel-projekt).
+**Live: <https://vindkraft-ver3.vercel.app>**  
+Vercel-projekt: **vindkraft-ver3** i teamet **Effektiv** (`effektiv1`), Root Directory `vindkraftskalkyl_Vercel_ver3` — se [PRD, delfråga 4d](PRD_vindkraftskalkyl_vercel_ver3.md#4d-Vercel-projekt). Varje push till `main` deployar om appen automatiskt.
+
+| Sida | Adress |
+|------|--------|
+| Kalkylen | <https://vindkraft-ver3.vercel.app/kalkyl> |
+| Närboende (NU20) | <https://vindkraft-ver3.vercel.app/kalkyl/narboende> |
+| Om kalkylen | <https://vindkraft-ver3.vercel.app/om> |
 
 Next.js (App Router) 16.3.5 är uppsatt i den här mappen. Starta lokalt med `npm run dev` (port 3000). Sidorna `/`, `/om`, `/kalkyl` och de fem perspektiven finns.
 
@@ -46,4 +52,15 @@ På GitHub: <https://github.com/kentlundgren/Vindkraft/tree/main/vindkraftskalky
 
 ---
 
-*Uppdaterad 2026-09-16: hela v1 enligt SPEC.md är byggd — kalkyl, perspektiv-URL:er, elpris, delningslänkar och OG-bild. Kvar: commit/push och Vercel-projektet.*
+## Kvar att sätta i Vercel
+
+Appen är deployad och räknar, men två frivilliga inställningar saknas ännu i projektet. Båda kan läggas till när som helst utan kodändring:
+
+| Inställning | Vad den ger | Utan den |
+|-------------|-------------|----------|
+| `ENTSOE_SECURITY_TOKEN` | Knappen "Hämta månads- och årsmedel" | Rutten svarar 503 med en förklarande text; kalkylen fungerar med manuellt pris |
+| Upstash Redis (Storage) | Korta delningslänkar `?s=` i 30 dagar, plus cache för elpriset | Alla delningar blir långa `?t=`-länkar, som fungerar men är otympligare |
+
+---
+
+*Uppdaterad 2026-09-16: appen är live på <https://vindkraft-ver3.vercel.app>. Hela v1 enligt SPEC.md är byggd och verifierad i produktion — kalkyl, perspektiv-URL:er, elpris-felväg, delningslänkar och OG-bild.*

@@ -100,8 +100,16 @@ export default function TeknikModal() {
               </a>
             </li>
             <li>
-              Vercel ver3 (den här appen): ingen live-URL ännu. Planerat
-              projektnamn <code>vindkraft-ver3</code> i teamet Effektiv.
+              Vercel ver3 (den här appen):{" "}
+              <a
+                className="text-teal-800 underline"
+                href="https://vindkraft-ver3.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                vindkraft-ver3.vercel.app
+              </a>{" "}
+              — projektet <code>vindkraft-ver3</code> i teamet Effektiv.
             </li>
           </ul>
           <p>
