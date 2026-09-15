@@ -3,8 +3,8 @@
 **Namn:** PRD_vindkraftskalkyl_vercel_ver3
 **Plats:** `vindkraftskalkyl_Vercel_ver3/PRD_vindkraftskalkyl_vercel_ver3.md`
 **Skapad:** 2026-09-15
-**Version:** 1.4 (önskan: månads- och årsmedelpris per elområde, att undersöka inom kort)
-**Status:** **Utkast, inte fryst.** 4b är beslutad (Next.js App Router). 4j var redan beslutad. Ny 4l: månads-/årsmedel är en uttalad önskan, inte fas 1. Ingen appkod, inget Vercel-projekt, ingen live-URL.
+**Version:** 1.5 (4l undersökt: månads- och årsmedel via samma A44 som ver2)
+**Status:** **Utkast, inte fryst.** 4b är beslutad (Next.js App Router). 4j var redan beslutad. **4l:** metod rekommenderad 15 september 2026 (källa + hämtning), inte byggd. Ingen appkod, inget Vercel-projekt, ingen live-URL.
 **Typ:** Grund-PRD (helt ny app i befintligt repo), inte en tilläggs-PRD till ver2.
 
 > Det här dokumentet följer mallen i
@@ -80,7 +80,7 @@ De tre äldre lagren ska **inte** ersättas av den här PRD:n. ver3 är ett nytt
 
 **Tillägg 2026-09-15 kväll.** Kent läste v1 och invände mot att agenten, med stöd i den dåvarande skillen, behandlade Next.js som något man inte ska anta bara för att Vercel nämns. Uppdraget var redan “till fullo”. Överenskommelsen: *till fullo* = Next.js (App Router) bland annat, inte ett sidospår. 4b frystes. Skillen `nextjs-vercel-app-prompting` (Cursor) och referensen `vercel-resa-fran-forsta-kalkylen.md` uppdaterades samma kväll. Claude-kopian av skillen (`C:\Users\kentl\.claude\skills\nextjs-vercel-app-prompting\`) fick samma regel införd; den filen är i övrigt en äldre promptmall och är inte en full synk.
 
-**Tillägg 2026-09-15 kväll (elpris).** Kent: ett dygnssnitt säger för lite, eftersom spotpriset svänger kraftigt från dag till dag. Önskan att appen på ett smart sätt ska kunna visa **genomsnittligt månadspris** och **genomsnittligt årspris** per elområde (SE1–SE4). Inte fas 1. Ska undersökas hur det kan läggas in inom en snar framtid. Se 4l.
+**Tillägg 2026-09-15 kväll (elpris).** Kent: ett dygnssnitt säger för lite, eftersom spotpriset svänger kraftigt från dag till dag. Önskan att appen på ett smart sätt ska kunna visa **genomsnittligt månadspris** och **genomsnittligt årspris** per elområde (SE1–SE4). Först skrivet som “undersök senare”. Samma kväll: undersök *nu* och lägg svaret i den här PRD:n. Se 4l.
 
 ---
 
@@ -93,7 +93,7 @@ De tre äldre lagren ska **inte** ersättas av den här PRD:n. ver3 är ett nytt
 - Göra skillnaden mot GitHub Pages *kännbar och förklarad* (teknik-modal), utan att släppa in hela Vercel-katalogen i en kalkyl som inte behöver Auth, agenter eller WebSockets.
 - Ha ett spårbart kravdokument innan `create-next-app` körs, så implementationen inte gissar stack, dual-publicering eller vilka Functions som ska med.
 
-**Vad “till fullo” betyder här:** rätt arkitektur — **Next.js (App Router)**, beslutat i 4b — plus de klossar GitHub Pages inte kan *och som kalkylen vinner på*, i faser (4f, 4i, 4k, och 4l när undersökningen är klar). Inte att kryssa av Auth, AI Gateway, Blob, Queues, Sandbox, eve och WebSockets för att de finns i plattformen.
+**Vad “till fullo” betyder här:** rätt arkitektur — **Next.js (App Router)**, beslutat i 4b — plus de klossar GitHub Pages inte kan *och som kalkylen vinner på*, i faser (4f, 4i, 4k, 4l). Inte att kryssa av Auth, AI Gateway, Blob, Queues, Sandbox, eve och WebSockets för att de finns i plattformen.
 
 ---
 
@@ -124,9 +124,9 @@ Punkterna nedan utom den redan skapade mappen är **förslag tills 4c och 4e är
 - Dynamisk OG-bild (`next/og`) när en delad kalkyl-länk ska se ut som ett kort, inte som en tom flik ([Next.js, 2026b](https://nextjs.org/docs/app/getting-started/metadata-and-og-images)).
 - `vercel.ts` som projektkonfiguration när cron/headers behövs ([Vercel, 2026e](https://vercel.com/docs/project-configuration/vercel-ts)). Första deployen kan räcka med Next.js nollkonfiguration.
 
-### Att undersöka inom kort, inte i första live-versionen (se 4l)
+### Rekommenderad elpris-yta, när Route Handler finns (se 4l)
 
-- Genomsnittligt **månadspris** och **årspris** per elområde (SE1–SE4), hämtat via Vercel (Function + cache), visat som information bredvid de gula 25-årsantagandena. Undersökningen ska svara på källa, aggregering, gränser och hur det inte tyst skriver över kalkylpriset. Inte lovat till första deploy.
+- Genomsnittligt **månadspris** och **årspris** per elområde (SE1–SE4), samma A44-serie som ver2:s dygn, medel räknat i servern, visat som information bredvid de gula 25-årsantagandena. Undersökningen är gjord i 4l (15 september 2026). Inte ett krav att första hello-world visar talen, men `/api/elpris` ska *designas* med `period=dygn|manad|ar` från början så ytan inte målas in i bara-dygn.
 
 ### Ingår inte
 
@@ -222,18 +222,18 @@ Redan prövat i ver2, ska *återanvändas* (inte läras om): Functions/Route Han
 
 1. Next.js (App Router) — det GitHub Pages och ver2 *inte* är.
 2. Riktiga sidor (se 4i).
-3. `GET` elpris + `GET`/`POST` scenario som Route Handlers.
+3. `GET` elpris + `GET`/`POST` scenario som Route Handlers. Elpris-kontraktet tar `period=dygn|manad|ar` redan i första versionen av handlern (4l), även om cron/cache kommer i fas 2.
 4. Redis (Upstash via Marketplace, samma linje som ver2; Vercel KV är borta) ([Vercel, 2026f](https://vercel.com/docs/redis)).
 5. Preview-URL per branch.
 6. Teknik-modal som förklarar varför detta *inte* är rosy/ver2.
 
 **Förslag fas 2 (när fas 1 räknar rätt i production) — se också 4k:**
 
-7. Cron för nattlig elpris-hämtning, så dygnssnittet finns även om ingen har sidan öppen ([Vercel, 2026d](https://vercel.com/docs/cron-jobs)).
+7. Cron för nattlig elpris-hämtning (dygn **och** senaste hela månad + år per SE1–SE4), så talen finns även om ingen har sidan öppen ([Vercel, 2026d](https://vercel.com/docs/cron-jobs)). Se 4l.
 8. OG-bild för delade länkar, med tal från kalkylen ([Next.js, 2026b](https://nextjs.org/docs/app/getting-started/metadata-and-og-images)).
-9. Eventuell cache/revalidate av elpris så ENTSO-E inte anropas på varje klick.
+9. Redis-cache / revalidate av elpris så ENTSO-E inte anropas på varje klick.
 
-**Fas 3 / snar framtid (efter undersökning, se 4l):** månads- och årsmedel per elområde. Inte i första live. Dygnssnitt kan vara en tillfällig brygga, men Kent har sagt att det *säger för lite* som ensam siffra.
+**Inte en separat “fas 3-research”:** hur månads- och årsmedel hämtas är besvarat i 4l. Bygget sker när elpris-handlern skrivs, inte efter en andra undersökningsrunda. Dygnssnitt kan finnas kvar som komplement. Kent har sagt att det *säger för lite* som ensam siffra.
 
 **Medvetet senare / troligen aldrig i den här appen:** Auth, AI, Blob, WebSockets.
 
@@ -290,7 +290,7 @@ App Router är en sidväxlare. HTML-kalkylen har en `index.html` och låtsas att
 | `/` | `app/page.tsx` | Kort ingång: vad kalkylen är, länkar till kalkyl + om + de tre äldre live-URL:erna |
 | `/kalkyl` | `app/kalkyl/page.tsx` | Översikt, alla fem nyckeltal (Client Component där state behövs) |
 | `/om` | `app/om/page.tsx` | Antaganden, källor, skillnad mot Pages/ver2 |
-| `/api/elpris` | `app/api/elpris/route.ts` | Samma uppgift som ver2 |
+| `/api/elpris` | `app/api/elpris/route.ts` | Spot per SE1–SE4: `period=dygn|manad|ar` (4l). Samma A44 som ver2. |
 | `/api/scenario` | `app/api/scenario/route.ts` | Samma uppgift som ver2 |
 
 Alternativ: kalkylen *är* `/` (som i HTML-versionerna). Då blir ingången tunnare. **Öppet.**
@@ -331,30 +331,57 @@ Inte “mer Vercel” i största allmänhet. Tre grejer GitHub Pages och ver2 *i
 2. **Ett delningskort med riktiga tal.**  
    Inte en chatt i kalkylen. När länken klistras i mejl, Teams eller LinkedIn kan de programmen visa en förhandsvisning (OG-bild som Vercel ritar med `next/og`), t.ex. “LCOE 48 öre/kWh · payback 9 år · närboende X kr/år”. I ver2 är delningen en URL. Här kan delningen *se ut som kalkylen*. Fas 2.
 
-3. **Dagens spotpris ligger där, utan knapp.**  
-   Cron hämtar dygnssnittet (UTC). Sidan visar “SE4 idag …” med källa och datum. Knappen “Hämta” i ver2 är ett anrop. Här blir priset en egenskap hos sidan. Kalkylens 25-årsantagande förblir ett gult fält — dagens spot är information, inte en tyst överskrivning. **Begränsning (Kent, 15 september 2026):** ett dygnssnitt svänger för mycket för att vara det man främst vill visa. Månads- och årsmedel är önskan; se 4l. Dygn kan finnas kvar som komplement, inte som huvudtal.
+3. **Spotpriset ligger där, utan knapp — månad och år som huvudtal.**  
+   Cron hämtar (UTC) och cachar i Redis. Sidan visar valt elområde med **senaste hela månad** och **senaste hela kalenderår** som det man främst vill se, plus källa och period. Dygnssnitt kan ligga kvar som komplement (“idag / igår”). Knappen “Hämta” i ver2 är ett anrop. Här blir priset en egenskap hos sidan. Kalkylens 25-årsantagande förblir ett gult fält — hämtat spot är information, inte en tyst överskrivning. Metod: 4l.
 
 ---
 
 <a id="4l-Manads-arspris"></a>
 
-**l) Månads- och årsmedelpris per elområde — ÖNSKAN, ATT UNDERSÖKA (inte fas 1)** [#](#4l-Manads-arspris)
+**l) Månads- och årsmedelpris per elområde — UNDERSÖKT 2026-09-15, REKOMMENDATION** [#](#4l-Manads-arspris)
 
 Kent: det är inte tillräckligt att bara lägga in **medelpriset för ett dygn**. Spotpriset kan skilja sig kraftigt från dag till dag. Ett **månadsmedel** och ett **årsmedel**, per region (SE1–SE4), säger mer för den som räknar på lönsamhet.
 
-**Beslut nu:** inte bygga det i första live-versionen. Skriva in det som en uttalad önskan. **Undersök inom en snar framtid** hur det kan läggas in i appen med Vercel-teknik (det GitHub Pages inte kan: hemlig nyckel, periodhämtning, cache/cron så ENTSO-E inte anropas vid varje sidvisning).
+Första skrivningen av 4l (v1.4) sa “undersök inom kort, inte fas 1”. Samma kväll: undersök **nu** och lägg svaret i PRD:n. Det här avsnittet *är* den undersökningen. Ingen appkod är skriven. Inget skarpt ENTSO-E-anrop för en hel månad gjordes i den här sessionen (token ligger i Vercel, inte i Git). Metoden nedan bygger på ver2:s redan skrivna Function, på repots egen ENTSO-E-fil, och på öppnade källor 15 september 2026.
 
-**Vad undersökningen ska svara på** (hypoteser tills de är prövade — inget av detta är verifierat som färdig lösning):
+### Svar i korthet
 
-1. **Källa.** ver2 hämtar dagen-före-pris (A44) för *ett dygn* från ENTSO-E Transparency Platform, omräknat med Riksbanken. Nord Pools eget API är abonnemang och används inte i ver2. Svenska kraftnäts öppna dataset uppdateras inte efter 1 juli 2026. Finns det en färdig månads-/årsserie per elområde, eller ska appen **räkna medel själv** från historiska dygns- eller timpriser?
-2. **Aggregering.** Enkelt medel av dygn, eller tidsvägt (fler timmar, mer vikt)? Vilken växelkurs för en hel månad — senaste SEKEURPMI, eller ett medel över perioden?
-3. **Tekniska gränser.** Hur lång period tål ENTSO-E-anropet, token-kvot, Function-timeout? Behövs cron som en gång per natt räknar om “senaste hela månad” och “senaste hela kalenderår” och lägger resultatet i Redis, så sidan bara läser tre tal (dygn / månad / år) per område?
-4. **Vad som visas i kalkylen.** Tre informationsrader per valt område, med period och källa, **bredvid** det gula 25-årsfältet. Ingen tyst överskrivning. Användaren kan *välja* att kopiera ett medel till antagandet — det är ett medvetet klick, inte default.
-5. **Vad “smart” inte betyder.** Inte en AI som gissar framtida elpris. Smart = rätt period, rätt område, synlig källa, cache så det är snabbt och snällt mot API:t.
+Det går. Appen ska **inte** leta efter en färdig “månadsmedel-knapp” hos ENTSO-E. Dagen-före-priserna kommer som en tidsserie (timme eller kvart). Ett medel för månad eller år räknar **servern** genom att hämta fönstret och ta medel av punkterna — samma princip som ver2 redan gör för *ett dygn* ([Lundgren, 2026e](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl_Vercel_ver2/Hur-skaffa-nyckel-hos-ENTSO-E.md#Genomsnittliga-elpriser)).
 
-**Varför Vercel (och inte Pages):** en månads- eller årshämtning är många punkter och kräver nyckel. Det hör hemma i en Function, gärna med nattlig cache. GitHub Pages kan bara visa ett tal någon klistrat in för hand.
+### Hur appen ska hämta det
 
-När undersökningen är gjord: antingen en kort tilläggsnot i den här PRD:n (källa + metod beslutad) eller en mini-SPEC för just `/api/elpris`-utökningen — inte en ny grund-PRD.
+1. **Källa (samma som ver2).** ENTSO-E Transparency Platform, dokumenttyp **A44** (dagen-före-pris / 12.1.D), elområde via samma EIC som i `api/elpris.js`: SE1 `10Y1001A1001A44P`, SE2 `…A45N`, SE3 `…A46L`, SE4 `…A47J`. `in_Domain` och `out_Domain` samma kod. Token: `ENTSOE_SECURITY_TOKEN`. Endpoint: `https://web-api.tp.entsoe.eu/api`. Officiell guide för A44 visar ett **helt kalenderår i ett anrop** och anger *one year range limit* ([ENTSO-E, 2024](https://transparency.entsoe.eu/content/static_content/Static%20content/web%20api/Guide_prod_backup_06_11_2024.html)).
+2. **Ett anrop per period, inte 365 dygnsklick.** Månad = `periodStart`–`periodEnd` för den kalendermånaden. År = ett anrop för högst tolv månader (gränsen är ett år per request). Hjälpguidens exempel för Tjeckien 2016 är just ett årsfönster i en GET. Det är därför årsmedel är realistiskt i en Vercel Function, inte bara i en nattjobbs-loop mot 365 dygn.
+3. **Medel i servern.** v1: enkelt medel av publicerade intervallpunkter, samma som ver2:s dygn. Flagga i SPEC om 15-minuters- och 60-minuterspunkter blandas: då är *tidsvägt* medel mer rättvist. Inte en ny ekonomisk modell — bara hur snittet bildas.
+4. **Valuta.** EUR/MWh → kr/kWh med Riksbankens öppna REST, serien `SEKEURPMI`, samma som ver2 ([Sveriges riksbank, 2026](https://www.riksbank.se/sv/statistik/rantor-och-valutakurser/hamta-rantor-och-valutakurser-via-api/)). För v1: **en** kurs (senaste notering) för visningen, dokumenterat som förenkling. Inte ett dagligt FX-medel över året — det kan SPEC:en öppna senare.
+5. **API-kontrakt i ver3** (design från första Route Handler, så ytan inte låses till bara dygn):
+
+   `GET /api/elpris?omrade=SE4&period=manad`  
+   `GET /api/elpris?omrade=SE4&period=ar`  
+   `GET /api/elpris?omrade=SE4&period=dygn` (default, ver2-kompatibel)
+
+   Svaret ska bära periodens start/slut, antal punkter, kr/kWh, EUR/MWh, källa och en varning att det är spot utan skatt, nät och påslag.
+6. **Cache, inte varje sidvisning.** ENTSO-E tillåter 400 anrop per minut och nyckel/IP; över det HTTP 429 och tillfälligt stopp ([ENTSO-E, 2024](https://transparency.entsoe.eu/content/static_content/Static%20content/web%20api/Guide_prod_backup_06_11_2024.html)). En månad eller ett år är *ett* anrop, så kvoten är inte problemet — *latensen och artigheten* är det. Nattlig cron (UTC) räknar om fyra områden × månad + år (åtta A44-anrop) och lägger JSON i Redis. Sidan läser cache. Vid cache-miss får handlern hämta en gång och skriva cache, inte 50 parallella ENTSO-E-anrop från samma sidladdning.
+7. **Vad som visas.** Två informationsrader (plus ev. dygn som komplement) **bredvid** det gula 25-årsfältet, med period och källa. Ingen tyst överskrivning. Användaren kan *välja* att kopiera ett medel till antagandet — medvetet klick, inte default.
+
+**Föreslagen betydelse av “månad” och “år” tills SPEC säger annat:** senaste *hela* kalendermånad, och senaste *hela* kalenderår. Öppet: om “hittills i år” eller rullande tolv månader ska ligga bredvid. Energimarknadsbyrån visar månad *och* ett årsmedel hittills för samma Nord Pool-siffror ([Energimarknadsbyrån, 2026](https://www.energimarknadsbyran.se/el/dina-elavtal-och-kostnader/elhandelsavtalet/elpriser-statistik/manadspriser-pa-elborsen/)) — det är en mänsklig kontrollista, inte appens hämtväg.
+
+### Vad appen inte ska hämta som *spot*
+
+| Källa | Varför inte som huvudtal i kalkylen |
+|-------|-------------------------------------|
+| **SCB EN0301** elhandelspriser per avtalstyp/elområde | Färdiga *månadstal*, men det är **erbjudna avtal** (rörligt, fast, anvisat), med handlarnas påslag — inte dagen-före-spot. Tabellen säger det själv ([SCB, 2026a](https://www.scb.se/hitta-statistik/statistik-efter-amne/energi/prisutvecklingen-inom-energiomradet/elpriser-och-elavtal/); [SCB, 2026b](https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__EN__EN0301__EN0301A/SSDManadElhandelpris/)). Kan bli en *tilläggsrad* “vad hushåll erbjöds”, aldrig ersättning för producentens spot. |
+| **Nord Pools eget API** | Abonnemang. Används inte i ver2. Marknadsplatsen syns på dataportalen för människa, inte som appens nyckel. |
+| **Svenska kraftnäts öppna dataset** | Titeln säger fortfarande att data inte uppdateras efter 1 juli 2026 ([Svenska kraftnät, 2026](https://data.svk.se/sv/dataset/market_data_day_ahead_area_prices)). Inte live-källa. |
+| **Skrapa Energimarknadsbyrån** | De *visar* månadsmedelspot från Nord Pool, till och med årsmedel hittills 2026 per SE1–SE4. Bra att jämföra mot när handlern är byggd. Inte ett API att binda kalkylen vid. |
+
+**Vad “smart” inte betyder.** Inte en AI som gissar framtida elpris. Smart = rätt period, rätt område, synlig källa, ett anrop per fönster, cache så det är snabbt och snällt mot API:t.
+
+**Varför Vercel (och inte Pages):** nyckel, XML-svar, medelvärde och Redis hör hemma i en Route Handler. GitHub Pages kan bara visa ett tal någon klistrat in för hand.
+
+**Vad som fortfarande är öppet (för SPEC, inte för en ny research-runda):** kalenderår kontra rullande 12; tidsvägt medel när MTU blandas; om “hittills i år” ska med; exakt Redis-nyckel (`elpris:SE4:manad` o.d.).
+
+Implementation: när `/api/elpris` skrivs i ver3, inte som en tredje grund-PRD. Första hello-world behöver inte visa talen. Första elpris-handlern ska däremot inte låsa kontraktet till bara dygn.
 
 ---
 
@@ -364,7 +391,7 @@ När undersökningen är gjord: antingen en kort tilläggsnot i den här PRD:n (
 
 Checklista. Avbockning ska spegla avsnitt 4 — inget här är “klart” bara för att det står i PRD:n.
 
-**Den här omgången (v1–v1.4):**
+**Den här omgången (v1–v1.5):**
 
 - [x] Skapa mappen `vindkraftskalkyl_Vercel_ver3/` (lokalt, 2026-09-15).
 - [x] Första utkast till denna PRD.
@@ -373,16 +400,13 @@ Checklista. Avbockning ska spegla avsnitt 4 — inget här är “klart” bara 
 - [x] v1.2: skillens roll, 4b beslutad, App Router-uppdelning, tre produktidéer (4k).
 - [x] `nextjs-vercel-app-prompting` uppdaterad så “till fullo” = spår B / Next.js (App Router) som default.
 - [x] v1.4: 4l — månads- och årsmedelpris per elområde som önskan att undersöka, inte fas 1.
+- [x] v1.5: 4l undersökt samma kväll — källa A44, ett anrop per månad/år, cache/cron, vad som *inte* är spot. Metod i PRD:n. Inte byggd.
 
 **Nästa, innan kod:**
 
-- [ ] Kent tar ställning till resterande 4a, 4c, 4e, 4g, 4h, 4i, 4k.
+- [ ] Kent tar ställning till resterande 4a, 4c, 4e, 4g, 4h, 4i, 4k (4l är rekommendation, inte grind).
 - [ ] Fräscha-ögon-genomläsning av hela PRD:n när Kent säger att den kan frysas (Regel 7 — inte samma sak som detta utkast).
-- [ ] SPEC.md om 4g blir ja.
-
-**Närliggande, efter första live eller parallellt som research (4l):**
-
-- [ ] Undersök källa och metod för månads- och årsmedel (SE1–SE4). Dokumentera svaret i PRD:n eller en mini-SPEC för elpris-API:t. Bygg inte innan undersökningen är gjord.
+- [ ] SPEC.md om 4g blir ja — ska då innehålla elpris-kontraktet `period=dygn|manad|ar`.
 
 **Därefter, implementation (inte påbörjad):**
 
@@ -403,11 +427,11 @@ Checklista. Avbockning ska spegla avsnitt 4 — inget här är “klart” bara 
 Ordningen är medveten: krav före spec före scaffolding före Vercel-projekt.
 
 1. **PRD (nu)** — vad och varför, öppna frågor synliga.
-2. **Kent svarar på avsnitt 4** — dual-publicering, vilken kalkyl, rutter, 4k. (Stacken 4b är beslutad. 4l är önskan, inte grind för scaffolding.)
+2. **Kent svarar på avsnitt 4** — dual-publicering, vilken kalkyl, rutter, 4k. (Stacken 4b är beslutad. 4l är rekommenderad metod, inte grind för scaffolding.)
 3. **Frys PRD** efter en fräscha-ögon-genomläsning, inte efter första utkastet.
 4. **SPEC.md** (om 4g = ja) — fält, formler, API-kontrakt, felvägar.
 5. **Scaffold Next.js** i den här mappen. Visa filträdet. Ingen stealth-omdesign.
-6. **Port av kalkyl + Route Handlers.** En fungerande `/kalkyl` som räknar utan API, *sedan* elpris och scenario.
+6. **Port av kalkyl + Route Handlers.** En fungerande `/kalkyl` som räknar utan API, *sedan* elpris (`period=dygn|manad|ar`) och scenario.
 7. **Kent: commit, push, skapa Vercel-projektet** (team Effektiv, Root Directory, env, ev. Redis).
 8. **Verifiera production.** Först därefter cron/OG som fas 2.
 9. **Dokumentera live-URL** i README, `CLAUDE.md` och rot-README.
@@ -420,7 +444,11 @@ Inte: skapa Vercel-projektet innan det finns något att bygga. Inte: byta formle
 
 ## 7. Källor [#](#7-Kallor)
 
-Alfabetisk, annoterad. Externa, citerbara källor först. Hämtdatum 15 september 2026 där källan är en föränderlig docs-sida. Länkarna är öppnade/kontrollerade i samma session som utkastet skrevs.
+Alfabetisk, annoterad. Externa, citerbara källor först. Hämtdatum 15 september 2026 där källan är en föränderlig docs-sida. Länkarna är öppnade/kontrollerade i samma session som utkastet skrevs (4l-källorna i v1.5 samma kväll).
+
+Energimarknadsbyrån (2026) *Månadspriser på elbörsen.* Tillgänglig: https://www.energimarknadsbyran.se/el/dina-elavtal-och-kostnader/elhandelsavtalet/elpriser-statistik/manadspriser-pa-elborsen/ (hämtad 15 september 2026). *(Månadsmedelspot från Nord Pool per SE1–SE4, plus årsmedel hittills; mänsklig kontrollista, inte appens API.)*
+
+ENTSO-E (2024) *REST API – User Guide* (Transparency Platform, snapshot 6 november 2024). Tillgänglig: https://transparency.entsoe.eu/content/static_content/Static%20content/web%20api/Guide_prod_backup_06_11_2024.html (hämtad 15 september 2026). *(Avsnitt 4.2.10 Day Ahead Prices [12.1.D]: A44, samma in/out-domain, one year range; exempel-GET för hela 2016. Avsnitt 1.8: 400 anrop/minut per IP och token, därefter HTTP 429. Den aktuella Guide.html svarade HTTP 400 vid kontroll 15 september 2026; den här backup-filen öppnades och innehöll avsnitten.)*
 
 Lundgren, K. (2026a) *PRD – Generell mall (struktur för hur en PRD byggs upp i det här arbetssättet).* GitHub, `kentlundgren/AI-teknik`. Tillgänglig: https://github.com/kentlundgren/AI-teknik/blob/main/AI_modeller/Claude/olika_Claude_modeller/PRD/PRD_generell.md (hämtad 15 september 2026). *(Mall för header, avsnitt 1–8, SPEC.md-checkpoint och fräscha-ögon-vana — den här filen följer den strukturen.)*
 
@@ -430,6 +458,8 @@ Lundgren, K. (2026c) *Vindkraftskalkyl – Vercel ver2* (README). GitHub, `kentl
 
 Lundgren, K. (2026d) *Behöver jag en spec.md?* klel.wordpress.com, 2 augusti. Tillgänglig: https://klel.wordpress.com/2026/08/02/behover-jag-en-spec-md/ (hämtad 15 september 2026). *(Varför SPEC.md är en stående fråga, inte ett obligatoriskt dokument — 4g i den här PRD:n.)*
 
+Lundgren, K. (2026e) *Hur man skaffar nyckel hos ENTSO-E* (avsnittet *Kan man få genomsnittspriser för dygn, vecka, månad och år?*). GitHub, `kentlundgren/Vindkraft`. Tillgänglig: https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl_Vercel_ver2/Hur-skaffa-nyckel-hos-ENTSO-E.md#Genomsnittliga-elpriser (hämtad 15 september 2026). *(ver2: A44 är en tidsserie utan månadsknapp; dygn är byggt, månad/år är samma princip men inte implementerat där.)*
+
 Next.js (2026a) *Route Handlers.* Next.js Documentation (App Router). Tillgänglig: https://nextjs.org/docs/app/getting-started/route-handlers (hämtad 15 september 2026). *(Next.js-motsvarigheten till ver2:s `api/*.js` — Web Request/Response, inte Pages Router.)*
 
 Next.js (2026b) *Metadata and OG images.* Next.js Documentation (App Router). Tillgänglig: https://nextjs.org/docs/app/getting-started/metadata-and-og-images (hämtad 15 september 2026). *(Fas 2-förslaget om delningskort; inte ett krav i första live-versionen.)*
@@ -437,6 +467,14 @@ Next.js (2026b) *Metadata and OG images.* Next.js Documentation (App Router). Ti
 Next.js (2026c) *llms.txt* (agentindex, Next.js 16.3.5 vid kontroll). Tillgänglig: https://nextjs.org/docs/llms.txt (hämtad 15 september 2026). *(Versionsstämplad ingång till App Router-dokumentationen; slår träningsdata.)*
 
 Next.js (2026d) *Getting Started.* Next.js Documentation (App Router). Tillgänglig: https://nextjs.org/docs/app/getting-started (hämtad 15 september 2026). *(Installation, `app/`, layout/page, Server vs Client — basen för 4b/4i.)*
+
+SCB (2026a) *Elpriser och elavtal.* Tillgänglig: https://www.scb.se/hitta-statistik/statistik-efter-amne/energi/prisutvecklingen-inom-energiomradet/elpriser-och-elavtal/ (hämtad 15 september 2026). *(EN0301: elhandels- och elnätspriser per avtalstyp; Energimyndigheten ansvarar. Inte dagen-före-spot.)*
+
+SCB (2026b) *Elhandelspriser på elenergi … efter avtalstyp, elområde och kundkategori. Månad* (PxWeb, SSDManadElhandelpris). Tillgänglig: https://www.statistikdatabasen.scb.se/pxweb/sv/ssd/START__EN__EN0301__EN0301A/SSDManadElhandelpris/ (hämtad 15 september 2026). *(Färdiga månadstal per SE1–SE4, men “genomsnittliga erbjudna priser för nytecknade avtal” — därför inte appens spotkälla.)*
+
+Svenska kraftnät (2026) *Dagen före-priser för system och per elområde.* Tillgänglig: https://data.svk.se/sv/dataset/market_data_day_ahead_area_prices (hämtad 15 september 2026). *(Öppen data, men titeln säger att den inte uppdateras efter 1 juli 2026 — därför inte live-källa i 4l.)*
+
+Sveriges riksbank (2026) *Hämta räntor och valutakurser via API.* Tillgänglig: https://www.riksbank.se/sv/statistik/rantor-och-valutakurser/hamta-rantor-och-valutakurser-via-api/ (hämtad 15 september 2026). *(Öppet REST; SEKEURPMI för EUR/MWh → kr/kWh, samma omräkning som ver2.)*
 
 Vercel (2026a) *Vercel Functions.* Tillgänglig: https://vercel.com/docs/functions (hämtad 15 september 2026). *(Request-driven serverkod, Fluid Compute som default, Route Handlers för Next.js App Router.)*
 
@@ -464,11 +502,11 @@ Vercel (2026f) *Redis on Vercel.* Tillgänglig: https://vercel.com/docs/redis (h
 
 ## 8. Status [#](#8-Status)
 
-15 september 2026 kväll: mappen finns. PRD v1.4. **4b beslutad:** Next.js (App Router) är skalet när Vercel används till fullo. 4j var redan beslutad. **4l:** månads- och årsmedelpris per elområde är en uttalad önskan att undersöka inom kort, inte ett krav i första live. Ingen appkod. Inget Vercel-projekt. Ingen live-URL.
+15 september 2026 kväll: mappen finns. PRD v1.5. **4b beslutad:** Next.js (App Router) är skalet när Vercel används till fullo. 4j var redan beslutad. **4l:** undersökt samma kväll — månads- och årsmedel per SE1–SE4 via samma A44 som ver2, ett anrop per fönster, cache/cron. Inte byggd. Ingen appkod. Inget Vercel-projekt. Ingen live-URL.
 
 Skillen `nextjs-vercel-app-prompting` (Cursor) säger nu att “till fullo” är spår B som default. Claude-kopian har samma regel införd men är i övrigt en äldre promptmall.
 
-Öppet eller förslag: 4a (mappnamn i praktiken skapat), 4c, 4d, 4e, 4f, 4g, 4h, 4i, 4k. 4l är önskan/research, inte ett nej.
+Öppet eller förslag: 4a (mappnamn i praktiken skapat), 4c, 4d, 4e, 4f, 4g, 4h, 4i, 4k. 4l är rekommenderad metod (öppna detaljer till SPEC), inte ett nej och inte en andra research-runda.
 
 Nästa handling är Kents: nicka, ändra eller stryka i det som är kvar i avsnitt 4. Därefter en fräscha-ögon-genomläsning innan någon kallar PRD:n fryst.
 
@@ -481,3 +519,4 @@ Nästa handling är Kents: nicka, ändra eller stryka i det som är kvar i avsni
 - 2026-09-15 (v1.2): Kent: “till fullo” ska inkludera Next.js (App Router). 4b beslutad. Nytt avsnitt om hur skillen styrde v1, och en rättelse av att v1 läste “anta inte Next.js” för strikt. 4i utökad med Server/Client-uppdelning och perspektiv-URL:er. Ny 4k med tre produktidéer (närboendelänk, OG-kort, levande spotpris). Skillen `nextjs-vercel-app-prompting` (Cursor + delvis Claude-kopian) och `vercel-resa-fran-forsta-kalkylen.md` uppdaterade samma kväll. Avsnitt 3 villkorar nu 4c/4e, inte 4b.
 - 2026-09-15 (v1.3): Förtydligat att kalkylen inte får en chatt. “Chatt” i bakgrunden bytt till Cursor-sessionen. 4k och “Ingår inte” skiljer meddelanden *i appen* från förhandsvisningskort i mejl/Teams/LinkedIn.
 - 2026-09-15 (v1.4): Kent: dygnssnitt räcker inte som ensam elprissiffra. Ny 4l — månads- och årsmedel per SE1–SE4 som önskan att undersöka inom snar framtid (källa, aggregering, cache/cron). Inte fas 1. Gula 25-årsfältet skrivs inte över tyst. 4k:3 pekar hit.
+- 2026-09-15 (v1.5): Kent ångrade “undersök senare”. 4l omarbetad till undersökt metod: samma A44 som ver2, ett anrop per månad/år (ENTSO-E one-year limit), Redis + cron, SCB/Nord Pool-API/SVK/skrapning avvisade som spotkälla. API-kontrakt `period=dygn|manad|ar`. Inte byggd.

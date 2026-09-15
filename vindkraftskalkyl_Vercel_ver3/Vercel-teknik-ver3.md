@@ -98,16 +98,19 @@ Här är skillnaden i kalkyl-språk, inte i ramverks-språk.
 
 På Pages skriver du elpriset för hand. Det är okej för en 25-årskalkyl: då *ska* det vara ett antagande, inte gårdagens spot.
 
-Men det är lätt att blanda ihop “vad kostar elen *idag* i SE4?” med “vilket pris räknar jag med i 25 år?”. Med Vercel till fullo kan sidan visa **två olika tal**:
+Men det är lätt att blanda ihop “vad kostar elen *just nu* i SE4?” med “vilket pris räknar jag med i 25 år?”. Med Vercel till fullo kan sidan visa **olika tal**:
 
 | Tal | Vad det är | Vem som sätter det |
 |-----|------------|---------------------|
-| Dagens dygnssnitt | Marknaden just nu, med källa och datum | Servern, gärna utan att du klickar “Hämta” |
+| Månadsmedel och årsmedel (huvudtal) | Marknaden över en period, med källa | Servern, utan att du klickar “Hämta” |
+| Dygnssnitt (komplement) | En ögonblicksbild som svänger mer | Samma server |
 | Intäkt / kalkylpris i de gula fälten | Antagande över livslängden | Du |
 
 Dagens spot ska **inte** tyst skriva över 25-årsantagandet. Det är information bredvid kalkylen, inte en genväg som ljuger om lönsamheten.
 
-På Pages kan du inte hämta det officiella priset säkert: nyckeln skulle ligga i JavaScript. På Vercel ligger nyckeln i environment variables, utanför koden ([Vercel, 2026c](https://vercel.com/docs/environment-variables)).
+Ett *dygn* svänger för mycket för att vara det man främst vill visa. Undersökningen i PRD:n (4l, 15 september 2026) säger: samma officiella serie som ver2 redan hämtar för ett dygn (ENTSO-E A44), men med ett **månads-** eller **årsfönster** i ett anrop. Servern räknar medel. Sidan kan då visa “SE4, augusti …” och “SE4, 2025 …” bredvid de gula fälten. GitHub Pages kan inte göra det säkert: nyckeln skulle ligga i JavaScript.
+
+På Vercel ligger nyckeln i environment variables, utanför koden ([Vercel, 2026c](https://vercel.com/docs/environment-variables)).
 
 ### B. Två personer kan räkna på *samma* case
 
@@ -282,8 +285,8 @@ Vercel (2026g) *Open Graph (OG) Image Generation.* Tillgänglig: https://vercel.
 
 - Programversionen: https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html
 - ver2, redan en liten server: [Vercel-teknik-ver2.md](../vindkraftskalkyl_Vercel_ver2/Vercel-teknik-ver2.md)
-- Krav för ver3: [PRD_vindkraftskalkyl_vercel_ver3.md](PRD_vindkraftskalkyl_vercel_ver3.md) (särskilt 4i och 4k)
+- Krav för ver3: [PRD_vindkraftskalkyl_vercel_ver3.md](PRD_vindkraftskalkyl_vercel_ver3.md) (särskilt 4i, 4k och 4l)
 
 ---
 
-*Första utkast 2026-09-15. Bara förklaring — ingen app, inga skärmbilder. Ska uppdateras när ver3 finns live. Samma dag: avsnitt om hur delningskortet ritas (Open Graph + ImageResponse).*
+*Första utkast 2026-09-15. Bara förklaring — ingen app, inga skärmbilder. Ska uppdateras när ver3 finns live. Samma dag: avsnitt om hur delningskortet ritas (Open Graph + ImageResponse). Samma kväll: elprisavsnittet pekar på månads- och årsmedel (PRD 4l), inte bara dygn.*
