@@ -4,7 +4,7 @@
 **Plats:** `vindkraftskalkyl_Vercel_ver3/SPEC.md`  
 **Skapad:** 2026-09-15  
 **Gäller:** fryst [PRD v1.14](PRD_vindkraftskalkyl_vercel_ver3.md)  
-**Status:** Stomme, `/`, `/om`, `/kalkyl`, de fem perspektiv-URL:erna, `GET /api/elpris` (dygn/månad/år, Redis-cache, felvägar) och `/api/scenario` med delningslänkar `?s=`/`?t=`. Paritetstestet är grönt. Kvar: OG-bild.
+**Status:** Hela v1-listan är byggd: `/`, `/om`, `/kalkyl`, de fem perspektiv-URL:erna, `GET /api/elpris` (dygn/månad/år, Redis-cache, felvägar), `/api/scenario` med delningslänkar `?s=`/`?t=` och OG-bilden. Paritetstestet är grönt. Kvar: Kents commit/push och Vercel-projektet (steg 9–10 nedan).
 
 Det här dokumentet är agentens ritning: *exakt hur*, inte *vad och varför*. Vad och varför står i PRD:n. Gissa inte luckor — om något saknas här, fråga Kent.
 
@@ -66,7 +66,7 @@ vindkraftskalkyl_Vercel_ver3/
 │   ├── kalkyl/
 │   │   ├── layout.tsx               ← delat state för /kalkyl + perspektiven
 │   │   ├── page.tsx                 ← /kalkyl
-│   │   ├── opengraph-image.tsx      ← OG 1200×630, läser ?s= / ?t=
+│   │   ├── opengraph-image.tsx      ← OG 1200×630, standardvärden (se 7.3)
 │   │   ├── investerare/page.tsx
 │   │   ├── markagare/page.tsx
 │   │   ├── kommun/page.tsx
@@ -75,6 +75,7 @@ vindkraftskalkyl_Vercel_ver3/
 │   ├── om/page.tsx
 │   └── api/
 │       ├── elpris/route.ts
+│       ├── og/route.tsx             ← OG-bild för delade länkar (?s= / ?t=)
 │       └── scenario/route.ts
 ├── components/
 │   ├── CalculatorForm.tsx           ← 'use client'
@@ -87,7 +88,9 @@ vindkraftskalkyl_Vercel_ver3/
 │   ├── defaults.ts                  ← samma defaultvärden som ver2 index.html
 │   ├── elpris.ts                    ← ENTSO-E A44 + Riksbanken + medel
 │   ├── redis.ts                     ← Upstash REST (cache + korta koder)
-│   └── scenario.ts                  ← packa/packaUpp + Redis vk:
+│   ├── scenario.ts                  ← packa/packaUpp + Redis vk:
+│   ├── og.tsx                       ← bildmotorn, en layout för alla varianter
+│   └── metadata.ts                  ← generateMetadata för kalkylsidorna
 └── public/                          ← ev. favicon; inga hemligheter
 ```
 
@@ -261,6 +264,15 @@ Klient-URL: `?s=` för kort kod, `?t=` för token.
 ### 7.3 OG-bild (första live)
 
 Fil: `app/kalkyl/opengraph-image.tsx` (gäller `/kalkyl` och, om Next.js ärver metadata, perspektiv-rutter — om arv inte räcker: samma bild under varje perspektiv-mapp eller en `opengraph-image` i `app/kalkyl/[...]/` enligt App Router-regler). Mål: **en** bildmotor, inte fem olika layoutkoder.
+
+> **Här skedde en uppdatering (2026-09-16, efter bygget).** Filkonventionen `opengraph-image.tsx` får bara `params` av Next.js — aldrig querysträngen ([dokumentation](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image)). Den kan alltså inte läsa `?s=`/`?t=`. Lösningen, som Kent valde:
+>
+> - `lib/og.tsx` — **en** bildmotor som ritar alla varianter.
+> - `app/kalkyl/opengraph-image.tsx` — standardbilden, ritad vid bygget, ärvs av de fem perspektiv-sidorna.
+> - `app/api/og/route.tsx` — samma motor, men läser `?s=`/`?t=` (och `?p=` för perspektiv).
+> - `lib/metadata.ts` + `generateMetadata` i de sex kalkylsidorna — pekar om `og:image` till `/api/og` när adressen har en delningskod.
+>
+> Följd: kalkylsidorna är server-renderade vid varje anrop i stället för statiska. `metadataBase` sätts i `app/layout.tsx` från `VERCEL_PROJECT_PRODUCTION_URL` (annars `VERCEL_URL`, annars localhost). `?t=` längre än 1 500 tecken ger standardbilden, eftersom långa og:image-adresser kapas av vissa tjänster.
 
 Teknik: `ImageResponse` / `next/og`. Storlek **1200×630**. Ingen klient-JS. Crawlers kör inte kalkylen.
 

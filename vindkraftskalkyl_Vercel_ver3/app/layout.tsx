@@ -15,7 +15,19 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+/**
+ * Adressen som relativa og:image-länkar räknas ut från. Utan den skriver Next
+ * ut localhost i bygget, och då hittar ingen crawler bilden.
+ * Vercel sätter variablerna åt oss; lokalt faller vi tillbaka på dev-servern.
+ */
+const platsUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  : process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(platsUrl),
   title: "Vindkraftskalkyl ver3",
   description:
     "Vercel-native vindkraftskalkyl (Next.js App Router). Fem perspektiv, samma formler som ver2.",

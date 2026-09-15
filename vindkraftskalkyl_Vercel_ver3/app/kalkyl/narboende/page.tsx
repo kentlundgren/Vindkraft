@@ -1,11 +1,22 @@
 import type { Metadata } from 'next';
 import CalculatorForm from '@/components/CalculatorForm';
+import { kalkylMetadata } from '@/lib/metadata';
 
-export const metadata: Metadata = {
-  title: 'Närboende (NU20) – Vindkraftskalkyl ver3',
-  description:
-    'Vindkraftsersättning enligt NU20: avståndszoner, distansfaktor och taket på 2,5 promille.',
-};
+/**
+ * På den här adressen visar förhandsvisningsbilden NU20-ersättningen per
+ * bostad i stället för nuvärdet – det är talet man delar länken för.
+ */
+export async function generateMetadata({
+  searchParams,
+}: PageProps<'/kalkyl/narboende'>): Promise<Metadata> {
+  return kalkylMetadata({
+    titel: 'Närboende (NU20) – Vindkraftskalkyl ver3',
+    beskrivning:
+      'Vindkraftsersättning enligt NU20: avståndszoner, distansfaktor och taket på 2,5 promille.',
+    perspektiv: 'narboende',
+    searchParams,
+  });
+}
 
 /**
  * /kalkyl/narboende – den URL som är tänkt att skickas vidare.

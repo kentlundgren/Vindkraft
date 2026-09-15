@@ -15,6 +15,8 @@ För att testa hämtningen lokalt: lägg `ENTSOE_SECURITY_TOKEN=…` i `.env.loc
 
 Kalkylen går att dela som länk. `POST /api/scenario` packar de gula fälten och ger antingen en kort kod (`?s=`, sparad i Redis i 30 dagar) eller en lång token (`?t=`, hela fältbilden gzippad i adressen, ingen tidsgräns). Utan Redis blir det alltid en lång länk — inget går sönder. Länken behåller det perspektiv du står på, så `/kalkyl/narboende?s=…` öppnar närboendevyn med rätt indata. Nyckeltalen delas aldrig; de räknas om hos mottagaren.
 
+När länken klistras in någonstans ritar servern en förhandsvisningsbild (1200×630) med kalkylens tal: LCOE, payback och nuvärde — eller NU20-ersättningen per bostad på `/kalkyl/narboende`. En vanlig länk får en standardbild som ritas vid bygget; en delad länk får sina egna siffror via `/api/og`. Bildmotorn är `lib/og.tsx`, och den räknar med samma `beraknaAllt` som gränssnittet.
+
 Varje perspektiv har en egen adress som går att länka till: `/kalkyl/investerare`, `/kalkyl/markagare`, `/kalkyl/kommun`, `/kalkyl/andelsagare` och `/kalkyl/narboende`. Ver2:s flikar är alltså ersatta av riktiga URL:er. Indata följer med när man byter perspektiv, eftersom fältens state ligger i den delade layouten `app/kalkyl/layout.tsx`.
 
 **Krav:** [PRD_vindkraftskalkyl_vercel_ver3.md](PRD_vindkraftskalkyl_vercel_ver3.md) (fryst v1.14)  
@@ -44,4 +46,4 @@ På GitHub: <https://github.com/kentlundgren/Vindkraft/tree/main/vindkraftskalky
 
 ---
 
-*Uppdaterad 2026-09-15: Next.js-stommen ligger i mappen. Kalkylen byggs enligt SPEC.md.*
+*Uppdaterad 2026-09-16: hela v1 enligt SPEC.md är byggd — kalkyl, perspektiv-URL:er, elpris, delningslänkar och OG-bild. Kvar: commit/push och Vercel-projektet.*

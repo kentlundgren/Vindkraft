@@ -1,11 +1,21 @@
 import type { Metadata } from 'next';
 import CalculatorForm from '@/components/CalculatorForm';
+import { kalkylMetadata } from '@/lib/metadata';
 
-export const metadata: Metadata = {
-  title: 'Kalkyl – Vindkraftskalkyl ver3',
-  description:
-    'Fem perspektiv på vindkraftens ekonomi: LCOE, payback, NPV, IRR och NU20-ersättning.',
-};
+/**
+ * Metadata läses per anrop för att en delad länk (`?s=`/`?t=`) ska få en
+ * förhandsvisningsbild med scenariots egna tal.
+ */
+export async function generateMetadata({
+  searchParams,
+}: PageProps<'/kalkyl'>): Promise<Metadata> {
+  return kalkylMetadata({
+    titel: 'Kalkyl – Vindkraftskalkyl ver3',
+    beskrivning:
+      'Fem perspektiv på vindkraftens ekonomi: LCOE, payback, NPV, IRR och NU20-ersättning.',
+    searchParams,
+  });
+}
 
 /**
  * /kalkyl – Server Component som bara sätter ramen.

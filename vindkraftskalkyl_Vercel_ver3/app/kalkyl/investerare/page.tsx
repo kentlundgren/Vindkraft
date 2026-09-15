@@ -1,11 +1,18 @@
 import type { Metadata } from 'next';
 import CalculatorForm from '@/components/CalculatorForm';
+import { kalkylMetadata } from '@/lib/metadata';
 
-export const metadata: Metadata = {
-  title: 'Investerare – Vindkraftskalkyl ver3',
-  description:
-    'Investerarperspektivet: LCOE, payback, NPV och IRR för en vindkraftspark.',
-};
+export async function generateMetadata({
+  searchParams,
+}: PageProps<'/kalkyl/investerare'>): Promise<Metadata> {
+  return kalkylMetadata({
+    titel: 'Investerare – Vindkraftskalkyl ver3',
+    beskrivning:
+      'Investerarperspektivet: LCOE, payback, NPV och IRR för en vindkraftspark.',
+    perspektiv: 'investerare',
+    searchParams,
+  });
+}
 
 /**
  * /kalkyl/investerare – tunn wrapper runt samma CalculatorForm som /kalkyl.

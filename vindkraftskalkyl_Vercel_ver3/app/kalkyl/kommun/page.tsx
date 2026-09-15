@@ -1,11 +1,18 @@
 import type { Metadata } from 'next';
 import CalculatorForm from '@/components/CalculatorForm';
+import { kalkylMetadata } from '@/lib/metadata';
 
-export const metadata: Metadata = {
-  title: 'Kommun och samhälle – Vindkraftskalkyl ver3',
-  description:
-    'Kommunperspektivet: lokala intäkter, kommunal ersättning och värderad klimatnytta.',
-};
+export async function generateMetadata({
+  searchParams,
+}: PageProps<'/kalkyl/kommun'>): Promise<Metadata> {
+  return kalkylMetadata({
+    titel: 'Kommun och samhälle – Vindkraftskalkyl ver3',
+    beskrivning:
+      'Kommunperspektivet: lokala intäkter, kommunal ersättning och värderad klimatnytta.',
+    perspektiv: 'kommun',
+    searchParams,
+  });
+}
 
 /**
  * /kalkyl/kommun – samma formulär som /kalkyl, med de lokala intäkterna

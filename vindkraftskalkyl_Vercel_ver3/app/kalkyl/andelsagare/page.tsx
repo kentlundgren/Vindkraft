@@ -1,11 +1,18 @@
 import type { Metadata } from 'next';
 import CalculatorForm from '@/components/CalculatorForm';
+import { kalkylMetadata } from '@/lib/metadata';
 
-export const metadata: Metadata = {
-  title: 'Andelsägare – Vindkraftskalkyl ver3',
-  description:
-    'Den kooperativa modellen: insats per andel, självkostnad och besparing mot hushållselens pris.',
-};
+export async function generateMetadata({
+  searchParams,
+}: PageProps<'/kalkyl/andelsagare'>): Promise<Metadata> {
+  return kalkylMetadata({
+    titel: 'Andelsägare – Vindkraftskalkyl ver3',
+    beskrivning:
+      'Den kooperativa modellen: insats per andel, självkostnad och besparing mot hushållselens pris.',
+    perspektiv: 'andelsagare',
+    searchParams,
+  });
+}
 
 /**
  * /kalkyl/andelsagare – samma formulär som /kalkyl, med den kooperativa

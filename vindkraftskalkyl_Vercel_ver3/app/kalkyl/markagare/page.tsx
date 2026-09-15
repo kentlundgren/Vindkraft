@@ -1,11 +1,18 @@
 import type { Metadata } from 'next';
 import CalculatorForm from '@/components/CalculatorForm';
+import { kalkylMetadata } from '@/lib/metadata';
 
-export const metadata: Metadata = {
-  title: 'Markägare – Vindkraftskalkyl ver3',
-  description:
-    'Markägarperspektivet: arrende per år, över hela livslängden och som nuvärde.',
-};
+export async function generateMetadata({
+  searchParams,
+}: PageProps<'/kalkyl/markagare'>): Promise<Metadata> {
+  return kalkylMetadata({
+    titel: 'Markägare – Vindkraftskalkyl ver3',
+    beskrivning:
+      'Markägarperspektivet: arrende per år, över hela livslängden och som nuvärde.',
+    perspektiv: 'markagare',
+    searchParams,
+  });
+}
 
 /**
  * /kalkyl/markagare – samma formulär och samma tal som /kalkyl,
