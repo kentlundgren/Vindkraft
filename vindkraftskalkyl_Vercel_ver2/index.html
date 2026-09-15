@@ -289,8 +289,12 @@
       <div class="kort"><span class="kort-etikett">Produktion</span><span class="kort-varde" id="nt-produktion">–</span></div>
     </div>
     <!-- Här skedde en uppdatering (2026-09-15): användaren väljer kort länk
-         (Redis, 30 dagar) eller lång länk (värdena i adressen, ingen tidsgräns). -->
+         (Redis, 30 dagar) eller lång länk (värdena i adressen, ingen tidsgräns).
+         Senare samma dag: synlig rubrik så knapparna inte ser ut att höra
+         till nyckeltalen. Rubriktexten gjordes övertydlig: "Dela kalkylen
+         genom att kopiera indata". -->
     <div class="dela-vid-nyckeltal">
+      <h3 id="dela-rubrik" class="dela-rubrik">Dela kalkylen genom att kopiera indata</h3>
       <div class="dela-knappar">
         <button type="button" id="spara-lank-kort" class="verktyg-knapp verktyg-knapp-gul"
           title="Kort adress via Redis. Gäller 30 dagar.">
