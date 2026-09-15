@@ -3,8 +3,8 @@
 **Namn:** PRD_vindkraftskalkyl_vercel_ver3
 **Plats:** `vindkraftskalkyl_Vercel_ver3/PRD_vindkraftskalkyl_vercel_ver3.md`
 **Skapad:** 2026-09-15
-**Version:** 1.11 (avsnitt 4 nickat; OG i första live; SPEC.md ja)
-**Status:** **Utkast, inte fryst.** Avsnitt 4 är beslutat. Nästa: fräscha-ögon-genomläsning, därefter SPEC.md. Ingen appkod.
+**Version:** 1.12 (fryst efter fräscha-ögon-genomläsning; SPEC.md skriven samma kväll)
+**Status:** **Fryst 2026-09-15.** Avsnitt 4 beslutat. SPEC.md finns. Ingen appkod. Inget Vercel-projekt skapat. Ingen live-URL.
 **Typ:** Grund-PRD (helt ny app i befintligt repo), inte en tilläggs-PRD till ver2.
 
 > Det här dokumentet följer mallen i
@@ -28,7 +28,7 @@ Fyra lager som låter lika men inte är samma sak:
 | **ver2** | Samma kalkyl *plus* två Vercel Functions (`/api/elpris`, `/api/scenario`). Framework **Other**. [vindkraft-ver2.vercel.app](https://vindkraft-ver2.vercel.app). |
 | **ver3 (den här PRD:n)** | Tänkt som en *ny* app: Next.js (App Router) som Vercel känner igen och bygger. Inte en tredje kopia av `index.html`. |
 
-**Dual publicering** = samma HTML/CSS/JS både på GitHub Pages och Vercel, så view-source ser likadan ut. Det är mönstret för programversionen och den statiska tvillingen. ver2 bryter det redan delvis (Functions syns inte i Pages-versionen). ver3 bryter det medvetet om 4c står fast.
+**Dual publicering** = samma HTML/CSS/JS både på GitHub Pages och Vercel, så view-source ser likadan ut. Det är mönstret för programversionen och den statiska tvillingen. ver2 bryter det redan delvis (Functions syns inte i Pages-versionen). ver3 bryter det medvetet (4c: Vercel-only som app).
 
 **Vercel-native** = appen är byggd för plattformen (framework, routing, serverkod, hemligheter, preview), inte bara uppladdad dit.
 
@@ -54,7 +54,7 @@ v1 av den här PRD:n *använde* skillen som arbetssätt men nämnde den bara en 
 - Levande docs (`llms.txt`, Vercel MCP), inte träningsdata eller team-dashboarden.
 - Dual publicering frågas, inte antas. En kloss i taget. Kalkylen räknar om API:t strular. Inget commit/push.
 
-**Medvetet avsteg från skillens exempelprompt:** referensprompten är en slankare investeringskalkyl. Den här PRD:n föreslår att porta *fem-perspektiv-kalkylen* (4e). Next.js är skalet.
+**Medvetet avsteg från skillens exempelprompt:** referensprompten är en slankare investeringskalkyl. Den här PRD:n portar *fem-perspektiv-kalkylen* (4e). Next.js är skalet.
 
 **Rättelse 15 september 2026 kväll:** v1 läste skillens rad “nämns bara Vercel: anta inte Next.js” för strikt mot ett uppdrag som redan sa *till fullo*. Kent påpekade att det är märkligt. Överens: när Vercel-teknik ska användas till fullo ska Next.js (App Router) ingå. Skillen är uppdaterad samma kväll så att “till fullo” / Vercel-native är **spår B som default**, medan “lägg en Function i ver2” fortfarande är spår A. Se 4b.
 
@@ -101,9 +101,9 @@ De tre äldre lagren ska **inte** ersättas av den här PRD:n. ver3 är ett nytt
 
 ## 3. Omfattning [#](#3-Omfattning)
 
-### Ingår (när PRD:n är fryst och, om 4g står fast, SPEC.md är skriven)
+### Ingår (när SPEC.md är skriven — 4g = ja)
 
-Punkterna nedan gäller när PRD:n är fryst och SPEC.md är skriven (4g = ja). 4a–4l är beslutade eller, för 4l, rekommenderad metod med öppna detaljer till SPEC.
+Punkterna nedan gäller den frysta PRD:n. 4a–4k är beslutade. 4l:s metod är i PRD:n; detaljerna (perioddefinition, Redis-nycklar, medel) låses i [SPEC.md](SPEC.md).
 
 - En ny mapp i det här repot: `vindkraftskalkyl_Vercel_ver3/` (skapad i v1 av den här PRD:n).
 - En Next.js-app (App Router) med TypeScript och Tailwind CSS, redo för Vercel. Vercel detekterar Next.js utan extra preset-trick ([Vercel, 2026b](https://vercel.com/docs/frameworks/nextjs)).
@@ -139,7 +139,7 @@ Punkterna nedan gäller när PRD:n är fryst och SPEC.md är skriven (4g = ja). 
 - Vercel Blob eller Postgres, så länge Redis räcker för korta scenarier.
 - PDF-export (nämnd som möjlig Function i ver2, inte byggd där heller).
 - Att agenten committar eller pushar, eller skapar Vercel-projektet åt Kent.
-- Att köra `create-next-app` innan öppna frågor i avsnitt 4 är stängda nog, och innan SPEC.md om 4g blir ja.
+- Att köra `create-next-app` innan SPEC.md är skriven (4g).
 - Vite-regler (`base: './'`, `outDir: 'dist'`) — de gäller Vite-projekt. Next.js har eget byggsteg (`next build`, `.next/`). Medvetet undantag, inte ett glömt krav.
 
 ---
@@ -314,7 +314,7 @@ Gemensamt skal: `app/layout.tsx` (Server Component så långt det går). `'use c
 
 **j) Kents Vite-regler (`base: './'`, `dist/`)? — BESLUTAT ✓ (för den här PRD:n)** [#](#4j-Vite-undantag)
 
-De reglerna gäller Vite-projekt. ver3 är Next.js (4b). Då är `next.config.ts` (eller motsvarande) konfigurationsfilen, inte `vite.config.js`. Relativa sökvägar på GitHub Pages är inte målet om 4c står fast. Dokumenterat så att en framtida agent inte “rättar” Next.js till Vite.
+De reglerna gäller Vite-projekt. ver3 är Next.js (4b). Då är `next.config.ts` (eller motsvarande) konfigurationsfilen, inte `vite.config.js`. Relativa sökvägar på GitHub Pages är inte målet (4c: Vercel-only). Dokumenterat så att en framtida agent inte “rättar” Next.js till Vite.
 
 ---
 
@@ -337,7 +337,7 @@ Inte “mer Vercel” i största allmänhet. Tre grejer GitHub Pages och ver2 *i
 
 <a id="4l-Manads-arspris"></a>
 
-**l) Månads- och årsmedelpris per elområde — UNDERSÖKT 2026-09-15, REKOMMENDATION** [#](#4l-Manads-arspris)
+**l) Månads- och årsmedelpris per elområde — UNDERSÖKT 2026-09-15, DETALJER I SPEC** [#](#4l-Manads-arspris)
 
 Kent: det är inte tillräckligt att bara lägga in **medelpriset för ett dygn**. Spotpriset kan skilja sig kraftigt från dag till dag. Ett **månadsmedel** och ett **årsmedel**, per region (SE1–SE4), säger mer för den som räknar på lönsamhet.
 
@@ -378,7 +378,7 @@ Det går. Appen ska **inte** leta efter en färdig “månadsmedel-knapp” hos 
 
 **Varför Vercel (och inte Pages):** nyckel, XML-svar, medelvärde och Redis hör hemma i en Route Handler. GitHub Pages kan bara visa ett tal någon klistrat in för hand.
 
-**Vad som fortfarande är öppet (för SPEC, inte för en ny research-runda):** kalenderår kontra rullande 12; tidsvägt medel när MTU blandas; om “hittills i år” ska med; exakt Redis-nyckel (`elpris:SE4:manad` o.d.).
+**Vad som fortfarande är öppet (låses i SPEC.md, inte i en ny research-runda):** kalenderår kontra rullande 12; tidsvägt medel när MTU blandas; om “hittills i år” ska med; exakt Redis-nyckel (`elpris:SE4:manad` o.d.). Se [SPEC.md](SPEC.md).
 
 Implementation: när `/api/elpris` skrivs i ver3, inte som en tredje grund-PRD. Första hello-world behöver inte visa talen. Första elpris-handlern ska däremot inte låsa kontraktet till bara dygn.
 
@@ -390,7 +390,7 @@ Implementation: när `/api/elpris` skrivs i ver3, inte som en tredje grund-PRD. 
 
 Checklista. Avbockning ska spegla avsnitt 4 — inget här är “klart” bara för att det står i PRD:n.
 
-**Den här omgången (v1–v1.11):**
+**Den här omgången (v1–v1.12):**
 
 - [x] Skapa mappen `vindkraftskalkyl_Vercel_ver3/` (lokalt, 2026-09-15).
 - [x] Första utkast till denna PRD.
@@ -406,11 +406,12 @@ Checklista. Avbockning ska spegla avsnitt 4 — inget här är “klart” bara 
 - [x] v1.9: Kent: ny app-känsla (4h), gula indatafält med defaults. 4i: `/` `/kalkyl` `/om`, perspektiv-URL:er så snart kalkylen räknar.
 - [x] v1.10: Kent nickade 4f:s faser (första live = sidor + elpris/scenario + Redis; cron/cache i fas 2). 4k närboendelänk ja. OG-kortets tidpunkt öppen tills “vad är OG?” är svarat.
 - [x] v1.11: Kent: OG-kort i första live. 4g SPEC.md ja, efter frysning, innan scaffolding. Avsnitt 4 nickat.
+- [x] v1.12: Fräscha-ögon-genomläsning. Rättat eftersläpning (OG som “fas 2” i källor och produktionsordning; “om 4c står fast”). PRD fryst. SPEC.md skriven.
 
 **Nästa, innan kod:**
 
-- [ ] Fräscha-ögon-genomläsning av hela PRD:n när Kent säger att den kan frysas (Regel 7 — inte samma sak som detta utkast).
-- [ ] SPEC.md (4g = ja) — elpris-kontraktet `period=dygn|manad|ar`, fält-id:n, formelparitet, OG-minimikrav, felvägar.
+- [x] Fräscha-ögon-genomläsning (Regel 7, v1.12).
+- [x] SPEC.md (4g = ja).
 
 **Därefter, implementation (inte påbörjad):**
 
@@ -433,11 +434,11 @@ Ordningen är medveten: krav före spec före scaffolding före Vercel-projekt.
 1. **PRD (nu)** — vad och varför, öppna frågor synliga.
 2. **Kent svarar på avsnitt 4** — gjort 15 september 2026 kväll.
 3. **Frys PRD** efter en fräscha-ögon-genomläsning, inte efter första utkastet.
-4. **SPEC.md** (om 4g = ja) — fält, formler, API-kontrakt, felvägar.
+4. **SPEC.md** — skriven 15 september 2026 ([SPEC.md](SPEC.md)).
 5. **Scaffold Next.js** i den här mappen. Visa filträdet. Ingen stealth-omdesign.
 6. **Port av kalkyl + Route Handlers.** En fungerande `/kalkyl` som räknar utan API, *sedan* elpris (`period=dygn|manad|ar`) och scenario.
 7. **Kent: commit, push, skapa Vercel-projektet** (team Effektiv, Root Directory, env, ev. Redis).
-8. **Verifiera production.** Först därefter cron/OG som fas 2.
+8. **Verifiera production.** Cron/cache är fas 2. OG-kortet hör till första live (4k:2), inte till fas 2.
 9. **Dokumentera live-URL** i README, `CLAUDE.md` och rot-README.
 
 Inte: skapa Vercel-projektet innan det finns något att bygga. Inte: byta formler samtidigt som skalet byts.
@@ -466,7 +467,7 @@ Lundgren, K. (2026e) *Hur man skaffar nyckel hos ENTSO-E* (avsnittet *Kan man f�
 
 Next.js (2026a) *Route Handlers.* Next.js Documentation (App Router). Tillgänglig: https://nextjs.org/docs/app/getting-started/route-handlers (hämtad 15 september 2026). *(Next.js-motsvarigheten till ver2:s `api/*.js` — Web Request/Response, inte Pages Router.)*
 
-Next.js (2026b) *Metadata and OG images.* Next.js Documentation (App Router). Tillgänglig: https://nextjs.org/docs/app/getting-started/metadata-and-og-images (hämtad 15 september 2026). *(Fas 2-förslaget om delningskort; inte ett krav i första live-versionen.)*
+Next.js (2026b) *Metadata and OG images.* Next.js Documentation (App Router). Tillgänglig: https://nextjs.org/docs/app/getting-started/metadata-and-og-images (hämtad 15 september 2026). *(Delningskort med `next/og` — krav i första live, 4k:2.)*
 
 Next.js (2026c) *llms.txt* (agentindex, Next.js 16.3.5 vid kontroll). Tillgänglig: https://nextjs.org/docs/llms.txt (hämtad 15 september 2026). *(Versionsstämplad ingång till App Router-dokumentationen; slår träningsdata.)*
 
@@ -506,13 +507,9 @@ Vercel (2026f) *Redis on Vercel.* Tillgänglig: https://vercel.com/docs/redis (h
 
 ## 8. Status [#](#8-Status)
 
-15 september 2026 kväll: mappen finns. PRD v1.11. **Avsnitt 4 nickat** (4a–4k beslutade; 4l rekommenderad metod med SPEC-detaljer). Nästa: fräscha-ögon-genomläsning, därefter SPEC.md, därefter kod. Ingen appkod. Inget Vercel-projekt skapat. Ingen live-URL.
+15 september 2026 kväll: **PRD fryst (v1.12)** efter fräscha-ögon-genomläsning. Avsnitt 4 nickat. SPEC.md skriven samma kväll. Ingen appkod. Inget Vercel-projekt skapat. Ingen live-URL.
 
-Skillen `nextjs-vercel-app-prompting` (Cursor) säger nu att “till fullo” är spår B som default. Claude-kopian har samma regel införd men är i övrigt en äldre promptmall.
-
-Öppet: inget i avsnitt 4 som kräver ny nick-runda. 4l har öppna detaljer till SPEC (kalenderår vs rullande 12, tidsvägt medel).
-
-Nästa handling: fräscha-ögon-genomläsning innan PRD:n kallas fryst. Därefter SPEC.md. Inte `create-next-app` före SPEC.
+Nästa handling: scaffolda Next.js (App Router) i den här mappen enligt SPEC.md. Visa filträdet innan mängder av filer skrivs. Inte `create-next-app` utan att följa SPEC. Kent committar och pushar själv.
 
 ---
 
@@ -530,3 +527,4 @@ Nästa handling: fräscha-ögon-genomläsning innan PRD:n kallas fryst. Därefte
 - 2026-09-15 (v1.9): Kent: 4h ny app-känsla, men indatafält alltid gula med defaults. 4i `/` `/kalkyl` `/om`; perspektiv-URL:er så snart kalkylen räknar.
 - 2026-09-15 (v1.10): Kent nickade 4f:s faser. 4k: närboendelänk ja. OG-kort förklaras innan tidpunkten låses (Kent frågade vad det är, och kryssade både fas 2 i 4f och “första live” i 4k).
 - 2026-09-15 (v1.11): Kent: OG-kort i första live. 4g SPEC.md ja — efter frysning, innan scaffolding. Avsnitt 4 nickat.
+- 2026-09-15 (v1.12): Fräscha-ögon-genomläsning (Regel 7). Rättat: dual-publicering/4c som redan beslutad; 4e inte längre “förslag”; OG inte fas 2 i källan Next.js 2026b eller i produktionsordning steg 8; Vite-undantaget utan “om 4c står fast”. PRD fryst. SPEC.md skriven.
