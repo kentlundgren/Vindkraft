@@ -6,14 +6,72 @@
  * 'use client' behövs: fälten har state och räknar om medan man skriver.
  * Ingen formel bor här. All matte ligger i lib/calculations.ts (port av ver2).
  *
- * Här skedde en uppdatering mot ver2: flikarna är borta. Perspektiven visas
- * under varandra i översikten; egna URL:er per perspektiv byggs i nästa steg.
+ * Här skedde en uppdatering (perspektiv-URL:erna, SPEC steg 5): samma
+ * komponent används på /kalkyl och på de fem /kalkyl/<perspektiv>-sidorna.
+ * Propen `perspektiv` styr bara vad som lyfts fram överst — inte beräkningen.
+ * Ver2:s flikar är alltså ersatta av riktiga adresser man kan länka till.
  */
 
-import { useState } from 'react';
+import { type ReactNode } from 'react';
+import Link from 'next/link';
 import { DEFAULTS, ELOMRADE_PRIS } from '@/lib/defaults';
 import { beraknaAllt, lasIndata, fmt, type Resultat } from '@/lib/calculations';
 import type { FaltId } from '@/lib/falt';
+import { useKalkyl } from '@/components/KalkylProvider';
+
+/* ---------------------------------------------------------------------------
+   Perspektiven – en lista som både sidorna och formuläret läser.
+   --------------------------------------------------------------------------- */
+
+export type PerspektivId =
+  | 'investerare'
+  | 'markagare'
+  | 'kommun'
+  | 'andelsagare'
+  | 'narboende';
+
+export const PERSPEKTIV: {
+  id: PerspektivId;
+  rubrik: string;
+  kort: string;
+  ingress: string;
+}[] = [
+  {
+    id: 'investerare',
+    rubrik: 'Investerare',
+    kort: 'Investerare',
+    ingress:
+      'Basen är Kent Lundgrens ursprungliga kalkyl, kompletterad med LCOE, payback, NPV och IRR.',
+  },
+  {
+    id: 'markagare',
+    rubrik: 'Markägare',
+    kort: 'Markägare',
+    ingress:
+      'Arrendet räknas antingen som andel av bruttointäkten eller som ett fast belopp per MW och år.',
+  },
+  {
+    id: 'kommun',
+    rubrik: 'Kommun och samhälle',
+    kort: 'Kommun',
+    ingress:
+      'Lokala intäkter (arrende, kommunal ersättning, närboendeersättning) plus värderad klimatnytta.',
+  },
+  {
+    id: 'andelsagare',
+    rubrik: 'Andelsägare',
+    kort: 'Andelsägare',
+    ingress:
+      'Den kooperativa modellen: insats per andel mot självkostnad jämfört med hushållselens marknadspris.',
+  },
+  {
+    id: 'narboende',
+    rubrik: 'Närboende (NU20)',
+    kort: 'Närboende',
+    ingress:
+      'Vindkraftsersättning enligt NU20 / prop. 2025/26:239 – avståndszoner, distansfaktor och taket på 2,5 ‰.',
+  },
+];
 
 /* ---------------------------------------------------------------------------
    Fältdefinitioner – samma etiketter, enheter och steg som ver2:s index.html.
@@ -227,31 +285,110 @@ const JAMFOR_NYCKELTAL: {
   },
 ];
 
+/** Raderna per perspektiv. Alla läser samma resultatobjekt. */
+function perspektivRader(r: Resultat): Record<PerspektivId, [string, string][]> {
+  const payback =
+    r.paybackInvest === null ? '> livslängd' : fmt(r.paybackInvest, 1, ' år');
+  const irr = Number.isFinite(r.irrInvest)
+    ? fmt(r.irrInvest * 100, 1, ' %')
+    : 'ej definierad';
+
+  return {
+    investerare: [
+      ['Produktion', fmt(r.produktionMWh_ar1, 0, ' MWh/år')],
+      ['Intäkt totalt per år', fmt(r.intaktAr1, 0, ' kr/år')],
+      ['Årlig driftskostnad', fmt(r.driftkostnadAr1, 0, ' kr/år')],
+      ['Investeringsutgift', fmt(r.investering, 0, ' kr')],
+      ['Investeringsutgift per årskWh', fmt(r.invPerkWh, 2, ' kr/årskWh')],
+      ['Årlig kapitalkostnad (annuitet)', fmt(r.kapitalkostnad, 0, ' kr/år')],
+      ['Årlig total kostnad', fmt(r.totalkostnad, 0, ' kr/år')],
+      ['Kostnad per kWh', fmt(r.kostnadPerkWh, 2, ' kr/kWh')],
+      ['Överskott per år (bas)', fmt(r.overskott, 0, ' kr/år')],
+      [
+        'Överskott per år efter lokala ersättningar',
+        fmt(r.overskottNetto, 0, ' kr/år'),
+      ],
+      ['LCOE', fmt(r.lcoe, 2, ' kr/kWh')],
+      ['Payback (enkel)', payback],
+      ['NPV (nettonuvärde)', fmt(r.npvInvest, 0, ' kr')],
+      ['IRR (internränta)', irr],
+    ],
+    markagare: [
+      ['Årlig arrendeintäkt (år 1)', fmt(r.arrendeAr1, 0, ' kr/år')],
+      ['Total arrendeintäkt (hela livslängden)', fmt(r.arrendeTotal, 0, ' kr')],
+      ['Nuvärde av arrendet', fmt(r.arrendeNuvarde, 0, ' kr')],
+    ],
+    kommun: [
+      [
+        'Lokala intäkter år 1 (arrende + kommun + närboende)',
+        fmt(r.lokalaIntakterAr1, 0, ' kr/år'),
+      ],
+      [
+        'Lokala intäkter, hela livslängden',
+        fmt(r.lokalaIntakterTotal, 0, ' kr'),
+      ],
+      ['Kommunal ersättning år 1', fmt(r.kommunAr, 0, ' kr/år')],
+      ['Undviken CO₂', fmt(r.co2Ton, 0, ' ton/år')],
+      ['Värderad samhällsnytta', fmt(r.samhallsnytta, 0, ' kr/år')],
+    ],
+    andelsagare: [
+      ['Årlig elmängd från andelarna', fmt(r.elmangd, 0, ' kWh/år')],
+      ['Total insats', fmt(r.totalInsats, 0, ' kr')],
+      ['Självkostnad', fmt(r.sjalvkostnadkWh, 2, ' kr/kWh')],
+      ['Marknadspris hushållsel (år 1)', fmt(r.marknadsprisAr1, 2, ' kr/kWh')],
+      ['Årlig besparing', fmt(r.besparingAr1, 0, ' kr/år')],
+      ['Alternativkostnad för insatsen', fmt(r.alternativkostnad, 0, ' kr/år')],
+      ['Nettoresultat år 1', fmt(r.nettoAr1, 0, ' kr/år')],
+      [
+        'Återbetalningstid på insatsen',
+        r.aterbetalning === null
+          ? 'aldrig (ingen besparing)'
+          : fmt(r.aterbetalning, 1, ' år'),
+      ],
+      ['Nettonuvärde för hushållet', fmt(r.nuvardeAndel, 0, ' kr')],
+    ],
+    narboende: [
+      ['Fem verkshöjder', fmt(r.femhojder, 0, ' m')],
+      ['Nio verkshöjder', fmt(r.niohojder, 0, ' m')],
+      [
+        'Inom ersättningszonen',
+        r.inomZon ? 'Ja' : 'Nej (utanför 9 verkshöjder)',
+      ],
+      ['Distansfaktor', fmt(r.distansfaktor, 2)],
+      [
+        'Ersättning till en enskild bostad',
+        fmt(r.narboendeEnskildAr1, 0, ' kr/år'),
+      ],
+      [
+        'Total ersättning som belastar utövaren',
+        fmt(r.narboendeTotalAr1, 0, ' kr/år'),
+      ],
+    ],
+  };
+}
+
 /* ---------------------------------------------------------------------------
    Komponenten
    --------------------------------------------------------------------------- */
 
-export default function CalculatorForm() {
-  const [falt, setFalt] = useState<Record<FaltId, string>>({ ...DEFAULTS });
-
-  // MINNESLOGIK (som i ver2): "Senaste" och "Tidigare" uppdateras när ett fält
-  // LÄMNAS (blur/change) – inte medan man skriver. Korten ovanför räknar live.
-  const [senaste, setSenaste] = useState<Resultat>(() =>
-    beraknaAllt(lasIndata(DEFAULTS))
-  );
-  const [tidigare, setTidigare] = useState<Resultat | null>(null);
+export default function CalculatorForm({
+  perspektiv,
+}: {
+  /** Utelämnad = översikten på /kalkyl. Satt = det perspektiv som lyfts fram. */
+  perspektiv?: PerspektivId;
+}) {
+  // Fälten och jämförelseminnet bor i /kalkyl-layouten (KalkylProvider), inte
+  // här. Därför nollställs inget när man byter perspektiv-adress.
+  const { falt, setFalt, senaste, tidigare, bekrafta } = useKalkyl();
 
   const resultat = beraknaAllt(lasIndata(falt));
+  const rader = perspektivRader(resultat);
+  const valt = PERSPEKTIV.find((p) => p.id === perspektiv);
+  const ovriga = PERSPEKTIV.filter((p) => p.id !== perspektiv);
 
   /** Skriver medan man knappar – live-omräkning, ingen tabelluppdatering. */
   function andra(id: FaltId, varde: string) {
     setFalt((fore) => ({ ...fore, [id]: varde }));
-  }
-
-  /** Bekräftad ändring: flytta Senaste → Tidigare och spara nytt Senaste. */
-  function bekrafta(nyaFalt: Record<FaltId, string> = falt) {
-    setTidigare(senaste);
-    setSenaste(beraknaAllt(lasIndata(nyaFalt)));
   }
 
   /** Elområde: fyller schablonpris i det gula elpris-fältet (redigerbart). */
@@ -269,13 +406,28 @@ export default function CalculatorForm() {
   function aterstall() {
     const nyaFalt = { ...DEFAULTS };
     setFalt(nyaFalt);
-    setTidigare(senaste);
-    setSenaste(beraknaAllt(lasIndata(nyaFalt)));
+    bekrafta(nyaFalt);
   }
 
   return (
     <div className="space-y-8">
-      {/* ---- Nyckeltal, alltid överst ---- */}
+      {/* ---- Perspektivväljare: adresser, inte flikar ---- */}
+      <nav aria-label="Perspektiv" className="flex flex-wrap gap-2">
+        <PerspektivLank href="/kalkyl" aktiv={!perspektiv}>
+          Översikt
+        </PerspektivLank>
+        {PERSPEKTIV.map((p) => (
+          <PerspektivLank
+            key={p.id}
+            href={`/kalkyl/${p.id}`}
+            aktiv={p.id === perspektiv}
+          >
+            {p.kort}
+          </PerspektivLank>
+        ))}
+      </nav>
+
+      {/* ---- Nyckeltal, alltid synliga oavsett perspektiv ---- */}
       <section aria-labelledby="nyckeltal-rubrik">
         <h2 id="nyckeltal-rubrik" className="sr-only">
           Sammanfattande nyckeltal
@@ -310,6 +462,16 @@ export default function CalculatorForm() {
         </div>
       </section>
 
+      {/* ---- Förgrunden: det valda perspektivet ligger överst ---- */}
+      {valt ? (
+        <Perspektiv
+          rubrik={valt.rubrik}
+          ingress={valt.ingress}
+          rader={rader[valt.id]}
+          framhavd
+        />
+      ) : null}
+
       {/* ---- Indata: gula fält ---- */}
       <section aria-labelledby="indata-rubrik">
         <div className="flex flex-wrap items-baseline justify-between gap-3">
@@ -327,7 +489,7 @@ export default function CalculatorForm() {
         <p className="mt-1 text-sm text-slate-600">
           Alla fält med <span className="rounded bg-[#fff3b0] px-1">gul
           bakgrund</span> är värden du kan mata in och ändra. Kalkylen räknar om
-          direkt, utan serveranrop.
+          direkt, utan serveranrop. Värdena följer med när du byter perspektiv.
         </p>
 
         <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -470,127 +632,22 @@ export default function CalculatorForm() {
         </div>
       </section>
 
-      {/* ---- De fem perspektiven i översikt ---- */}
+      {/* ---- Övriga perspektiv (alla fem när man står på översikten) ---- */}
       <section aria-labelledby="perspektiv-rubrik" className="space-y-4">
         <h2 id="perspektiv-rubrik" className="text-xl font-semibold">
-          De fem perspektiven
+          {valt ? 'Övriga perspektiv' : 'De fem perspektiven'}
         </h2>
 
-        <Perspektiv
-          rubrik="Investerare"
-          rader={[
-            ['Produktion', fmt(resultat.produktionMWh_ar1, 0, ' MWh/år')],
-            ['Intäkt totalt per år', fmt(resultat.intaktAr1, 0, ' kr/år')],
-            ['Årlig driftskostnad', fmt(resultat.driftkostnadAr1, 0, ' kr/år')],
-            ['Investeringsutgift', fmt(resultat.investering, 0, ' kr')],
-            [
-              'Investeringsutgift per årskWh',
-              fmt(resultat.invPerkWh, 2, ' kr/årskWh'),
-            ],
-            [
-              'Årlig kapitalkostnad (annuitet)',
-              fmt(resultat.kapitalkostnad, 0, ' kr/år'),
-            ],
-            ['Årlig total kostnad', fmt(resultat.totalkostnad, 0, ' kr/år')],
-            ['Kostnad per kWh', fmt(resultat.kostnadPerkWh, 2, ' kr/kWh')],
-            ['Överskott per år (bas)', fmt(resultat.overskott, 0, ' kr/år')],
-            [
-              'Överskott per år efter lokala ersättningar',
-              fmt(resultat.overskottNetto, 0, ' kr/år'),
-            ],
-            ['LCOE', fmt(resultat.lcoe, 2, ' kr/kWh')],
-            [
-              'Payback (enkel)',
-              resultat.paybackInvest === null
-                ? '> livslängd'
-                : fmt(resultat.paybackInvest, 1, ' år'),
-            ],
-            ['NPV (nettonuvärde)', fmt(resultat.npvInvest, 0, ' kr')],
-            [
-              'IRR (internränta)',
-              Number.isFinite(resultat.irrInvest)
-                ? fmt(resultat.irrInvest * 100, 1, ' %')
-                : 'ej definierad',
-            ],
-          ]}
-        />
+        {ovriga.map((p) => (
+          <Perspektiv
+            key={p.id}
+            rubrik={p.rubrik}
+            rader={rader[p.id]}
+            lank={`/kalkyl/${p.id}`}
+          />
+        ))}
 
-        <Perspektiv
-          rubrik="Markägare"
-          rader={[
-            ['Årlig arrendeintäkt (år 1)', fmt(resultat.arrendeAr1, 0, ' kr/år')],
-            [
-              'Total arrendeintäkt (hela livslängden)',
-              fmt(resultat.arrendeTotal, 0, ' kr'),
-            ],
-            ['Nuvärde av arrendet', fmt(resultat.arrendeNuvarde, 0, ' kr')],
-          ]}
-        />
-
-        <Perspektiv
-          rubrik="Kommun/samhälle"
-          rader={[
-            [
-              'Lokala intäkter år 1 (arrende + kommun + närboende)',
-              fmt(resultat.lokalaIntakterAr1, 0, ' kr/år'),
-            ],
-            [
-              'Lokala intäkter, hela livslängden',
-              fmt(resultat.lokalaIntakterTotal, 0, ' kr'),
-            ],
-            ['Kommunal ersättning år 1', fmt(resultat.kommunAr, 0, ' kr/år')],
-            ['Undviken CO₂', fmt(resultat.co2Ton, 0, ' ton/år')],
-            ['Värderad samhällsnytta', fmt(resultat.samhallsnytta, 0, ' kr/år')],
-          ]}
-        />
-
-        <Perspektiv
-          rubrik="Andelsägare"
-          rader={[
-            ['Årlig elmängd från andelarna', fmt(resultat.elmangd, 0, ' kWh/år')],
-            ['Total insats', fmt(resultat.totalInsats, 0, ' kr')],
-            ['Självkostnad', fmt(resultat.sjalvkostnadkWh, 2, ' kr/kWh')],
-            [
-              'Marknadspris hushållsel (år 1)',
-              fmt(resultat.marknadsprisAr1, 2, ' kr/kWh'),
-            ],
-            ['Årlig besparing', fmt(resultat.besparingAr1, 0, ' kr/år')],
-            [
-              'Alternativkostnad för insatsen',
-              fmt(resultat.alternativkostnad, 0, ' kr/år'),
-            ],
-            ['Nettoresultat år 1', fmt(resultat.nettoAr1, 0, ' kr/år')],
-            [
-              'Återbetalningstid på insatsen',
-              resultat.aterbetalning === null
-                ? 'aldrig (ingen besparing)'
-                : fmt(resultat.aterbetalning, 1, ' år'),
-            ],
-            ['Nettonuvärde för hushållet', fmt(resultat.nuvardeAndel, 0, ' kr')],
-          ]}
-        />
-
-        <Perspektiv
-          rubrik="Närboende (NU20)"
-          rader={[
-            ['Fem verkshöjder', fmt(resultat.femhojder, 0, ' m')],
-            ['Nio verkshöjder', fmt(resultat.niohojder, 0, ' m')],
-            [
-              'Inom ersättningszonen',
-              resultat.inomZon ? 'Ja' : 'Nej (utanför 9 verkshöjder)',
-            ],
-            ['Distansfaktor', fmt(resultat.distansfaktor, 2)],
-            [
-              'Ersättning till en enskild bostad',
-              fmt(resultat.narboendeEnskildAr1, 0, ' kr/år'),
-            ],
-            [
-              'Total ersättning som belastar utövaren',
-              fmt(resultat.narboendeTotalAr1, 0, ' kr/år'),
-            ],
-          ]}
-        />
-
+        {/* Rimlighetskontrollen hör till NU20 och visas där siffran finns. */}
         <p className="text-sm text-slate-600">
           Rimlighetskontroll: högsta ersättning per bostad hamnar enligt lagens
           storleksordning på ca 38 000 kr/år i SE4 och ca 19 000 kr/år i SE1 vid
@@ -605,6 +662,31 @@ export default function CalculatorForm() {
 /* ---------------------------------------------------------------------------
    Små presentationsdelar
    --------------------------------------------------------------------------- */
+
+function PerspektivLank({
+  href,
+  aktiv,
+  children,
+}: {
+  href: string;
+  aktiv: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      aria-current={aktiv ? 'page' : undefined}
+      className={
+        'rounded-full border px-3 py-1.5 text-sm font-medium ' +
+        (aktiv
+          ? 'border-teal-700 bg-teal-700 text-white'
+          : 'border-slate-300 bg-white text-slate-700 hover:border-teal-700 hover:text-teal-800')
+      }
+    >
+      {children}
+    </Link>
+  );
+}
 
 function Nyckeltal({ etikett, varde }: { etikett: string; varde: string }) {
   return (
@@ -621,14 +703,40 @@ function Nyckeltal({ etikett, varde }: { etikett: string; varde: string }) {
 
 function Perspektiv({
   rubrik,
+  ingress,
   rader,
+  lank,
+  framhavd = false,
 }: {
   rubrik: string;
+  ingress?: string;
   rader: [string, string][];
+  lank?: string;
+  framhavd?: boolean;
 }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4">
-      <h3 className="font-semibold text-teal-900">{rubrik}</h3>
+    <div
+      className={
+        'rounded-xl border p-4 ' +
+        (framhavd
+          ? 'border-teal-700 bg-teal-50/60 shadow-sm'
+          : 'border-slate-200 bg-white')
+      }
+    >
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h3 className="font-semibold text-teal-900">{rubrik}</h3>
+        {lank ? (
+          <Link
+            href={lank}
+            className="text-sm font-medium text-teal-800 underline underline-offset-2 hover:text-teal-600"
+          >
+            Öppna som egen sida
+          </Link>
+        ) : null}
+      </div>
+      {ingress ? (
+        <p className="mt-1 text-sm text-slate-700">{ingress}</p>
+      ) : null}
       <dl className="mt-3 grid gap-x-6 gap-y-2 sm:grid-cols-2">
         {rader.map(([etikett, varde]) => (
           <div

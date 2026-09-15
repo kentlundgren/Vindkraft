@@ -4,7 +4,7 @@
 **Plats:** `vindkraftskalkyl_Vercel_ver3/SPEC.md`  
 **Skapad:** 2026-09-15  
 **Gäller:** fryst [PRD v1.14](PRD_vindkraftskalkyl_vercel_ver3.md)  
-**Status:** Stomme, `/` `/om` och `/kalkyl` med alla 33 gula fält, nyckeltal, jämförelsetabell och de fem perspektiven. Paritetstestet är grönt. Kvar: perspektiv-URL:er, Route Handlers (elpris, scenario) och OG-bild.
+**Status:** Stomme, `/`, `/om`, `/kalkyl` och de fem perspektiv-URL:erna. Gula fält, nyckeltal och jämförelsetabell fungerar; paritetstestet är grönt. Kvar: Route Handlers (elpris, scenario), delningslänkar `?s=`/`?t=` och OG-bild.
 
 Det här dokumentet är agentens ritning: *exakt hur*, inte *vad och varför*. Vad och varför står i PRD:n. Gissa inte luckor — om något saknas här, fråga Kent.
 
@@ -64,6 +64,7 @@ vindkraftskalkyl_Vercel_ver3/
 │   ├── page.tsx                     ← /
 │   ├── globals.css
 │   ├── kalkyl/
+│   │   ├── layout.tsx               ← delat state för /kalkyl + perspektiven
 │   │   ├── page.tsx                 ← /kalkyl
 │   │   ├── opengraph-image.tsx      ← OG 1200×630, läser ?s= / ?t=
 │   │   ├── investerare/page.tsx
@@ -77,6 +78,7 @@ vindkraftskalkyl_Vercel_ver3/
 │       └── scenario/route.ts
 ├── components/
 │   ├── CalculatorForm.tsx           ← 'use client'
+│   ├── KalkylProvider.tsx           ← 'use client', fältens delade state
 │   ├── GithubHorna.tsx
 │   └── TeknikModal.tsx
 ├── lib/
@@ -89,6 +91,8 @@ vindkraftskalkyl_Vercel_ver3/
 ```
 
 Perspektiv-sidorna ska **återanvända** `CalculatorForm` med prop `perspektiv`. Inte fem kopior av formlerna.
+
+Två filer tillkom här utöver ursprungsträdet: `app/kalkyl/layout.tsx` och `components/KalkylProvider.tsx`. Skälet: App Router behåller layouten när man navigerar mellan sidor under `/kalkyl`, så fältens state måste bo där för att indata ska följa med mellan perspektiv-adresserna. Alternativet (state i varje sida + sessionStorage) föll på ESLint-regeln `react-hooks/set-state-in-effect`.
 
 Tester: `lib/calculations.test.ts`, kört med Node:s inbyggda testlöpare (`npm test` → `node --experimental-strip-types --test`). Ingen ny testram installerad. Fixturen är tagen genom att köra ver2:s `berakningar.js` mot ver2:s defaults, inte handräknad.
 
