@@ -3,8 +3,8 @@
 **Namn:** PRD_vindkraftskalkyl_vercel_ver3
 **Plats:** `vindkraftskalkyl_Vercel_ver3/PRD_vindkraftskalkyl_vercel_ver3.md`
 **Skapad:** 2026-09-15
-**Version:** 1.5 (4l undersökt: månads- och årsmedel via samma A44 som ver2)
-**Status:** **Utkast, inte fryst.** 4b är beslutad (Next.js App Router). 4j var redan beslutad. **4l:** metod rekommenderad 15 september 2026 (källa + hämtning), inte byggd. Ingen appkod, inget Vercel-projekt, ingen live-URL.
+**Version:** 1.6 (4a och 4d beslutade: mapp + Vercel-projekt)
+**Status:** **Utkast, inte fryst.** Beslutade: 4a, 4b, 4d, 4j. **4l:** metod rekommenderad, inte byggd. Ingen appkod, inget Vercel-projekt skapat, ingen live-URL.
 **Typ:** Grund-PRD (helt ny app i befintligt repo), inte en tilläggs-PRD till ver2.
 
 > Det här dokumentet följer mallen i
@@ -150,13 +150,11 @@ Punkterna nedan utom den redan skapade mappen är **förslag tills 4c och 4e är
 
 <a id="4a-Mappnamn"></a>
 
-**a) Vilket mappnamn? — FÖRSLAG UTFÖRT, VÄNTAR BEKRÄFTELSE** [#](#4a-Mappnamn)
+**a) Vilket mappnamn? — BESLUTAT ✓ (2026-09-15)** [#](#4a-Mappnamn)
 
 Kent skrev `vindkraft:Vercel_ver3`. Kolon kan inte ingå i ett Windows-mappnamn. Befintligt mönster är `vindkraftskalkyl_Vercel_ver2`.
 
-**Förslag som redan är skapat lokalt:** `vindkraftskalkyl_Vercel_ver3`.
-
-Alternativ om Kent vill något kortare: `vindkraftskalkyl_Vercel_ver3` står ändå fast som default tills annat sägs. Byt inte tyst.
+**Beslut:** `vindkraftskalkyl_Vercel_ver3` (redan skapad lokalt). Byt inte tyst.
 
 ---
 
@@ -188,10 +186,10 @@ Om Kent vill ha en Pages-spegel senare: exportera statiskt där det går, som et
 
 <a id="4d-Vercel-projekt"></a>
 
-**d) Vercel-projektnamn, team, Root Directory? — FÖRSLAG, ÖPPEN** [#](#4d-Vercel-projekt)
+**d) Vercel-projektnamn, team, Root Directory? — BESLUTAT ✓ (2026-09-15)** [#](#4d-Vercel-projekt)
 
-| Val | Förslag |
-|-----|---------|
+| Val | Beslut |
+|-----|--------|
 | Team | Effektiv (`effektiv1`) — samma som ver2, inte ett nytt team |
 | Project Name | `vindkraft-ver3` |
 | Root Directory | `vindkraftskalkyl_Vercel_ver3` |
@@ -391,7 +389,7 @@ Implementation: när `/api/elpris` skrivs i ver3, inte som en tredje grund-PRD. 
 
 Checklista. Avbockning ska spegla avsnitt 4 — inget här är “klart” bara för att det står i PRD:n.
 
-**Den här omgången (v1–v1.5):**
+**Den här omgången (v1–v1.6):**
 
 - [x] Skapa mappen `vindkraftskalkyl_Vercel_ver3/` (lokalt, 2026-09-15).
 - [x] Första utkast till denna PRD.
@@ -401,10 +399,11 @@ Checklista. Avbockning ska spegla avsnitt 4 — inget här är “klart” bara 
 - [x] `nextjs-vercel-app-prompting` uppdaterad så “till fullo” = spår B / Next.js (App Router) som default.
 - [x] v1.4: 4l — månads- och årsmedelpris per elområde som önskan att undersöka, inte fas 1.
 - [x] v1.5: 4l undersökt samma kväll — källa A44, ett anrop per månad/år, cache/cron, vad som *inte* är spot. Metod i PRD:n. Inte byggd.
+- [x] v1.6: Kent nickade 4a (mappnamn) och 4d (Vercel-projekt `vindkraft-ver3` i teamet Effektiv).
 
 **Nästa, innan kod:**
 
-- [ ] Kent tar ställning till resterande 4a, 4c, 4e, 4g, 4h, 4i, 4k (4l är rekommendation, inte grind).
+- [ ] Kent tar ställning till resterande 4c, 4e, 4f, 4g, 4h, 4i, 4k (4l är rekommendation, inte grind).
 - [ ] Fräscha-ögon-genomläsning av hela PRD:n när Kent säger att den kan frysas (Regel 7 — inte samma sak som detta utkast).
 - [ ] SPEC.md om 4g blir ja — ska då innehålla elpris-kontraktet `period=dygn|manad|ar`.
 
@@ -502,13 +501,13 @@ Vercel (2026f) *Redis on Vercel.* Tillgänglig: https://vercel.com/docs/redis (h
 
 ## 8. Status [#](#8-Status)
 
-15 september 2026 kväll: mappen finns. PRD v1.5. **4b beslutad:** Next.js (App Router) är skalet när Vercel används till fullo. 4j var redan beslutad. **4l:** undersökt samma kväll — månads- och årsmedel per SE1–SE4 via samma A44 som ver2, ett anrop per fönster, cache/cron. Inte byggd. Ingen appkod. Inget Vercel-projekt. Ingen live-URL.
+15 september 2026 kväll: mappen finns. PRD v1.6. **Beslutade:** 4a mappnamn, 4b Next.js (App Router), 4d Vercel-projekt `vindkraft-ver3` i Effektiv, 4j Vite-undantag. **4l:** undersökt — månads- och årsmedel via A44. Inte byggd. Ingen appkod. Inget Vercel-projekt skapat. Ingen live-URL.
 
 Skillen `nextjs-vercel-app-prompting` (Cursor) säger nu att “till fullo” är spår B som default. Claude-kopian har samma regel införd men är i övrigt en äldre promptmall.
 
-Öppet eller förslag: 4a (mappnamn i praktiken skapat), 4c, 4d, 4e, 4f, 4g, 4h, 4i, 4k. 4l är rekommenderad metod (öppna detaljer till SPEC), inte ett nej och inte en andra research-runda.
+Öppet: 4c, 4e, 4f, 4g, 4h, 4i, 4k. 4l är rekommenderad metod (öppna detaljer till SPEC).
 
-Nästa handling är Kents: nicka, ändra eller stryka i det som är kvar i avsnitt 4. Därefter en fräscha-ögon-genomläsning innan någon kallar PRD:n fryst.
+Nästa handling: resten av avsnitt 4, två frågor i taget. Därefter fräscha-ögon-genomläsning innan PRD:n kallas fryst.
 
 ---
 
@@ -520,3 +519,4 @@ Nästa handling är Kents: nicka, ändra eller stryka i det som är kvar i avsni
 - 2026-09-15 (v1.3): Förtydligat att kalkylen inte får en chatt. “Chatt” i bakgrunden bytt till Cursor-sessionen. 4k och “Ingår inte” skiljer meddelanden *i appen* från förhandsvisningskort i mejl/Teams/LinkedIn.
 - 2026-09-15 (v1.4): Kent: dygnssnitt räcker inte som ensam elprissiffra. Ny 4l — månads- och årsmedel per SE1–SE4 som önskan att undersöka inom snar framtid (källa, aggregering, cache/cron). Inte fas 1. Gula 25-årsfältet skrivs inte över tyst. 4k:3 pekar hit.
 - 2026-09-15 (v1.5): Kent ångrade “undersök senare”. 4l omarbetad till undersökt metod: samma A44 som ver2, ett anrop per månad/år (ENTSO-E one-year limit), Redis + cron, SCB/Nord Pool-API/SVK/skrapning avvisade som spotkälla. API-kontrakt `period=dygn|manad|ar`. Inte byggd.
+- 2026-09-15 (v1.6): Kent nickade 4a (`vindkraftskalkyl_Vercel_ver3`) och 4d (projekt `vindkraft-ver3`, team Effektiv, Root Directory = mappen).
