@@ -3,8 +3,8 @@
 **Namn:** PRD_vindkraftskalkyl_vercel_ver3
 **Plats:** `vindkraftskalkyl_Vercel_ver3/PRD_vindkraftskalkyl_vercel_ver3.md`
 **Skapad:** 2026-09-15
-**Version:** 1.6 (4a och 4d beslutade: mapp + Vercel-projekt)
-**Status:** **Utkast, inte fryst.** Beslutade: 4a, 4b, 4d, 4j. **4l:** metod rekommenderad, inte byggd. Ingen appkod, inget Vercel-projekt skapat, ingen live-URL.
+**Version:** 1.9 (4h ny app-känsla + gula fält; 4i bas-URL:er + perspektiv)
+**Status:** **Utkast, inte fryst.** Beslutade: 4a–4e, 4h, 4i, 4j. Öppet: 4f, 4g, 4k. **4l:** metod rekommenderad, inte byggd. Ingen appkod.
 **Typ:** Grund-PRD (helt ny app i befintligt repo), inte en tilläggs-PRD till ver2.
 
 > Det här dokumentet följer mallen i
@@ -103,7 +103,7 @@ De tre äldre lagren ska **inte** ersättas av den här PRD:n. ver3 är ett nytt
 
 ### Ingår (när PRD:n är fryst och, om 4g står fast, SPEC.md är skriven)
 
-Punkterna nedan utom den redan skapade mappen är **förslag tills 4c och 4e är beslutade.** 4b är beslutad: Next.js (App Router). Fem-perspektiv-porten (4e) är fortfarande förslag.
+Punkterna nedan utom den redan skapade mappen är **förslag tills 4f är beslutad.** 4a–4e, 4h, 4i och 4j är beslutade.
 
 - En ny mapp i det här repot: `vindkraftskalkyl_Vercel_ver3/` (skapad i v1 av den här PRD:n).
 - En Next.js-app (App Router) med TypeScript och Tailwind CSS, redo för Vercel. Vercel detekterar Next.js utan extra preset-trick ([Vercel, 2026b](https://vercel.com/docs/frameworks/nextjs)).
@@ -174,13 +174,15 @@ Arbete *i ver2* är ett annat uppdrag och stannar på HTML tills någon uttryckl
 
 <a id="4c-Dual"></a>
 
-**c) Dual publicering (GitHub Pages + Vercel identiskt)? — FÖRSLAG, ÖPPEN** [#](#4c-Dual)
+**c) Dual publicering (GitHub Pages + Vercel identiskt)? — BESLUTAT ✓ (2026-09-15)** [#](#4c-Dual)
 
-Projekt-skillen för dual publicering säger att nya modeller *bör* följa samma mönster. Next.js har ett byggsteg. View-source blir inte tre platta filer.
+Projekt-skillen för dual publicering säger att nya modeller *bör* följa samma mönster. Next.js har ett byggsteg. View-source blir inte tre platta filer. Hemlig nyckel, elpris-API, Redis-delning och dynamiska delningskort kräver server — det GitHub Pages inte har.
 
-**Förslag:** ver3 är **Vercel-only som app**. GitHub Pages fortsätter visa programversionen. README och teknik-modal förklarar de fyra adresserna (Pages, rosy, ver2, ver3) i stället för att låtsas att de är samma binär.
+Kent: när Vercel används till fullo kan man inte ha samma program med samma funktionalitet på Pages. Det stämmer. Därför är dual publicering av *samma binär* inte målet här.
 
-Om Kent vill ha en Pages-spegel senare: exportera statiskt där det går, som ett *eget* senare beslut — inte ett dolt krav i v1.
+**Beslut:** ver3 är **Vercel-only som app**. GitHub Pages fortsätter visa programversionen. rosy och ver2 ligger kvar. README och teknik-modal förklarar de fyra adresserna i stället för att låtsas att de är samma binär.
+
+En Pages-spegel senare är ett *eget* senare beslut — inte ett dolt krav i v1.
 
 ---
 
@@ -202,11 +204,11 @@ Kent skapar projektet i dashboarden efter första push, samma arbetssätt som ve
 
 <a id="4e-Kalkyl"></a>
 
-**e) Samma kalkyl (fem perspektiv) eller en slankare investeringskalkyl? — FÖRSLAG, ÖPPEN** [#](#4e-Kalkyl)
+**e) Samma kalkyl (fem perspektiv) eller en slankare investeringskalkyl? — BESLUTAT ✓ (2026-09-15)** [#](#4e-Kalkyl)
 
 Referensprompten för Next.js-kalkylatorn är en slankare investeringskalkyl (effekt, LCOE, känslighet). Live-kalkylen som Kent faktiskt använder är **fem perspektiv** plus NU20.
 
-**Förslag:** porta fem-perspektiv-kalkylen (samma indata och formler som ver2). Next.js är skalet. En slankare kalkyl skulle vara ett annat verktyg, och då ska det sägas rakt.
+**Beslut:** porta fem-perspektiv-kalkylen (samma indata och formler som ver2). Next.js är skalet. En slankare kalkyl vore ett annat verktyg.
 
 ---
 
@@ -255,24 +257,21 @@ Om Kent vill börja med en tom Next.js-hello och fylla kalkylen senare kan SPEC.
 
 <a id="4h-Utseende"></a>
 
-**h) Behålla ver2:s utseende eller ny, “appig” design? — ÖPPEN** [#](#4h-Utseende)
+**h) Behålla ver2:s utseende eller ny, “appig” design? — BESLUTAT ✓ (2026-09-15)** [#](#4h-Utseende)
 
-Två rimliga linjer:
+Kent: Vercel till fullo betyder **ny app-känsla**, inte en HTML-kalkyl i ny kostym. Ett undantag är stående: **indatafält har gul bakgrund**, så det syns var man ska skriva. Defaultvärden finns som tidigare.
 
-1. **Igenkänning:** samma palett, samma gula fält, samma fem flikar — bara skalet byts. Snabbare att jämföra formelparitet.
-2. **Ny yta:** Tailwind, kortlayout, egna URL:er per perspektiv. Tydligare att det är en ny app; högre risk att “samma kalkyl” känns som en annan produkt.
-
-Ingen av dem är vald. Första utkastet lutar mot (1) för *färger och gula fält* i fas 1. 4i:s perspektiv-URL:er kan ersätta flikar även om paletten är densamma — det är routing, inte en visuell omdesign. Kent avgör.
+**Beslut:** ny yta (Tailwind, kortlayout, egna URL:er per perspektiv). Inte ver2:s palett i övrigt. Gula indatafält + defaults är krav, inte ett färgtema att kopiera rakt av.
 
 ---
 
 <a id="4i-Rutter"></a>
 
-**i) Vilka URL:er, och hur App Router delas upp? — FÖRSLAG, ÖPPEN** [#](#4i-Rutter)
+**i) Vilka URL:er, och hur App Router delas upp? — BESLUTAT ✓ (2026-09-15)** [#](#4i-Rutter)
 
 App Router är en sidväxlare. HTML-kalkylen har en `index.html` och låtsas att flikar är sidor. Adressen är densamma. Det är skillen som sätter den skillnaden: flikar döljer divar; App Router ger riktiga URL:er.
 
-**Föreslagen uppdelning (arkitektur, inte bara fillista):**
+**Arkitektur (låst som princip):**
 
 | Del | Var | Varför |
 |-----|-----|--------|
@@ -281,7 +280,7 @@ App Router är en sidväxlare. HTML-kalkylen har en `index.html` och låtsas att
 | Formler | `lib/calculations.ts` | Samma tal som ver2, testbart utan UI. |
 | Elpris och delning | `app/api/.../route.ts` | Hemligheter stannar på servern. Samma uppgift som ver2, ny filform. |
 
-**Bas-URL:er:**
+**Beslutade bas-URL:er:**
 
 | URL | Fil | Innehåll |
 |-----|-----|----------|
@@ -291,9 +290,9 @@ App Router är en sidväxlare. HTML-kalkylen har en `index.html` och låtsas att
 | `/api/elpris` | `app/api/elpris/route.ts` | Spot per SE1–SE4: `period=dygn|manad|ar` (4l). Samma A44 som ver2. |
 | `/api/scenario` | `app/api/scenario/route.ts` | Samma uppgift som ver2 |
 
-Alternativ: kalkylen *är* `/` (som i HTML-versionerna). Då blir ingången tunnare. **Öppet.**
+Kalkylen är **inte** `/`. Ingången är `/`, kalkylen är `/kalkyl`.
 
-**Perspektiv som adresser (förslag, det HTML inte kan):**
+**Perspektiv som adresser — så snart kalkylen räknar** (inte en evig “senare”):
 
 | URL | För vem |
 |-----|---------|
@@ -303,7 +302,7 @@ Alternativ: kalkylen *är* `/` (som i HTML-versionerna). Då blir ingången tunn
 | `/kalkyl/andelsagare` | Kooperativ modell |
 | `/kalkyl/narboende` | NU20 — länken man skickar till den som berörs |
 
-Indata är gemensam (samma layout, samma scenario via `?s=`). Det som byts är vilken historia som är i förgrunden. Fas 1 kan leva med `/kalkyl` och flikar; perspektiv-URL:erna är det som gör App Router *kännbart* för användaren, inte bara för den som tittar i `app/`. Se 4k:1.
+Indata är gemensam (samma layout, samma scenario via `?s=`). Det som byts är vilken historia som är i förgrunden. Se 4k:1.
 
 Gemensamt skal: `app/layout.tsx` (Server Component så långt det går). `'use client'` bara där state, events eller webbläsar-API behövs.
 
@@ -400,10 +399,13 @@ Checklista. Avbockning ska spegla avsnitt 4 — inget här är “klart” bara 
 - [x] v1.4: 4l — månads- och årsmedelpris per elområde som önskan att undersöka, inte fas 1.
 - [x] v1.5: 4l undersökt samma kväll — källa A44, ett anrop per månad/år, cache/cron, vad som *inte* är spot. Metod i PRD:n. Inte byggd.
 - [x] v1.6: Kent nickade 4a (mappnamn) och 4d (Vercel-projekt `vindkraft-ver3` i teamet Effektiv).
+- [x] v1.7: Kent nickade 4e (fem-perspektiv-port). 4c inte stängd: Kent frågade om samma funktionalitet kan ligga på GitHub Pages när Vercel används till fullo.
+- [x] v1.8: Kent nickade 4c (Vercel-only som app). Pages/rosy/ver2 ligger kvar. Dual publicering av samma Next.js-binär är inte målet.
+- [x] v1.9: Kent: ny app-känsla (4h), gula indatafält med defaults. 4i: `/` `/kalkyl` `/om`, perspektiv-URL:er så snart kalkylen räknar.
 
 **Nästa, innan kod:**
 
-- [ ] Kent tar ställning till resterande 4c, 4e, 4f, 4g, 4h, 4i, 4k (4l är rekommendation, inte grind).
+- [ ] Kent tar ställning till resterande 4f, 4g, 4k (4l är rekommendation, inte grind).
 - [ ] Fräscha-ögon-genomläsning av hela PRD:n när Kent säger att den kan frysas (Regel 7 — inte samma sak som detta utkast).
 - [ ] SPEC.md om 4g blir ja — ska då innehålla elpris-kontraktet `period=dygn|manad|ar`.
 
@@ -501,11 +503,11 @@ Vercel (2026f) *Redis on Vercel.* Tillgänglig: https://vercel.com/docs/redis (h
 
 ## 8. Status [#](#8-Status)
 
-15 september 2026 kväll: mappen finns. PRD v1.6. **Beslutade:** 4a mappnamn, 4b Next.js (App Router), 4d Vercel-projekt `vindkraft-ver3` i Effektiv, 4j Vite-undantag. **4l:** undersökt — månads- och årsmedel via A44. Inte byggd. Ingen appkod. Inget Vercel-projekt skapat. Ingen live-URL.
+15 september 2026 kväll: mappen finns. PRD v1.9. **Beslutade:** 4a–4e, 4h (ny app-känsla + gula fält), 4i (bas-URL:er + perspektiv så snart det räknar), 4j. Öppet: 4f, 4g, 4k. **4l:** undersökt. Inte byggd.
 
 Skillen `nextjs-vercel-app-prompting` (Cursor) säger nu att “till fullo” är spår B som default. Claude-kopian har samma regel införd men är i övrigt en äldre promptmall.
 
-Öppet: 4c, 4e, 4f, 4g, 4h, 4i, 4k. 4l är rekommenderad metod (öppna detaljer till SPEC).
+Öppet: 4f, 4g, 4k. 4l är rekommenderad metod (öppna detaljer till SPEC).
 
 Nästa handling: resten av avsnitt 4, två frågor i taget. Därefter fräscha-ögon-genomläsning innan PRD:n kallas fryst.
 
@@ -520,3 +522,6 @@ Nästa handling: resten av avsnitt 4, två frågor i taget. Därefter fräscha-�
 - 2026-09-15 (v1.4): Kent: dygnssnitt räcker inte som ensam elprissiffra. Ny 4l — månads- och årsmedel per SE1–SE4 som önskan att undersöka inom snar framtid (källa, aggregering, cache/cron). Inte fas 1. Gula 25-årsfältet skrivs inte över tyst. 4k:3 pekar hit.
 - 2026-09-15 (v1.5): Kent ångrade “undersök senare”. 4l omarbetad till undersökt metod: samma A44 som ver2, ett anrop per månad/år (ENTSO-E one-year limit), Redis + cron, SCB/Nord Pool-API/SVK/skrapning avvisade som spotkälla. API-kontrakt `period=dygn|manad|ar`. Inte byggd.
 - 2026-09-15 (v1.6): Kent nickade 4a (`vindkraftskalkyl_Vercel_ver3`) och 4d (projekt `vindkraft-ver3`, team Effektiv, Root Directory = mappen).
+- 2026-09-15 (v1.7): Kent nickade 4e (porta fem-perspektiv-kalkylen). 4c väntar: Kent hade rätt i att till-fullo-appen inte kan ha samma funktionalitet på GitHub Pages.
+- 2026-09-15 (v1.8): Kent nickade 4c: ver3 är Vercel-only som app. Pages, rosy och ver2 ligger kvar. Dual publicering av samma Next.js-binär är inte målet.
+- 2026-09-15 (v1.9): Kent: 4h ny app-känsla, men indatafält alltid gula med defaults. 4i `/` `/kalkyl` `/om`; perspektiv-URL:er så snart kalkylen räknar.
