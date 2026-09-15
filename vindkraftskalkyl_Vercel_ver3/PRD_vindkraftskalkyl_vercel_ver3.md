@@ -3,8 +3,8 @@
 **Namn:** PRD_vindkraftskalkyl_vercel_ver3
 **Plats:** `vindkraftskalkyl_Vercel_ver3/PRD_vindkraftskalkyl_vercel_ver3.md`
 **Skapad:** 2026-09-15
-**Version:** 1.9 (4h ny app-känsla + gula fält; 4i bas-URL:er + perspektiv)
-**Status:** **Utkast, inte fryst.** Beslutade: 4a–4e, 4h, 4i, 4j. Öppet: 4f, 4g, 4k. **4l:** metod rekommenderad, inte byggd. Ingen appkod.
+**Version:** 1.11 (avsnitt 4 nickat; OG i första live; SPEC.md ja)
+**Status:** **Utkast, inte fryst.** Avsnitt 4 är beslutat. Nästa: fräscha-ögon-genomläsning, därefter SPEC.md. Ingen appkod.
 **Typ:** Grund-PRD (helt ny app i befintligt repo), inte en tilläggs-PRD till ver2.
 
 > Det här dokumentet följer mallen i
@@ -103,7 +103,7 @@ De tre äldre lagren ska **inte** ersättas av den här PRD:n. ver3 är ett nytt
 
 ### Ingår (när PRD:n är fryst och, om 4g står fast, SPEC.md är skriven)
 
-Punkterna nedan utom den redan skapade mappen är **förslag tills 4f är beslutad.** 4a–4e, 4h, 4i och 4j är beslutade.
+Punkterna nedan gäller när PRD:n är fryst och SPEC.md är skriven (4g = ja). 4a–4l är beslutade eller, för 4l, rekommenderad metod med öppna detaljer till SPEC.
 
 - En ny mapp i det här repot: `vindkraftskalkyl_Vercel_ver3/` (skapad i v1 av den här PRD:n).
 - En Next.js-app (App Router) med TypeScript och Tailwind CSS, redo för Vercel. Vercel detekterar Next.js utan extra preset-trick ([Vercel, 2026b](https://vercel.com/docs/frameworks/nextjs)).
@@ -115,13 +115,13 @@ Punkterna nedan utom den redan skapade mappen är **förslag tills 4f är beslut
 - Route Handlers som motsvarar ver2:s tunna API-yta: elpris och scenario. Redis för korta koder, lång `?t=` som reserv.
 - Preview-deployments när en annan branch än `main` pushas ([Vercel, 2026c](https://vercel.com/docs/environment-variables)).
 - Fluid Compute som default för Functions — inte `runtime = 'edge'` ([Vercel, 2026a](https://vercel.com/docs/functions)).
+- Dynamisk OG-bild (`next/og`) för delade kalkyl-länkar redan i första live (4k:2).
 - README med lokal sökväg, live-länk (när den finns) och korsreferens till de tre äldre lagren.
 - `.gitignore` som utelämnar `.env*`, `.vercel`, `node_modules`, `.next`.
 
-### Ingår i senare fas, inte i första live-versionen (förslag — se 4f)
+### Ingår i senare fas, inte i första live-versionen (se 4f)
 
-- Cron Job som nattligen hämtar/cacherar dygnssnitt för SE1–SE4 ([Vercel, 2026d](https://vercel.com/docs/cron-jobs)). Tidzon UTC. Hobby-planens aktuella intervallgräns ska slås upp vid implementation, inte gissas här.
-- Dynamisk OG-bild (`next/og`) när en delad kalkyl-länk ska se ut som ett kort, inte som en tom flik ([Next.js, 2026b](https://nextjs.org/docs/app/getting-started/metadata-and-og-images)).
+- Cron Job som nattligen hämtar/cacherar månad + år (och ev. dygn) för SE1–SE4 ([Vercel, 2026d](https://vercel.com/docs/cron-jobs)). Tidzon UTC. Hobby-planens aktuella intervallgräns ska slås upp vid implementation, inte gissas här.
 - `vercel.ts` som projektkonfiguration när cron/headers behövs ([Vercel, 2026e](https://vercel.com/docs/project-configuration/vercel-ts)). Första deployen kan räcka med Next.js nollkonfiguration.
 
 ### Rekommenderad elpris-yta, när Route Handler finns (se 4l)
@@ -214,11 +214,11 @@ Referensprompten för Next.js-kalkylatorn är en slankare investeringskalkyl (ef
 
 <a id="4f-Klossar"></a>
 
-**f) Vilka Vercel-klossar i första live-versionen? — FÖRSLAG, ÖPPEN** [#](#4f-Klossar)
+**f) Vilka Vercel-klossar i första live-versionen? — BESLUTAT ✓ (2026-09-15)** [#](#4f-Klossar)
 
 Redan prövat i ver2, ska *återanvändas* (inte läras om): Functions/Route Handlers, env, Redis, Root Directory, Git-deploy.
 
-**Förslag fas 1 (första live):**
+**Beslut fas 1 (första live):**
 
 1. Next.js (App Router) — det GitHub Pages och ver2 *inte* är.
 2. Riktiga sidor (se 4i).
@@ -226,14 +226,16 @@ Redan prövat i ver2, ska *återanvändas* (inte läras om): Functions/Route Han
 4. Redis (Upstash via Marketplace, samma linje som ver2; Vercel KV är borta) ([Vercel, 2026f](https://vercel.com/docs/redis)).
 5. Preview-URL per branch.
 6. Teknik-modal som förklarar varför detta *inte* är rosy/ver2.
+7. OG-bild för delade länkar, med tal från kalkylen ([Next.js, 2026b](https://nextjs.org/docs/app/getting-started/metadata-and-og-images)). Se 4k:2.
 
-**Förslag fas 2 (när fas 1 räknar rätt i production) — se också 4k:**
+**Beslut fas 2 (när fas 1 räknar rätt i production):**
 
-7. Cron för nattlig elpris-hämtning (dygn **och** senaste hela månad + år per SE1–SE4), så talen finns även om ingen har sidan öppen ([Vercel, 2026d](https://vercel.com/docs/cron-jobs)). Se 4l.
-8. OG-bild för delade länkar, med tal från kalkylen ([Next.js, 2026b](https://nextjs.org/docs/app/getting-started/metadata-and-og-images)).
+8. Cron för nattlig elpris-hämtning (dygn **och** senaste hela månad + år per SE1–SE4), så talen finns även om ingen har sidan öppen ([Vercel, 2026d](https://vercel.com/docs/cron-jobs)). Se 4l.
 9. Redis-cache / revalidate av elpris så ENTSO-E inte anropas på varje klick.
 
-**Inte en separat “fas 3-research”:** hur månads- och årsmedel hämtas är besvarat i 4l. Bygget sker när elpris-handlern skrivs, inte efter en andra undersökningsrunda. Dygnssnitt kan finnas kvar som komplement. Kent har sagt att det *säger för lite* som ensam siffra.
+**OG-bild (delningskort):** i **första live** (Kent, efter förklaring av vad kortet är). Inte en chatt i appen.
+
+**Inte en separat “fas 3-research”:** hur månads- och årsmedel hämtas är besvarat i 4l. Bygget sker när elpris-handlern skrivs. Dygnssnitt kan finnas kvar som komplement.
 
 **Medvetet senare / troligen aldrig i den här appen:** Auth, AI, Blob, WebSockets.
 
@@ -243,15 +245,15 @@ En kloss i taget vid implementation, även om PRD:n listar dem nu. Det är skill
 
 <a id="4g-SPEC"></a>
 
-**g) Behövs ett SPEC.md-steg härifrån? — FÖRSLAG JA, ÖPPEN** [#](#4g-SPEC)
+**g) Behövs ett SPEC.md-steg härifrån? — BESLUTAT ✓ JA (2026-09-15)** [#](#4g-SPEC)
 
-Stående fråga i varje PRD ([Lundgren, 2026d](https://klel.wordpress.com/2026/08/02/behover-jag-en-spec-md/)). Svaret är oftast nej. Här är förslaget **ja**.
+Stående fråga i varje PRD ([Lundgren, 2026d](https://klel.wordpress.com/2026/08/02/behover-jag-en-spec-md/)). Svaret är oftast nej. Här är svaret **ja**.
 
 Skäl: leveransen är tekniskt komplex och agent-driven (`create-next-app`, App Router-filer, port av `berakningar.js`, Route Handlers, env-namn, Redis-variabelpar som redan gick isär en gång i ver2). En människa fyller i “samma kalkyl” med kontext. En agent fyller i samma lucka med en gissning.
 
-SPEC.md ska skrivas **efter att den här PRD:n frysts** (särskilt 4c, 4e, 4i, 4k; 4b är redan beslutad), **innan** scaffolding. Den ska innehålla: indatafält-id:n att porta, formelparitet mot ver2, API-kontrakt, vad som händer när token saknas, och acceptanskriterier för “kalkylen räknar utan API”.
+**Beslut:** SPEC.md skrivs **efter att den här PRD:n frysts**, **innan** scaffolding. Den ska innehålla: indatafält-id:n att porta, formelparitet mot ver2, API-kontrakt (`period=dygn|manad|ar`), vad som händer när token saknas, OG-kortets minimikrav, och acceptanskriterier för “kalkylen räknar utan API”.
 
-Om Kent vill börja med en tom Next.js-hello och fylla kalkylen senare kan SPEC.md vänta till kalkyl-porten — men inte hoppas över helt.
+Inte: tom Next.js-hello före SPEC. Inte: hoppa SPEC och koda direkt från PRD:n.
 
 ---
 
@@ -318,18 +320,18 @@ De reglerna gäller Vite-projekt. ver3 är Next.js (4b). Då är `next.config.ts
 
 <a id="4k-Extra-bra"></a>
 
-**k) Tre saker som kan bli extra bra — FÖRSLAG, ÖPPEN** [#](#4k-Extra-bra)
+**k) Tre saker som kan bli extra bra — BESLUTAT ✓ (2026-09-15)** [#](#4k-Extra-bra)
 
 Inte “mer Vercel” i största allmänhet. Tre grejer GitHub Pages och ver2 *inte* kan, och som passar *den här* kalkylen. Inloggning, **chatt eller meddelanden inne i kalkylen**, och WebSockets hör inte hit.
 
-1. **Närboendesidan som en länk man vågar skicka.**  
-   `…/kalkyl/narboende?s=wqdmm7` öppnar *deras* perspektiv, inte en flik någon måste hitta. Produkt, inte ramverk. Kräver 4i:s perspektiv-URL:er. Kan vänta till efter att `/kalkyl` räknar rätt.
+1. **Närboendesidan som en länk man vågar skicka — ja, så snart kalkylen räknar.**  
+   `…/kalkyl/narboende?s=wqdmm7` öppnar *deras* perspektiv, inte en flik någon måste hitta. Produkt, inte ramverk. Låst av 4i.
 
-2. **Ett delningskort med riktiga tal.**  
-   Inte en chatt i kalkylen. När länken klistras i mejl, Teams eller LinkedIn kan de programmen visa en förhandsvisning (OG-bild som Vercel ritar med `next/og`), t.ex. “LCOE 48 öre/kWh · payback 9 år · närboende X kr/år”. I ver2 är delningen en URL. Här kan delningen *se ut som kalkylen*. Fas 2.
+2. **Ett delningskort med riktiga tal — ja, i första live.**  
+   Inte en chatt i kalkylen. När länken klistras i mejl, Teams eller LinkedIn kan de programmen visa en förhandsvisning (OG-bild som Vercel ritar med `next/og`), t.ex. “LCOE 48 öre/kWh · payback 9 år · närboende X kr/år”. I ver2 är delningen en URL. Här kan delningen *se ut som kalkylen*. Kent frågade vad “OG-kort” är; efter förklaring: in i första live, inte fas 2.
 
 3. **Spotpriset ligger där, utan knapp — månad och år som huvudtal.**  
-   Cron hämtar (UTC) och cachar i Redis. Sidan visar valt elområde med **senaste hela månad** och **senaste hela kalenderår** som det man främst vill se, plus källa och period. Dygnssnitt kan ligga kvar som komplement (“idag / igår”). Knappen “Hämta” i ver2 är ett anrop. Här blir priset en egenskap hos sidan. Kalkylens 25-årsantagande förblir ett gult fält — hämtat spot är information, inte en tyst överskrivning. Metod: 4l.
+   API-kontraktet `period=dygn|manad|ar` hör till första elpris-handlern (4f, 4l). Nattlig cron och cache är **fas 2**. Tills cron finns kan handlern hämta vid behov och visa talen, utan att tyst skriva över det gula 25-årsfältet.
 
 ---
 
@@ -388,7 +390,7 @@ Implementation: när `/api/elpris` skrivs i ver3, inte som en tredje grund-PRD. 
 
 Checklista. Avbockning ska spegla avsnitt 4 — inget här är “klart” bara för att det står i PRD:n.
 
-**Den här omgången (v1–v1.6):**
+**Den här omgången (v1–v1.11):**
 
 - [x] Skapa mappen `vindkraftskalkyl_Vercel_ver3/` (lokalt, 2026-09-15).
 - [x] Första utkast till denna PRD.
@@ -402,12 +404,13 @@ Checklista. Avbockning ska spegla avsnitt 4 — inget här är “klart” bara 
 - [x] v1.7: Kent nickade 4e (fem-perspektiv-port). 4c inte stängd: Kent frågade om samma funktionalitet kan ligga på GitHub Pages när Vercel används till fullo.
 - [x] v1.8: Kent nickade 4c (Vercel-only som app). Pages/rosy/ver2 ligger kvar. Dual publicering av samma Next.js-binär är inte målet.
 - [x] v1.9: Kent: ny app-känsla (4h), gula indatafält med defaults. 4i: `/` `/kalkyl` `/om`, perspektiv-URL:er så snart kalkylen räknar.
+- [x] v1.10: Kent nickade 4f:s faser (första live = sidor + elpris/scenario + Redis; cron/cache i fas 2). 4k närboendelänk ja. OG-kortets tidpunkt öppen tills “vad är OG?” är svarat.
+- [x] v1.11: Kent: OG-kort i första live. 4g SPEC.md ja, efter frysning, innan scaffolding. Avsnitt 4 nickat.
 
 **Nästa, innan kod:**
 
-- [ ] Kent tar ställning till resterande 4f, 4g, 4k (4l är rekommendation, inte grind).
 - [ ] Fräscha-ögon-genomläsning av hela PRD:n när Kent säger att den kan frysas (Regel 7 — inte samma sak som detta utkast).
-- [ ] SPEC.md om 4g blir ja — ska då innehålla elpris-kontraktet `period=dygn|manad|ar`.
+- [ ] SPEC.md (4g = ja) — elpris-kontraktet `period=dygn|manad|ar`, fält-id:n, formelparitet, OG-minimikrav, felvägar.
 
 **Därefter, implementation (inte påbörjad):**
 
@@ -428,7 +431,7 @@ Checklista. Avbockning ska spegla avsnitt 4 — inget här är “klart” bara 
 Ordningen är medveten: krav före spec före scaffolding före Vercel-projekt.
 
 1. **PRD (nu)** — vad och varför, öppna frågor synliga.
-2. **Kent svarar på avsnitt 4** — dual-publicering, vilken kalkyl, rutter, 4k. (Stacken 4b är beslutad. 4l är rekommenderad metod, inte grind för scaffolding.)
+2. **Kent svarar på avsnitt 4** — gjort 15 september 2026 kväll.
 3. **Frys PRD** efter en fräscha-ögon-genomläsning, inte efter första utkastet.
 4. **SPEC.md** (om 4g = ja) — fält, formler, API-kontrakt, felvägar.
 5. **Scaffold Next.js** i den här mappen. Visa filträdet. Ingen stealth-omdesign.
@@ -503,13 +506,13 @@ Vercel (2026f) *Redis on Vercel.* Tillgänglig: https://vercel.com/docs/redis (h
 
 ## 8. Status [#](#8-Status)
 
-15 september 2026 kväll: mappen finns. PRD v1.9. **Beslutade:** 4a–4e, 4h (ny app-känsla + gula fält), 4i (bas-URL:er + perspektiv så snart det räknar), 4j. Öppet: 4f, 4g, 4k. **4l:** undersökt. Inte byggd.
+15 september 2026 kväll: mappen finns. PRD v1.11. **Avsnitt 4 nickat** (4a–4k beslutade; 4l rekommenderad metod med SPEC-detaljer). Nästa: fräscha-ögon-genomläsning, därefter SPEC.md, därefter kod. Ingen appkod. Inget Vercel-projekt skapat. Ingen live-URL.
 
 Skillen `nextjs-vercel-app-prompting` (Cursor) säger nu att “till fullo” är spår B som default. Claude-kopian har samma regel införd men är i övrigt en äldre promptmall.
 
-Öppet: 4f, 4g, 4k. 4l är rekommenderad metod (öppna detaljer till SPEC).
+Öppet: inget i avsnitt 4 som kräver ny nick-runda. 4l har öppna detaljer till SPEC (kalenderår vs rullande 12, tidsvägt medel).
 
-Nästa handling: resten av avsnitt 4, två frågor i taget. Därefter fräscha-ögon-genomläsning innan PRD:n kallas fryst.
+Nästa handling: fräscha-ögon-genomläsning innan PRD:n kallas fryst. Därefter SPEC.md. Inte `create-next-app` före SPEC.
 
 ---
 
@@ -525,3 +528,5 @@ Nästa handling: resten av avsnitt 4, två frågor i taget. Därefter fräscha-�
 - 2026-09-15 (v1.7): Kent nickade 4e (porta fem-perspektiv-kalkylen). 4c väntar: Kent hade rätt i att till-fullo-appen inte kan ha samma funktionalitet på GitHub Pages.
 - 2026-09-15 (v1.8): Kent nickade 4c: ver3 är Vercel-only som app. Pages, rosy och ver2 ligger kvar. Dual publicering av samma Next.js-binär är inte målet.
 - 2026-09-15 (v1.9): Kent: 4h ny app-känsla, men indatafält alltid gula med defaults. 4i `/` `/kalkyl` `/om`; perspektiv-URL:er så snart kalkylen räknar.
+- 2026-09-15 (v1.10): Kent nickade 4f:s faser. 4k: närboendelänk ja. OG-kort förklaras innan tidpunkten låses (Kent frågade vad det är, och kryssade både fas 2 i 4f och “första live” i 4k).
+- 2026-09-15 (v1.11): Kent: OG-kort i första live. 4g SPEC.md ja — efter frysning, innan scaffolding. Avsnitt 4 nickat.
