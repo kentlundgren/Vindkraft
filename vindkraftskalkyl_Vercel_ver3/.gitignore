@@ -7,15 +7,28 @@
 .env.local
 .env*.local
 
-# Next.js-byggutdata och cache (skapas när appen scaffoldas).
+# Next.js-byggutdata och cache.
 .next
 out
 dist
+/build
+*.tsbuildinfo
+next-env.d.ts
 
 # Node-moduler. Ska aldrig checkas in.
 node_modules
+.pnp
+.pnp.*
+
+# Tester och loggar.
+/coverage
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
 # OS- och editorfiler.
 .DS_Store
 Thumbs.db
 *.swp
+*.pem

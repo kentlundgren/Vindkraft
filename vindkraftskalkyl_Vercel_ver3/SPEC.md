@@ -4,7 +4,7 @@
 **Plats:** `vindkraftskalkyl_Vercel_ver3/SPEC.md`  
 **Skapad:** 2026-09-15  
 **Gäller:** fryst [PRD v1.14](PRD_vindkraftskalkyl_vercel_ver3.md)  
-**Status:** Skriven före scaffolding. Ingen appkod än.
+**Status:** Next.js-stommen finns (16.3.5). Kalkylen är inte portad än.
 
 Det här dokumentet är agentens ritning: *exakt hur*, inte *vad och varför*. Vad och varför står i PRD:n. Gissa inte luckor — om något saknas här, fråga Kent.
 

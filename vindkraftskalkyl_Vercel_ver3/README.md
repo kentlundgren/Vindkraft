@@ -1,16 +1,13 @@
-# Vindkraftskalkyl – Vercel ver3 (planering)
+# Vindkraftskalkyl – Vercel ver3
 
-Live: *ingen ännu – appen är inte byggd.*  
+Live: *ingen ännu – kalkylen är inte portad.*  
 Tänkt Vercel-projekt: **vindkraft-ver3** i teamet **Effektiv** (`effektiv1`) — se [PRD, delfråga 4d](PRD_vindkraftskalkyl_vercel_ver3.md#4d-Vercel-projekt).
 
-Den här mappen är **inte** en kopia av HTML-kalkylen. Den är platsen för en tredje
-vindkraftskalkyl som ska vara *Vercel-native* (Next.js App Router), inte bara
-hostad på Vercel.
+Next.js (App Router) 16.3.5 är uppsatt i den här mappen. Starta lokalt med `npm run dev` (port 3000). Det du ser då är fortfarande Next.js startsida, inte kalkylen.
 
-Just nu (15 september 2026) finns bara planeringen: en PRD. Ingen `app/`-mapp,
-ingen `package.json`, ingen live-URL.
-
-**Kravdokumentet:** [PRD_vindkraftskalkyl_vercel_ver3.md](PRD_vindkraftskalkyl_vercel_ver3.md).
+**Krav:** [PRD_vindkraftskalkyl_vercel_ver3.md](PRD_vindkraftskalkyl_vercel_ver3.md) (fryst v1.14)  
+**Ritning:** [SPEC.md](SPEC.md)  
+**Teknik på 15-åringssvenska:** [Vercel-teknik-ver3.md](Vercel-teknik-ver3.md)
 
 De tre tidigare lagren ligger kvar oförändrade:
 
@@ -35,4 +32,4 @@ På GitHub: <https://github.com/kentlundgren/Vindkraft/tree/main/vindkraftskalky
 
 ---
 
-*Skapad 2026-09-15. Appen scaffoldas inte förrän PRD:n har passerat öppna frågor och, om 4g står fast, ett SPEC.md-steg.*
+*Uppdaterad 2026-09-15: Next.js-stommen ligger i mappen. Kalkylen byggs enligt SPEC.md.*
