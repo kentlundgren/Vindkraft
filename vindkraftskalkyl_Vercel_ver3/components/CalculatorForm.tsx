@@ -12,11 +12,12 @@
  * Ver2:s flikar är alltså ersatta av riktiga adresser man kan länka till.
  */
 
-import { type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import Link from 'next/link';
 import { DEFAULTS, ELOMRADE_PRIS } from '@/lib/defaults';
 import { beraknaAllt, lasIndata, fmt, type Resultat } from '@/lib/calculations';
 import type { FaltId } from '@/lib/falt';
+import type { ElprisSvar } from '@/lib/elpris';
 import { useKalkyl } from '@/components/KalkylProvider';
 
 /* ---------------------------------------------------------------------------
@@ -409,6 +410,17 @@ export default function CalculatorForm({
     bekrafta(nyaFalt);
   }
 
+  /**
+   * Fyller ENBART "Spotpris hushållsel" – aldrig "Intäkt för elen".
+   * Ett hämtat dygns- eller månadspris är en ögonblicksbild och duger inte
+   * som 25-årsantagande för parkens intäkt.
+   */
+  function anvandSomSpotpris(prisKrKwh: number) {
+    const nyaFalt = { ...falt, spotpris: String(prisKrKwh) };
+    setFalt(nyaFalt);
+    bekrafta(nyaFalt);
+  }
+
   return (
     <div className="space-y-8">
       {/* ---- Perspektivväljare: adresser, inte flikar ---- */}
@@ -562,6 +574,12 @@ export default function CalculatorForm({
         </div>
       </section>
 
+      {/* ---- Hämtat spotpris: information bredvid fälten ---- */}
+      <Spotprishamtare
+        elomrade={falt.elomrade}
+        anvand={anvandSomSpotpris}
+      />
+
       {/* ---- Jämförelsetabell: Senaste / Tidigare / Förändring ---- */}
       <section aria-labelledby="jamforelse-rubrik">
         <h2 id="jamforelse-rubrik" className="text-xl font-semibold">
@@ -685,6 +703,156 @@ function PerspektivLank({
     >
       {children}
     </Link>
+  );
+}
+
+/**
+ * Spotpris från ENTSO-E via /api/elpris – månadsmedel och årsmedel.
+ *
+ * Talen visas som INFORMATION bredvid de gula fälten. Ingenting fylls i
+ * automatiskt; användaren måste klicka för att lägga priset i "Spotpris
+ * hushållsel". "Intäkt för elen" (som styr LCOE) rörs aldrig härifrån.
+ */
+function Spotprishamtare({
+  elomrade,
+  anvand,
+}: {
+  elomrade: string;
+  anvand: (prisKrKwh: number) => void;
+}) {
+  const [laddar, setLaddar] = useState(false);
+  const [manad, setManad] = useState<ElprisSvar | null>(null);
+  const [ar, setAr] = useState<ElprisSvar | null>(null);
+  const [felmeddelande, setFelmeddelande] = useState<string | null>(null);
+
+  async function hamta() {
+    setLaddar(true);
+    setFelmeddelande(null);
+    setManad(null);
+    setAr(null);
+
+    // Två anrop, ett per period. Servern cachar dem sex timmar per elområde.
+    const [svarManad, svarAr] = await Promise.all([
+      hamtaElprisFranApi(elomrade, 'manad'),
+      hamtaElprisFranApi(elomrade, 'ar'),
+    ]);
+
+    if (svarManad.ok) setManad(svarManad.data);
+    if (svarAr.ok) setAr(svarAr.data);
+    if (!svarManad.ok && !svarAr.ok) setFelmeddelande(svarManad.fel);
+
+    setLaddar(false);
+  }
+
+  return (
+    <section
+      aria-labelledby="spotpris-rubrik"
+      className="rounded-xl border border-slate-200 bg-white p-4"
+    >
+      <h2 id="spotpris-rubrik" className="text-xl font-semibold">
+        Spotpris från ENTSO-E
+      </h2>
+      <p className="mt-1 text-sm text-slate-600">
+        Hämtar månadsmedel och årsmedel för {elomrade} från dagen-före-marknaden
+        (A44). Priset är utan skatt, nät och påslag, och fylls aldrig i
+        automatiskt. Kalkylen fungerar även om hämtningen misslyckas.
+      </p>
+
+      <button
+        type="button"
+        onClick={hamta}
+        disabled={laddar}
+        className="mt-3 rounded-md border border-teal-700 bg-teal-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-teal-800 disabled:opacity-60"
+      >
+        {laddar ? 'Hämtar …' : `Hämta månads- och årsmedel för ${elomrade}`}
+      </button>
+
+      {felmeddelande ? (
+        <p role="status" className="mt-3 text-sm text-red-700">
+          {felmeddelande}
+        </p>
+      ) : null}
+
+      {manad || ar ? (
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {manad ? (
+            <Elpriskort
+              rubrik="Senaste hela månaden"
+              svar={manad}
+              anvand={anvand}
+            />
+          ) : null}
+          {ar ? (
+            <Elpriskort rubrik="Senaste hela året" svar={ar} anvand={anvand} />
+          ) : null}
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
+/** Ett anrop mot vår egen Route Handler. Nyckeln stannar på servern. */
+async function hamtaElprisFranApi(
+  omrade: string,
+  period: 'dygn' | 'manad' | 'ar'
+): Promise<{ ok: true; data: ElprisSvar } | { ok: false; fel: string }> {
+  try {
+    const svar = await fetch(
+      `/api/elpris?omrade=${encodeURIComponent(omrade)}&period=${period}`
+    );
+    const kropp = await svar.json();
+    if (!svar.ok || !kropp?.ok) {
+      return {
+        ok: false,
+        fel: kropp?.fel ?? 'Elpriset kunde inte hämtas just nu.',
+      };
+    }
+    return { ok: true, data: kropp as ElprisSvar };
+  } catch {
+    return { ok: false, fel: 'Ingen kontakt med servern. Försök igen senare.' };
+  }
+}
+
+function Elpriskort({
+  rubrik,
+  svar,
+  anvand,
+}: {
+  rubrik: string;
+  svar: ElprisSvar;
+  anvand: (prisKrKwh: number) => void;
+}) {
+  return (
+    <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+      <h3 className="font-semibold text-teal-900">{rubrik}</h3>
+      <p className="text-xs text-slate-600">
+        {svar.periodStart} – {svar.periodEnd} · {svar.antalPunkter} prispunkter
+      </p>
+      <p className="mt-2 text-lg font-semibold tabular-nums">
+        {svar.prisKrKwh !== null
+          ? fmt(svar.prisKrKwh, 3, ' kr/kWh')
+          : 'kurs saknas'}
+      </p>
+      <p className="text-sm text-slate-600 tabular-nums">
+        {fmt(svar.prisEurMwh, 2, ' EUR/MWh')}
+        {svar.sekPerEur
+          ? ` · ${fmt(svar.sekPerEur, 3)} kr/EUR (${svar.fxDatum ?? 'okänt datum'})`
+          : ''}
+      </p>
+      {svar.fxFel ? (
+        <p className="mt-1 text-xs text-red-700">{svar.fxFel}</p>
+      ) : null}
+
+      {svar.prisKrKwh !== null ? (
+        <button
+          type="button"
+          onClick={() => anvand(svar.prisKrKwh as number)}
+          className="mt-3 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium hover:border-teal-700"
+        >
+          Använd som spotpris hushållsel
+        </button>
+      ) : null}
+    </div>
   );
 }
 

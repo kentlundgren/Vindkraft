@@ -4,7 +4,7 @@
 **Plats:** `vindkraftskalkyl_Vercel_ver3/SPEC.md`  
 **Skapad:** 2026-09-15  
 **Gäller:** fryst [PRD v1.14](PRD_vindkraftskalkyl_vercel_ver3.md)  
-**Status:** Stomme, `/`, `/om`, `/kalkyl` och de fem perspektiv-URL:erna. Gula fält, nyckeltal och jämförelsetabell fungerar; paritetstestet är grönt. Kvar: Route Handlers (elpris, scenario), delningslänkar `?s=`/`?t=` och OG-bild.
+**Status:** Stomme, `/`, `/om`, `/kalkyl`, de fem perspektiv-URL:erna och `GET /api/elpris` (dygn/månad/år, Redis-cache, felvägar). Paritetstestet är grönt. Kvar: `/api/scenario` med `?s=`/`?t=` och OG-bild.
 
 Det här dokumentet är agentens ritning: *exakt hur*, inte *vad och varför*. Vad och varför står i PRD:n. Gissa inte luckor — om något saknas här, fråga Kent.
 
@@ -86,11 +86,14 @@ vindkraftskalkyl_Vercel_ver3/
 │   ├── falt.ts                      ← TILLATNA_FALT
 │   ├── defaults.ts                  ← samma defaultvärden som ver2 index.html
 │   ├── elpris.ts                    ← ENTSO-E A44 + Riksbanken + medel
+│   ├── redis.ts                     ← Upstash REST (cache + korta koder)
 │   └── scenario.ts                  ← packa/packaUpp + Redis vk:
 └── public/                          ← ev. favicon; inga hemligheter
 ```
 
 Perspektiv-sidorna ska **återanvända** `CalculatorForm` med prop `perspektiv`. Inte fem kopior av formlerna.
+
+`lib/redis.ts` tillkom också: både elpris-cachen (`elpris:…`) och de korta delningskoderna (`vk:…`) behöver samma Upstash-REST-anrop, och den koden hör inte hemma i `lib/scenario.ts` enbart.
 
 Två filer tillkom här utöver ursprungsträdet: `app/kalkyl/layout.tsx` och `components/KalkylProvider.tsx`. Skälet: App Router behåller layouten när man navigerar mellan sidor under `/kalkyl`, så fältens state måste bo där för att indata ska följa med mellan perspektiv-adresserna. Alternativet (state i varje sida + sessionStorage) föll på ESLint-regeln `react-hooks/set-state-in-effect`.
 

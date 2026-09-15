@@ -9,6 +9,10 @@ Beräkningen är portad från ver2 och ligger i `lib/calculations.ts`. `npm test
 
 `/kalkyl` har alla 33 gula indatafält, nyckeltalen (LCOE, överskott, payback, NPV, IRR, produktion), jämförelsetabellen Senaste/Tidigare/Förändring och de fem perspektiven. Allt räknas i webbläsaren — inget serveranrop och ingen API-nyckel behövs.
 
+`GET /api/elpris?omrade=SE4&period=manad` hämtar spotpris från ENTSO-E (dagen-före, A44) och räknar om till kr/kWh med Riksbankens SEK/EUR. `period` kan vara `dygn`, `manad` (senaste hela kalendermånad) eller `ar` (senaste hela kalenderår). Svaret cachas sex timmar per elområde och period om Redis finns. Priset visas som information och fylls bara i "Spotpris hushållsel" efter ett klick — "Intäkt för elen" rörs aldrig av hämtningen.
+
+För att testa hämtningen lokalt: lägg `ENTSOE_SECURITY_TOKEN=…` i `.env.local` (den filen är ignorerad av Git). Utan nyckel svarar rutten 503 med en begriplig text och kalkylen fungerar som vanligt med manuellt pris. Så skaffar man nyckeln: [Hur-skaffa-nyckel-hos-ENTSO-E.md](../vindkraftskalkyl_Vercel_ver2/Hur-skaffa-nyckel-hos-ENTSO-E.md).
+
 Varje perspektiv har en egen adress som går att länka till: `/kalkyl/investerare`, `/kalkyl/markagare`, `/kalkyl/kommun`, `/kalkyl/andelsagare` och `/kalkyl/narboende`. Ver2:s flikar är alltså ersatta av riktiga URL:er. Indata följer med när man byter perspektiv, eftersom fältens state ligger i den delade layouten `app/kalkyl/layout.tsx`.
 
 **Krav:** [PRD_vindkraftskalkyl_vercel_ver3.md](PRD_vindkraftskalkyl_vercel_ver3.md) (fryst v1.14)  
