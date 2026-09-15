@@ -18,7 +18,6 @@ Lokalt: `C:\Users\kentl\OneDrive\AI\Cursor\Intressen\Vindkraft\vindkraftskalkyl_
 - Inte dual-publicera samma Next.js-build till GitHub Pages.
 - Inte ny ekonomisk modell, nya perspektiv eller nya LCOE-formler.
 - Inte Auth, AI-chatt i appen, Blob, Postgres, PDF, WebSockets.
-- Inte Vite. User Rules: `vite.config.js` / `base: './'` / `dist/` bara om ni *har börjat* med Vite. Den här appen har inte det. Skapa inte `vite.config.js`.
 - Inte `runtime = 'edge'`.
 - Inte commit/push. Inte skapa Vercel-projektet.
 - Inte tyst skriva över gula 25-årsfält med hämtat spot.
@@ -42,10 +41,6 @@ Lokalt: `C:\Users\kentl\OneDrive\AI\Cursor\Intressen\Vindkraft\vindkraftskalkyl_
 Vid `create-next-app`: slå upp aktuell 16.x via [https://nextjs.org/docs/llms.txt](https://nextjs.org/docs/llms.txt). Kryssa App Router, TypeScript, Tailwind, ESLint. Inte `src/`. Inte `next.config` som sätter `output: 'export'` (då dör Route Handlers).
 
 PowerShell: inga `&&`. Ett kommando i taget. Kör scaffolding **i** `vindkraftskalkyl_Vercel_ver3` (mappen finns, den är inte tom — PRD/README/SPEC/.gitignore ligger där). Om CLI klagar på icke-tom mapp: initiera i mappen med flaggan som tillåter det, eller visa Kent felet innan du tvingar.
-
-`vite.config.js` ska **inte** skapas. Det är inte ett glömt Vite-krav.
-
-Gula indatafält gäller alltid när det är fält man ska knappa i (User Rules punkt 18; PRD 4h). Inte bara i Vite-projekt.
 
 ---
 
@@ -331,7 +326,7 @@ Svenska kommentarer vid viktiga funktioner. Vid port från ver2: notera att form
 
 Inte en ny Harvard-lista. Primära artefakter:
 
-- [PRD_vindkraftskalkyl_vercel_ver3.md](PRD_vindkraftskalkyl_vercel_ver3.md) (fryst v1.12)
+- [PRD_vindkraftskalkyl_vercel_ver3.md](PRD_vindkraftskalkyl_vercel_ver3.md) (fryst v1.14)
 - `vindkraftskalkyl_Vercel_ver2/berakningar.js`
 - `vindkraftskalkyl_Vercel_ver2/lib/falt.js`
 - `vindkraftskalkyl_Vercel_ver2/api/elpris.js`
