@@ -3,7 +3,7 @@
 **Namn:** PRD_vindkraftskalkyl_vercel_ver3
 **Plats:** `vindkraftskalkyl_Vercel_ver3/PRD_vindkraftskalkyl_vercel_ver3.md`
 **Skapad:** 2026-09-15
-**Version:** 1.2 (Kent: “till fullo” = Next.js App Router; skillen uppdaterad; tre produktidéer inskrivna)
+**Version:** 1.3 (förtydligat: ingen chatt i kalkylen; OG-kort är förhandsvisning i mejl/Teams)
 **Status:** **Utkast, inte fryst.** 4b är beslutad (Next.js App Router). 4j var redan beslutad. Övriga delfrågor öppna eller förslag. Ingen appkod, inget Vercel-projekt, ingen live-URL.
 **Typ:** Grund-PRD (helt ny app i befintligt repo), inte en tilläggs-PRD till ver2.
 
@@ -74,7 +74,7 @@ ver2 är medvetet *inte* Next.js. I Vercel är preset **Other**. Det var rätt f
 
 Kent bad 15 september 2026 om en **tredje** kalkyl som *till fullo tar fördel av Vercel-tekniken*, i en ny mapp, med en PRD först. Det är spår B i den dokumenterade Vercel-resan: Next.js (App Router) som skal, samma beräkningslogik i botten — inte “mer HTML i ver2”.
 
-Uppdraget i chatten nämnde mappnamnet `vindkraft:Vercel_ver3`. Kolon är ogiltigt i Windows-sökvägar. Mappen skapades därför som `vindkraftskalkyl_Vercel_ver3`, i linje med `vindkraftskalkyl_Vercel_ver2`. Bekräftelse: se 4a.
+Uppdraget i den här Cursor-sessionen nämnde mappnamnet `vindkraft:Vercel_ver3`. Kolon är ogiltigt i Windows-sökvägar. Mappen skapades därför som `vindkraftskalkyl_Vercel_ver3`, i linje med `vindkraftskalkyl_Vercel_ver2`. Bekräftelse: se 4a.
 
 De tre äldre lagren ska **inte** ersättas av den här PRD:n. ver3 är ett nytt Vercel-projekt i samma team (Effektiv / `effektiv1`), samma GitHub-repo, annan Root Directory.
 
@@ -129,7 +129,7 @@ Punkterna nedan utom den redan skapade mappen är **förslag tills 4c och 4e är
 - Nytt Vercel-team. Nytt GitHub-repo.
 - Ny ekonomisk modell, nya perspektiv eller nya LCOE-formler — om inte en senare PRD säger det.
 - Inloggning / Auth.
-- AI-chatt, AI Gateway, eve, Vercel Sandbox, Queues, WebSockets.
+- AI-chatt / meddelandefunktion i appen, AI Gateway, eve, Vercel Sandbox, Queues, WebSockets.
 - Vercel Blob eller Postgres, så länge Redis räcker för korta scenarier.
 - PDF-export (nämnd som möjlig Function i ver2, inte byggd där heller).
 - Att agenten committar eller pushar, eller skapar Vercel-projektet åt Kent.
@@ -315,13 +315,13 @@ De reglerna gäller Vite-projekt. ver3 är Next.js (4b). Då är `next.config.ts
 
 **k) Tre saker som kan bli extra bra — FÖRSLAG, ÖPPEN** [#](#4k-Extra-bra)
 
-Inte “mer Vercel” i största allmänhet. Tre grejer GitHub Pages och ver2 *inte* kan, och som passar *den här* kalkylen. Auth, chatt och WebSockets hör inte hit.
+Inte “mer Vercel” i största allmänhet. Tre grejer GitHub Pages och ver2 *inte* kan, och som passar *den här* kalkylen. Inloggning, **chatt eller meddelanden inne i kalkylen**, och WebSockets hör inte hit.
 
 1. **Närboendesidan som en länk man vågar skicka.**  
    `…/kalkyl/narboende?s=wqdmm7` öppnar *deras* perspektiv, inte en flik någon måste hitta. Produkt, inte ramverk. Kräver 4i:s perspektiv-URL:er. Kan vänta till efter att `/kalkyl` räknar rätt.
 
 2. **Ett delningskort med riktiga tal.**  
-   När länken klistras i mejl eller LinkedIn: en OG-bild som Vercel ritar (`next/og`) med t.ex. “LCOE 48 öre/kWh · payback 9 år · närboende X kr/år”. I ver2 är delningen en URL. Här kan delningen *se ut som kalkylen*. Fas 2.
+   Inte en chatt i kalkylen. När länken klistras i mejl, Teams eller LinkedIn kan de programmen visa en förhandsvisning (OG-bild som Vercel ritar med `next/og`), t.ex. “LCOE 48 öre/kWh · payback 9 år · närboende X kr/år”. I ver2 är delningen en URL. Här kan delningen *se ut som kalkylen*. Fas 2.
 
 3. **Dagens spotpris ligger där, utan knapp.**  
    Cron hämtar dygnssnittet (UTC). Sidan visar “SE4 idag …” med källa och datum. Knappen “Hämta” i ver2 är ett anrop. Här blir priset en egenskap hos sidan. Kalkylens 25-årsantagande förblir ett gult fält — dagens spot är information, inte en tyst överskrivning. Samma distinktion som ver2, men Vercel gör jobbet även när ingen har sidan öppen. Fas 2. Hobby-planens aktuella cron-gräns slås upp vid implementation, inte gissas här.
@@ -429,7 +429,7 @@ Vercel (2026f) *Redis on Vercel.* Tillgänglig: https://vercel.com/docs/redis (h
 
 ## 8. Status [#](#8-Status)
 
-15 september 2026 kväll: mappen finns. PRD v1.2. **4b beslutad:** Next.js (App Router) är skalet när Vercel används till fullo. 4j var redan beslutad. Ingen appkod. Inget Vercel-projekt. Ingen live-URL.
+15 september 2026 kväll: mappen finns. PRD v1.3. **4b beslutad:** Next.js (App Router) är skalet när Vercel används till fullo. 4j var redan beslutad. Ingen appkod. Inget Vercel-projekt. Ingen live-URL.
 
 Skillen `nextjs-vercel-app-prompting` (Cursor) säger nu att “till fullo” är spår B som default. Claude-kopian har samma regel införd men är i övrigt en äldre promptmall.
 
@@ -444,3 +444,4 @@ Nästa handling är Kents: nicka, ändra eller stryka i det som är kvar i avsni
 - 2026-09-15 (v1): Första utkast. Mapp skapad. Inga delfrågor frysta utom 4j (Vite-regler gäller inte Next.js). Skrivet efter genomgång av ver2:s teknikfil, PRD-mallen, Vercel-resan och levande Vercel-/Next.js-docs samma dag.
 - 2026-09-15 (v1.1): Intern genomläsning av utkastet (inte en frysning). Rättat “tre begrepp” → fyra lager i terminologin, och gjort avsnitt 3:s “Ingår” uttryckligen villkorat av 4b/4c/4e så omfattningen inte låtsas att stacken redan är beslutad.
 - 2026-09-15 (v1.2): Kent: “till fullo” ska inkludera Next.js (App Router). 4b beslutad. Nytt avsnitt om hur skillen styrde v1, och en rättelse av att v1 läste “anta inte Next.js” för strikt. 4i utökad med Server/Client-uppdelning och perspektiv-URL:er. Ny 4k med tre produktidéer (närboendelänk, OG-kort, levande spotpris). Skillen `nextjs-vercel-app-prompting` (Cursor + delvis Claude-kopian) och `vercel-resa-fran-forsta-kalkylen.md` uppdaterade samma kväll. Avsnitt 3 villkorar nu 4c/4e, inte 4b.
+- 2026-09-15 (v1.3): Förtydligat att kalkylen inte får en chatt. “Chatt” i bakgrunden bytt till Cursor-sessionen. 4k och “Ingår inte” skiljer meddelanden *i appen* från förhandsvisningskort i mejl/Teams/LinkedIn.
