@@ -3,8 +3,8 @@
 **Namn:** PRD_vindkraftskalkyl_vercel_ver3
 **Plats:** `vindkraftskalkyl_Vercel_ver3/PRD_vindkraftskalkyl_vercel_ver3.md`
 **Skapad:** 2026-09-15
-**Version:** 1.1 (första utkast, plus intern genomläsning samma kväll)
-**Status:** **Första utkast, inte fryst.** Mappen och den här filen finns. De flesta delfrågor i avsnitt 4 är öppna eller förslag. Ingen Next.js-app, inget Vercel-projekt, ingen live-URL. v1.1 rättar bara inre glapp (fyra termer, villkorlig omfattning) — inga produktbeslut.
+**Version:** 1.2 (Kent: “till fullo” = Next.js App Router; skillen uppdaterad; tre produktidéer inskrivna)
+**Status:** **Utkast, inte fryst.** 4b är beslutad (Next.js App Router). 4j var redan beslutad. Övriga delfrågor öppna eller förslag. Ingen appkod, inget Vercel-projekt, ingen live-URL.
 **Typ:** Grund-PRD (helt ny app i befintligt repo), inte en tilläggs-PRD till ver2.
 
 > Det här dokumentet följer mallen i
@@ -34,7 +34,29 @@ Fyra lager som låter lika men inte är samma sak:
 
 **Vercel Function** = serverkod som körs vid anrop ([Vercel, 2026a](https://vercel.com/docs/functions)). I ver2 ligger den i `api/*.js`. I Next.js (App Router) är motsvarigheten **Route Handlers** (`app/api/.../route.ts`) ([Next.js, 2026a](https://nextjs.org/docs/app/getting-started/route-handlers)).
 
-**App Router** = Next.js routing via mappen `app/` (moderna systemet). Inte Pages Router (`pages/`). Skriv alltid “Next.js (App Router)” så ingen modell blandar ihop dem.
+**App Router** (samma sak som **App Routing** i den här kontexten) = Next.js routing via mappen `app/` (moderna systemet). Inte Pages Router (`pages/`). Skriv alltid “Next.js (App Router)” så ingen modell blandar ihop dem.
+
+---
+
+<a id="Hur-skillen-styrde"></a>
+
+## Hur `nextjs-vercel-app-prompting` styrde utkastet [#](#Hur-skillen-styrde)
+
+Skillen bor centralt på datorn, inte i det här repot:
+
+`C:\Users\kentl\.cursor\skills\nextjs-vercel-app-prompting\SKILL.md`
+
+v1 av den här PRD:n *använde* skillen som arbetssätt men nämnde den bara en gång, längst ner bland interna referenser. Det var för tunt. Det som faktiskt kom därifrån:
+
+- Klassificera innan kod: spår A (mer Vercel i HTML) kontra spår B (Next.js App Router).
+- ver2 som referenspunkt: HTML + Functions, preset Other — inte en Next.js-mall.
+- Stack: TypeScript, Tailwind, `lib/calculations.ts`, `'use client'` bara där state behövs, sidor `/` `/kalkyl` `/om`.
+- Levande docs (`llms.txt`, Vercel MCP), inte träningsdata eller team-dashboarden.
+- Dual publicering frågas, inte antas. En kloss i taget. Kalkylen räknar om API:t strular. Inget commit/push.
+
+**Medvetet avsteg från skillens exempelprompt:** referensprompten är en slankare investeringskalkyl. Den här PRD:n föreslår att porta *fem-perspektiv-kalkylen* (4e). Next.js är skalet.
+
+**Rättelse 15 september 2026 kväll:** v1 läste skillens rad “nämns bara Vercel: anta inte Next.js” för strikt mot ett uppdrag som redan sa *till fullo*. Kent påpekade att det är märkligt. Överens: när Vercel-teknik ska användas till fullo ska Next.js (App Router) ingå. Skillen är uppdaterad samma kväll så att “till fullo” / Vercel-native är **spår B som default**, medan “lägg en Function i ver2” fortfarande är spår A. Se 4b.
 
 ---
 
@@ -56,6 +78,8 @@ Uppdraget i chatten nämnde mappnamnet `vindkraft:Vercel_ver3`. Kolon är ogilti
 
 De tre äldre lagren ska **inte** ersättas av den här PRD:n. ver3 är ett nytt Vercel-projekt i samma team (Effektiv / `effektiv1`), samma GitHub-repo, annan Root Directory.
 
+**Tillägg 2026-09-15 kväll.** Kent läste v1 och invände mot att agenten, med stöd i den dåvarande skillen, behandlade Next.js som något man inte ska anta bara för att Vercel nämns. Uppdraget var redan “till fullo”. Överenskommelsen: *till fullo* = Next.js (App Router) bland annat, inte ett sidospår. 4b frystes. Skillen `nextjs-vercel-app-prompting` (Cursor) och referensen `vercel-resa-fran-forsta-kalkylen.md` uppdaterades samma kväll. Claude-kopian av skillen (`C:\Users\kentl\.claude\skills\nextjs-vercel-app-prompting\`) fick samma regel införd; den filen är i övrigt en äldre promptmall och är inte en full synk.
+
 ---
 
 <a id="2-Syfte"></a>
@@ -67,7 +91,7 @@ De tre äldre lagren ska **inte** ersättas av den här PRD:n. ver3 är ett nytt
 - Göra skillnaden mot GitHub Pages *kännbar och förklarad* (teknik-modal), utan att släppa in hela Vercel-katalogen i en kalkyl som inte behöver Auth, agenter eller WebSockets.
 - Ha ett spårbart kravdokument innan `create-next-app` körs, så implementationen inte gissar stack, dual-publicering eller vilka Functions som ska med.
 
-**Vad “till fullo” *inte* betyder i det här utkastet:** att kryssa av Auth, AI Gateway, Blob, Queues, Sandbox, eve och WebSockets för att de finns i plattformen. Det skulle vara scope creep, inte Vercel-vana. “Till fullo” betyder **rätt arkitektur** plus de klossar som GitHub Pages inte kan *och som kalkylen faktiskt vinner på* — införda i faser (avsnitt 3 och 4f).
+**Vad “till fullo” betyder här:** rätt arkitektur — **Next.js (App Router)**, beslutat i 4b — plus de klossar GitHub Pages inte kan *och som kalkylen vinner på*, i faser (4f, 4i, 4k). Inte att kryssa av Auth, AI Gateway, Blob, Queues, Sandbox, eve och WebSockets för att de finns i plattformen.
 
 ---
 
@@ -77,10 +101,10 @@ De tre äldre lagren ska **inte** ersättas av den här PRD:n. ver3 är ett nytt
 
 ### Ingår (när PRD:n är fryst och, om 4g står fast, SPEC.md är skriven)
 
-Punkterna nedan utom den redan skapade mappen är **förslag tills 4b, 4c och 4e är beslutade.** De är skrivna som om Next.js och fem-perspektiv-porten blir svaret, för att utkastet ska gå att granska — inte för att de redan är frysta.
+Punkterna nedan utom den redan skapade mappen är **förslag tills 4c och 4e är beslutade.** 4b är beslutad: Next.js (App Router). Fem-perspektiv-porten (4e) är fortfarande förslag.
 
 - En ny mapp i det här repot: `vindkraftskalkyl_Vercel_ver3/` (skapad i v1 av den här PRD:n).
-- En Next.js-app (App Router) med TypeScript och Tailwind CSS, redo för Vercel — *om 4b blir ja*. Vercel detekterar Next.js utan extra preset-trick ([Vercel, 2026b](https://vercel.com/docs/frameworks/nextjs)).
+- En Next.js-app (App Router) med TypeScript och Tailwind CSS, redo för Vercel. Vercel detekterar Next.js utan extra preset-trick ([Vercel, 2026b](https://vercel.com/docs/frameworks/nextjs)).
 - Port av beräkningslogiken från `vindkraftskalkyl_Vercel_ver2/berakningar.js` till `lib/` (t.ex. `lib/calculations.ts`) — samma formler, inte en ny ekonomisk modell.
 - Gula indatafält (stående regel för indata i Kents webbappar).
 - GitHub-hörna + teknik-modal som par (stående sidregel), med GitHub-länk till *den här* mappen.
@@ -132,13 +156,15 @@ Alternativ om Kent vill något kortare: `vindkraftskalkyl_Vercel_ver3` står än
 
 <a id="4b-Stack"></a>
 
-**b) Next.js (App Router) eller mer HTML/Functions? — FÖRSLAG, ÖPPEN** [#](#4b-Stack)
+**b) Next.js (App Router) eller mer HTML/Functions? — BESLUTAT ✓ (2026-09-15)** [#](#4b-Stack)
 
-Den dokumenterade Vercel-resan har två spår. “Bara Vercel” ska inte tyst bli Next.js. Men uppdraget här är *till fullo* plattformen, i en *ny* mapp — det är spår B.
+När Vercel-teknik ska användas **till fullo** ska Next.js (App Router) användas. Det är inte samma sak som att ordet Vercel nämns, och inte samma sak som ver2 (HTML + Functions, preset Other).
 
-**Förslag:** Next.js (App Router) + TypeScript + Tailwind CSS. Aktuell docs-linje vid skrivandet: Next.js 16.x via [llms.txt](https://nextjs.org/docs/llms.txt) ([Next.js, 2026c](https://nextjs.org/docs/llms.txt); agentindex visade 16.3.5 den 15 september 2026). Exakt `create-next-app`-version låses i SPEC.md / vid scaffolding, inte mot träningsdata.
+Kent invände mot v1:s försiktighet (“anta inte Next.js bara för att du sa Vercel”). Överens: *till fullo* inkluderar App Router. Skillen är rättad så att framtida agenter inte gör om samma miss.
 
-Om Kent hellre vill stanna på HTML: då är det här fel PRD, och arbetet hör hemma som tillägg i ver2.
+**Beslut:** Next.js (App Router) + TypeScript + Tailwind CSS. Aktuell docs-linje vid skrivandet: Next.js 16.x via [llms.txt](https://nextjs.org/docs/llms.txt) ([Next.js, 2026c](https://nextjs.org/docs/llms.txt); agentindex visade 16.3.5 den 15 september 2026). Exakt `create-next-app`-version låses i SPEC.md / vid scaffolding, inte mot träningsdata.
+
+Arbete *i ver2* är ett annat uppdrag och stannar på HTML tills någon uttryckligen ber om att flytta den appen.
 
 ---
 
@@ -195,10 +221,10 @@ Redan prövat i ver2, ska *återanvändas* (inte läras om): Functions/Route Han
 5. Preview-URL per branch.
 6. Teknik-modal som förklarar varför detta *inte* är rosy/ver2.
 
-**Förslag fas 2 (när fas 1 räknar rätt i production):**
+**Förslag fas 2 (när fas 1 räknar rätt i production) — se också 4k:**
 
-7. Cron för nattlig elpris-hämtning, om Kent faktiskt vill ha ett färskt dygnssnitt utan att någon öppnar sidan.
-8. OG-bild för delade länkar.
+7. Cron för nattlig elpris-hämtning, så dygnssnittet finns även om ingen har sidan öppen ([Vercel, 2026d](https://vercel.com/docs/cron-jobs)).
+8. OG-bild för delade länkar, med tal från kalkylen ([Next.js, 2026b](https://nextjs.org/docs/app/getting-started/metadata-and-og-images)).
 9. Eventuell cache/revalidate av elpris så ENTSO-E inte anropas på varje klick.
 
 **Medvetet senare / troligen aldrig i den här appen:** Auth, AI, Blob, WebSockets.
@@ -215,7 +241,7 @@ Stående fråga i varje PRD ([Lundgren, 2026d](https://klel.wordpress.com/2026/0
 
 Skäl: leveransen är tekniskt komplex och agent-driven (`create-next-app`, App Router-filer, port av `berakningar.js`, Route Handlers, env-namn, Redis-variabelpar som redan gick isär en gång i ver2). En människa fyller i “samma kalkyl” med kontext. En agent fyller i samma lucka med en gissning.
 
-SPEC.md ska skrivas **efter att den här PRD:n frysts** (särskilt 4b, 4c, 4e, 4i), **innan** scaffolding. Den ska innehålla: indatafält-id:n att porta, formelparitet mot ver2, API-kontrakt, vad som händer när token saknas, och acceptanskriterier för “kalkylen räknar utan API”.
+SPEC.md ska skrivas **efter att den här PRD:n frysts** (särskilt 4c, 4e, 4i, 4k; 4b är redan beslutad), **innan** scaffolding. Den ska innehålla: indatafält-id:n att porta, formelparitet mot ver2, API-kontrakt, vad som händer när token saknas, och acceptanskriterier för “kalkylen räknar utan API”.
 
 Om Kent vill börja med en tom Next.js-hello och fylla kalkylen senare kan SPEC.md vänta till kalkyl-porten — men inte hoppas över helt.
 
@@ -230,25 +256,48 @@ Två rimliga linjer:
 1. **Igenkänning:** samma palett, samma gula fält, samma fem flikar — bara skalet byts. Snabbare att jämföra formelparitet.
 2. **Ny yta:** Tailwind, kortlayout, egna URL:er per perspektiv. Tydligare att det är en ny app; högre risk att “samma kalkyl” känns som en annan produkt.
 
-Ingen av dem är vald. Första utkastet lutar mot (1) för fas 1, så att Vercel-arkitekturen inte blandas ihop med en visuell omdesign. Kent avgör.
+Ingen av dem är vald. Första utkastet lutar mot (1) för *färger och gula fält* i fas 1. 4i:s perspektiv-URL:er kan ersätta flikar även om paletten är densamma — det är routing, inte en visuell omdesign. Kent avgör.
 
 ---
 
 <a id="4i-Rutter"></a>
 
-**i) Vilka URL:er? — FÖRSLAG, ÖPPEN** [#](#4i-Rutter)
+**i) Vilka URL:er, och hur App Router delas upp? — FÖRSLAG, ÖPPEN** [#](#4i-Rutter)
 
-Förslag (App Router):
+App Router är en sidväxlare. HTML-kalkylen har en `index.html` och låtsas att flikar är sidor. Adressen är densamma. Det är skillen som sätter den skillnaden: flikar döljer divar; App Router ger riktiga URL:er.
+
+**Föreslagen uppdelning (arkitektur, inte bara fillista):**
+
+| Del | Var | Varför |
+|-----|-----|--------|
+| Skal, ingress, källor, NU20-text | Server Components (`layout.tsx`, `/om`) | Ingen interaktivitet. Mindre JS. |
+| Gula fält, nyckeltal, diagram | Client Component (t.ex. `components/CalculatorForm.tsx`) | State, `onChange`, diagram. |
+| Formler | `lib/calculations.ts` | Samma tal som ver2, testbart utan UI. |
+| Elpris och delning | `app/api/.../route.ts` | Hemligheter stannar på servern. Samma uppgift som ver2, ny filform. |
+
+**Bas-URL:er:**
 
 | URL | Fil | Innehåll |
 |-----|-----|----------|
 | `/` | `app/page.tsx` | Kort ingång: vad kalkylen är, länkar till kalkyl + om + de tre äldre live-URL:erna |
-| `/kalkyl` | `app/kalkyl/page.tsx` | Själva kalkylen (Client Component där state behövs) |
+| `/kalkyl` | `app/kalkyl/page.tsx` | Översikt, alla fem nyckeltal (Client Component där state behövs) |
 | `/om` | `app/om/page.tsx` | Antaganden, källor, skillnad mot Pages/ver2 |
 | `/api/elpris` | `app/api/elpris/route.ts` | Samma uppgift som ver2 |
 | `/api/scenario` | `app/api/scenario/route.ts` | Samma uppgift som ver2 |
 
-Alternativ: kalkylen *är* `/` (som i HTML-versionerna). Då blir ingången tunnare och en användare från ver2 känner igen sig. **Öppet** vilket som är rätt.
+Alternativ: kalkylen *är* `/` (som i HTML-versionerna). Då blir ingången tunnare. **Öppet.**
+
+**Perspektiv som adresser (förslag, det HTML inte kan):**
+
+| URL | För vem |
+|-----|---------|
+| `/kalkyl/investerare` | LCOE, NPV, IRR i förgrunden |
+| `/kalkyl/markagare` | Arrende |
+| `/kalkyl/kommun` | Lokala intäkter, schablon CO₂ |
+| `/kalkyl/andelsagare` | Kooperativ modell |
+| `/kalkyl/narboende` | NU20 — länken man skickar till den som berörs |
+
+Indata är gemensam (samma layout, samma scenario via `?s=`). Det som byts är vilken historia som är i förgrunden. Fas 1 kan leva med `/kalkyl` och flikar; perspektiv-URL:erna är det som gör App Router *kännbart* för användaren, inte bara för den som tittar i `app/`. Se 4k:1.
 
 Gemensamt skal: `app/layout.tsx` (Server Component så långt det går). `'use client'` bara där state, events eller webbläsar-API behövs.
 
@@ -258,7 +307,24 @@ Gemensamt skal: `app/layout.tsx` (Server Component så långt det går). `'use c
 
 **j) Kents Vite-regler (`base: './'`, `dist/`)? — BESLUTAT ✓ (för den här PRD:n)** [#](#4j-Vite-undantag)
 
-De reglerna gäller Vite-projekt. ver3 föreslås som Next.js. Då är `next.config.ts` (eller motsvarande) konfigurationsfilen, inte `vite.config.js`. Relativa sökvägar på GitHub Pages är inte målet om 4c står fast. Dokumenterat så att en framtida agent inte “rättar” Next.js till Vite.
+De reglerna gäller Vite-projekt. ver3 är Next.js (4b). Då är `next.config.ts` (eller motsvarande) konfigurationsfilen, inte `vite.config.js`. Relativa sökvägar på GitHub Pages är inte målet om 4c står fast. Dokumenterat så att en framtida agent inte “rättar” Next.js till Vite.
+
+---
+
+<a id="4k-Extra-bra"></a>
+
+**k) Tre saker som kan bli extra bra — FÖRSLAG, ÖPPEN** [#](#4k-Extra-bra)
+
+Inte “mer Vercel” i största allmänhet. Tre grejer GitHub Pages och ver2 *inte* kan, och som passar *den här* kalkylen. Auth, chatt och WebSockets hör inte hit.
+
+1. **Närboendesidan som en länk man vågar skicka.**  
+   `…/kalkyl/narboende?s=wqdmm7` öppnar *deras* perspektiv, inte en flik någon måste hitta. Produkt, inte ramverk. Kräver 4i:s perspektiv-URL:er. Kan vänta till efter att `/kalkyl` räknar rätt.
+
+2. **Ett delningskort med riktiga tal.**  
+   När länken klistras i mejl eller LinkedIn: en OG-bild som Vercel ritar (`next/og`) med t.ex. “LCOE 48 öre/kWh · payback 9 år · närboende X kr/år”. I ver2 är delningen en URL. Här kan delningen *se ut som kalkylen*. Fas 2.
+
+3. **Dagens spotpris ligger där, utan knapp.**  
+   Cron hämtar dygnssnittet (UTC). Sidan visar “SE4 idag …” med källa och datum. Knappen “Hämta” i ver2 är ett anrop. Här blir priset en egenskap hos sidan. Kalkylens 25-årsantagande förblir ett gult fält — dagens spot är information, inte en tyst överskrivning. Samma distinktion som ver2, men Vercel gör jobbet även när ingen har sidan öppen. Fas 2. Hobby-planens aktuella cron-gräns slås upp vid implementation, inte gissas här.
 
 ---
 
@@ -268,17 +334,19 @@ De reglerna gäller Vite-projekt. ver3 föreslås som Next.js. Då är `next.con
 
 Checklista. Avbockning ska spegla avsnitt 4 — inget här är “klart” bara för att det står i PRD:n.
 
-**Den här omgången (v1 av PRD:n):**
+**Den här omgången (v1–v1.2):**
 
 - [x] Skapa mappen `vindkraftskalkyl_Vercel_ver3/` (lokalt, 2026-09-15).
 - [x] Första utkast till denna PRD.
 - [x] README som säger att appen inte är byggd än, plus lokal sökväg.
 - [x] `.gitignore` för framtida `.env`, `.vercel`, `node_modules`, `.next`.
+- [x] v1.2: skillens roll, 4b beslutad, App Router-uppdelning, tre produktidéer (4k).
+- [x] `nextjs-vercel-app-prompting` uppdaterad så “till fullo” = spår B / Next.js (App Router) som default.
 
 **Nästa, innan kod:**
 
-- [ ] Kent tar ställning till 4a–4i (särskilt 4b, 4c, 4e, 4g, 4h, 4i).
-- [ ] Fräscha-ögon-genomläsning av hela PRD:n när Kent säger att den kan frysas (Regel 7 — inte samma sak som detta första utkast).
+- [ ] Kent tar ställning till resterande 4a, 4c, 4e, 4g, 4h, 4i, 4k.
+- [ ] Fräscha-ögon-genomläsning av hela PRD:n när Kent säger att den kan frysas (Regel 7 — inte samma sak som detta utkast).
 - [ ] SPEC.md om 4g blir ja.
 
 **Därefter, implementation (inte påbörjad):**
@@ -300,7 +368,7 @@ Checklista. Avbockning ska spegla avsnitt 4 — inget här är “klart” bara 
 Ordningen är medveten: krav före spec före scaffolding före Vercel-projekt.
 
 1. **PRD (nu)** — vad och varför, öppna frågor synliga.
-2. **Kent svarar på avsnitt 4** — särskilt stack, dual-publicering, vilken kalkyl, rutter.
+2. **Kent svarar på avsnitt 4** — dual-publicering, vilken kalkyl, rutter, 4k. (Stacken 4b är beslutad.)
 3. **Frys PRD** efter en fräscha-ögon-genomläsning, inte efter första utkastet.
 4. **SPEC.md** (om 4g = ja) — fält, formler, API-kontrakt, felvägar.
 5. **Scaffold Next.js** i den här mappen. Visa filträdet. Ingen stealth-omdesign.
@@ -352,7 +420,8 @@ Vercel (2026f) *Redis on Vercel.* Tillgänglig: https://vercel.com/docs/redis (h
 - Live ver2: https://vindkraft-ver2.vercel.app
 - Team-yta (arbetsyta, inte docs): https://vercel.com/effektiv1
 - Dual-publicerings-skill i det här repot: `.cursor/skills/vercel-github-pages-dual-publicering/SKILL.md`
-- Next.js/Vercel-prompt-skill: `C:\Users\kentl\.cursor\skills\nextjs-vercel-app-prompting\SKILL.md`
+- Next.js/Vercel-prompt-skill (Cursor, kanonisk för två spår + “till fullo”): `C:\Users\kentl\.cursor\skills\nextjs-vercel-app-prompting\SKILL.md` — uppdaterad 15 september 2026 kväll.
+- Samma skills Claude-kopia (äldre promptmall + till-fullo-regeln införd, inte full synk): `C:\Users\kentl\.claude\skills\nextjs-vercel-app-prompting\SKILL.md`
 
 ---
 
@@ -360,11 +429,13 @@ Vercel (2026f) *Redis on Vercel.* Tillgänglig: https://vercel.com/docs/redis (h
 
 ## 8. Status [#](#8-Status)
 
-15 september 2026: mappen `vindkraftskalkyl_Vercel_ver3` finns lokalt med README, `.gitignore` och detta första PRD-utkast (v1.1). Ingen appkod. Inget Vercel-projekt. Ingen live-URL.
+15 september 2026 kväll: mappen finns. PRD v1.2. **4b beslutad:** Next.js (App Router) är skalet när Vercel används till fullo. 4j var redan beslutad. Ingen appkod. Inget Vercel-projekt. Ingen live-URL.
 
-Förslag som *ligger på bordet* men inte är Kents beslut: Next.js (App Router), Vercel-only (ingen identisk Pages-tvilling), projektnamn `vindkraft-ver3` i teamet Effektiv, porta fem-perspektiv-kalkylen, SPEC.md före scaffolding, fas 1 utan cron/OG/Auth.
+Skillen `nextjs-vercel-app-prompting` (Cursor) säger nu att “till fullo” är spår B som default. Claude-kopian har samma regel införd men är i övrigt en äldre promptmall.
 
-Nästa handling är Kents: nicka, ändra eller stryka i avsnitt 4 — särskilt 4b, 4c, 4e, 4g, 4h och 4i. Därefter en fräscha-ögon-genomläsning innan någon kallar PRD:n fryst.
+Öppet eller förslag: 4a (mappnamn i praktiken skapat), 4c, 4d, 4e, 4f, 4g, 4h, 4i, 4k.
+
+Nästa handling är Kents: nicka, ändra eller stryka i det som är kvar i avsnitt 4. Därefter en fräscha-ögon-genomläsning innan någon kallar PRD:n fryst.
 
 ---
 
@@ -372,3 +443,4 @@ Nästa handling är Kents: nicka, ändra eller stryka i avsnitt 4 — särskilt 
 
 - 2026-09-15 (v1): Första utkast. Mapp skapad. Inga delfrågor frysta utom 4j (Vite-regler gäller inte Next.js). Skrivet efter genomgång av ver2:s teknikfil, PRD-mallen, Vercel-resan och levande Vercel-/Next.js-docs samma dag.
 - 2026-09-15 (v1.1): Intern genomläsning av utkastet (inte en frysning). Rättat “tre begrepp” → fyra lager i terminologin, och gjort avsnitt 3:s “Ingår” uttryckligen villkorat av 4b/4c/4e så omfattningen inte låtsas att stacken redan är beslutad.
+- 2026-09-15 (v1.2): Kent: “till fullo” ska inkludera Next.js (App Router). 4b beslutad. Nytt avsnitt om hur skillen styrde v1, och en rättelse av att v1 läste “anta inte Next.js” för strikt. 4i utökad med Server/Client-uppdelning och perspektiv-URL:er. Ny 4k med tre produktidéer (närboendelänk, OG-kort, levande spotpris). Skillen `nextjs-vercel-app-prompting` (Cursor + delvis Claude-kopian) och `vercel-resa-fran-forsta-kalkylen.md` uppdaterade samma kväll. Avsnitt 3 villkorar nu 4c/4e, inte 4b.
