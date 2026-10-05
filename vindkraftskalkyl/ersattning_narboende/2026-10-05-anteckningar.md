@@ -154,3 +154,19 @@ kalkylens parametrar. Kontrollera detta vid nästa uppdatering av kalkylen.
 2. Ta reda på vem som är utredare för inlösen och när utredningen ska redovisas.
 3. Följ upp vecka för vecka enligt [README.md](README.md) och spara varje uppföljning
    som en egen fil, `ÅÅÅÅ-MM-DD-anteckningar.md`, i den här mappen.
+
+## 10. Om rutinen
+
+Från och med 2026-10-12 tas uppföljningen fram av en schemalagd rutin varje måndag
+morgon. Rutinen kan utformas på flera sätt. Valet, gjort 2026-10-05 och gällande tills
+vidare, är alternativ 3.
+
+| Alternativ | Hur det fungerar | Fördel | Nackdel |
+|---|---|---|---|
+| 1. Lokal fil, Kent pushar själv | Anteckningen skrivs i den lokala Vindkraft-mappen. Kent läser, committar och pushar i Cursor | Texten granskas innan den publiceras. Ingen skrivrätt till GitHub behövs | Datorn och Claude-appen måste vara igång på måndagsmorgonen |
+| 2. Automatisk push till main | Rutinen körs i molnet och pushar direkt till main | Datorn behövs inte och anteckningen syns direkt | Texten är inte kvalitetssäkrad men publiceras direkt i ett publikt repo |
+| **3. Automatisk push till egen gren (valt)** | Rutinen körs i molnet och pushar till grenen `veckouppfoljning-narboende`. Kent läser och slår ihop med main | Datorn behövs inte. Main ändras inte förrän texten är granskad | Grenen måste slås ihop manuellt. Skrivrätten gäller hela repot |
+
+Valet kan ändras genom att prompten i den schemalagda uppgiften "Veckouppföljning
+närboendeersättning vindkraft" skrivs om. Avsnittet finns med för att påminna om att
+samma uppgift kan lösas på flera sätt, och att valet av lösning är ett eget beslut.

@@ -31,3 +31,23 @@ inlösen vindkraft, Vindkraft i kommuner 2025/26:239, NU20.
 Källor anges i Harvardstil med länk och hämtdatum. Länkar som inte har kunnat öppnas
 markeras som inte kontrollerade. Inga personnamn utöver de som finns i formella
 offentliga källor.
+
+## Om rutinen
+
+Uppföljningen tas fram av en schemalagd rutin varje måndag morgon (första körningen
+2026-10-12). Valt alternativ, tills vidare: **automatisk push till en egen gren**,
+`veckouppfoljning-narboende`. Anteckningen granskas där och slås sedan ihop med main.
+
+Andra möjliga alternativ:
+
+1. **Lokal fil, Kent pushar själv.** Texten granskas före publicering, men datorn
+   måste vara igång.
+2. **Automatisk push direkt till main.** Datorn behövs inte, men texten publiceras
+   utan granskning.
+
+Valet kan ändras genom att prompten i den schemalagda uppgiften "Veckouppföljning
+närboendeersättning vindkraft" skrivs om. Varje anteckning avslutas med ett avsnitt
+"Om rutinen" med samma påminnelse.
+
+- Grenen: https://github.com/kentlundgren/Vindkraft/tree/veckouppfoljning-narboende/vindkraftskalkyl/ersattning_narboende
+- Jämför och slå ihop: https://github.com/kentlundgren/Vindkraft/compare/main...veckouppfoljning-narboende
