@@ -5,8 +5,8 @@
 **Live (Vercel-app, statisk):** https://vindkraft-rosy.vercel.app
 **Live (Vercel-app, Functions):** https://vindkraft-ver2.vercel.app
 **Live (Vercel-app, Next.js App Router):** https://vindkraft-ver3.vercel.app
-**Senast uppdaterad:** 2026-09-16
-**Version:** 1.7
+**Senast uppdaterad:** 2026-10-05
+**Version:** 1.8
 
 ---
 
@@ -81,8 +81,33 @@ Gällande promptavsnitt i Vercel-README: `#Forslag_pa_promt`
 
 ---
 
+## 📌 Regel – Namn och struktur på anteckningsfiler
+
+Anteckningar och mötessammanfattningar (t.ex. i `skanes-vindkraftsakademi/`) sparas
+med **samma namn och struktur varje gång**, så att filerna blir snygga och lätta
+att hitta:
+
+- **Filnamn:** datum först, `ÅÅÅÅ-MM-DD-anteckningar.md` (t.ex.
+  `2026-10-05-anteckningar.md`). Då hamnar filerna automatiskt i datumordning.
+  Använd bara tecken som fungerar i alla system (ingen å, ä, ö i filnamnet).
+- **Struktur:** rubrik `# Anteckningar – <sammanhang>`, därefter `**Datum:**`,
+  `**Källa:**` och en länk till föregående anteckningar, en kort inledning, en
+  linje (`---`) och numrerade avsnitt (`## 1.`, `## 2.` …). Källor i Harvardstil
+  i kursiv text sist i det avsnitt de hör till. Avsluta med att-göra och
+  uppföljningsmaterial, och koppla alltid till föregående anteckningar.
+- Förebild: [`skanes-vindkraftsakademi/anteckningar-2026-09-02.md`](skanes-vindkraftsakademi/anteckningar-2026-09-02.md)
+  och [`skanes-vindkraftsakademi/2026-10-05-anteckningar.md`](skanes-vindkraftsakademi/2026-10-05-anteckningar.md).
+- Byt inte namn på befintliga anteckningsfiler utan att fråga Kent, eftersom
+  externa länkar kan peka på dem.
+
+Denna regel gäller **övergripande** för alla Kents repon och bör även finnas i
+den globala filen `AI\Claude\CLAUDE.md` på Kents lokala maskin.
+
+---
+
 ## Uppdateringslogg
 
+- 2026-10-05 (v1.8): Regel om namn och struktur på anteckningsfiler (datum först, samma struktur varje gång). Mötessammanfattningen 2026-10-05 lades till i `skanes-vindkraftsakademi/`.
 - 2026-09-16 (v1.7): `vindkraftskalkyl_Vercel_ver3/` live på https://vindkraft-ver3.vercel.app. Ver3 är en Next.js-app (App Router) och den enda av lagren som *inte* går att spegla på GitHub Pages — den behöver en server. Rot-README:n fick en rad per Vercel-app.
 - 2026-09-15 (v1.6): `Hur-skaffa-nyckel-hos-ENTSO-E.md` i ver2; live-URL för `vindkraft-ver2`.
 - 2026-09-14 (v1.5): `vindkraftskalkyl_Vercel_ver2/` – Vercel-anpassad kalkyl med Functions, nytt projekt i teamet `effektiv1`.
@@ -95,4 +120,4 @@ Gällande promptavsnitt i Vercel-README: `#Forslag_pa_promt`
 
 ---
 
-_CLAUDE.md v1.7, 2026-09-16_
+_CLAUDE.md v1.8, 2026-10-05_
