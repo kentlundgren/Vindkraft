@@ -5,7 +5,7 @@
 två mötesbilder (punkt 4 "Rapport från verksamhetsledaren" och punkt 5 "Försäkring
 för föreningen/styrelse") och arbetet med dem efteråt. Övriga punkter på
 dagordningen har inte setts.
-**Föregående anteckningar:** [2026-09-02](anteckningar-2026-09-02.md)
+**Föregående anteckningar:** [2026-09-02](2026-09-02-anteckningar.md)
 **Nästa möte:** måndag 2026-10-12 kl. 08.30
 
 Detta är en kort sammanfattning av vad som togs upp, med koppling till förra

@@ -95,7 +95,7 @@ att hitta:
   linje (`---`) och numrerade avsnitt (`## 1.`, `## 2.` …). Källor i Harvardstil
   i kursiv text sist i det avsnitt de hör till. Avsluta med att-göra och
   uppföljningsmaterial, och koppla alltid till föregående anteckningar.
-- Förebild: [`skanes-vindkraftsakademi/anteckningar-2026-09-02.md`](skanes-vindkraftsakademi/anteckningar-2026-09-02.md)
+- Förebild: [`skanes-vindkraftsakademi/2026-09-02-anteckningar.md`](skanes-vindkraftsakademi/2026-09-02-anteckningar.md)
   och [`skanes-vindkraftsakademi/2026-10-05-anteckningar.md`](skanes-vindkraftsakademi/2026-10-05-anteckningar.md).
 - Byt inte namn på befintliga anteckningsfiler utan att fråga Kent, eftersom
   externa länkar kan peka på dem.
@@ -107,7 +107,7 @@ den globala filen `AI\Claude\CLAUDE.md` på Kents lokala maskin.
 
 ## Uppdateringslogg
 
-- 2026-10-05 (v1.8): Regel om namn och struktur på anteckningsfiler (datum först, samma struktur varje gång). Mötessammanfattningen 2026-10-05 lades till i `skanes-vindkraftsakademi/`.
+- 2026-10-05 (v1.8): Regel om namn och struktur på anteckningsfiler (datum först, samma struktur varje gång). Äldre fil `anteckningar-2026-09-02.md` bytt till `2026-09-02-anteckningar.md`. Mötessammanfattningen 2026-10-05 lades till i `skanes-vindkraftsakademi/`.
 - 2026-09-16 (v1.7): `vindkraftskalkyl_Vercel_ver3/` live på https://vindkraft-ver3.vercel.app. Ver3 är en Next.js-app (App Router) och den enda av lagren som *inte* går att spegla på GitHub Pages — den behöver en server. Rot-README:n fick en rad per Vercel-app.
 - 2026-09-15 (v1.6): `Hur-skaffa-nyckel-hos-ENTSO-E.md` i ver2; live-URL för `vindkraft-ver2`.
 - 2026-09-14 (v1.5): `vindkraftskalkyl_Vercel_ver2/` – Vercel-anpassad kalkyl med Functions, nytt projekt i teamet `effektiv1`.
