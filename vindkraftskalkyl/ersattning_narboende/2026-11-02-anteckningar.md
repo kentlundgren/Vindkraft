@@ -48,13 +48,11 @@ Skatteverket.
   250 meter högt verk: upp till 11 000 kr per år vid 5–6 verkshöjder och cirka
   2 800 kr per år vid 8–9 verkshöjder. Det är en branschorganisations exempel.
 
-*Källor:
-Green Power Sweden (2026) Så funkar intäktsdelningen från vindkraft med närboende.
-Publicerad på wpd:s webbplats.
-https://www.wpd.se/wp-content/uploads/2026/09/2026-08-31-Sa-funkar-intaktsdelningen-fran-vindkraft-med-narboende.pdf
-(hämtad 2026-11-02).
-— Vindkollen (2026) Skatt på vindkraftsersättning 2026.
-https://vindkoll.se/skatt-vindkraftersattning (hämtad 2026-11-02).*
+*Källor:*
+
+*Green Power Sweden (2026) Så funkar intäktsdelningen från vindkraft med närboende. Publicerad på wpd:s webbplats. https://www.wpd.se/wp-content/uploads/2026/09/2026-08-31-Sa-funkar-intaktsdelningen-fran-vindkraft-med-narboende.pdf (hämtad 2026-11-02).*
+
+*Vindkollen (2026) Skatt på vindkraftsersättning 2026. https://vindkoll.se/skatt-vindkraftersattning (hämtad 2026-11-02).*
 
 ## 3. Tillstånd och parker
 
@@ -94,32 +92,23 @@ Min bedömning, som är ett resonemang och inte belagt:
   berörda inte kan överklaga tillstyrkan, vilket inte har kontrollerats.
 - **Sammanställning av parker som omfattas av lagen:** inte funnet.
 
-*Källor:
-Länsstyrelsen Östergötland (2026) Ansökan om tillstånd enligt miljöbalken, Fred. Olsen
-Renewables AB. 15 juni.
-https://www.lansstyrelsen.se/ostergotland/om-oss/nyheter-och-press/kungorelser/kungorelser---ostergotland/2026-06-15-ansokan-om-tillstand-enligt-miljobalken-fred.-olsen-renewables-ab.html
-(hämtad 2026-11-02).
-— Fred. Olsen Renewables (u.å.) Långhult. https://fredolsenrenewables.com/all-projects/laanghult/
-(hämtad 2026-11-02).
-— Jönköpings-Posten (2026) Beslut om vindkraft drogs tillbaka. 8 oktober. Via Pressen.se.
-https://www.pressen.se/1369162502.html (hämtad 2026-11-02, bara ingress).
-Originalet https://www.jp.se/jonkoping/beslut-om-vindkraft-drogs-tillbaka (inte kontrollerad).
-— Jönköpings-Posten (u.å.) L svängde. https://www.jp.se/jonkoping/l-svangde-vindkraftpark-stoppas-markligt/
-(inte kontrollerad, innehåll och datum okända).
-— Skillingaryd.nu (2026) Gislaved säger ja till vindkraft i ett område kommunen själv
-vill skydda. Insändare, 31 oktober.
-https://skillingaryd.nu/vaggeryd/nyheter/gislaved-sager-ja-till-vindkraft-i-ett-omrade-kommunen-sjalv-vill-skydda/
-(hämtad 2026-11-02).
-— Skillingaryd.nu (2026) Ingen tar ansvar. Insändare, 1 november.
-https://skillingaryd.nu/vaggeryd/nyheter/ingen-tar-ansvar-insandare-om-vindkraft/
-(hämtad 2026-11-02).
-— Finwire (2026) Endast fyra landbaserade vindkraftsprojekt fick tillstånd under första
-halvåret. Via Placera, 30 september.
-https://www.placera.se/telegram/endast-fyra-landbaserade-vindkraftsprojekt-fick-tillstand-under-forsta-halvaret-20260930
-(hämtad 2026-11-02).
-— Länsstyrelsen Västernorrland (2026) Vindkraftpark, Kusberget, Bräcke kommun.
-https://www.lansstyrelsen.se/vasternorrland/om-oss/nyheter-och-press/nyheter---vasternorrland/2026-07-06-vindkraftpark-kusberget-bracke-kommun.html
-(inte kontrollerad, hämtad 2026-11-02).*
+*Källor:*
+
+*Länsstyrelsen Östergötland (2026) Ansökan om tillstånd enligt miljöbalken, Fred. Olsen Renewables AB. 15 juni. https://www.lansstyrelsen.se/ostergotland/om-oss/nyheter-och-press/kungorelser/kungorelser---ostergotland/2026-06-15-ansokan-om-tillstand-enligt-miljobalken-fred.-olsen-renewables-ab.html (hämtad 2026-11-02).*
+
+*Fred. Olsen Renewables (u.å.) Långhult. https://fredolsenrenewables.com/all-projects/laanghult/ (hämtad 2026-11-02).*
+
+*Jönköpings-Posten (2026) Beslut om vindkraft drogs tillbaka. 8 oktober. Via Pressen.se. https://www.pressen.se/1369162502.html (hämtad 2026-11-02, bara ingress). Originalet https://www.jp.se/jonkoping/beslut-om-vindkraft-drogs-tillbaka (inte kontrollerad).*
+
+*Jönköpings-Posten (u.å.) L svängde. https://www.jp.se/jonkoping/l-svangde-vindkraftpark-stoppas-markligt/ (inte kontrollerad, innehåll och datum okända).*
+
+*Skillingaryd.nu (2026) Gislaved säger ja till vindkraft i ett område kommunen själv vill skydda. Insändare, 31 oktober. https://skillingaryd.nu/vaggeryd/nyheter/gislaved-sager-ja-till-vindkraft-i-ett-omrade-kommunen-sjalv-vill-skydda/ (hämtad 2026-11-02).*
+
+*Skillingaryd.nu (2026) Ingen tar ansvar. Insändare, 1 november. https://skillingaryd.nu/vaggeryd/nyheter/ingen-tar-ansvar-insandare-om-vindkraft/ (hämtad 2026-11-02).*
+
+*Finwire (2026) Endast fyra landbaserade vindkraftsprojekt fick tillstånd under första halvåret. Via Placera, 30 september. https://www.placera.se/telegram/endast-fyra-landbaserade-vindkraftsprojekt-fick-tillstand-under-forsta-halvaret-20260930 (hämtad 2026-11-02).*
+
+*Länsstyrelsen Västernorrland (2026) Vindkraftpark, Kusberget, Bräcke kommun. https://www.lansstyrelsen.se/vasternorrland/om-oss/nyheter-och-press/nyheter---vasternorrland/2026-07-06-vindkraftpark-kusberget-bracke-kommun.html (inte kontrollerad, hämtad 2026-11-02).*
 
 ## 4. Kritik och stöd
 
@@ -137,12 +126,11 @@ https://www.lansstyrelsen.se/vasternorrland/om-oss/nyheter-och-press/nyheter---v
   8 september 2026 och anger att besked om inlösen planeras under 2027.
 - **Svensk Vindkraft, Energimyndigheten:** inget nytt hittat.
 
-*Källor:
-Villaägarnas Riksförbund (2026) Ny lag bjuder in till fler vindkraftverk nära bostäder.
-16 juni. https://www.villaagarna.se/debatt/aganderatt/ny-vindkraftsersattning-trader-i-kraft-men-racker-inte-till/
-(hämtad 2026-11-02).
-— Green Power Sweden (2026) Incitament för vindkraft.
-https://greenpowersweden.se/incitament-for-vindkraft/ (hämtad 2026-11-02).*
+*Källor:*
+
+*Villaägarnas Riksförbund (2026) Ny lag bjuder in till fler vindkraftverk nära bostäder. 16 juni. https://www.villaagarna.se/debatt/aganderatt/ny-vindkraftsersattning-trader-i-kraft-men-racker-inte-till/ (hämtad 2026-11-02).*
+
+*Green Power Sweden (2026) Incitament för vindkraft. https://greenpowersweden.se/incitament-for-vindkraft/ (hämtad 2026-11-02).*
 
 ## 5. Inlösenutredningen
 
@@ -152,9 +140,9 @@ https://greenpowersweden.se/incitament-for-vindkraft/ (hämtad 2026-11-02).*
   direktivet (Dir. 2026:58).
 - **Delbetänkande:** inte funnet.
 
-*Källa:
-Statens offentliga utredningar (2026) Pågående utredningar, sida 3.
-https://www.sou.gov.se/pagaende-utredningar/?page=3 (hämtad 2026-11-02).*
+*Källa:*
+
+*Statens offentliga utredningar (2026) Pågående utredningar, sida 3. https://www.sou.gov.se/pagaende-utredningar/?page=3 (hämtad 2026-11-02).*
 
 ## 6. Utfall, acceptans och frivilliga modeller
 
@@ -170,16 +158,13 @@ https://www.sou.gov.se/pagaende-utredningar/?page=3 (hämtad 2026-11-02).*
   den räknas om. Det är min slutsats, ingen ny promemoria har hittats.
 - Sveriges Radios artikel om Kårböle kunde inte heller denna vecka öppnas.
 
-*Källor:
-Novus (2026) Novusundersökning vindkraft närboende 2025.
-https://novus.se/wp-content/uploads/2026/03/novusundersokningvindkraftnarboende2025forpublikation.pdf
-(inte kontrollerad, hämtad 2026-11-02).
-— Fred. Olsen Renewables (2026) PM Intäktsdelning och ersättningar, Vindpark Långhult.
-https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf
-(inte kontrollerad denna vecka, hämtad 2026-11-02).
-— Sveriges Radio (2026) I Kårböle ses vindkraften som en räddning.
-https://www.sverigesradio.se/artikel/i-karbole-ses-vindkraften-som-en-raddning
-(inte kontrollerad, hämtad 2026-11-02).*
+*Källor:*
+
+*Novus (2026) Novusundersökning vindkraft närboende 2025. https://novus.se/wp-content/uploads/2026/03/novusundersokningvindkraftnarboende2025forpublikation.pdf (inte kontrollerad, hämtad 2026-11-02).*
+
+*Fred. Olsen Renewables (2026) PM Intäktsdelning och ersättningar, Vindpark Långhult. https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf (inte kontrollerad denna vecka, hämtad 2026-11-02).*
+
+*Sveriges Radio (2026) I Kårböle ses vindkraften som en räddning. https://www.sverigesradio.se/artikel/i-karbole-ses-vindkraften-som-en-raddning (inte kontrollerad, hämtad 2026-11-02).*
 
 ## 7. Vad vi vet och inte vet
 
