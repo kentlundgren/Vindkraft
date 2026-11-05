@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  Vindkraftskalkyl, fall Långhult (Gislaved och Jönköping)
+  ----------------------------------------------------------------------------
+  Kopia av vindkraftskalkyl.html. Originalet är oförändrat.
+  Struktur och innehåll här (HTML), formatering i stil_langhult.css och all
+  beräknings- och interaktionslogik i berakningar_langhult.js. Filerna länkas
+  med relativa sökvägar och fungerar när de tre filerna ligger i samma mapp.
+
+  Indata är hämtade ur promemorian "Intäktsdelning och ersättningar: Vindpark
+  Långhult" (Westander Klimat och Energi, 2026-04-20). Varje indatafält är märkt
+  PM, lagstadgat eller antagande. Gult används bara på inmatningsfält.
+  ============================================================================
+-->
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vindkraftskalkyl, fall Långhult</title>
+  <link rel="stylesheet" href="stil_langhult.css">
+</head>
+
+<body>
+
+  <header class="sidhuvud">
+    <h1 id="Langhult">Vindkraftskalkyl, fall Långhult<a class="ankare" href="#Langhult" aria-label="Länk till rubriken">#</a></h1>
+    <p class="ingress">
+      Projektets totala ekonomi och den ersättning som närboende troligen får, för vindpark
+      Långhult i Jönköpings och Gislaveds kommuner (20 verk, 132 <abbr class="fk" tabindex="0" data-f="MW = megawatt, enhet för effekt. 1 MW = 1 000 kW.">MW</abbr>).
+      Uppgifterna är hämtade ur promemorian
+      <a href="#ref-pm">Westander Klimat och Energi (2026)</a>.
+      Det som inte står i promemorian är märkt som antagande. Ändra ett gult fält så räknas allt om.
+    </p>
+    <p class="ingress">Kent Lundgren · version 2026-11-05 · kopia av <a href="vindkraftskalkyl.html" style="color:#fff">vindkraftskalkyl.html</a></p>
+  </header>
+
+  <!-- ========================================================================
+       LÄSGUIDE
+       ==================================================================== -->
+  <section aria-labelledby="Lasguide">
+    <h2 id="Lasguide">Så läser du sidan<a class="ankare" href="#Lasguide" aria-label="Länk till rubriken">#</a></h2>
+    <div class="lasguide">
+      <p style="margin:0">Varje tal är märkt med varifrån det kommer:</p>
+      <ul>
+        <li><span class="badge pm">PM</span> uppgift ur promemorian, med sidhänvisning (PM:ets egen sidnumrering).</li>
+        <li><span class="badge lagstadgat">lagstadgat</span> lagtext, återgiven ur promemorian, som citerar regeringens proposition 2025/26:239. Kontrollera mot <a href="https://lagen.nu/2026:1113" target="_blank" rel="noopener">intäktsdelningslagen (2026:1113)</a> innan något återges.</li>
+        <li><span class="badge antagande">antagande</span> Kents standardvärde eller en förenkling, inte ur promemorian.</li>
+        <li><span class="badge beraknat">beräknat</span> räknas fram här av andra tal.</li>
+        <li><span class="gul-legend"></span> Gula fält ifylles. Grå fält är beräknade.</li>
+      </ul>
+    </div>
+    <p class="notering">
+      <strong>Förutsättning.</strong> Kalkylen förutsätter att Långhult omfattas av
+      <a href="https://lagen.nu/2026:1113" target="_blank" rel="noopener">intäktsdelningslagen (2026:1113)</a>.
+      Promemorian förutsätter det (s. 2, 5), men beslutsläget i kommunerna och antalet verk kan ändras
+      under tillståndsprövningen (s. 3). Det är inte kontrollerat här.
+      Siffrorna är hämtade ur källorna längst ned och är inte kvalitetssäkrade. Kontrollera mot källan innan något återges.
+    </p>
+  </section>
+
+  <!-- ========================================================================
+       INDATA
+       ==================================================================== -->
+  <section class="indata-panel" aria-labelledby="Indata">
+    <h2 id="Indata">Indata<a class="ankare" href="#Indata" aria-label="Länk till rubriken">#</a></h2>
+
+    <div class="indata-grupper">
+
+      <!-- ---- Anläggning (PM) ---- -->
+      <fieldset class="indata-grupp">
+        <legend>Anläggning (hela parken)</legend>
+
+        <label>Antal verk
+          <input type="number" step="1" id="antalverk" class="indata" value="20">
+          <span class="badge pm">PM s. 3</span>
+        </label>
+
+        <label>Effekt per verk (MW)
+          <input type="number" step="0.1" id="effekt" class="indata" value="6.6">
+          <span class="badge pm">PM s. 3, 11</span>
+        </label>
+
+        <label>Fullasttimmar (h/år)
+          <abbr class="fk" tabindex="0" data-f="Fullasttimmar: antal timmar per år som verket skulle behöva gå på full effekt för att ge årets produktion. Produktion = effekt × fullasttimmar.">?</abbr>
+          <input type="number" step="10" id="fullasttimmar" class="indata" value="3610">
+          <span class="badge pm">PM s. 11, 16</span>
+          <span class="hint">6,6 MW × 3 610 h = cirka 23,8 GWh per verk och år.</span>
+        </label>
+
+        <label>Verkshöjd (m)
+          <abbr class="fk" tabindex="0" data-f="Verkshöjd: totalhöjden från marken till rotorbladets högsta punkt. Avståndszonerna för närboende mäts i antal verkshöjder.">?</abbr>
+          <input type="number" step="1" id="verkshojd" class="indata" value="270">
+          <span class="badge pm">PM s. 16</span>
+          <span class="hint">PM:et anger maxhöjd 270 m för verken i Jönköping. Samma höjd används här för alla verk (antagande).</span>
+        </label>
+
+        <label>Livslängd (år)
+          <input type="number" step="1" id="livslangd" class="indata" value="30">
+          <span class="badge pm">PM s. 3, 16</span>
+        </label>
+
+        <label>Spotpris (kr/kWh)
+          <abbr class="fk" tabindex="0" data-f="Spotpris: elens börspris för varje timme. Här ett medelvärde för hela livslängden.">?</abbr>
+          <input type="number" step="0.01" id="elpris" class="indata" value="0.5">
+          <span class="badge pm">PM s. 12, 16</span>
+          <span class="hint">PM:et utgår från 50 öre/kWh (nära Svenska kraftnäts scenarier) och visar 30–70 öre.</span>
+        </label>
+
+        <label>Viktning av intäkten
+          <abbr class="fk" tabindex="0" data-f="Viktning: vindkraften producerar mest när elpriset är lågt. Intäkten per kWh blir därför lägre än medelspotpriset. PM:et multiplicerar med 0,75.">?</abbr>
+          <input type="number" step="0.01" id="viktning" class="indata" value="0.75">
+          <span class="badge pm">PM s. 12, 16</span>
+          <span class="hint">Realiserat pris = spotpris × viktning = 0,375 kr/kWh med PM:ets värden.</span>
+        </label>
+
+        <label>Elprisbana, årlig förändring (%/år)
+          <input type="number" step="0.1" id="elprisforandring" class="indata" value="0">
+          <span class="badge pm">PM: platt</span>
+        </label>
+
+        <label>Degradering (%/år)
+          <input type="number" step="0.1" id="degradering" class="indata" value="0">
+          <span class="badge pm">PM: ingen</span>
+          <span class="hint">PM:ets 107 Mkr på 30 år förutsätter oförändrad produktion.</span>
+        </label>
+      </fieldset>
+
+      <!-- ---- Investering och drift (antagande) ---- -->
+      <fieldset class="indata-grupp">
+        <legend>Investering och drift</legend>
+        <p class="hint" style="margin:0 0 .6rem">PM:et saknar uppgifter om kostnader. Värdena är kalkylens egna standardvärden.</p>
+
+        <label>Specifik investeringskostnad (kkr/MW)
+          <abbr class="fk" tabindex="0" data-f="kkr = tusen kronor. 12 000 kkr/MW = 12 miljoner kronor per MW.">?</abbr>
+          <input type="number" step="10" id="specinv" class="indata" value="12000">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Kalkylränta (0–1)
+          <input type="number" step="0.0001" id="kalkylranta" class="indata" value="0.1215">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Rörlig driftskostnad (kr/kWh)
+          <input type="number" step="0.01" id="rorlig" class="indata" value="0.11">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Fast driftskostnad (kr/MW/år)
+          <input type="number" step="100" id="fast" class="indata" value="42100">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Nedmonteringskostnad (kkr/MW)
+          <input type="number" step="10" id="nedmontering" class="indata" value="600">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Restvärde (kkr/MW)
+          <input type="number" step="10" id="restvarde" class="indata" value="0">
+          <span class="badge antagande">antagande</span>
+        </label>
+      </fieldset>
+
+      <!-- ---- Markägare (antagande) ---- -->
+      <fieldset class="indata-grupp">
+        <legend>Markägare (arrende)</legend>
+
+        <label>Arrendemodell
+          <select id="arrendemodell" class="indata">
+            <option value="procent" selected>% av bruttointäkt</option>
+            <option value="krmw">kr/MW/år</option>
+          </select>
+        </label>
+
+        <label>Arrende (% av bruttointäkt)
+          <input type="number" step="0.1" id="arrendeprocent" class="indata" value="3.5">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Arrende (kr/MW/år)
+          <input type="number" step="1000" id="arrendekrmw" class="indata" value="40000">
+          <span class="badge antagande">antagande</span>
+        </label>
+      </fieldset>
+
+      <!-- ---- Skatt, bygd och kommun (PM) ---- -->
+      <fieldset class="indata-grupp">
+        <legend>Fastighetsskatt, bygdemedel och kommun</legend>
+
+        <label>Fastighetsskatt per verk, första åren (kr/år)
+          <abbr class="fk" tabindex="0" data-f="Fastighetsskatt: 0,5 % av taxeringsvärdet. För ett nytt verk på 6,6 MW i elområde 3 blir det 334 398 kr per år enligt PM:ets räkneexempel.">?</abbr>
+          <input type="number" step="100" id="fskatt1" class="indata" value="334398">
+          <span class="badge pm">PM bilaga 1, s. 18</span>
+        </label>
+
+        <label>Antal år med full fastighetsskatt
+          <input type="number" step="1" id="fskattaar" class="indata" value="4">
+          <span class="badge pm">PM s. 4, 9</span>
+          <span class="hint">PM:et: "de första fyra åren" (2,3 Mkr för sju verk).</span>
+        </label>
+
+        <label>Fastighetsskatt per verk över 30 år (kr)
+          <abbr class="fk" tabindex="0" data-f="Skatten sjunker över tid eftersom taxeringsvärdet skrivs ned med verkets ålder (nedskrivningsfaktor). PM:et anger 46,5 Mkr för sju verk, alltså cirka 6,64 Mkr per verk. Här jämnas åren efter de första fyra ut till ett lika stort belopp per år.">?</abbr>
+          <input type="number" step="1000" id="fskattotal" class="indata" value="6643000">
+          <span class="badge pm">PM s. 18 (46,5 Mkr / 7)</span>
+          <span class="badge antagande">utjämning</span>
+        </label>
+
+        <label>Bygdemedel, hela parken (kr/år)
+          <abbr class="fk" tabindex="0" data-f="Bygdemedel: pengar som bolaget avsätter till föreningsliv, näringsliv och infrastruktur i bygden. Det är inte samma sak som ersättningen till närboende.">?</abbr>
+          <input type="number" step="10000" id="bygdemedel" class="indata" value="400000">
+          <span class="badge pm">PM s. 4, 12 (minst)</span>
+        </label>
+
+        <label>Kommunstöd (kr per MW och år)
+          <abbr class="fk" tabindex="0" data-f="Kommunstöd: staten fördelar ett belopp motsvarande fastighetsskatten på vindkraft till kommunerna efter installerad effekt, cirka 20 000 kr per MW. Det betalas av staten och belastar inte projektet.">?</abbr>
+          <input type="number" step="100" id="kommunstod" class="indata" value="20000">
+          <span class="badge pm">PM s. 7–9</span>
+        </label>
+
+        <label>Antal verk i Gislaveds kommun
+          <input type="number" step="1" id="verkgislaved" class="indata" value="7">
+          <span class="badge pm">PM s. 3</span>
+          <span class="hint">Resten (13 verk) ligger i Jönköpings kommun.</span>
+        </label>
+
+        <label>CO₂-faktor, undviken (kg/kWh)
+          <input type="number" step="0.01" id="co2faktor" class="indata" value="0.3">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Värdering av CO₂ (kr/kg)
+          <input type="number" step="0.1" id="co2varde" class="indata" value="1.0">
+          <span class="badge antagande">antagande</span>
+        </label>
+      </fieldset>
+
+      <!-- ---- Närboende ---- -->
+      <fieldset class="indata-grupp">
+        <legend>Närboende (bostäder per zon)</legend>
+        <p class="hint" style="margin:0 0 .6rem">
+          PM:et anger cirka 200 bostäder (s. 4, 16) men inte hur de fördelar sig på avstånd.
+          Fördelningen nedan följer ytan av ringarna kring ett verk (jämn bebyggelsetäthet) och är en gissning.
+          Zonerna står i <a href="#Tabell2">Tabell 2</a>.
+        </p>
+
+        <label>Bostäder i zon 1 (inom 5 verkshöjder)
+          <input type="number" step="1" id="bost1" class="indata" value="62">
+          <span class="badge antagande">antagande</span>
+        </label>
+        <label>Bostäder i zon 2 (5–6 verkshöjder)
+          <input type="number" step="1" id="bost2" class="indata" value="27">
+          <span class="badge antagande">antagande</span>
+        </label>
+        <label>Bostäder i zon 3 (6–7 verkshöjder)
+          <input type="number" step="1" id="bost3" class="indata" value="32">
+          <span class="badge antagande">antagande</span>
+        </label>
+        <label>Bostäder i zon 4 (7–8 verkshöjder)
+          <input type="number" step="1" id="bost4" class="indata" value="37">
+          <span class="badge antagande">antagande</span>
+        </label>
+        <label>Bostäder i zon 5 (8–9 verkshöjder)
+          <input type="number" step="1" id="bost5" class="indata" value="42">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Verk som ger ersättning per bostad (1 eller 2)
+          <input type="number" step="1" min="1" max="2" id="verkperbostad" class="indata" value="2">
+          <span class="badge lagstadgat">högst två verk</span>
+          <span class="badge antagande">båda verken i samma zon</span>
+          <span class="hint">PM:et: ersättning från högst de två verk som ger mest (s. 15, 16). Att båda ligger i samma zon som bostaden är en förenkling som ger en övre gräns.</span>
+        </label>
+
+        <label>Tak för närboendeersättning (% av parkens intäkt)
+          <input type="number" step="0.1" id="tak" class="indata" value="2">
+          <span class="badge lagstadgat">PM s. 15</span>
+        </label>
+      </fieldset>
+
+      <!-- ---- Andelsägare (antagande, oförändrad från originalet) ---- -->
+      <fieldset class="indata-grupp">
+        <legend>Andelsägare (kooperativ)</legend>
+
+        <label>Antal andelar
+          <input type="number" step="1" id="antalandelar" class="indata" value="10">
+        </label>
+        <label>Elmängd per andel (kWh/år)
+          <input type="number" step="100" id="kwhperandel" class="indata" value="1000">
+          <span class="badge antagande">antagande</span>
+        </label>
+        <label>Insats per andel (kr)
+          <input type="number" step="100" id="insatsperandel" class="indata" value="6000">
+          <span class="badge antagande">antagande</span>
+        </label>
+        <label>Föreningens driftpåslag (öre/kWh)
+          <input type="number" step="0.5" id="driftpaslag" class="indata" value="3">
+          <span class="badge antagande">antagande</span>
+        </label>
+        <label>Spotpris hushållsel (kr/kWh)
+          <input type="number" step="0.01" id="spotpris" class="indata" value="0.6">
+        </label>
+        <label>Elhandelspåslag (kr/kWh)
+          <input type="number" step="0.01" id="elhandelspaslag" class="indata" value="0.08">
+          <span class="badge antagande">antagande</span>
+        </label>
+        <label>Energiskatt (kr/kWh, exkl. moms)
+          <input type="number" step="0.001" id="energiskatt" class="indata" value="0.428">
+          <span class="badge antagande">antagande</span>
+        </label>
+        <label>Moms (%)
+          <input type="number" step="1" id="momssats" class="indata" value="25">
+        </label>
+      </fieldset>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       NYCKELTAL (alltid synliga)
+       ==================================================================== -->
+  <section class="nyckeltalsrad" aria-labelledby="Nyckeltal">
+    <h2 id="Nyckeltal" class="visuellt-dold">Sammanfattande nyckeltal</h2>
+    <div class="nyckeltal-kort">
+      <div class="kort"><span class="kort-etikett"><abbr class="fk" tabindex="0" data-f="LCOE: genomsnittlig kostnad per kWh över livslängden (investering och drift, diskonterade). Arrende, skatt, bygdemedel och närboendeersättning ingår inte.">LCOE</abbr></span><span class="kort-varde" id="nt-lcoe">–</span></div>
+      <div class="kort"><span class="kort-etikett">Överskott/år efter allt (år 1)</span><span class="kort-varde" id="nt-overskott">–</span></div>
+      <div class="kort"><span class="kort-etikett"><abbr class="fk" tabindex="0" data-f="Payback: antal år tills summan av årens nettokassaflöden är lika stor som investeringen (utan diskontering).">Payback</abbr></span><span class="kort-varde" id="nt-payback">–</span></div>
+      <div class="kort"><span class="kort-etikett"><abbr class="fk" tabindex="0" data-f="NPV (nettonuvärde): alla framtida kassaflöden omräknade till dagens värde med kalkylräntan, minus investeringen. Negativt värde: projektet når inte kalkylräntan.">NPV</abbr></span><span class="kort-varde" id="nt-npv">–</span></div>
+      <div class="kort"><span class="kort-etikett"><abbr class="fk" tabindex="0" data-f="IRR (internränta): den ränta där nettonuvärdet blir noll. Jämförs med kalkylräntan.">IRR</abbr></span><span class="kort-varde" id="nt-irr">–</span></div>
+      <div class="kort"><span class="kort-etikett">Närboende, hela parken</span><span class="kort-varde" id="nt-narboende">–</span></div>
+      <div class="kort"><span class="kort-etikett">Närboende, snitt per bostad</span><span class="kort-varde" id="nt-snitt">–</span></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       TABELL 1: PROJEKTETS EKONOMI
+       ==================================================================== -->
+  <section aria-labelledby="ProjektetsEkonomi">
+    <h2 id="ProjektetsEkonomi">Projektets totala ekonomi (hela parken)<a class="ankare" href="#ProjektetsEkonomi" aria-label="Länk till rubriken">#</a></h2>
+    <p class="hint">
+      Alla belopp i kronor. Kostnader har minustecken. Siffrorna räknas om när ett gult fält ändras.
+      Kolumnen "Källa" säger vad som kommer ur <a href="#ref-pm">PM:et</a> och vad som är antagande.
+      Närboendeposten förklaras i <a href="#Tabell2">Tabell 2</a>.
+    </p>
+    <div class="tabell-ruta">
+      <table class="data-tabell" id="Tabell1">
+        <caption id="Tabell1-rubrik">Tabell 1. Projektets ekonomi, år 1 och hela livslängden<a class="ankare" href="#Tabell1" aria-label="Länk till tabellen">#</a></caption>
+        <thead>
+          <tr>
+            <th scope="col">Post</th>
+            <th scope="col" class="tal">År 1</th>
+            <th scope="col" class="tal">Hela livslängden</th>
+            <th scope="col">Källa</th>
+          </tr>
+        </thead>
+        <tbody id="t1-kropp"></tbody>
+      </table>
+    </div>
+    <p class="hint">
+      Kapitalkostnaden är en <abbr class="fk" tabindex="0" data-f="Annuitet: lika stora årliga betalningar som tillsammans betalar investeringen med ränta under livslängden.">annuitet</abbr>
+      (som i originalkalkylen). Nettonuvärdet i nyckeltalen räknas i stället med investeringen som utbetalning år 0.
+      Överskottet i tabellen och nettonuvärdet är därför två olika mått.
+    </p>
+  </section>
+
+  <!-- ========================================================================
+       TABELL 2: NÄRBOENDE PER ZON
+       ==================================================================== -->
+  <section aria-labelledby="NarboendePerZon">
+    <h2 id="NarboendePerZon">Vad närboende troligen får<a class="ankare" href="#NarboendePerZon" aria-label="Länk till rubriken">#</a></h2>
+    <p class="hint">
+      Ersättningen är en andel (i <abbr class="fk" tabindex="0" data-f="Promille (‰): tusendel. 2,5 ‰ = 0,25 %.">promille</abbr>)
+      av <em>ett verks</em> intäkt, och andelen sjunker i fem steg med avståndet mätt i verkshöjder.
+      En bostad får ersättning från högst två verk. Sammanlagt får parken betala högst 2 % av sina intäkter.
+      Överstiger summan taket sätts alla ersättningar ned i proportion.
+    </p>
+    <div class="tabell-ruta">
+      <table class="data-tabell" id="Tabell2">
+        <caption id="Tabell2-rubrik">Tabell 2. Närboendeersättning per avståndszon, hela parken, år 1<a class="ankare" href="#Tabell2" aria-label="Länk till tabellen">#</a></caption>
+        <thead>
+          <tr>
+            <th scope="col">Zon</th>
+            <th scope="col">Avstånd till verket</th>
+            <th scope="col" class="tal">Andel av verkets intäkt <span class="badge lagstadgat">lagstadgat</span></th>
+            <th scope="col" class="tal">Bostäder <span class="badge antagande">antagande</span></th>
+            <th scope="col" class="tal">Per bostad före tak (kr/år)</th>
+            <th scope="col" class="tal">Per bostad efter tak (kr/år)</th>
+            <th scope="col" class="tal">Zonen totalt efter tak (kr/år)</th>
+          </tr>
+        </thead>
+        <tbody id="t2-kropp"></tbody>
+      </table>
+    </div>
+    <dl class="resultatlista">
+      <div><dt>Summa före tak</dt><dd id="t2-fore">–</dd></div>
+      <div><dt>Tak (2 % av parkens intäkt)</dt><dd id="t2-tak">–</dd></div>
+      <div><dt>Nås taket?</dt><dd id="t2-nas" style="white-space:normal;text-align:right">–</dd></div>
+      <div><dt>Nedsättning</dt><dd id="t2-skal">–</dd></div>
+      <div class="framhavd"><dt>Genomsnitt per bostad</dt><dd id="t2-snitt">–</dd></div>
+    </dl>
+    <p class="notering">
+      PM:et anger att taket nås och att genomsnittet då blir "drygt 18 000" kronor per bostad och år (s. 4, 16).
+      Det går inte att kontrollera utan bostädernas verkliga avstånd. Zonfördelningen här är en gissning,
+      och ändras den ändras både summan före tak och hur mycket varje zon får.
+      Jämför med <a href="#Tabell6">Tabell 6</a>. Hur ersättningen ändras med elpriset visas i <a href="#Tabell4">Tabell 4</a> och <a href="#Tabell5">Tabell 5</a>.
+    </p>
+  </section>
+
+  <!-- ========================================================================
+       TABELL 3: JÄMFÖRELSE MOT FÖREGÅENDE ÄNDRING
+       ==================================================================== -->
+  <section class="jamforelse" aria-labelledby="Jamforelse">
+    <h2 id="Jamforelse">Jämförelse mot föregående ändring<a class="ankare" href="#Jamforelse" aria-label="Länk till rubriken">#</a></h2>
+    <p class="hint">
+      När du ändrar ett fält och lämnar det flyttas det tidigare "Senaste"-värdet till "Tidigare",
+      det nya värdet hamnar i "Senaste" och skillnaden visas i "Förändring". Vid första beräkningen visas "–".
+    </p>
+    <div class="tabell-ruta">
+      <table class="jamforelse-tabell" id="Tabell3">
+        <caption id="Tabell3-rubrik" style="text-align:left;font-weight:700;color:var(--farg-primar);padding:.2rem 0 .5rem">Tabell 3. Jämförelse mot föregående ändring<a class="ankare" href="#Tabell3" aria-label="Länk till tabellen">#</a></caption>
+        <thead>
+          <tr>
+            <th scope="col">Nyckeltal</th>
+            <th scope="col">Senaste resultatet</th>
+            <th scope="col">Tidigare resultatet</th>
+            <th scope="col">Förändringen</th>
+          </tr>
+        </thead>
+        <tbody id="jamforelse-kropp"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       FLIKAR
+       ==================================================================== -->
+  <section class="flik-omrade" aria-labelledby="Perspektiv">
+    <h2 id="Perspektiv">Fem perspektiv<a class="ankare" href="#Perspektiv" aria-label="Länk till rubriken">#</a></h2>
+
+    <div class="flik-knappar" role="tablist" aria-label="Perspektiv">
+      <button class="flik-knapp aktiv" role="tab" aria-selected="true"  data-flik="investerare">Investerare</button>
+      <button class="flik-knapp"       role="tab" aria-selected="false" data-flik="markagare">Markägare</button>
+      <button class="flik-knapp"       role="tab" aria-selected="false" data-flik="kommun">Kommun, bygd och samhälle</button>
+      <button class="flik-knapp"       role="tab" aria-selected="false" data-flik="andelsagare">Andelsägare</button>
+      <button class="flik-knapp"       role="tab" aria-selected="false" data-flik="narboende">Närboende</button>
+    </div>
+
+    <!-- ---- Investerare ---- -->
+    <div class="flik-panel aktiv" id="panel-investerare" role="tabpanel">
+      <h3 id="Investerare">Investerarperspektivet<a class="ankare" href="#Investerare" aria-label="Länk till rubriken">#</a></h3>
+      <p class="hint">Basen är originalkalkylen. Nytt: realiserat pris (spotpris × viktning), fastighetsskatt och bygdemedel som kostnader samt närboendeersättning efter tak. Sammanställningen står i <a href="#Tabell1">Tabell 1</a>.</p>
+      <dl class="resultatlista">
+        <div><dt>Produktion</dt><dd id="inv-produktion">–</dd></div>
+        <div><dt>Realiserat pris (spotpris × viktning)</dt><dd id="inv-realpris">–</dd></div>
+        <div><dt>Intäkt totalt per år</dt><dd id="inv-intakt">–</dd></div>
+        <div><dt>Årlig driftskostnad</dt><dd id="inv-driftkostnad">–</dd></div>
+        <div><dt>Investeringsutgift</dt><dd id="inv-investering">–</dd></div>
+        <div><dt>Investeringsutgift per årskWh</dt><dd id="inv-invperkwh">–</dd></div>
+        <div><dt>Årlig kapitalkostnad (annuitet)</dt><dd id="inv-kapitalkostnad">–</dd></div>
+        <div><dt>Årlig total kostnad (drift + kapital)</dt><dd id="inv-totalkostnad">–</dd></div>
+        <div><dt>Kostnad per kWh</dt><dd id="inv-kostnadperkwh">–</dd></div>
+        <div><dt>Överskott per år (bas)</dt><dd id="inv-overskott">–</dd></div>
+        <div><dt>Överskott per år efter arrende, skatt, bygdemedel och närboende</dt><dd id="inv-overskottnetto">–</dd></div>
+        <div class="framhavd"><dt>LCOE</dt><dd id="inv-lcoe">–</dd></div>
+        <div class="framhavd"><dt>Payback (enkel)</dt><dd id="inv-payback">–</dd></div>
+        <div class="framhavd"><dt>NPV (nettonuvärde)</dt><dd id="inv-npv">–</dd></div>
+        <div class="framhavd"><dt>IRR (internränta)</dt><dd id="inv-irr">–</dd></div>
+      </dl>
+      <div class="diagram-ruta">
+        <h4 id="Diagram1">Diagram 1. Kassaflöde per år (netto, nominellt)<a class="ankare" href="#Diagram1" aria-label="Länk till diagrammet">#</a></h4>
+        <canvas id="diagram-kassaflode" height="140" role="img" aria-label="Stapeldiagram över nettokassaflöde per år"></canvas>
+      </div>
+    </div>
+
+    <!-- ---- Markägare ---- -->
+    <div class="flik-panel" id="panel-markagare" role="tabpanel" hidden>
+      <h3 id="Markagare">Markägarperspektivet<a class="ankare" href="#Markagare" aria-label="Länk till rubriken">#</a></h3>
+      <p class="hint"><span class="badge antagande">antagande</span> Arrendet är inte ur PM:et.</p>
+      <dl class="resultatlista">
+        <div><dt>Årlig arrendeintäkt (år 1)</dt><dd id="mark-arrende-ar">–</dd></div>
+        <div><dt>Total arrendeintäkt (hela livslängden)</dt><dd id="mark-arrende-total">–</dd></div>
+        <div class="framhavd"><dt>Nuvärde av arrendet</dt><dd id="mark-arrende-nuvarde">–</dd></div>
+      </dl>
+    </div>
+
+    <!-- ---- Kommun, bygd och samhälle ---- -->
+    <div class="flik-panel" id="panel-kommun" role="tabpanel" hidden>
+      <h3 id="Kommun">Kommun, bygd och samhälle<a class="ankare" href="#Kommun" aria-label="Länk till rubriken">#</a></h3>
+      <p class="hint">
+        Kommunstödet betalas av staten och belastar inte projektet (<span class="badge pm">PM s. 7–9</span>).
+        Det visas därför här och under strecket i <a href="#Tabell1">Tabell 1</a>, men dras inte från projektets resultat.
+      </p>
+      <dl class="resultatlista">
+        <div><dt>Lokala betalningar från projektet år 1 (arrende + bygdemedel + närboende)</dt><dd id="kom-lokala-ar">–</dd></div>
+        <div><dt>Lokala betalningar från projektet, hela livslängden</dt><dd id="kom-lokala-total">–</dd></div>
+        <div><dt>Bygdemedel, hela parken</dt><dd id="kom-bygde">–</dd></div>
+        <div class="framhavd"><dt>Kommunstöd till Gislaveds kommun (statligt)</dt><dd id="kom-stod-gisl">–</dd></div>
+        <div class="framhavd"><dt>Kommunstöd till Jönköpings kommun (statligt, samma schablon)</dt><dd id="kom-stod-jonk">–</dd></div>
+        <div><dt>Undviken CO₂ per år</dt><dd id="kom-co2-ton">–</dd></div>
+        <div><dt>Värderad samhällsnytta (undviken CO₂)</dt><dd id="kom-samhallsnytta">–</dd></div>
+      </dl>
+      <p class="hint"><span class="badge antagande">antagande</span> Samhällsnyttan är en förenklad post och ingen exakt siffra.</p>
+      <div class="diagram-ruta">
+        <h4 id="Diagram2">Diagram 2. Kostnadsnedbrytning år 1<a class="ankare" href="#Diagram2" aria-label="Länk till diagrammet">#</a></h4>
+        <canvas id="diagram-kostnader" height="160" role="img" aria-label="Cirkeldiagram över kostnader år 1"></canvas>
+      </div>
+    </div>
+
+    <!-- ---- Andelsägare ---- -->
+    <div class="flik-panel" id="panel-andelsagare" role="tabpanel" hidden>
+      <h3 id="Andelsagare">Andelsägarperspektivet (kooperativ modell)<a class="ankare" href="#Andelsagare" aria-label="Länk till rubriken">#</a></h3>
+      <p class="hint">Samma modell som i originalkalkylen. Inget i promemorian om Långhult rör andelsägande. Självkostnaden bygger på investerarens kostnad per kWh.</p>
+      <dl class="resultatlista">
+        <div><dt>Årlig elmängd från andelarna</dt><dd id="and-elmangd">–</dd></div>
+        <div><dt>Total insats (bunden)</dt><dd id="and-insats">–</dd></div>
+        <div><dt>Självkostnad per kWh</dt><dd id="and-sjalvkostnad">–</dd></div>
+        <div><dt>Marknadspris hushållsel per kWh (inkl. moms)</dt><dd id="and-marknadspris">–</dd></div>
+        <div><dt>Årlig besparing mot marknadsel</dt><dd id="and-besparing">–</dd></div>
+        <div><dt>Alternativkostnad för bunden insats</dt><dd id="and-alternativkostnad">–</dd></div>
+        <div class="framhavd"><dt>Hushållets nettoresultat per år</dt><dd id="and-netto">–</dd></div>
+        <div class="framhavd"><dt>Återbetalningstid på insatsen</dt><dd id="and-aterbetalning">–</dd></div>
+        <div class="framhavd"><dt>Nettonuvärde för hushållet</dt><dd id="and-nuvarde">–</dd></div>
+      </dl>
+    </div>
+
+    <!-- ---- Närboende ---- -->
+    <div class="flik-panel" id="panel-narboende" role="tabpanel" hidden>
+      <h3 id="Narboende">Närboendeperspektivet, detaljer<a class="ankare" href="#Narboende" aria-label="Länk till rubriken">#</a></h3>
+      <p class="hint">
+        Modellerar ersättningen enligt lagförslaget i
+        <a href="https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/vindkraft-i-kommuner_hd03239/" target="_blank" rel="noopener">prop. 2025/26:239</a>
+        som PM:et återger (s. 13–15). Zontabellen står i <a href="#Tabell2">Tabell 2</a>.
+      </p>
+      <dl class="resultatlista">
+        <div><dt>Ett verks intäkt (parkens intäkt / antal verk)</dt><dd id="nar-verkintakt">–</dd></div>
+        <div><dt>Antal bostäder med ersättning</dt><dd id="nar-bostader">–</dd></div>
+        <div><dt>Summa före tak</dt><dd id="nar-fore">–</dd></div>
+        <div><dt>Tak (2 % av parkens intäkt)</dt><dd id="nar-tak">–</dd></div>
+        <div class="framhavd"><dt>Total årlig ersättning (belastar verksamhetsutövaren)</dt><dd id="nar-total">–</dd></div>
+        <div class="framhavd"><dt>Genomsnitt per bostad</dt><dd id="nar-snitt">–</dd></div>
+        <div><dt>Andel av parkens intäkt</dt><dd id="nar-intaktsandel">–</dd></div>
+        <div><dt>Total ersättning hela livslängden</dt><dd id="nar-total-livs">–</dd></div>
+      </dl>
+
+      <div class="regel-lista">
+        <h4 id="Regler">Regler och vad som är vad<a class="ankare" href="#Regler" aria-label="Länk till rubriken">#</a></h4>
+        <ul>
+          <li><span class="badge lagstadgat">lagstadgat</span> Verksamhetsutövaren betalar till ägare av bostadsbyggnader inom nio verkshöjder från ett verk (PM s. 14, "7 §").</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Andelen av ett verks intäkt är 2,5 ‰ inom fem verkshöjder, 2,0 ‰ upp till sex, 1,5 ‰ upp till sju, 1,0 ‰ upp till åtta och 0,5 ‰ upp till nio (PM s. 14–15, "12 §").</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Ersättningen baseras på de två verk som ger högst belopp (PM s. 15, "13 §").</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Verksamhetsutövaren behöver inte betala mer än 2 % av anläggningens intäkter. Därutöver sätts ersättningarna ned i proportion (PM s. 15, "14 §").</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Ersättningen är skattefri till den del den avser privatbostad (PM s. 15).</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Intäkten uppskattas till ett schablonbelopp som motsvarar marknadsvärdet av elen i elområdet (PM s. 14, "11 §"). PM:et räknar med viktning 0,75.</li>
+          <li><span class="badge antagande">antagande</span> Hur många bostäder som ligger i varje zon. PM:et anger bara cirka 200 totalt.</li>
+          <li><span class="badge antagande">antagande</span> Att båda verken som ger ersättning ligger i samma zon som bostaden. Det ger en övre gräns.</li>
+          <li><span class="badge antagande">antagande</span> Alla verk har samma höjd (270 m) och samma intäkt.</li>
+          <li><span class="badge antagande">antagande</span> Ersättningen räknas för ett normalår. Bostäder som tillkommer efter tillståndsansökan, anmälan varje år och att ägare med flera byggnader bara får ersättning för en (PM s. 14, "7–10 §§") är inte modellerade.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       TABELL 4: ZON × ELPRIS (PM:ets Tabell 2, omräknad)
+       ==================================================================== -->
+  <section aria-labelledby="KanslighetZon">
+    <h2 id="KanslighetZon">Hur elpriset påverkar ersättningen<a class="ankare" href="#KanslighetZon" aria-label="Länk till rubriken">#</a></h2>
+    <p class="hint">
+      Ersättningen är proportionell mot elpriset. Tabell 4 är PM:ets Tabell 2 (s. 16) omräknad med sidans indata.
+      Kolumnen 100 öre är ett högt scenario som inte finns i PM:et.
+    </p>
+    <div class="tabell-ruta">
+      <table class="data-tabell" id="Tabell4">
+        <caption id="Tabell4-rubrik">Tabell 4. Närboendeersättning per verk och zon vid olika spotpris (kr/år, före tak)<a class="ankare" href="#Tabell4" aria-label="Länk till tabellen">#</a></caption>
+        <thead>
+          <tr>
+            <th scope="col">Avstånd till verket</th>
+            <th scope="col" class="tal">30 öre</th>
+            <th scope="col" class="tal">40 öre</th>
+            <th scope="col" class="tal">50 öre</th>
+            <th scope="col" class="tal">60 öre</th>
+            <th scope="col" class="tal">70 öre</th>
+            <th scope="col" class="tal">100 öre</th>
+          </tr>
+        </thead>
+        <tbody id="t4-kropp"></tbody>
+      </table>
+    </div>
+    <p class="hint">Beloppen gäller en bostad och ett verk. En bostad får ersättning från upp till två verk, men aldrig så att parkens summa överstiger taket (<a href="#Tabell2">Tabell 2</a>).</p>
+  </section>
+
+  <section aria-labelledby="KanslighetProjekt">
+    <h2 id="KanslighetProjekt">Hur elpriset påverkar projektet<a class="ankare" href="#KanslighetProjekt" aria-label="Länk till rubriken">#</a></h2>
+    <div class="tabell-ruta">
+      <table class="data-tabell" id="Tabell5">
+        <caption id="Tabell5-rubrik">Tabell 5. Projekt och närboende vid olika spotpris (hela parken)<a class="ankare" href="#Tabell5" aria-label="Länk till tabellen">#</a></caption>
+        <thead>
+          <tr>
+            <th scope="col">Mått</th>
+            <th scope="col" class="tal">30 öre</th>
+            <th scope="col" class="tal">40 öre</th>
+            <th scope="col" class="tal">50 öre</th>
+            <th scope="col" class="tal">60 öre</th>
+            <th scope="col" class="tal">70 öre</th>
+            <th scope="col" class="tal">100 öre</th>
+          </tr>
+        </thead>
+        <tbody id="t5-kropp"></tbody>
+      </table>
+    </div>
+    <p class="hint">
+      Alla andra indata är oförändrade. Kostnadsvärdena är <span class="badge antagande">antagande</span>, så nettonuvärdet säger mest hur känsligt resultatet är för priset.
+      Taket gör att närboendeersättningen i första hand följer parkens intäkt, inte antalet bostäder.
+    </p>
+  </section>
+
+  <!-- ========================================================================
+       TABELL 6: KONTROLL MOT PM
+       ==================================================================== -->
+  <section aria-labelledby="KontrollPM">
+    <h2 id="KontrollPM">Kontroll mot promemorian<a class="ankare" href="#KontrollPM" aria-label="Länk till rubriken">#</a></h2>
+    <p class="hint">
+      Kalkylen räknar fram talen i <a href="#ref-pm">PM:et</a> ur grunddata. Tabellen visar vad kalkylen räknar och vad PM:et säger.
+      Avvikelsen är liten när indata är PM:ets egna. Ändrar du indata avviker talen, vilket är meningen.
+    </p>
+    <div class="tabell-ruta">
+      <table class="data-tabell" id="Tabell6">
+        <caption id="Tabell6-rubrik">Tabell 6. Räknat här mot promemorians tal<a class="ankare" href="#Tabell6" aria-label="Länk till tabellen">#</a></caption>
+        <thead>
+          <tr>
+            <th scope="col">Uppgift</th>
+            <th scope="col" class="tal">Räknat här</th>
+            <th scope="col" class="tal">PM:et</th>
+            <th scope="col">Sida i PM:et</th>
+            <th scope="col" class="tal">Avvikelse</th>
+            <th scope="col">Anmärkning</th>
+          </tr>
+        </thead>
+        <tbody id="t6-kropp"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       KÄLLOR
+       ==================================================================== -->
+  <section class="kallor" aria-labelledby="Kallor">
+    <h2 id="Kallor">Källor och antaganden<a class="ankare" href="#Kallor" aria-label="Länk till rubriken">#</a></h2>
+    <ol>
+      <li id="ref-pm">
+        Westander Klimat och Energi (2026) <em>Intäktsdelning och ersättningar: Vindpark Långhult.</em>
+        Promemoria, 20 april 2026. Tillgänglig:
+        <a href="https://github.com/kentlundgren/Studier/blob/main/2026_host/Policy_i_energi_och_klimat/Yttre_dialog/Intaktsdelning/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf" target="_blank" rel="noopener">pm-intaektsdelning-vindpark-laanghult_gislaved.pdf</a>
+        (hämtad 5 november 2026). <em>(Konsultpromemoria om vad Fred. Olsen Renewables projekt Långhult kan ge kommun, bygd och närboende. Källa till allt märkt PM på sidan. Sidhänvisningarna följer promemorians egen sidnumrering.)</em>
+      </li>
+      <li id="ref-lag">
+        Lagen.nu (2026) <em>Lag (2026:1113) om intäktsdelning från vindkraftsanläggningar.</em>
+        Tillgänglig: <a href="https://lagen.nu/2026:1113" target="_blank" rel="noopener">https://lagen.nu/2026:1113</a>.
+        <em>(Intäktsdelningslagen (2026:1113). Lagtexten på sidan är återgiven ur promemorian, som citerar propositionen, och är inte kontrollerad mot intäktsdelningslagen (2026:1113) här.)</em>
+      </li>
+      <li id="ref-prop">
+        Regeringen (2026) <em>Proposition 2025/26:239 Vindkraft i kommuner.</em>
+        Tillgänglig:
+        <a href="https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/vindkraft-i-kommuner_hd03239/" target="_blank" rel="noopener">https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/vindkraft-i-kommuner_hd03239/</a>
+        (hämtad 3 juli 2026). <em>(Regeringens förslag till intäktsdelning med närboende.)</em>
+      </li>
+      <li id="ref-nu20">
+        Sveriges riksdag (2026) <em>Vindkraft i kommuner. Betänkande 2025/26:NU20.</em>
+        Tillgänglig:
+        <a href="https://www.riksdagen.se/sv/dokument-och-lagar/dokument/betankande/vindkraft-i-kommuner_hd01nu20/" target="_blank" rel="noopener">https://www.riksdagen.se/sv/dokument-och-lagar/dokument/betankande/vindkraft-i-kommuner_hd01nu20/</a>
+        (hämtad 3 juli 2026). <em>(Näringsutskottets betänkande om propositionen.)</em>
+      </li>
+      <li id="ref-energi24">
+        Energimyndigheten (2024) <em>Kostnaden för att bygga vindkraft fortsätter att öka.</em>
+        Tillgänglig:
+        <a href="https://www.energimyndigheten.se/nyhetsarkiv/2024/kostnaden-for-att-bygga-vindkraft-fortsatter-att-oka/" target="_blank" rel="noopener">https://www.energimyndigheten.se/nyhetsarkiv/2024/kostnaden-for-att-bygga-vindkraft-fortsatter-att-oka/</a>
+        (hämtad 3 juli 2026). <em>(Underlag för kalkylens investerings- och kostnadsantaganden.)</em>
+      </li>
+      <li id="ref-energi26">
+        Energimyndigheten (2026) <em>Vindkraft.</em>
+        Tillgänglig:
+        <a href="https://www.energimyndigheten.se/fornybart/vindkraft/" target="_blank" rel="noopener">https://www.energimyndigheten.se/fornybart/vindkraft/</a>
+        (hämtad 3 juli 2026). <em>(Allmänt underlag om produktion och kapacitetsfaktorer.)</em>
+      </li>
+    </ol>
+    <p class="hint">
+      Kostnadsvärdena (investering, drift, ränta, arrende) är kalkylens egna standardvärden från
+      <a href="https://kentlundgren.se/kalkyler/vindkraftskalkyl.html" target="_blank" rel="noopener">kentlundgren.se/kalkyler/vindkraftskalkyl.html</a>
+      och finns inte i promemorian. Fält märkta <span class="badge antagande">antagande</span> är förenklingar, fält märkta
+      <span class="badge pm">PM</span> kommer ur promemorian och fält märkta <span class="badge lagstadgat">lagstadgat</span> följer lagtexten som promemorian återger.
+      Siffrorna är hämtade ur källorna och är inte kvalitetssäkrade. Kontrollera mot källan innan något återges.
+    </p>
+  </section>
+
+  <footer class="sidfot">
+    <p>Byggt med enbart HTML, CSS och JavaScript. Diagram via Chart.js (CDN).</p>
+  </footer>
+
+  <!-- Hörnparet: GitHub nedre vänster, teknik nedre höger -->
+  <a class="corner corner-left github-lank" id="github-lank"
+     href="https://github.com/kentlundgren/Vindkraft/tree/main/vindkraftskalkyl"
+     target="_blank" rel="noopener"
+     title="Öppna projektets mapp på GitHub">{ } GitHub</a>
+
+  <button type="button" class="corner corner-right teknik-knapp" id="teknik-knapp"
+          aria-haspopup="dialog" aria-controls="teknik-modal" aria-label="Tekniköversikt">&lt;/&gt; teknik</button>
+
+  <div id="teknik-modal" class="modal-overlay" role="dialog" aria-modal="true"
+       aria-labelledby="teknik-modal-rubrik" hidden>
+    <div class="modal-ruta">
+      <div class="modal-huvud">
+        <h2 id="teknik-modal-rubrik">Hur den här sidan är byggd</h2>
+        <button id="teknik-stang" class="modal-stang" type="button" aria-label="Stäng">&times;</button>
+      </div>
+      <div class="modal-innehall">
+        <p class="modal-meta">
+          Sidan är en kopia av vindkraftskalkylen, anpassad till fallet Långhult.
+          Originalet <a href="vindkraftskalkyl.html">vindkraftskalkyl.html</a> är oförändrat.
+        </p>
+
+        <h3 class="modal-delrubrik">Tekniken</h3>
+        <div class="tech-grid">
+          <div class="tech-card">
+            <h4>Tre filer</h4>
+            <p>vindkraftskalkyl_langhult.html (innehåll), stil_langhult.css (formatering) och berakningar_langhult.js (all beräkning). Relativa sökvägar, inget byggsteg.</p>
+          </div>
+          <div class="tech-card">
+            <h4>Ingen server</h4>
+            <p>All beräkning sker i webbläsaren. Inga uppgifter skickas någonstans. Chart.js 4.4.1 laddas från CDN och används bara för diagrammen.</p>
+          </div>
+          <div class="tech-card">
+            <h4>Reaktiv utan ramverk</h4>
+            <p>addEventListener på varje gult fält: "input" räknar om medan du skriver, "change" uppdaterar <a href="#Tabell3">Tabell 3</a> (Senaste → Tidigare).</p>
+          </div>
+          <div class="tech-card">
+            <h4>PM:ets tal som konstanter</h4>
+            <p>Promemorians egna siffror ligger i PM_REF i berakningar_langhult.js med sidhänvisning. <a href="#Tabell6">Tabell 6</a> räknar om dem ur grunddata och visar avvikelsen.</p>
+          </div>
+        </div>
+
+        <h3 class="modal-delrubrik">Metoden</h3>
+        <div class="tech-grid">
+          <div class="tech-card">
+            <h4>Uppdraget</h4>
+            <p>"jag vill tydliggöra både projektets totala ekonomi och den ersättning som närboende troligen kommer få." Antaganden är märkta, liksom vilka uppgifter som kommer ur promemorian.</p>
+          </div>
+          <div class="tech-card">
+            <h4>Val som är gjorda</h4>
+            <p>Hela parken (20 verk) räknas, med Gislaveds 7 verk som egen rad. Kalkylens egna kostnadsvärden är kvar. Kommunstödet betalas av staten och dras inte från projektet. Bostäderna fördelas på zoner som ett antagande.</p>
+          </div>
+          <div class="tech-card">
+            <h4>Skillnad mot originalet</h4>
+            <p>Originalets linjära avtrappning mellan 5 och 9 verkshöjder är ersatt av fem zoner, två verk och taket 2 %. Originalets schablon "kommunal ersättning" är ersatt av fastighetsskatt och bygdemedel. Pris viktas med 0,75.</p>
+          </div>
+          <div class="tech-card">
+            <h4>Öppna punkter</h4>
+            <p>Fastighetsskattens nedskrivning är förenklad (resten jämnas ut). Lagtexten är återgiven ur promemorian och inte kontrollerad mot intäktsdelningslagen (2026:1113). Att taket nås går inte att kontrollera utan bostädernas verkliga avstånd. Beslutsläget för Långhult är inte kontrollerat.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="berakningar_langhult.js"></script>
+</body>
+</html>
