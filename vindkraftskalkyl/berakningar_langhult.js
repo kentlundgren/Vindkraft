@@ -478,7 +478,7 @@ function ritaTabell1(res, d) {
   laggRad(k, [{t: 'Driftskostnad (rörlig + fast)'}, {t: neg(res.driftkostnadAr1), k: 'tal'}, {t: neg(L.drift), k: 'tal'},
     {h: M.ant('kalkylens standardvärden, ej ur PM:et')}]);
   laggRad(k, [{t: 'Kapitalkostnad (annuitet)'}, {t: neg(res.kapitalkostnad), k: 'tal'}, {t: neg(L.kapital), k: 'tal'},
-    {h: M.ant('investering och ränta ur kalkylens standardvärden, ej ur PM:et')}]);
+    {h: M.ant('investering ur kalkylens standardvärde, ränta 5,2 % real ur Energiforsk (2021), ej ur PM:et')}]);
   laggRad(k, [{t: 'Arrende till markägare'}, {t: neg(res.arrendeAr1), k: 'tal'}, {t: neg(L.arrende), k: 'tal'},
     {h: M.ant('3,5 % av bruttointäkten, ej ur PM:et')}]);
   laggRad(k, [{t: 'Fastighetsskatt'}, {t: neg(res.fskattAr1), k: 'tal'}, {t: neg(L.fskatt), k: 'tal'},

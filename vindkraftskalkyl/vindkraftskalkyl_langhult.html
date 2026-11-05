@@ -29,7 +29,8 @@
       Projektets totala ekonomi och den ersättning som närboende troligen får, för vindpark
       Långhult i Jönköpings och Gislaveds kommuner (20 verk, 132 <abbr class="fk" tabindex="0" data-f="MW = megawatt, enhet för effekt. 1 MW = 1 000 kW.">MW</abbr>).
       Uppgifterna är hämtade ur promemorian
-      <a href="#ref-pm">Westander Klimat och Energi (2026)</a>.
+      <a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf" target="_blank" rel="noopener" style="color:#fff">Westander Klimat och Energi (2026)</a>
+      (<a href="#ref-pm" style="color:#fff">se källan</a>).
       Det som inte står i promemorian är märkt som antagande. Ändra ett gult fält så räknas allt om.
     </p>
     <p class="ingress">Kent Lundgren · version 2026-11-05 · kopia av <a href="vindkraftskalkyl.html" style="color:#fff">vindkraftskalkyl.html</a></p>
@@ -53,7 +54,7 @@
     <p class="notering">
       <strong>Förutsättning.</strong> Kalkylen förutsätter att Långhult omfattas av
       <a href="https://lagen.nu/2026:1113" target="_blank" rel="noopener">intäktsdelningslagen (2026:1113)</a>.
-      Promemorian förutsätter det (s. 2, 5), men beslutsläget i kommunerna och antalet verk kan ändras
+      Promemorian (<a href="#ref-pm">Westander Klimat och Energi, 2026</a>, publicerad på Fred. Olsen Renewables webbplats) förutsätter det (s. 2, 5), men beslutsläget i kommunerna och antalet verk kan ändras
       under tillståndsprövningen (s. 3). Det är inte kontrollerat här.
       Siffrorna är hämtade ur källorna längst ned och är inte kvalitetssäkrade. Kontrollera mot källan innan något återges.
     </p>
@@ -129,7 +130,7 @@
       <!-- ---- Investering och drift (antagande) ---- -->
       <fieldset class="indata-grupp">
         <legend>Investering och drift</legend>
-        <p class="hint" style="margin:0 0 .6rem">PM:et saknar uppgifter om kostnader. Värdena är kalkylens egna standardvärden.</p>
+        <p class="hint" style="margin:0 0 .6rem">PM:et saknar uppgifter om kostnader. Kalkylräntan kommer ur <a href="#ref-energiforsk">Energiforsk (2021)</a>, övriga värden är kalkylens egna standardvärden.</p>
 
         <label>Specifik investeringskostnad (kkr/MW)
           <abbr class="fk" tabindex="0" data-f="kkr = tusen kronor. 12 000 kkr/MW = 12 miljoner kronor per MW.">?</abbr>
@@ -137,9 +138,11 @@
           <span class="badge antagande">antagande</span>
         </label>
 
-        <label>Kalkylränta (0–1)
-          <input type="number" step="0.0001" id="kalkylranta" class="indata" value="0.1215">
+        <label>Kalkylränta, real (0–1)
+          <abbr class="fk" tabindex="0" data-f="Kalkylränta: avkastningskravet som framtida betalningar diskonteras med. Real = utan inflation. Kalkylen räknar med oförändrade priser och kostnader, vilket passar en realränta.">?</abbr>
+          <input type="number" step="0.0001" id="kalkylranta" class="indata" value="0.052">
           <span class="badge antagande">antagande</span>
+          <span class="hint">5,2 % är medelvärdet för landbaserad vindkraft i <a href="#ref-energiforsk">Energiforsk (2021)</a>, s. 18 (spann 2,6–7,5 %, realränta, tolv projekt under byggnation 2020). Energimyndigheten (2016) använde 6,8 % (5–8 %). Räntelägets utveckling efter 2020 är inte med. Långhults egen ränta är okänd.</span>
         </label>
 
         <label>Rörlig driftskostnad (kr/kWh)
@@ -650,10 +653,28 @@
     <h2 id="Kallor">Källor och antaganden<a class="ankare" href="#Kallor" aria-label="Länk till rubriken">#</a></h2>
     <ol>
       <li id="ref-pm">
-        Westander Klimat och Energi (2026) <em>Intäktsdelning och ersättningar: Vindpark Långhult.</em>
-        Promemoria, 20 april 2026. Tillgänglig:
-        <a href="https://github.com/kentlundgren/Studier/blob/main/2026_host/Policy_i_energi_och_klimat/Yttre_dialog/Intaktsdelning/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf" target="_blank" rel="noopener">pm-intaektsdelning-vindpark-laanghult_gislaved.pdf</a>
-        (hämtad 5 november 2026). <em>(Konsultpromemoria om vad Fred. Olsen Renewables projekt Långhult kan ge kommun, bygd och närboende. Källa till allt märkt PM på sidan. Sidhänvisningarna följer promemorians egen sidnumrering.)</em>
+        Westander Klimat och Energi (2026) <em>Intäktsdelning och ersättningar: Vindpark Långhult. En samlad bild av ersättning till och intäktsdelning med Gislaveds kommun, den lokala bygden och närboende.</em>
+        Promemoria, 20 april 2026. Tillgänglig (originalet, publicerat av Fred. Olsen Renewables):
+        <a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf" target="_blank" rel="noopener">https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf</a>
+        (hämtad 5 november 2026). Samma fil finns som kopia i
+        <a href="https://github.com/kentlundgren/Studier/blob/main/2026_host/Policy_i_energi_och_klimat/Yttre_dialog/Intaktsdelning/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf" target="_blank" rel="noopener">Kents repo Studier</a>
+        (filerna är identiska, kontrollerat med SHA-256).
+        <em>(Konsultpromemoria från Westander Klimat och Energi, ett konsultbolag, inte ett myndighetsdokument. Den beskriver vad Fred. Olsen Renewables projekt Långhult kan ge kommun, bygd och närboende. Källa till allt märkt PM på sidan. Sidhänvisningarna följer promemorians egen sidnumrering.)</em>
+      </li>
+      <li id="ref-fo">
+        Fred. Olsen Renewables (u.å.) <em>Långhult.</em>
+        Tillgänglig: <a href="https://fredolsenrenewables.com/all-projects/laanghult" target="_blank" rel="noopener">https://fredolsenrenewables.com/all-projects/laanghult</a>
+        (hämtad 5 november 2026). <em>(Bolagets projektsida: högst 20 verk, högst 270 m totalhöjd, tillståndsansökan inlämnad i juni 2025. Bekräftar promemorians antal verk och höjd.)</em>
+      </li>
+      <li id="ref-energiforsk">
+        Energiforsk (2021) <em>El från nya anläggningar 2021.</em> Rapport 2021:714. Tillgänglig:
+        <a href="https://energiforsk.se/media/30970/el-fra-n-nya-anla-ggningar-energiforskrapport-2021-714.pdf" target="_blank" rel="noopener">https://energiforsk.se/media/30970/el-fra-n-nya-anla-ggningar-energiforskrapport-2021-714.pdf</a>
+        (hämtad 5 november 2026). <em>(Källa till kalkylräntan 5,2 % real, s. 18, Tabell 5: lågt 2,6, medel 5,2, högt 7,5 % för landbaserad vindkraft. Texten anger "cirka 5 %" som genomsnitt för tolv projekt från sju bolag under byggnation 2020. Energiforsk anger där också investeringskostnad 9,8–13,2 Mkr/MW, medel 10,9, att jämföra med kalkylens 12 Mkr/MW.)</em>
+      </li>
+      <li id="ref-er2016">
+        Energimyndigheten (2016) <em>Produktionskostnader för vindkraft i Sverige.</em> ER 2016:17. Tillgänglig:
+        <a href="https://www.energimyndigheten.se/contentassets/9f658fbcc1d24014bbe6fbeb70f80cba/er-2016_17-produktionskostnader-for-vindkraft-i-sverige.pdf" target="_blank" rel="noopener">https://www.energimyndigheten.se/contentassets/9f658fbcc1d24014bbe6fbeb70f80cba/er-2016_17-produktionskostnader-for-vindkraft-i-sverige.pdf</a>
+        (hämtad 5 november 2026). <em>(Jämförelse: referensfallet använder 6,8 % (5 % vid låga och 8 % vid höga kostnader), medelvärdet av avkastningskrav i intervjuer med aktörer, s. 33. Äldre än Energiforsk.)</em>
       </li>
       <li id="ref-lag">
         Lagen.nu (2026) <em>Lag (2026:1113) om intäktsdelning från vindkraftsanläggningar.</em>
@@ -686,7 +707,7 @@
       </li>
     </ol>
     <p class="hint">
-      Kostnadsvärdena (investering, drift, ränta, arrende) är kalkylens egna standardvärden från
+      Kalkylräntan kommer ur Energiforsk (2021). Övriga kostnadsvärden (investering, drift, arrende) är kalkylens egna standardvärden från
       <a href="https://kentlundgren.se/kalkyler/vindkraftskalkyl.html" target="_blank" rel="noopener">kentlundgren.se/kalkyler/vindkraftskalkyl.html</a>
       och finns inte i promemorian. Fält märkta <span class="badge antagande">antagande</span> är förenklingar, fält märkta
       <span class="badge pm">PM</span> kommer ur promemorian och fält märkta <span class="badge lagstadgat">lagstadgat</span> följer lagtexten som promemorian återger.
@@ -748,7 +769,7 @@
           </div>
           <div class="tech-card">
             <h4>Val som är gjorda</h4>
-            <p>Hela parken (20 verk) räknas, med Gislaveds 7 verk som egen rad. Kalkylens egna kostnadsvärden är kvar. Kommunstödet betalas av staten och dras inte från projektet. Bostäderna fördelas på zoner som ett antagande.</p>
+            <p>Hela parken (20 verk) räknas, med Gislaveds 7 verk som egen rad. Kalkylräntan är 5,2 % real (Energiforsk 2021), övriga kostnadsvärden är kalkylens egna. Kommunstödet betalas av staten och dras inte från projektet. Bostäderna fördelas på zoner som ett antagande.</p>
           </div>
           <div class="tech-card">
             <h4>Skillnad mot originalet</h4>
