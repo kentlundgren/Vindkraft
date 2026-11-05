@@ -19,15 +19,17 @@ vindkraftsersättningen till närboende enligt NU20.
 
 Adress: `https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html`
 
+**Fall Långhult (kopia med promemorians värden): [Öppna Långhult-kalkylen (Live Page)](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl_langhult.html)**
+
+Adress: `https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl_langhult.html`
+
 ## Fall Långhult (kopia av kalkylen)
 
-Kopian [`vindkraftskalkyl_langhult.html`](vindkraftskalkyl_langhult.html) lägger in vindpark Långhult
+Kopian [`vindkraftskalkyl_langhult.html`](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl_langhult.html) (Live Page) lägger in vindpark Långhult
 (20 verk, Jönköpings och Gislaveds kommuner) med värden ur promemorian
 [Intäktsdelning och ersättningar: Vindpark Långhult](https://github.com/kentlundgren/Studier/blob/main/2026_host/Policy_i_energi_och_klimat/Yttre_dialog/Intaktsdelning/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf)
 (Westander Klimat och Energi, 2026-04-20; [originalet hos Fred. Olsen Renewables](https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf), identisk fil). Kalkylräntan 5,2 % real kommer ur [Energiforsk (2021)](https://energiforsk.se/media/30970/el-fra-n-nya-anla-ggningar-energiforskrapport-2021-714.pdf). Varje indatafält är märkt PM, lagstadgat eller antagande.
 Filerna är `vindkraftskalkyl_langhult.html`, `stil_langhult.css` och `berakningar_langhult.js`. Originalet är oförändrat.
-
-Live (efter publicering): `https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl_langhult.html`
 
 ## 🗂️ Lokalt repo
 
