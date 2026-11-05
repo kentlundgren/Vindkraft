@@ -8,9 +8,9 @@
   beräknings- och interaktionslogik i berakningar_langhult.js. Filerna länkas
   med relativa sökvägar och fungerar när de tre filerna ligger i samma mapp.
 
-  Indata är hämtade ur promemorian "Intäktsdelning och ersättningar: Vindpark
-  Långhult" (Westander Klimat och Energi, 2026-04-20). Varje indatafält är märkt
-  PM, lagstadgat eller antagande. Gult används bara på inmatningsfält.
+  Indata är hämtade ur Westander Klimat och Energi (2026), "Intäktsdelning och
+  ersättningar: Vindpark Långhult". Varje indatafält är märkt med källa (författare,
+  år, sida), lagstadgat eller antagande. Gult används bara på inmatningsfält.
   ============================================================================
 -->
 <html lang="sv">
@@ -28,10 +28,9 @@
     <p class="ingress">
       Projektets totala ekonomi och den ersättning som närboende troligen får, för vindpark
       Långhult i Jönköpings och Gislaveds kommuner (20 verk, 132 <abbr class="fk" tabindex="0" data-f="MW = megawatt, enhet för effekt. 1 MW = 1 000 kW.">MW</abbr>).
-      Uppgifterna är hämtade ur promemorian
-      <a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf" target="_blank" rel="noopener" style="color:#fff">Westander Klimat och Energi (2026)</a>
-      (<a href="#ref-pm" style="color:#fff">se källan</a>).
-      Det som inte står i promemorian är märkt som antagande. Ändra ett gult fält så räknas allt om.
+      Uppgifterna är hämtade ur <a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf" target="_blank" rel="noopener">Westander Klimat och Energi (2026)</a>
+      (<a href="#ref-pm">se källan</a>).
+      Det som inte står där är märkt som antagande. Ändra ett gult fält så räknas allt om.
     </p>
     <p class="ingress">Kent Lundgren · version 2026-11-05 · kopia av <a href="vindkraftskalkyl.html" style="color:#fff">vindkraftskalkyl.html</a></p>
   </header>
@@ -44,9 +43,9 @@
     <div class="lasguide">
       <p style="margin:0">Varje tal är märkt med varifrån det kommer:</p>
       <ul>
-        <li><span class="badge pm">PM</span> uppgift ur promemorian, med sidhänvisning (PM:ets egen sidnumrering).</li>
-        <li><span class="badge lagstadgat">lagstadgat</span> lagtext, återgiven ur promemorian, som citerar regeringens proposition 2025/26:239. Kontrollera mot <a href="https://lagen.nu/2026:1113" target="_blank" rel="noopener">intäktsdelningslagen (2026:1113)</a> innan något återges.</li>
-        <li><span class="badge antagande">antagande</span> Kents standardvärde eller en förenkling, inte ur promemorian.</li>
+        <li><a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 3</a> uppgift ur <a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf" target="_blank" rel="noopener">Westander Klimat och Energi (2026)</a>, med författare, år och sida. Sidnumren följer källans egen sidnumrering, och märket är en länk till rätt PDF-sida.</li>
+        <li><span class="badge lagstadgat">lagstadgat</span> lagtext, återgiven av <a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=13" target="_blank" rel="noopener">Westander Klimat och Energi (2026, s. 13–15)</a>, som citerar <a href="https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/vindkraft-i-kommuner_hd03239/" target="_blank" rel="noopener">Regeringen (2026)</a>, proposition 2025/26:239. Kontrollera mot <a href="https://lagen.nu/2026:1113" target="_blank" rel="noopener">intäktsdelningslagen (2026:1113)</a> innan något återges.</li>
+        <li><span class="badge antagande">antagande</span> Kents standardvärde eller en förenkling, inte ur <a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf" target="_blank" rel="noopener">Westander Klimat och Energi (2026)</a>.</li>
         <li><span class="badge beraknat">beräknat</span> räknas fram här av andra tal.</li>
         <li><span class="gul-legend"></span> Gula fält ifylles. Grå fält är beräknade.</li>
       </ul>
@@ -54,7 +53,7 @@
     <p class="notering">
       <strong>Förutsättning.</strong> Kalkylen förutsätter att Långhult omfattas av
       <a href="https://lagen.nu/2026:1113" target="_blank" rel="noopener">intäktsdelningslagen (2026:1113)</a>.
-      Promemorian (<a href="#ref-pm">Westander Klimat och Energi, 2026</a>, publicerad på Fred. Olsen Renewables webbplats) förutsätter det (s. 2, 5), men beslutsläget i kommunerna och antalet verk kan ändras
+      <a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=2" target="_blank" rel="noopener">Westander Klimat och Energi (2026, s. 2, 5)</a>, publicerad på Fred. Olsen Renewables webbplats, förutsätter det, men beslutsläget i kommunerna och antalet verk kan ändras
       under tillståndsprövningen (s. 3). Det är inte kontrollerat här.
       Siffrorna är hämtade ur källorna längst ned och är inte kvalitetssäkrade. Kontrollera mot källan innan något återges.
     </p>
@@ -68,69 +67,69 @@
 
     <div class="indata-grupper">
 
-      <!-- ---- Anläggning (PM) ---- -->
+      <!-- ---- Anläggning ---- -->
       <fieldset class="indata-grupp">
         <legend>Anläggning (hela parken)</legend>
 
         <label>Antal verk
           <input type="number" step="1" id="antalverk" class="indata" value="20">
-          <span class="badge pm">PM s. 3</span>
+          <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=3" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 3</a>
         </label>
 
         <label>Effekt per verk (MW)
           <input type="number" step="0.1" id="effekt" class="indata" value="6.6">
-          <span class="badge pm">PM s. 3, 11</span>
+          <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=3" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 3, 11</a>
         </label>
 
         <label>Fullasttimmar (h/år)
           <abbr class="fk" tabindex="0" data-f="Fullasttimmar: antal timmar per år som verket skulle behöva gå på full effekt för att ge årets produktion. Produktion = effekt × fullasttimmar.">?</abbr>
           <input type="number" step="10" id="fullasttimmar" class="indata" value="3610">
-          <span class="badge pm">PM s. 11, 16</span>
+          <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=11" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 11, 16</a>
           <span class="hint">6,6 MW × 3 610 h = cirka 23,8 GWh per verk och år.</span>
         </label>
 
         <label>Verkshöjd (m)
           <abbr class="fk" tabindex="0" data-f="Verkshöjd: totalhöjden från marken till rotorbladets högsta punkt. Avståndszonerna för närboende mäts i antal verkshöjder.">?</abbr>
           <input type="number" step="1" id="verkshojd" class="indata" value="270">
-          <span class="badge pm">PM s. 16</span>
-          <span class="hint">PM:et anger maxhöjd 270 m för verken i Jönköping. Samma höjd används här för alla verk (antagande).</span>
+          <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=16" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 16</a>
+          <span class="hint">Westander Klimat och Energi (2026, s. 16) anger maxhöjd 270 m för verken i Jönköping. Samma höjd används här för alla verk (antagande).</span>
         </label>
 
         <label>Livslängd (år)
           <input type="number" step="1" id="livslangd" class="indata" value="30">
-          <span class="badge pm">PM s. 3, 16</span>
+          <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=3" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 3, 16</a>
         </label>
 
         <label>Spotpris (kr/kWh)
           <abbr class="fk" tabindex="0" data-f="Spotpris: elens börspris för varje timme. Här ett medelvärde för hela livslängden.">?</abbr>
           <input type="number" step="0.01" id="elpris" class="indata" value="0.5">
-          <span class="badge pm">PM s. 12, 16</span>
-          <span class="hint">PM:et utgår från 50 öre/kWh (nära Svenska kraftnäts scenarier) och visar 30–70 öre.</span>
+          <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=12" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 12, 16</a>
+          <span class="hint">Westander Klimat och Energi (2026, s. 12, 16) utgår från 50 öre/kWh och visar 30–70 öre.</span>
         </label>
 
         <label>Viktning av intäkten
-          <abbr class="fk" tabindex="0" data-f="Viktning: vindkraften producerar mest när elpriset är lågt. Intäkten per kWh blir därför lägre än medelspotpriset. PM:et multiplicerar med 0,75.">?</abbr>
+          <abbr class="fk" tabindex="0" data-f="Viktning: vindkraften producerar mest när elpriset är lågt. Intäkten per kWh blir därför lägre än medelspotpriset. Westander Klimat och Energi (2026, s. 12, 16) multiplicerar med 0,75.">?</abbr>
           <input type="number" step="0.01" id="viktning" class="indata" value="0.75">
-          <span class="badge pm">PM s. 12, 16</span>
-          <span class="hint">Realiserat pris = spotpris × viktning = 0,375 kr/kWh med PM:ets värden.</span>
+          <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=12" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 12, 16</a>
+          <span class="hint">Realiserat pris = spotpris × viktning = 0,375 kr/kWh med värdena i Westander Klimat och Energi (2026).</span>
         </label>
 
         <label>Elprisbana, årlig förändring (%/år)
           <input type="number" step="0.1" id="elprisforandring" class="indata" value="0">
-          <span class="badge pm">PM: platt</span>
+          <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=16" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 16 (konstant pris, härlett)</a>
         </label>
 
         <label>Degradering (%/år)
           <input type="number" step="0.1" id="degradering" class="indata" value="0">
-          <span class="badge pm">PM: ingen</span>
-          <span class="hint">PM:ets 107 Mkr på 30 år förutsätter oförändrad produktion.</span>
+          <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=16" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 16 (oförändrad produktion, härlett)</a>
+          <span class="hint">De 107 Mkr på 30 år i Westander Klimat och Energi (2026, s. 16) förutsätter oförändrad produktion.</span>
         </label>
       </fieldset>
 
       <!-- ---- Investering och drift (antagande) ---- -->
       <fieldset class="indata-grupp">
         <legend>Investering och drift</legend>
-        <p class="hint" style="margin:0 0 .6rem">PM:et saknar uppgifter om kostnader. Kalkylräntan kommer ur <a href="#ref-energiforsk">Energiforsk (2021)</a>, övriga värden är kalkylens egna standardvärden.</p>
+        <p class="hint" style="margin:0 0 .6rem">Westander Klimat och Energi (2026) saknar uppgifter om kostnader. Kalkylräntan kommer ur <a href="#ref-energiforsk">Energiforsk (2021)</a>, övriga värden är kalkylens egna standardvärden.</p>
 
         <label>Specifik investeringskostnad (kkr/MW)
           <abbr class="fk" tabindex="0" data-f="kkr = tusen kronor. 12 000 kkr/MW = 12 miljoner kronor per MW.">?</abbr>
@@ -188,44 +187,44 @@
         </label>
       </fieldset>
 
-      <!-- ---- Skatt, bygd och kommun (PM) ---- -->
+      <!-- ---- Skatt, bygd och kommun ---- -->
       <fieldset class="indata-grupp">
         <legend>Fastighetsskatt, bygdemedel och kommun</legend>
 
         <label>Fastighetsskatt per verk, första åren (kr/år)
-          <abbr class="fk" tabindex="0" data-f="Fastighetsskatt: 0,5 % av taxeringsvärdet. För ett nytt verk på 6,6 MW i elområde 3 blir det 334 398 kr per år enligt PM:ets räkneexempel.">?</abbr>
+          <abbr class="fk" tabindex="0" data-f="Fastighetsskatt: 0,5 % av taxeringsvärdet. För ett nytt verk på 6,6 MW i elområde 3 blir det 334 398 kr per år enligt räkneexemplet i Westander Klimat och Energi (2026, s. 17–18).">?</abbr>
           <input type="number" step="100" id="fskatt1" class="indata" value="334398">
-          <span class="badge pm">PM bilaga 1, s. 18</span>
+          <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=1" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, bilaga 1, s. 18</a>
         </label>
 
         <label>Antal år med full fastighetsskatt
           <input type="number" step="1" id="fskattaar" class="indata" value="4">
-          <span class="badge pm">PM s. 4, 9</span>
-          <span class="hint">PM:et: "de första fyra åren" (2,3 Mkr för sju verk).</span>
+          <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=4" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 4, 9</a>
+          <span class="hint">Westander Klimat och Energi (2026, s. 4, 9): "de första fyra åren" (2,3 Mkr för sju verk).</span>
         </label>
 
         <label>Fastighetsskatt per verk över 30 år (kr)
-          <abbr class="fk" tabindex="0" data-f="Skatten sjunker över tid eftersom taxeringsvärdet skrivs ned med verkets ålder (nedskrivningsfaktor). PM:et anger 46,5 Mkr för sju verk, alltså cirka 6,64 Mkr per verk. Här jämnas åren efter de första fyra ut till ett lika stort belopp per år.">?</abbr>
+          <abbr class="fk" tabindex="0" data-f="Skatten sjunker över tid eftersom taxeringsvärdet skrivs ned med verkets ålder (nedskrivningsfaktor). Westander Klimat och Energi (2026, s. 18) anger 46,5 Mkr för sju verk, alltså cirka 6,64 Mkr per verk. Här jämnas åren efter de första fyra ut till ett lika stort belopp per år.">?</abbr>
           <input type="number" step="1000" id="fskattotal" class="indata" value="6643000">
-          <span class="badge pm">PM s. 18 (46,5 Mkr / 7)</span>
+          <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=18" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 18 (46,5 Mkr / 7)</a>
           <span class="badge antagande">utjämning</span>
         </label>
 
         <label>Bygdemedel, hela parken (kr/år)
           <abbr class="fk" tabindex="0" data-f="Bygdemedel: pengar som bolaget avsätter till föreningsliv, näringsliv och infrastruktur i bygden. Det är inte samma sak som ersättningen till närboende.">?</abbr>
           <input type="number" step="10000" id="bygdemedel" class="indata" value="400000">
-          <span class="badge pm">PM s. 4, 12 (minst)</span>
+          <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=4" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 4, 12 (minst)</a>
         </label>
 
         <label>Kommunstöd (kr per MW och år)
           <abbr class="fk" tabindex="0" data-f="Kommunstöd: staten fördelar ett belopp motsvarande fastighetsskatten på vindkraft till kommunerna efter installerad effekt, cirka 20 000 kr per MW. Det betalas av staten och belastar inte projektet.">?</abbr>
           <input type="number" step="100" id="kommunstod" class="indata" value="20000">
-          <span class="badge pm">PM s. 7–9</span>
+          <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=7" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 7–9</a>
         </label>
 
         <label>Antal verk i Gislaveds kommun
           <input type="number" step="1" id="verkgislaved" class="indata" value="7">
-          <span class="badge pm">PM s. 3</span>
+          <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=3" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 3</a>
           <span class="hint">Resten (13 verk) ligger i Jönköpings kommun.</span>
         </label>
 
@@ -244,7 +243,7 @@
       <fieldset class="indata-grupp">
         <legend>Närboende (bostäder per zon)</legend>
         <p class="hint" style="margin:0 0 .6rem">
-          PM:et anger cirka 200 bostäder (s. 4, 16) men inte hur de fördelar sig på avstånd.
+          Westander Klimat och Energi (2026, s. 4, 16) anger cirka 200 bostäder men inte hur de fördelar sig på avstånd.
           Fördelningen nedan följer ytan av ringarna kring ett verk (jämn bebyggelsetäthet) och är en gissning.
           Zonerna står i <a href="#Tabell2">Tabell 2</a>.
         </p>
@@ -274,12 +273,12 @@
           <input type="number" step="1" min="1" max="2" id="verkperbostad" class="indata" value="2">
           <span class="badge lagstadgat">högst två verk</span>
           <span class="badge antagande">båda verken i samma zon</span>
-          <span class="hint">PM:et: ersättning från högst de två verk som ger mest (s. 15, 16). Att båda ligger i samma zon som bostaden är en förenkling som ger en övre gräns.</span>
+          <span class="hint">Westander Klimat och Energi (2026, s. 15, 16): ersättning från högst de två verk som ger mest. Att båda ligger i samma zon som bostaden är en förenkling som ger en övre gräns.</span>
         </label>
 
         <label>Tak för närboendeersättning (% av parkens intäkt)
           <input type="number" step="0.1" id="tak" class="indata" value="2">
-          <span class="badge lagstadgat">PM s. 15</span>
+          <span class="badge lagstadgat">lagstadgat</span> <a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=15" target="_blank" rel="noopener">(Westander Klimat och Energi, 2026, s. 15)</a>
         </label>
       </fieldset>
 
@@ -344,7 +343,7 @@
     <h2 id="ProjektetsEkonomi">Projektets totala ekonomi (hela parken)<a class="ankare" href="#ProjektetsEkonomi" aria-label="Länk till rubriken">#</a></h2>
     <p class="hint">
       Alla belopp i kronor. Kostnader har minustecken. Siffrorna räknas om när ett gult fält ändras.
-      Kolumnen "Källa" säger vad som kommer ur <a href="#ref-pm">PM:et</a> och vad som är antagande.
+      Kolumnen "Källa" säger vad som kommer ur <a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf" target="_blank" rel="noopener">Westander Klimat och Energi (2026)</a> och vad som är antagande.
       Närboendeposten förklaras i <a href="#Tabell2">Tabell 2</a>.
     </p>
     <div class="tabell-ruta">
@@ -404,7 +403,7 @@
       <div class="framhavd"><dt>Genomsnitt per bostad</dt><dd id="t2-snitt">–</dd></div>
     </dl>
     <p class="notering">
-      PM:et anger att taket nås och att genomsnittet då blir "drygt 18 000" kronor per bostad och år (s. 4, 16).
+      <a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=4" target="_blank" rel="noopener">Westander Klimat och Energi (2026, s. 4, 16)</a> anger att taket nås och att genomsnittet då blir "drygt 18 000" kronor per bostad och år.
       Det går inte att kontrollera utan bostädernas verkliga avstånd. Zonfördelningen här är en gissning,
       och ändras den ändras både summan före tak och hur mycket varje zon får.
       Jämför med <a href="#Tabell6">Tabell 6</a>. Hur ersättningen ändras med elpriset visas i <a href="#Tabell4">Tabell 4</a> och <a href="#Tabell5">Tabell 5</a>.
@@ -480,7 +479,7 @@
     <!-- ---- Markägare ---- -->
     <div class="flik-panel" id="panel-markagare" role="tabpanel" hidden>
       <h3 id="Markagare">Markägarperspektivet<a class="ankare" href="#Markagare" aria-label="Länk till rubriken">#</a></h3>
-      <p class="hint"><span class="badge antagande">antagande</span> Arrendet är inte ur PM:et.</p>
+      <p class="hint"><span class="badge antagande">antagande</span> Arrendet är inte ur Westander Klimat och Energi (2026).</p>
       <dl class="resultatlista">
         <div><dt>Årlig arrendeintäkt (år 1)</dt><dd id="mark-arrende-ar">–</dd></div>
         <div><dt>Total arrendeintäkt (hela livslängden)</dt><dd id="mark-arrende-total">–</dd></div>
@@ -492,7 +491,7 @@
     <div class="flik-panel" id="panel-kommun" role="tabpanel" hidden>
       <h3 id="Kommun">Kommun, bygd och samhälle<a class="ankare" href="#Kommun" aria-label="Länk till rubriken">#</a></h3>
       <p class="hint">
-        Kommunstödet betalas av staten och belastar inte projektet (<span class="badge pm">PM s. 7–9</span>).
+        Kommunstödet betalas av staten och belastar inte projektet (<a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=7" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 7–9</a>).
         Det visas därför här och under strecket i <a href="#Tabell1">Tabell 1</a>, men dras inte från projektets resultat.
       </p>
       <dl class="resultatlista">
@@ -514,7 +513,7 @@
     <!-- ---- Andelsägare ---- -->
     <div class="flik-panel" id="panel-andelsagare" role="tabpanel" hidden>
       <h3 id="Andelsagare">Andelsägarperspektivet (kooperativ modell)<a class="ankare" href="#Andelsagare" aria-label="Länk till rubriken">#</a></h3>
-      <p class="hint">Samma modell som i originalkalkylen. Inget i promemorian om Långhult rör andelsägande. Självkostnaden bygger på investerarens kostnad per kWh.</p>
+      <p class="hint">Samma modell som i originalkalkylen. Inget i Westander Klimat och Energi (2026) om Långhult rör andelsägande. Självkostnaden bygger på investerarens kostnad per kWh.</p>
       <dl class="resultatlista">
         <div><dt>Årlig elmängd från andelarna</dt><dd id="and-elmangd">–</dd></div>
         <div><dt>Total insats (bunden)</dt><dd id="and-insats">–</dd></div>
@@ -534,7 +533,7 @@
       <p class="hint">
         Modellerar ersättningen enligt lagförslaget i
         <a href="https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/vindkraft-i-kommuner_hd03239/" target="_blank" rel="noopener">prop. 2025/26:239</a>
-        som PM:et återger (s. 13–15). Zontabellen står i <a href="#Tabell2">Tabell 2</a>.
+        som <a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=13" target="_blank" rel="noopener">Westander Klimat och Energi (2026, s. 13–15)</a> återger. Zontabellen står i <a href="#Tabell2">Tabell 2</a>.
       </p>
       <dl class="resultatlista">
         <div><dt>Ett verks intäkt (parkens intäkt / antal verk)</dt><dd id="nar-verkintakt">–</dd></div>
@@ -550,29 +549,29 @@
       <div class="regel-lista">
         <h4 id="Regler">Regler och vad som är vad<a class="ankare" href="#Regler" aria-label="Länk till rubriken">#</a></h4>
         <ul>
-          <li><span class="badge lagstadgat">lagstadgat</span> Verksamhetsutövaren betalar till ägare av bostadsbyggnader inom nio verkshöjder från ett verk (PM s. 14, "7 §").</li>
-          <li><span class="badge lagstadgat">lagstadgat</span> Andelen av ett verks intäkt är 2,5 ‰ inom fem verkshöjder, 2,0 ‰ upp till sex, 1,5 ‰ upp till sju, 1,0 ‰ upp till åtta och 0,5 ‰ upp till nio (PM s. 14–15, "12 §").</li>
-          <li><span class="badge lagstadgat">lagstadgat</span> Ersättningen baseras på de två verk som ger högst belopp (PM s. 15, "13 §").</li>
-          <li><span class="badge lagstadgat">lagstadgat</span> Verksamhetsutövaren behöver inte betala mer än 2 % av anläggningens intäkter. Därutöver sätts ersättningarna ned i proportion (PM s. 15, "14 §").</li>
-          <li><span class="badge lagstadgat">lagstadgat</span> Ersättningen är skattefri till den del den avser privatbostad (PM s. 15).</li>
-          <li><span class="badge lagstadgat">lagstadgat</span> Intäkten uppskattas till ett schablonbelopp som motsvarar marknadsvärdet av elen i elområdet (PM s. 14, "11 §"). PM:et räknar med viktning 0,75.</li>
-          <li><span class="badge antagande">antagande</span> Hur många bostäder som ligger i varje zon. PM:et anger bara cirka 200 totalt.</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Verksamhetsutövaren betalar till ägare av bostadsbyggnader inom nio verkshöjder från ett verk (<a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=14" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 14</a>, återger 7 §).</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Andelen av ett verks intäkt är 2,5 ‰ inom fem verkshöjder, 2,0 ‰ upp till sex, 1,5 ‰ upp till sju, 1,0 ‰ upp till åtta och 0,5 ‰ upp till nio (<a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=14" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 14–15</a>, återger 12 §).</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Ersättningen baseras på de två verk som ger högst belopp (<a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=15" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 15</a>, återger 13 §).</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Verksamhetsutövaren behöver inte betala mer än 2 % av anläggningens intäkter. Därutöver sätts ersättningarna ned i proportion (<a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=15" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 15</a>, återger 14 §).</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Ersättningen är skattefri till den del den avser privatbostad (<a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=15" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 15</a>).</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Intäkten uppskattas till ett schablonbelopp som motsvarar marknadsvärdet av elen i elområdet (<a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=14" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 14</a>, återger 11 §). Westander Klimat och Energi (2026) räknar med viktning 0,75.</li>
+          <li><span class="badge antagande">antagande</span> Hur många bostäder som ligger i varje zon. Westander Klimat och Energi (2026) anger bara cirka 200 totalt.</li>
           <li><span class="badge antagande">antagande</span> Att båda verken som ger ersättning ligger i samma zon som bostaden. Det ger en övre gräns.</li>
           <li><span class="badge antagande">antagande</span> Alla verk har samma höjd (270 m) och samma intäkt.</li>
-          <li><span class="badge antagande">antagande</span> Ersättningen räknas för ett normalår. Bostäder som tillkommer efter tillståndsansökan, anmälan varje år och att ägare med flera byggnader bara får ersättning för en (PM s. 14, "7–10 §§") är inte modellerade.</li>
+          <li><span class="badge antagande">antagande</span> Ersättningen räknas för ett normalår. Bostäder som tillkommer efter tillståndsansökan, anmälan varje år och att ägare med flera byggnader bara får ersättning för en (<a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=14" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. 14</a>, återger 7–10 §§) är inte modellerade.</li>
         </ul>
       </div>
     </div>
   </section>
 
   <!-- ========================================================================
-       TABELL 4: ZON × ELPRIS (PM:ets Tabell 2, omräknad)
+       TABELL 4: ZON × ELPRIS (Tabell 2 i Westander Klimat och Energi, 2026, omräknad)
        ==================================================================== -->
   <section aria-labelledby="KanslighetZon">
     <h2 id="KanslighetZon">Hur elpriset påverkar ersättningen<a class="ankare" href="#KanslighetZon" aria-label="Länk till rubriken">#</a></h2>
     <p class="hint">
-      Ersättningen är proportionell mot elpriset. Tabell 4 är PM:ets Tabell 2 (s. 16) omräknad med sidans indata.
-      Kolumnen 100 öre är ett högt scenario som inte finns i PM:et.
+      Ersättningen är proportionell mot elpriset. Tabell 4 är Tabell 2 i <a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=16" target="_blank" rel="noopener">Westander Klimat och Energi (2026, s. 16)</a> omräknad med sidans indata.
+      Kolumnen 100 öre är ett högt scenario som inte finns i Westander Klimat och Energi (2026).
     </p>
     <div class="tabell-ruta">
       <table class="data-tabell" id="Tabell4">
@@ -620,23 +619,23 @@
   </section>
 
   <!-- ========================================================================
-       TABELL 6: KONTROLL MOT PM
+       TABELL 6: KONTROLL MOT WESTANDER KLIMAT OCH ENERGI (2026)
        ==================================================================== -->
   <section aria-labelledby="KontrollPM">
-    <h2 id="KontrollPM">Kontroll mot promemorian<a class="ankare" href="#KontrollPM" aria-label="Länk till rubriken">#</a></h2>
+    <h2 id="KontrollPM">Kontroll mot Westander Klimat och Energi (2026)<a class="ankare" href="#KontrollPM" aria-label="Länk till rubriken">#</a></h2>
     <p class="hint">
-      Kalkylen räknar fram talen i <a href="#ref-pm">PM:et</a> ur grunddata. Tabellen visar vad kalkylen räknar och vad PM:et säger.
-      Avvikelsen är liten när indata är PM:ets egna. Ändrar du indata avviker talen, vilket är meningen.
+      Kalkylen räknar fram talen i <a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf" target="_blank" rel="noopener">Westander Klimat och Energi (2026)</a> ur grunddata. Tabellen visar vad kalkylen räknar och vad Westander Klimat och Energi (2026) skriver.
+      Avvikelsen är liten när indata är samma som i källan. Ändrar du indata avviker talen, vilket är meningen.
     </p>
     <div class="tabell-ruta">
       <table class="data-tabell" id="Tabell6">
-        <caption id="Tabell6-rubrik">Tabell 6. Räknat här mot promemorians tal<a class="ankare" href="#Tabell6" aria-label="Länk till tabellen">#</a></caption>
+        <caption id="Tabell6-rubrik">Tabell 6. Räknat här mot talen i Westander Klimat och Energi (2026)<a class="ankare" href="#Tabell6" aria-label="Länk till tabellen">#</a></caption>
         <thead>
           <tr>
             <th scope="col">Uppgift</th>
             <th scope="col" class="tal">Räknat här</th>
-            <th scope="col" class="tal">PM:et</th>
-            <th scope="col">Sida i PM:et</th>
+            <th scope="col" class="tal">Westander Klimat och Energi (2026)</th>
+            <th scope="col">Sida</th>
             <th scope="col" class="tal">Avvikelse</th>
             <th scope="col">Anmärkning</th>
           </tr>
@@ -659,12 +658,12 @@
         (hämtad 5 november 2026). Samma fil finns som kopia i
         <a href="https://github.com/kentlundgren/Studier/blob/main/2026_host/Policy_i_energi_och_klimat/Yttre_dialog/Intaktsdelning/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf" target="_blank" rel="noopener">Kents repo Studier</a>
         (filerna är identiska, kontrollerat med SHA-256).
-        <em>(Konsultpromemoria från Westander Klimat och Energi, ett konsultbolag, inte ett myndighetsdokument. Den beskriver vad Fred. Olsen Renewables projekt Långhult kan ge kommun, bygd och närboende. Källa till allt märkt PM på sidan. Sidhänvisningarna följer promemorians egen sidnumrering.)</em>
+        <em>(Konsultpromemoria från Westander Klimat och Energi, ett konsultbolag, inte ett myndighetsdokument. Den beskriver vad Fred. Olsen Renewables projekt Långhult kan ge kommun, bygd och närboende. Källa till alla uppgifter märkta Westander Klimat och Energi, 2026, på sidan. Sidhänvisningarna följer källans egen sidnumrering.)</em>
       </li>
       <li id="ref-fo">
         Fred. Olsen Renewables (u.å.) <em>Långhult.</em>
         Tillgänglig: <a href="https://fredolsenrenewables.com/all-projects/laanghult" target="_blank" rel="noopener">https://fredolsenrenewables.com/all-projects/laanghult</a>
-        (hämtad 5 november 2026). <em>(Bolagets projektsida: högst 20 verk, högst 270 m totalhöjd, tillståndsansökan inlämnad i juni 2025. Bekräftar promemorians antal verk och höjd.)</em>
+        (hämtad 5 november 2026). <em>(Bolagets projektsida: högst 20 verk, högst 270 m totalhöjd, tillståndsansökan inlämnad i juni 2025. Bekräftar antal verk och höjd i Westander Klimat och Energi (2026).)</em>
       </li>
       <li id="ref-energiforsk">
         Energiforsk (2021) <em>El från nya anläggningar 2021.</em> Rapport 2021:714. Tillgänglig:
@@ -679,7 +678,7 @@
       <li id="ref-lag">
         Lagen.nu (2026) <em>Lag (2026:1113) om intäktsdelning från vindkraftsanläggningar.</em>
         Tillgänglig: <a href="https://lagen.nu/2026:1113" target="_blank" rel="noopener">https://lagen.nu/2026:1113</a>.
-        <em>(Intäktsdelningslagen (2026:1113). Lagtexten på sidan är återgiven ur promemorian, som citerar propositionen, och är inte kontrollerad mot intäktsdelningslagen (2026:1113) här.)</em>
+        <em>(Intäktsdelningslagen (2026:1113). Lagtexten på sidan är återgiven av Westander Klimat och Energi (2026), som citerar propositionen, och är inte kontrollerad mot intäktsdelningslagen (2026:1113) här.)</em>
       </li>
       <li id="ref-prop">
         Regeringen (2026) <em>Proposition 2025/26:239 Vindkraft i kommuner.</em>
@@ -709,8 +708,8 @@
     <p class="hint">
       Kalkylräntan kommer ur Energiforsk (2021). Övriga kostnadsvärden (investering, drift, arrende) är kalkylens egna standardvärden från
       <a href="https://kentlundgren.se/kalkyler/vindkraftskalkyl.html" target="_blank" rel="noopener">kentlundgren.se/kalkyler/vindkraftskalkyl.html</a>
-      och finns inte i promemorian. Fält märkta <span class="badge antagande">antagande</span> är förenklingar, fält märkta
-      <span class="badge pm">PM</span> kommer ur promemorian och fält märkta <span class="badge lagstadgat">lagstadgat</span> följer lagtexten som promemorian återger.
+      och finns inte i Westander Klimat och Energi (2026). Fält märkta <span class="badge antagande">antagande</span> är förenklingar, fält märkta
+      <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, s. N</a> kommer ur <a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf" target="_blank" rel="noopener">Westander Klimat och Energi (2026)</a> och fält märkta <span class="badge lagstadgat">lagstadgat</span> följer lagtexten som <a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf" target="_blank" rel="noopener">Westander Klimat och Energi (2026)</a> återger.
       Siffrorna är hämtade ur källorna och är inte kvalitetssäkrade. Kontrollera mot källan innan något återges.
     </p>
   </section>
@@ -756,8 +755,8 @@
             <p>addEventListener på varje gult fält: "input" räknar om medan du skriver, "change" uppdaterar <a href="#Tabell3">Tabell 3</a> (Senaste → Tidigare).</p>
           </div>
           <div class="tech-card">
-            <h4>PM:ets tal som konstanter</h4>
-            <p>Promemorians egna siffror ligger i PM_REF i berakningar_langhult.js med sidhänvisning. <a href="#Tabell6">Tabell 6</a> räknar om dem ur grunddata och visar avvikelsen.</p>
+            <h4>Källans tal som konstanter</h4>
+            <p>Siffrorna i Westander Klimat och Energi (2026) ligger i PM_REF i berakningar_langhult.js med sidhänvisning. <a href="#Tabell6">Tabell 6</a> räknar om dem ur grunddata och visar avvikelsen.</p>
           </div>
         </div>
 
@@ -765,7 +764,7 @@
         <div class="tech-grid">
           <div class="tech-card">
             <h4>Uppdraget</h4>
-            <p>"jag vill tydliggöra både projektets totala ekonomi och den ersättning som närboende troligen kommer få." Antaganden är märkta, liksom vilka uppgifter som kommer ur promemorian.</p>
+            <p>"jag vill tydliggöra både projektets totala ekonomi och den ersättning som närboende troligen kommer få." Antaganden är märkta, liksom vilka uppgifter som kommer ur Westander Klimat och Energi (2026).</p>
           </div>
           <div class="tech-card">
             <h4>Val som är gjorda</h4>
@@ -777,7 +776,7 @@
           </div>
           <div class="tech-card">
             <h4>Öppna punkter</h4>
-            <p>Fastighetsskattens nedskrivning är förenklad (resten jämnas ut). Lagtexten är återgiven ur promemorian och inte kontrollerad mot intäktsdelningslagen (2026:1113). Att taket nås går inte att kontrollera utan bostädernas verkliga avstånd. Beslutsläget för Långhult är inte kontrollerat.</p>
+            <p>Fastighetsskattens nedskrivning är förenklad (resten jämnas ut). Lagtexten är återgiven av Westander Klimat och Energi (2026) och inte kontrollerad mot intäktsdelningslagen (2026:1113). Att taket nås går inte att kontrollera utan bostädernas verkliga avstånd. Beslutsläget för Långhult är inte kontrollerat.</p>
           </div>
         </div>
       </div>

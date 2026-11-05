@@ -5,24 +5,24 @@
    (Jönköpings och Gislaveds kommuner). Originalet (berakningar.js) är oförändrat.
 
    Vad som är nytt jämfört med originalet:
-     1. Indata hämtas ur promemorian (PM) "Intäktsdelning och ersättningar:
+     1. Indata hämtas ur Westander Klimat och Energi (2026), "Intäktsdelning och ersättningar:
         Vindpark Långhult" (Westander Klimat och Energi, 2026-04-20):
         20 verk, 6,6 MW, 3 610 fullasttimmar, 270 m, 50 öre/kWh, vikt 0,75, 30 år.
-     2. Närboendeersättningen följer lagtexten som PM:et återger: fem zoner
+     2. Närboendeersättningen följer lagtexten som Westander Klimat och Energi (2026) återger: fem zoner
         (2,5 / 2,0 / 1,5 / 1,0 / 0,5 promille av ETT VERKS intäkt), ersättning
         från de två närmaste verken, och ett tak på 2 % av parkens intäkter.
         Originalets linjära schablon mellan 5 och 9 verkshöjder är borttagen.
-     3. Fastighetsskatt och bygdemedel är projektkostnader (PM bilaga 1, avsnitt 4).
+     3. Fastighetsskatt och bygdemedel är projektkostnader (Westander Klimat och Energi, 2026, bilaga 1, avsnitt 4).
         Kommunstödet (cirka 20 000 kr/MW) betalas av staten och dras INTE från
         projektets resultat. Originalets schablon "kommunal ersättning" är borttagen.
      4. Realiserat pris = spotpris × viktning (0,75, "kannibalisering").
      5. Nya tabeller: projektets ekonomi, närboende per zon, känslighet för elpris
-        och en kontroll mot PM:ets egna tal.
+        och en kontroll mot talen i Westander Klimat och Energi (2026).
 
    Märkning av indata i gränssnittet:
-     PM         = uppgift hämtad ur PM:et (sida anges)
-     lagstadgat = lagtext, återgiven ur PM:et
-     antagande  = Kents standardvärde eller en förenkling, inte ur PM:et
+     Källmärke   = uppgift hämtad ur Westander Klimat och Energi (2026), med sida
+     lagstadgat = lagtext, återgiven ur Westander Klimat och Energi (2026)
+     antagande  = Kents standardvärde eller en förenkling, inte ur Westander Klimat och Energi (2026)
 
    Koden är skriven i "vanilla" JavaScript (ES2020-nivå). Ingen data skickas
    någonstans: all beräkning sker i webbläsaren.
@@ -118,17 +118,17 @@ function payback(cashflows) {
 }
 
 /* ============================================================================
-   DEL 1.5 – KONSTANTER FRÅN PM OCH LAGTEXT
+   DEL 1.5 – KONSTANTER FRÅN WESTANDER KLIMAT OCH ENERGI (2026) OCH LAGTEXT
    ----------------------------------------------------------------------------
-   Sidhänvisningar gäller PM:ets egen sidnumrering (sidnummer längst upp).
+   Sidhänvisningar följer sidnumreringen i Westander Klimat och Energi (2026), sidnummer längst upp.
    ============================================================================ */
 
-/** Livslängd som PM:et räknar med (s. 3, 17–18). Används för fastighetsskattens
+/** Livslängd som Westander Klimat och Energi (2026, s. 3, 17–18) räknar med. Används för fastighetsskattens
     jämnade slutperiod, se fastighetsskattPerVerk(). */
 const PM_LIVSLANGD = 30;
 
 /**
- * De fem avståndszonerna (lagtext återgiven ur PM:et s. 14–15, "12 §").
+ * De fem avståndszonerna (lagtext återgiven av Westander Klimat och Energi (2026, s. 14–15), "12 §").
  * `till` anges i antal verkshöjder: 5, 6, 7, 8 och 9. Andelen är promille av
  * ETT VERKS intäkt. Första zonen börjar vid verket (0).
  */
@@ -140,14 +140,14 @@ const ZONER = [
   { fran: 8, till: 9, promille: 0.5 }
 ];
 
-/** Elpriser (kr/kWh) för känslighetstabellerna. PM:et visar 30–70 öre. 100 öre
-    är tillagt som ett högt scenario (antagande, inte ur PM:et). */
+/** Elpriser (kr/kWh) för känslighetstabellerna. Westander Klimat och Energi (2026, s. 16) visar 30–70 öre. 100 öre
+    är tillagt som ett högt scenario (antagande, inte ur Westander Klimat och Energi (2026)). */
 const PRISER = [0.30, 0.40, 0.50, 0.60, 0.70, 1.00];
 
-/** PM:ets egna tal, för kontrolltabellen (Tabell 6). Enhet kr om inget annat. */
+/** Talen i Westander Klimat och Energi (2026), för kontrolltabellen (Tabell 6). Enhet kr om inget annat. */
 const PM_REF = {
   produktionVerkGWh: 23.8,                         // s. 11, 16
-  zonVerk50: [22300, 17900, 13400, 8900, 4500],    // Tabell 2 i PM:et, s. 16, 50 öre
+  zonVerk50: [22300, 17900, 13400, 8900, 4500],    // Tabell 2 i Westander Klimat och Energi (2026), s. 16, 50 öre
   narboendeAr: 3.6e6,                              // s. 3, 4, 16
   narboende30: 107e6,                              // s. 3, 16
   snittBostad: 18000,                              // "drygt 18 000", s. 4
@@ -167,7 +167,7 @@ const PM_REF = {
 
 function lasIndata() {
   return {
-    // Anläggning (PM)
+    // Anläggning
     antalverk:        Math.max(1, Math.round(tal('antalverk'))),
     effekt:           tal('effekt'),                   // MW per verk
     fullasttimmar:    tal('fullasttimmar'),            // h/år
@@ -191,7 +191,7 @@ function lasIndata() {
     arrendeprocent:   tal('arrendeprocent') / 100,
     arrendekrmw:      tal('arrendekrmw'),
 
-    // Kommun, bygd och skatt (PM)
+    // Kommun, bygd och skatt
     fskatt1:          tal('fskatt1'),                  // kr/verk/år, första åren
     fskattaar:        Math.max(0, Math.round(tal('fskattaar'))),
     fskattotal:       tal('fskattotal'),               // kr/verk över 30 år
@@ -224,8 +224,8 @@ function lasIndata() {
 
 /**
  * Fastighetsskatt per verk och år (kr).
- * PM:et anger (bilaga 1): 334 398 kr per verk de första fyra åren och 46,5 Mkr
- * för sju verk över 30 år, alltså cirka 6,64 Mkr per verk. PM:ets tabell med
+ * Westander Klimat och Energi (2026) anger (bilaga 1): 334 398 kr per verk de första fyra åren och 46,5 Mkr
+ * för sju verk över 30 år, alltså cirka 6,64 Mkr per verk. Tabellen med
  * nedskrivningsfaktorer ger sänkningen i steg; den här kalkylen FÖRENKLAR genom
  * att jämna ut resten: (totalsumma − första åren) fördelas lika över övriga år.
  */
@@ -240,7 +240,7 @@ function fastighetsskattPerVerk(t, d) {
  * @param {number} verkIntakt  ett verks intäkt (kr/år) = parkens intäkt / antal verk
  * @param {number} parkIntakt  parkens intäkt (kr/år)
  * @param {object} d           indata
- * Lagtext (återgiven ur PM:et):
+ * Lagtext (återgiven ur Westander Klimat och Energi (2026)):
  *   - andelen av ETT VERKS intäkt beror på avståndet (fem zoner, promille)
  *   - en bostad får ersättning från högst de två verk som ger mest
  *   - sammanlagt högst 2 % av anläggningens intäkter; överskjutande del
@@ -270,12 +270,12 @@ function beraknaAllt(d) {
   const P_tot = d.effekt * d.antalverk;                     // MW, hela parken
 
   /* ---------- 3.1 Produktion och investerarens grundstorheter ------------- */
-  // Produktion per verk år 1 = effekt (kW) × fullasttimmar (PM: 6,6 MW × 3 610 h).
+  // Produktion per verk år 1 = effekt (kW) × fullasttimmar (Westander Klimat och Energi, 2026: 6,6 MW × 3 610 h).
   const prodVerkkWh_ar1 = d.effekt * 1000 * d.fullasttimmar;
   const produktionkWh_ar1 = prodVerkkWh_ar1 * d.antalverk;
   const produktionMWh_ar1 = produktionkWh_ar1 / 1000;
 
-  // Realiserat pris = spotpris × viktning (PM s. 12, 16: 0,75).
+  // Realiserat pris = spotpris × viktning (Westander Klimat och Energi, 2026, s. 12, 16: 0,75).
   const realPris_ar1 = d.elpris * d.viktning;
   const intaktAr1 = produktionkWh_ar1 * realPris_ar1;
 
@@ -310,7 +310,7 @@ function beraknaAllt(d) {
   const arrendeTotal = arrendeAr.reduce((a, b) => a + b, 0);
   const arrendeNuvarde = arrendeAr.reduce((s, v, i) => s + v / Math.pow(1 + r, i + 1), 0);
 
-  /* ---------- 3.4 Fastighetsskatt och bygdemedel (projektkostnader, PM) ---- */
+  /* ---------- 3.4 Fastighetsskatt och bygdemedel (projektkostnader) ---- */
   const fskattAr = [];     // hela parken, kr/år
   const bygdeAr = [];
   for (let t = 1; t <= n; t++) {
@@ -323,7 +323,7 @@ function beraknaAllt(d) {
   /* ---------- 3.5 Kommunstöd (betalas av staten, ingen projektkostnad) ----- */
   const kommunstodGisl = d.kommunstod * d.effekt * d.verkgislaved;
   const kommunstodJonk = d.kommunstod * d.effekt * Math.max(0, d.antalverk - d.verkgislaved);
-  // Om kommunen i stället fick den faktiska fastighetsskatten (PM s. 8–9):
+  // Om kommunen i stället fick den faktiska fastighetsskatten (Westander Klimat och Energi, 2026, s. 8–9):
   const fskattGislAr1 = fastighetsskattPerVerk(1, d) * d.verkgislaved;
   let fskattGislTotal = 0;
   for (let t = 1; t <= n; t++) fskattGislTotal += fastighetsskattPerVerk(t, d) * d.verkgislaved;
@@ -438,9 +438,14 @@ function satt(id, value) {
   if (el) el.textContent = value;
 }
 
+/** Originalet (Westander Klimat och Energi, 2026), publicerat av Fred. Olsen Renewables. */
+const KALLA_URL = 'https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf';
+
 /** Källmärken (statisk, egen text – ingen användardata). */
 const M = {
-  pm:   (s) => '<span class="badge pm">PM</span> ' + s,
+  // Märke med författare, år och sida, länkat till rätt sida i originalet (Harvardform).
+  pm:   (sid, s) => '<a class="badge pm" href="' + KALLA_URL + '#page=' + (String(sid).match(/\d+/) || [1])[0] +
+                    '" target="_blank" rel="noopener">Westander Klimat och Energi, 2026, ' + sid + '</a> ' + s,
   lag:  (s) => '<span class="badge lagstadgat">lagstadgat</span> ' + s,
   ant:  (s) => '<span class="badge antagande">antagande</span> ' + s,
   ber:  (s) => '<span class="badge beraknat">beräknat</span> ' + s
@@ -472,34 +477,34 @@ function ritaTabell1(res, d) {
   const L = res.livs;
   const neg = (v) => fmt(-v, 0);
   laggRad(k, [{t: 'Produktion (MWh)'}, {t: fmt(res.produktionMWh_ar1, 0), k: 'tal'}, {t: fmt(L.prodMWh, 0), k: 'tal'},
-    {h: M.pm('6,6 MW × 3 610 fullasttimmar × 20 verk (s. 11, 16)')}]);
+    {h: M.pm('s. 11, 16', '6,6 MW × 3 610 fullasttimmar × 20 verk')}]);
   laggRad(k, [{t: 'Intäkt (spotpris × viktning)'}, {t: fmt(res.intaktAr1, 0), k: 'tal'}, {t: fmt(L.intakt, 0), k: 'tal'},
-    {h: M.pm('50 öre/kWh och vikt 0,75 (s. 12, 16)')}]);
+    {h: M.pm('s. 12, 16', '50 öre/kWh och vikt 0,75')}]);
   laggRad(k, [{t: 'Driftskostnad (rörlig + fast)'}, {t: neg(res.driftkostnadAr1), k: 'tal'}, {t: neg(L.drift), k: 'tal'},
-    {h: M.ant('kalkylens standardvärden, ej ur PM:et')}]);
+    {h: M.ant('kalkylens standardvärden, ej ur Westander Klimat och Energi (2026)')}]);
   laggRad(k, [{t: 'Kapitalkostnad (annuitet)'}, {t: neg(res.kapitalkostnad), k: 'tal'}, {t: neg(L.kapital), k: 'tal'},
-    {h: M.ant('investering ur kalkylens standardvärde, ränta 5,2 % real ur Energiforsk (2021), ej ur PM:et')}]);
+    {h: M.ant('investering ur kalkylens standardvärde, ränta 5,2 % real ur Energiforsk (2021), ej ur Westander Klimat och Energi (2026)')}]);
   laggRad(k, [{t: 'Arrende till markägare'}, {t: neg(res.arrendeAr1), k: 'tal'}, {t: neg(L.arrende), k: 'tal'},
-    {h: M.ant('3,5 % av bruttointäkten, ej ur PM:et')}]);
+    {h: M.ant('3,5 % av bruttointäkten, ej ur Westander Klimat och Energi (2026)')}]);
   laggRad(k, [{t: 'Fastighetsskatt'}, {t: neg(res.fskattAr1), k: 'tal'}, {t: neg(L.fskatt), k: 'tal'},
-    {h: M.pm('334 398 kr/verk första fyra åren, 46,5 Mkr för sju verk på 30 år (bilaga 1, s. 17–18)') + ' ' + M.ant('resten jämnas ut')}]);
+    {h: M.pm('bilaga 1, s. 17–18', '334 398 kr/verk första fyra åren, 46,5 Mkr för sju verk på 30 år') + ' ' + M.ant('resten jämnas ut')}]);
   laggRad(k, [{t: 'Bygdemedel'}, {t: neg(res.bygdeAr1), k: 'tal'}, {t: neg(L.bygde), k: 'tal'},
-    {h: M.pm('minst 400 000 kr/år för hela parken (s. 4, 12)')}]);
+    {h: M.pm('s. 4, 12', 'minst 400 000 kr/år för hela parken')}]);
   laggRad(k, [{t: 'Närboendeersättning (efter tak)'}, {t: neg(res.narboendeAr1), k: 'tal'}, {t: neg(L.narboende), k: 'tal'},
     {h: M.lag('zoner, två verk, tak 2 %') + ' ' + M.ant('antal bostäder per zon')}]);
   laggRad(k, [{t: 'Nedmontering och restvärde'}, {t: '–', k: 'tal'}, {t: fmt(L.nedRest, 0), k: 'tal'},
-    {h: M.ant('nedmontering 600 kkr/MW, restvärde 0, ej ur PM:et')}]);
+    {h: M.ant('nedmontering 600 kkr/MW, restvärde 0, ej ur Westander Klimat och Energi (2026)')}]);
   laggRad(k, [{t: 'Överskott efter allt'}, {t: fmt(res.overskottNetto, 0), k: 'tal'}, {t: fmt(L.overskott, 0), k: 'tal'},
     {h: M.ber('intäkt minus alla kostnadsposter ovan')}], 'summa');
   laggRad(k, [{t: 'Betalas av staten, inte av projektet (information)'}, {t: ''}, {t: ''}, {t: ''}], 'delrubrik');
   laggRad(k, [{t: 'Kommunstöd till Gislaveds kommun (' + d.verkgislaved + ' verk)'}, {t: fmt(res.kommunstodGisl, 0), k: 'tal'},
     {t: fmt(res.kommunstodGisl * d.livslangd, 0), k: 'tal'},
-    {h: M.pm('cirka 20 000 kr per installerad MW (s. 7–9)')}]);
+    {h: M.pm('s. 7–9', 'cirka 20 000 kr per installerad MW')}]);
   laggRad(k, [{t: 'Kommunstöd till Jönköpings kommun (' + Math.max(0, d.antalverk - d.verkgislaved) + ' verk)'}, {t: fmt(res.kommunstodJonk, 0), k: 'tal'},
     {t: fmt(res.kommunstodJonk * d.livslangd, 0), k: 'tal'},
-    {h: M.ber('samma schablon × MW i Jönköping (PM:et räknar bara Gislaved)')}]);
+    {h: M.ber('samma schablon × MW i Jönköping (Westander Klimat och Energi (2026) räknar bara Gislaved)')}]);
   laggRad(k, [{t: 'Om Gislaved fick den faktiska fastighetsskatten'}, {t: fmt(res.fskattGislAr1, 0), k: 'tal'}, {t: fmt(res.fskattGislTotal, 0), k: 'tal'},
-    {h: M.pm('2,3 Mkr/år de första fyra åren, 46,5 Mkr totalt (s. 8–9, 18)')}]);
+    {h: M.pm('s. 8–9, 18', '2,3 Mkr/år de första fyra åren, 46,5 Mkr totalt')}]);
 }
 
 /* ---- Tabell 2: närboende per zon ---- */
@@ -599,7 +604,7 @@ function skrivUt(res, d) {
   uppdateraDiagram(res, d);
 }
 
-/* ---- Tabell 4: ett verk, zon × elpris (motsvarar PM:ets Tabell 2) ---- */
+/* ---- Tabell 4: ett verk, zon × elpris (motsvarar Tabell 2 i Westander Klimat och Energi (2026)) ---- */
 function ritaKanslighet(d) {
   const k4 = document.getElementById('t4-kropp');
   const k5 = document.getElementById('t5-kropp');
@@ -636,7 +641,7 @@ function ritaKanslighet(d) {
   }
 }
 
-/* ---- Tabell 6: kontroll mot PM:ets egna tal ---- */
+/* ---- Tabell 6: kontroll mot talen i Westander Klimat och Energi (2026) ---- */
 function ritaKontroll(res, d) {
   const k = document.getElementById('t6-kropp');
   if (!k) return;
@@ -648,21 +653,21 @@ function ritaKontroll(res, d) {
     laggRad(k, [{t: namn}, {t: fmt(rakat, dec), k: 'tal'}, {t: fmt(pm, decPm), k: 'tal'}, {t: sida},
       {t: Number.isFinite(avv) ? fmt(avv, 1, ' %') : '–', k: 'tal'}, {t: anm}]);
   };
-  rad('Produktion per verk (GWh/år)', res.prodVerkkWh_ar1 / 1e6, PM_REF.produktionVerkGWh, 's. 11, 16', 'PM:et avrundar 23,826 till 23,8', 2, 1);
+  rad('Produktion per verk (GWh/år)', res.prodVerkkWh_ar1 / 1e6, PM_REF.produktionVerkGWh, 's. 11, 16', 'Westander Klimat och Energi (2026) avrundar 23,826 till 23,8', 2, 1);
   ZONER.forEach((z, i) => {
     const verkIntakt = res.prodVerkkWh_ar1 * d.elpris * d.viktning;
     const v = (z.promille / 1000) * verkIntakt;
-    rad('Zon ' + (i + 1) + ' per verk (kr/år, 50 öre)', v, PM_REF.zonVerk50[i], 'Tabell 2, s. 16', 'PM:et avrundar till hundratal');
+    rad('Zon ' + (i + 1) + ' per verk (kr/år, 50 öre)', v, PM_REF.zonVerk50[i], 'Tabell 2, s. 16', 'Westander Klimat och Energi (2026) avrundar till hundratal');
   });
-  rad('Närboende, hela parken (kr/år)', n.utbetalt, PM_REF.narboendeAr, 's. 3, 16', 'PM:et anger taket 2 %, avrundat till 3,6 Mkr');
+  rad('Närboende, hela parken (kr/år)', n.utbetalt, PM_REF.narboendeAr, 's. 3, 16', 'Westander Klimat och Energi (2026) anger taket 2 %, avrundat till 3,6 Mkr');
   rad('Närboende på 30 år (kr)', res.narboendeTotal, PM_REF.narboende30, 's. 3, 16', 'Förutsätter 30 år och oförändrat pris');
-  rad('Snitt per bostad (kr/år)', n.snitt, PM_REF.snittBostad, 's. 4', 'PM:et skriver "drygt 18 000"');
-  rad('Antal bostäder (st)', n.antal, PM_REF.bostader, 's. 4, 16', 'PM:et skriver "cirka 200"; fördelningen på zoner är ett antagande');
-  rad('Kommunstöd Gislaved (kr/år)', res.kommunstodGisl, PM_REF.kommunstodGislavedAr, 's. 3, 9', 'PM:et skriver "cirka 0,9 miljoner"');
-  rad('Kommunstöd Gislaved, 30 år (kr)', res.kommunstodGisl * 30, PM_REF.kommunstodGislaved30, 's. 3, 9', 'PM:et skriver 27,7 Mkr');
-  rad('Fastighetsskatt, sju verk, år 1 (kr)', res.fskattGislAr1, PM_REF.fskatt7Ar1, 's. 4, 18', 'PM:et skriver 2,3 Mkr');
-  rad('Fastighetsskatt, sju verk, 30 år (kr)', res.fskattGislTotal, PM_REF.fskatt7_30, 's. 3, 18', 'Samma som PM:et genom konstruktion (summan är en indata)');
-  rad('Bygdemedel, 30 år (kr)', res.bygdeAr1 * 30, PM_REF.bygdemedel30, 's. 12', 'Minst 400 000 kr/år enligt PM:et');
+  rad('Snitt per bostad (kr/år)', n.snitt, PM_REF.snittBostad, 's. 4', 'Westander Klimat och Energi (2026) skriver "drygt 18 000"');
+  rad('Antal bostäder (st)', n.antal, PM_REF.bostader, 's. 4, 16', 'Westander Klimat och Energi (2026) skriver "cirka 200"; fördelningen på zoner är ett antagande');
+  rad('Kommunstöd Gislaved (kr/år)', res.kommunstodGisl, PM_REF.kommunstodGislavedAr, 's. 3, 9', 'Westander Klimat och Energi (2026) skriver "cirka 0,9 miljoner"');
+  rad('Kommunstöd Gislaved, 30 år (kr)', res.kommunstodGisl * 30, PM_REF.kommunstodGislaved30, 's. 3, 9', 'Westander Klimat och Energi (2026) skriver 27,7 Mkr');
+  rad('Fastighetsskatt, sju verk, år 1 (kr)', res.fskattGislAr1, PM_REF.fskatt7Ar1, 's. 4, 18', 'Westander Klimat och Energi (2026) skriver 2,3 Mkr');
+  rad('Fastighetsskatt, sju verk, 30 år (kr)', res.fskattGislTotal, PM_REF.fskatt7_30, 's. 3, 18', 'Samma som Westander Klimat och Energi (2026) genom konstruktion (summan är en indata)');
+  rad('Bygdemedel, 30 år (kr)', res.bygdeAr1 * 30, PM_REF.bygdemedel30, 's. 12', 'Minst 400 000 kr/år enligt Westander Klimat och Energi (2026)');
 }
 
 /* ============================================================================

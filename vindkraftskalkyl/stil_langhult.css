@@ -498,3 +498,14 @@ body { padding-bottom: 4rem; }
 
 /* Tabellrubriker får radbrytas så att Tabell 2 ryms utan sidledsrullning på bred skärm */
 .data-tabell thead th.tal { white-space: normal; }
+
+/* Källmärken med författare, år och sida: normal text, inte versaler, och klickbara */
+a.badge.pm, .badge.pm {
+  text-transform: none; letter-spacing: 0; font-weight: 600; text-decoration: none;
+  white-space: normal; line-height: 1.35;
+}
+a.badge.pm:hover, a.badge.pm:focus { text-decoration: underline; }
+
+/* Länkar i sidhuvudet (mörk bakgrund): vita och understrukna, så de går att läsa */
+.sidhuvud a { color: #fff; text-decoration: underline; }
+.sidhuvud a:hover, .sidhuvud a:focus { text-decoration-thickness: 2px; }
