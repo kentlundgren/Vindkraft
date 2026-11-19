@@ -53,6 +53,25 @@ De fyra delarna (visualiserade som överlappande cirklar):
 - Viktigt att summan motsvarar den totala fastighetsskatten för vindkraft som regeringen har sagt att den ska.
 - I o m att fastighetsskatten har höjts fattas ca 85 miljoner för 2026 och ca 55 miljoner för 2027 (blir mindre glapp nästa år eftersom potten är större).
 
+### Genomförande av intäktsdelning med lokalsamhället
+
+- Regeringen har inte meddelat hur frågan ska tas vidare.
+- I alla projekt betalas redan t.ex. bygdepeng till föreningar eller garantilån till lokalt näringsliv så behöver egentligen inte regleras.
+- Viktigt att kommunerna inte ställer krav på avtal om ersättning till lokalsamhället för tillstyrkan. Inte i linje med kommunallagen eftersom bygdemedlen gynnar enskilda.
+- Kostnaderna för bolagen ökar p.g.a. intäktsdelningen med närboende, vilket påverkar utrymmet för intäktsdelning med lokalsamhället.
+- Dock nytt att kommunen får en direkt ersättning som också kommer lokalsamhället till godo.
+
+### Ändringar av formerna för kommunal tillstyrkan
+
+- Vetoutredningen lämnade 2021 förslag till ändringar av formerna för kommunal tillstyrkan i betänkandet *En rättsäker vindkraftsprövning*.
+- Ändringar av den kommunala tillstyrkan ingick inte i regeringens avisering av incitamentspaketet.
+- Främst följande punkter förhandlades dock:
+  - Kommunen bör besluta tidigt
+  - Förtydliga att kommunens beslut avser lämplig mark- och vattenanvändning
+  - Kommunens beslut bör ligga fast genom hela prövningen
+- Redan varit i riksdagen genom prop. *Tidigt kommunalt ställningstagande till vindkraft*.
+- Frågan kan aktualiseras med en ny regering.
+
 ## Reflektioner – varför det spelar roll för kalkylen
 
 Den höga vetoandelen gör den lokala ekonomin avgörande. Kommuner efterfrågar tydligare och mer långsiktiga incitament innan de säger ja. Incitamentspaketet (kommunersättning motsvarande fastighetsskatt, intäktsdelning till närboende och lokalsamhälle, rätt till inlösen) är precis det som den interaktiva kalkylen i repot belyser genom fem perspektiv:
@@ -63,11 +82,11 @@ Den höga vetoandelen gör den lokala ekonomin avgörande. Kommuner efterfrågar
 - **Andelsägaren** – kooperativ modell.
 - **Den närboende** – intäktsdelning enligt prop. 2025/26:239 och betänkande 2025/26:NU20 (från 1 juli 2026).
 
-När en park tillstyrks blir de lokala flödena (arrende, ersättning till närboende, kommunal ersättning och nytta) konkreta och beräkningsbara. Verktyget gör det möjligt att visa siffror på vad ett ja faktiskt betyder för kommunen och de närboende – något som kan minska osäkerheten som driver veton. Exemplen på hur kommuner använder pengarna (busskort, fritidsaktiviteter, naturvård, skidanläggningar, medborgarröstning) visar den konkreta lokala nyttan.
+När en park tillstyrks blir de lokala flödena (arrende, ersättning till närboende, kommunal ersättning och nytta) konkreta och beräkningsbara. Verktyget gör det möjligt att visa siffror på vad ett ja faktiskt betyder för kommunen och de närboende – något som kan minska osäkerheten som driver veton. Exemplen på hur kommuner använder pengarna (busskort, fritidsaktiviteter, naturvård, skidanläggningar, medborgarröstning) visar den konkreta lokala nyttan. Samtidigt är genomförandet av intäktsdelning med lokalsamhället fortfarande oklart, och formerna för kommunal tillstyrkan har inte reformerats i paketet.
 
 ## Koppling till Skånes vindkraftsakademi
 
-Statistiken visar att utbyggnaden ligger långt under den takt som behövs för elektrifiering och klimatmål (Energimyndighetens scenarier nämner behov av ca 5,4 TWh ökning per år för landbaserad vindkraft). I Skåne (elområde 4) har tillstånd varit särskilt knappa under flera år. Akademins arbete med lokala planer, studiebesök och kommunikation om nytta blir därför centralt – särskilt när ersättningen till kommuner är på plats men fortfarande inte fullt långsiktigt reglerad.
+Statistiken visar att utbyggnaden ligger långt under den takt som behövs för elektrifiering och klimatmål (Energimyndighetens scenarier nämner behov av ca 5,4 TWh ökning per år för landbaserad vindkraft). I Skåne (elområde 4) har tillstånd varit särskilt knappa under flera år. Akademins arbete med lokala planer, studiebesök och kommunikation om nytta blir därför centralt – särskilt när ersättningen till kommuner är på plats men fortfarande inte fullt långsiktigt reglerad, och när formerna för tillstyrkan och intäktsdelning med lokalsamhället är oklara.
 
 Den interaktiva kalkylen kan användas i dialogen med kommuner och närboende för att göra ekonomin (inkl. den nya ersättningen) synlig och transparent.
 
@@ -75,6 +94,6 @@ Den interaktiva kalkylen kan användas i dialogen med kommuner och närboende f�
 
 - Green Power Sweden (2026) *Nästan all vindkraft stoppades av kommunerna 2025.* https://greenpowersweden.se/nastan-all-vindkraft-stoppades-av-kommunerna-2025/
 - Green Power Sweden (2026) *Statistik tillstånd landbaserad vindkraft 2014–2025.* https://greenpowersweden.se/statistik/statistik-tillstand-landbaserad-vindkraft-2014-2025/
-- Green Power Sweden-presentation (2026) om incitamentspaketet (slides om olika delar, ersättning till kommuner, exempel på användning, former och nivå).
+- Green Power Sweden-presentation (2026) om incitamentspaketet (slides om olika delar, ersättning till kommuner, exempel på användning, former och nivå, genomförande av intäktsdelning med lokalsamhället, ändringar av formerna för kommunal tillstyrkan).
 - Regeringen (2026) *Proposition 2025/26:239 Vindkraft i kommuner.*
 - Sveriges riksdag (2026) *Vindkraft i kommuner. Betänkande 2025/26:NU20.*
