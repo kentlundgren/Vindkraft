@@ -56,13 +56,15 @@ eller någon server behövs.
 
 ## Filstruktur
 
-Projektet består av tre separata filer i denna mapp:
+Projektet består av tre huvudfiler i denna mapp, plus en förklaringsruta och en delningsbild:
 
 | Fil | Ansvar |
 | --- | --- |
-| `vindkraftskalkyl.html` | Struktur och innehåll (semantisk HTML5). |
-| `stil.css` | All formatering (responsiv design, gula indatafält, flikar). |
+| `vindkraftskalkyl.html` | Struktur och innehåll (semantisk HTML5), inklusive delningstaggarna (Open Graph). |
+| `stil.css` | All formatering (responsiv design, gula indatafält, flikar, förklaringsrutan). |
 | `berakningar.js` | All beräknings- och interaktionslogik. |
+| [`narboende_info.js`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/narboende_info.js) | Förklaringsruta för "närboende" (hovring, fokus, tryck) med länk till information om lag (2026:1113). |
+| [`og-bild.jpg`](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/og-bild.jpg) | Delningsbild, 1200×630 px, för länkförhandsvisning på LinkedIn, X och Facebook. |
 
 CSS länkas i `<head>` och JavaScript strax före `</body>`, båda med relativa
 sökvägar. [Chart.js](https://www.chartjs.org/) laddas via CDN och används endast

@@ -392,3 +392,39 @@ h2 { font-size: 1.25rem; color: var(--farg-primar); border-bottom: 2px solid var
   .resultatlista dd { white-space: normal; }
   .jamforelse-tabell th, .jamforelse-tabell td { padding: .4rem .45rem; font-size: .85rem; }
 }
+
+/* ---- Förklaringsruta för "närboende" (narboende_info.js, 2026-11-19) ---- */
+.nb-info {
+  border-bottom: 1px dotted var(--farg-primar);
+  cursor: help;
+}
+.nb-info:hover, .nb-info:focus-visible {
+  background: var(--farg-framhavd);
+  outline: 2px solid var(--farg-primar-ljus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+.nb-ruta {
+  position: absolute;
+  z-index: 1000;
+  background: #eaf3fb;                    /* blå notering, inte gul */
+  color: var(--farg-text);
+  border: 1px solid #8fb4d4;
+  border-radius: 6px;
+  padding: .6rem .8rem;
+  font-size: .88rem;
+  font-weight: 400;
+  line-height: 1.4;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .18);
+}
+.nb-ruta[hidden] { display: none; }
+.nb-ruta p { margin: 0 0 .4rem; }
+.nb-ruta p:last-child { margin-bottom: 0; }
+.nb-ruta a { color: var(--farg-primar); font-weight: 600; }
+@media print { .nb-ruta { display: none; } }
+/* "närboende" i den mörka rubrikremsan: ljus understrykning och ljus hovring */
+.sidhuvud .nb-info { border-bottom-color: rgba(255, 255, 255, .85); }
+.sidhuvud .nb-info:hover, .sidhuvud .nb-info:focus-visible {
+  background: rgba(255, 255, 255, .22);
+  outline-color: #fff;
+}

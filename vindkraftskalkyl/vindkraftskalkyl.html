@@ -21,6 +21,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vindkraftens ekonomi – fem perspektiv</title>
+  <meta name="description" content="Interaktiv kalkyl som visar vindkraftens ekonomi för investeraren, markägaren, kommunen, andelsägaren och den närboende, inklusive ersättning till närboende enligt lag (2026:1113).">
+
+  <!-- Delningsbild (Open Graph / X-kort). Bilden ligger i samma mapp: og-bild.jpg (1200x630). -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="sv_SE">
+  <meta property="og:title" content="Ny vindkraft kan ge ersättning till närboende – kalkyl i fem perspektiv">
+  <meta property="og:description" content="Räkna på vindkraftens ekonomi för investerare, markägare, kommun, andelsägare och närboende. Ändra indata och se ersättningen till närboende enligt lag (2026:1113) om intäktsdelning.">
+  <meta property="og:url" content="https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html">
+  <meta property="og:image" content="https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/og-bild.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Tre vindkraftverk på en kulle och tre hus i förgrunden, med mynt som går från verken till husen. Rubrik: Ny vindkraft kan ge ersättning till närboende.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Ny vindkraft kan ge ersättning till närboende – kalkyl i fem perspektiv">
+  <meta name="twitter:description" content="Räkna på vindkraftens ekonomi för investerare, markägare, kommun, andelsägare och närboende.">
+  <meta name="twitter:image" content="https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/og-bild.jpg">
 
   <!-- Extern CSS länkas i head med relativ sökväg -->
   <link rel="stylesheet" href="stil.css">
@@ -34,7 +50,7 @@
       Ett interaktivt verktyg som beräknar och visualiserar vindkraftens ekonomi
       samtidigt för <strong>investeraren</strong>, <strong>markägaren</strong>,
       <strong>kommunen/samhället</strong>, <strong>andelsägaren</strong> och
-      <strong>den närboende</strong>. Ändra ett indatafält så räknas allt om
+      <strong>den <span class="nb-info" tabindex="0">närboende</span></strong>. Ändra ett indatafält så räknas allt om
       automatiskt.
     </p>
   </header>
@@ -216,7 +232,7 @@
 
       <!-- ---- Grupp: Närboende (NU20 / prop. 2025/26:239) ---- -->
       <fieldset class="indata-grupp">
-        <legend>Närboende (vindkraftsersättning, NU20)</legend>
+        <legend><span class="nb-info" tabindex="0">Närboende</span> (vindkraftsersättning, NU20)</legend>
 
         <label>Avstånd till närmaste verk (m)
           <input type="number" step="10" id="avstand" class="indata" value="800">
@@ -338,7 +354,7 @@
     <div class="flik-panel" id="panel-kommun" role="tabpanel" hidden>
       <h3>Kommun- och samhällsperspektivet</h3>
       <dl class="resultatlista">
-        <div><dt>Lokala intäkter år 1 (arrende + kommun + närboende)</dt><dd id="kom-lokala-ar">–</dd></div>
+        <div><dt>Lokala intäkter år 1 (arrende + kommun + <span class="nb-info" tabindex="0">närboende</span>)</dt><dd id="kom-lokala-ar">–</dd></div>
         <div><dt>Lokala intäkter totalt (hela livslängden)</dt><dd id="kom-lokala-total">–</dd></div>
         <div><dt>Kommunal ersättning år 1</dt><dd id="kom-kommun-ar">–</dd></div>
         <div><dt>Undviken CO₂ per år</dt><dd id="kom-co2-ton">–</dd></div>
@@ -370,7 +386,7 @@
 
     <!-- ---- Flik: Närboende ---- -->
     <div class="flik-panel" id="panel-narboende" role="tabpanel" hidden>
-      <h3>Närboendeperspektivet – vindkraftsersättning enligt NU20</h3>
+      <h3><span class="nb-info" tabindex="0">Närboendeperspektivet</span> – vindkraftsersättning enligt NU20</h3>
       <p class="hint">
         Modellerar den nya lagen om intäktsdelning
         (<a href="https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/vindkraft-i-kommuner_hd03239/" target="_blank" rel="noopener">prop. 2025/26:239</a>,
@@ -381,7 +397,7 @@
         <div><dt>Nio verkshöjder (yttre gräns)</dt><dd id="nar-niohojder">–</dd></div>
         <div><dt>Inom ersättningszon (≤ 9 verkshöjder)?</dt><dd id="nar-inom">–</dd></div>
         <div><dt>Distansfaktor (1 = närmast, 0 = vid yttre gräns)</dt><dd id="nar-faktor">–</dd></div>
-        <div class="framhavd"><dt>Årlig ersättning till en enskild närboende</dt><dd id="nar-enskild">–</dd></div>
+        <div class="framhavd"><dt>Årlig <span class="nb-info" tabindex="0">ersättning till en enskild närboende</span></dt><dd id="nar-enskild">–</dd></div>
         <div class="framhavd"><dt>Total årlig ersättning (belastar verksamhetsutövaren)</dt><dd id="nar-total">–</dd></div>
       </dl>
 
@@ -553,5 +569,7 @@
 
   <!-- Vår egen logik länkas sist, strax före </body>, med relativ sökväg -->
   <script src="berakningar.js"></script>
+  <!-- Förklaringsruta för "närboende" (hovring, fokus, tryck) -->
+  <script src="narboende_info.js"></script>
 </body>
 </html>
