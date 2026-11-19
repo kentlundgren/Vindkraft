@@ -72,6 +72,52 @@ De fyra delarna (visualiserade som överlappande cirklar):
 - Redan varit i riksdagen genom prop. *Tidigt kommunalt ställningstagande till vindkraft*.
 - Frågan kan aktualiseras med en ny regering.
 
+## Intäktsdelning till närboende – detaljerad modell
+
+Lagstiftning har införts med modell för hur intäkterna fördelas. De som bor nära vindkraftverk ska få ta del av intäkterna från elproduktionen.
+
+- Lag (2026:1113) och förordning (2026:1115) om intäktsdelning från vindkraftsanläggningar.
+- Trädde i kraft den 1 juli 2026.
+
+### Ersättningsnivåer (trappstegsmodell i promille av genomsnittsintäkt)
+
+Ersättningen baseras på avståndet från vindkraftverket, mätt i antal vindkraftverkshöjder:
+
+| Avstånd (antal verkshöjder) | Ersättningsnivå (promille) |
+| --- | --- |
+| 0–5 | 2,5 ‰ |
+| 5–6 | 2,0 ‰ |
+| 6–7 | 1,5 ‰ |
+| 7–8 | 1,0 ‰ |
+| 8–9 | 0,5 ‰ |
+
+### Vem har rätt till ersättning?
+
+- Den som äger ett bostadshus vid utgången av ett intäktsår.
+- Huset ska ha funnits, eller hållit på att byggas, vid ansökan om miljötillstånd för vindkraftsanläggningen, eller ha ersatt ett hus som hade rätt till intäktsdelning.
+- Om en person äger flera bostadshus på en fastighet har ägaren bara rätt till ersättning för det av husen som ger mest.
+- Om två eller flera tillsammans äger ett bostadshus får de ersättning efter hur stor del av fastigheten de äger.
+- Om huset inte hör till en fastighet (t.ex. arrenderad eller kommunalt ägd mark) får ägarna ersättning efter hur stor del av huset de äger.
+
+### Hur räknas storleken på ersättningen ut?
+
+Ersättningen beräknas utifrån två faktorer:
+
+1. Avståndet mellan bostadshuset och vindkraftverket, och
+2. beräknad intäkt från vindkraftverket.
+
+Systemet innebär att en del av vindkraftsanläggningens intäkter per år fördelas, inte ett fast belopp.
+
+### Hur beräknas intäkten?
+
+Genomsnitt av intäkterna från alla verken i en vindkraftsanläggning:
+
+1. Elproduktionen × genomsnittligt elpris = beräknad intäkt
+2. Beräknad intäkt / antalet verk = genomsnittsintäkt
+3. Genomsnittsintäkt × promille enligt trappstegsmodellen = ersättningen till bostadsägaren
+
+Eftersom elpriset skiljer sig mellan elområdena kommer ersättningen bli olika stor i olika delar av landet.
+
 ## Reflektioner – varför det spelar roll för kalkylen
 
 Den höga vetoandelen gör den lokala ekonomin avgörande. Kommuner efterfrågar tydligare och mer långsiktiga incitament innan de säger ja. Incitamentspaketet (kommunersättning motsvarande fastighetsskatt, intäktsdelning till närboende och lokalsamhälle, rätt till inlösen) är precis det som den interaktiva kalkylen i repot belyser genom fem perspektiv:
@@ -80,20 +126,21 @@ Den höga vetoandelen gör den lokala ekonomin avgörande. Kommuner efterfrågar
 - **Markägaren** – arrende.
 - **Kommunen/samhället** – lokala intäkter (inkl. den nya ersättningen) och samhällsnytta.
 - **Andelsägaren** – kooperativ modell.
-- **Den närboende** – intäktsdelning enligt prop. 2025/26:239 och betänkande 2025/26:NU20 (från 1 juli 2026).
+- **Den närboende** – intäktsdelning enligt lag (2026:1113) och förordning (2026:1115) (från 1 juli 2026), med trappstegsmodell baserad på avstånd i verkshöjder och andel av anläggningens genomsnittsintäkt.
 
-När en park tillstyrks blir de lokala flödena (arrende, ersättning till närboende, kommunal ersättning och nytta) konkreta och beräkningsbara. Verktyget gör det möjligt att visa siffror på vad ett ja faktiskt betyder för kommunen och de närboende – något som kan minska osäkerheten som driver veton. Exemplen på hur kommuner använder pengarna (busskort, fritidsaktiviteter, naturvård, skidanläggningar, medborgarröstning) visar den konkreta lokala nyttan. Samtidigt är genomförandet av intäktsdelning med lokalsamhället fortfarande oklart, och formerna för kommunal tillstyrkan har inte reformerats i paketet.
+När en park tillstyrks blir de lokala flödena (arrende, ersättning till närboende enligt promille-modellen, kommunal ersättning och nytta) konkreta och beräkningsbara. Verktyget gör det möjligt att visa siffror på vad ett ja faktiskt betyder för kommunen och de närboende – något som kan minska osäkerheten som driver veton. Exemplen på hur kommuner använder pengarna (busskort, fritidsaktiviteter, naturvård, skidanläggningar, medborgarröstning) visar den konkreta lokala nyttan. Samtidigt är genomförandet av intäktsdelning med lokalsamhället fortfarande oklart, och formerna för kommunal tillstyrkan har inte reformerats i paketet. Ersättningen till närboende varierar dessutom geografiskt beroende på elprisområde.
 
 ## Koppling till Skånes vindkraftsakademi
 
-Statistiken visar att utbyggnaden ligger långt under den takt som behövs för elektrifiering och klimatmål (Energimyndighetens scenarier nämner behov av ca 5,4 TWh ökning per år för landbaserad vindkraft). I Skåne (elområde 4) har tillstånd varit särskilt knappa under flera år. Akademins arbete med lokala planer, studiebesök och kommunikation om nytta blir därför centralt – särskilt när ersättningen till kommuner är på plats men fortfarande inte fullt långsiktigt reglerad, och när formerna för tillstyrkan och intäktsdelning med lokalsamhället är oklara.
+Statistiken visar att utbyggnaden ligger långt under den takt som behövs för elektrifiering och klimatmål (Energimyndighetens scenarier nämner behov av ca 5,4 TWh ökning per år för landbaserad vindkraft). I Skåne (elområde 4) har tillstånd varit särskilt knappa under flera år. Akademins arbete med lokala planer, studiebesök och kommunikation om nytta blir därför centralt – särskilt när ersättningen till kommuner är på plats men fortfarande inte fullt långsiktigt reglerad, och när formerna för tillstyrkan och intäktsdelning med lokalsamhället är oklara. Den nya intäktsdelningsmodellen för närboende gör det möjligt att kvantifiera nyttan för enskilda hushåll.
 
-Den interaktiva kalkylen kan användas i dialogen med kommuner och närboende för att göra ekonomin (inkl. den nya ersättningen) synlig och transparent.
+Den interaktiva kalkylen kan användas i dialogen med kommuner och närboende för att göra ekonomin (inkl. den nya ersättningen och promille-modellen) synlig och transparent.
 
 ## Källor
 
 - Green Power Sweden (2026) *Nästan all vindkraft stoppades av kommunerna 2025.* https://greenpowersweden.se/nastan-all-vindkraft-stoppades-av-kommunerna-2025/
 - Green Power Sweden (2026) *Statistik tillstånd landbaserad vindkraft 2014–2025.* https://greenpowersweden.se/statistik/statistik-tillstand-landbaserad-vindkraft-2014-2025/
-- Green Power Sweden-presentation (2026) om incitamentspaketet (slides om olika delar, ersättning till kommuner, exempel på användning, former och nivå, genomförande av intäktsdelning med lokalsamhället, ändringar av formerna för kommunal tillstyrkan).
+- Green Power Sweden-presentation (2026) om incitamentspaketet (slides om olika delar, ersättning till kommuner, exempel på användning, former och nivå, genomförande av intäktsdelning med lokalsamhället, ändringar av formerna för kommunal tillstyrkan, lagstiftning och modell för intäktsdelning till närboende).
+- Lag (2026:1113) och förordning (2026:1115) om intäktsdelning från vindkraftsanläggningar.
 - Regeringen (2026) *Proposition 2025/26:239 Vindkraft i kommuner.*
 - Sveriges riksdag (2026) *Vindkraft i kommuner. Betänkande 2025/26:NU20.*
