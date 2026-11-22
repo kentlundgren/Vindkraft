@@ -151,5 +151,22 @@ KALKYLER.forEach(k => {
   sant(k.html + ' har rullgardinen Kalkyler', html.indexOf('class="kalkylmeny"') > -1);
 });
 
+/* ---------- Rubriker och ordning på indatagrupperna, och att varje kalkylsida är med i rullgardinen ---------- */
+const dokument = JSON.parse(fs.readFileSync('dokument.json', 'utf8'));
+const medMeny = dokument.kalkyler.map(x => x.fil);
+fs.readdirSync('.').filter(f => /^vindkraftskalkyl.*\.html$/.test(f)).forEach(f => {
+  sant(f + ' finns i kalkyler i dokument.json (rullgardinen Kalkyler)', medMeny.indexOf(f) > -1);
+  const html = fs.readFileSync(f, 'utf8');
+  const grupper = [];
+  const re = /<fieldset class="indata-grupp"[^>]*>\s*<legend>([\s\S]*?)<\/legend>/g;
+  let m;
+  while ((m = re.exec(html))) {
+    grupper.push(m[1].replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim());
+  }
+  const lika = grupper.length === K.INDATAGRUPPER.length && grupper.every((g, i) => g === K.INDATAGRUPPER[i]);
+  if (!lika) console.log('  ' + f + ' har grupperna: ' + JSON.stringify(grupper));
+  sant(f + ' har samma indatagrupper, med samma rubriker och i samma ordning, som INDATAGRUPPER', lika);
+});
+
 if (fel) { console.log(fel + ' fel, ' + ok + ' godkända'); process.exit(1); }
 console.log('ALLA TESTER OK: ' + ok + ' godkända, 0 fel');

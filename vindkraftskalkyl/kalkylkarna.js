@@ -24,12 +24,28 @@
    webbläsaren och exporteras som module.exports i Node, där test_kalkylkarna.js
    kör dem.
 
-   Version 1.1 (2026-11-22): närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
+   Version 1.2 (2026-11-23): fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
    berakningar.js och berakningar_langhult.js.
    ============================================================================ */
 'use strict';
 
-const KARNA_VERSION = '1.1';
+const KARNA_VERSION = '1.2';
+
+/**
+ * Indatagrupperna i alla vindkraftskalkyler: rubrikerna och deras ordning är fastställda här, så att kalkylerna ser
+ * likadana ut och en ny kalkyl får samma. Ordningen följer flikarna i resultatet (investerare, markägare, kommun,
+ * andelsägare, närboende). Projektspecifika fält läggs INOM en befintlig grupp (till exempel fastighetsskatt under
+ * Kommun & samhälle), inte som en ny grupp med eget namn. test_kalkylkarna.js kontrollerar rubrikerna i varje kalkylsida.
+ */
+const INDATAGRUPPER = [
+  'Anläggning & investering',
+  'Drift & livscykel',
+  'Nät och systemkrav',
+  'Markägare (arrende)',
+  'Kommun & samhälle',
+  'Andelsägare (kooperativ)',
+  'Närboende (vindkraftsersättning, SFS 2026:1113)'
+];
 
 /* ============================================================================
    1. LÄSA OCH FORMATERA VÄRDEN
@@ -436,7 +452,7 @@ function realiseratPris(spotprisAr1, elprisforandring, prisfaktor, t) {
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
-    KARNA_VERSION, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode,
+    KARNA_VERSION, INDATAGRUPPER, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode,
     natPaverkan, natEngangTillaggAv, natSammanfattning,
     NARBOENDE_METOD, NARBOENDE_ZONER, beraknaNarboende, beraknaNarboendeZoner, beraknaNarboendeSchablon, realiseratPris
   };

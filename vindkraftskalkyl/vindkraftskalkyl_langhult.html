@@ -16,6 +16,7 @@
   UPPDATERING 2026-11-22 (senare): nätkostnader och systemkrav (gruppen Nät och systemkrav, panelen Nätkostnader i siffror, förvalt läge Ingen) och
   gemensam kärna kalkylkarna.js för finansmatematik och nätkoppling, delad med huvudkalkylen.
   UPPDATERING 2026-11-23: närboendeersättningen räknas i kalkylkarna.js (delas med huvudkalkylen), kapacitetsfaktor 0,4121 (= 3 610 h / 8 760) i stället för fullasttimmar, och viktning heter prisfaktor.
+  UPPDATERING 2026-11-23 (senare): indatagrupperna har samma rubriker och ordning som övriga kalkyler (INDATAGRUPPER i kalkylkarna.js), och Närboende ligger sist.
   ============================================================================
 -->
 <html lang="sv">
@@ -84,9 +85,9 @@
 
     <div class="indata-grupper">
 
-      <!-- ---- Anläggning ---- -->
+      <!-- ---- Anläggning och investering ---- -->
       <fieldset class="indata-grupp">
-        <legend>Anläggning (hela parken)</legend>
+        <legend>Anläggning &amp; investering</legend>
 
         <label>Antal verk
           <input type="number" step="1" id="antalverk" class="indata" value="20">
@@ -141,11 +142,7 @@
           <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=16" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, s. 16 (oförändrad produktion, härlett)</a>
           <span class="hint">De 107 Mkr på 30 år i Kaufmann &amp; Westander (2026, s. 16) förutsätter oförändrad produktion.</span>
         </label>
-      </fieldset>
 
-      <!-- ---- Investering och drift (antagande) ---- -->
-      <fieldset class="indata-grupp">
-        <legend>Investering och drift</legend>
         <p class="hint" style="margin:0 0 .6rem">Kaufmann &amp; Westander (2026) saknar uppgifter om kostnader. Kalkylräntan kommer ur <a href="#ref-energiforsk">Energiforsk (2021)</a>, övriga värden är kalkylens egna standardvärden.</p>
 
         <label>Specifik investeringskostnad (kkr/MW)
@@ -160,6 +157,13 @@
           <span class="badge antagande">antagande</span>
           <span class="hint">5,2 % är medelvärdet för landbaserad vindkraft i <a href="#ref-energiforsk">Energiforsk (2021)</a>, s. 18 (spann 2,6–7,5 %, realränta, tolv projekt under byggnation 2020). Energimyndigheten (2016) använde 6,8 % (5–8 %). Räntelägets utveckling efter 2020 är inte med. Långhults egen ränta är okänd.</span>
         </label>
+      </fieldset>
+
+      <!-- ---- Drift och livscykel (antagande) ---- -->
+      <fieldset class="indata-grupp">
+        <legend>Drift &amp; livscykel</legend>
+
+
 
         <label>Rörlig driftskostnad (kr/kWh)
           <input type="number" step="0.01" id="rorlig" class="indata" value="0.11">
@@ -425,9 +429,9 @@
         </label>
       </fieldset>
 
-      <!-- ---- Skatt, bygd och kommun ---- -->
+      <!-- ---- Kommun och samhälle (inklusive fastighetsskatt, bygdemedel och kommunstöd för Långhult) ---- -->
       <fieldset class="indata-grupp">
-        <legend>Fastighetsskatt, bygdemedel och kommun</legend>
+        <legend>Kommun &amp; samhälle</legend>
 
         <label>Fastighetsskatt per verk, första åren (kr/år)
           <abbr class="fk" tabindex="0" data-f="Fastighetsskatt: 0,5 % av taxeringsvärdet. För ett nytt verk på 6,6 MW i elområde 3 blir det 334 398 kr per år enligt räkneexemplet i Kaufmann &amp; Westander (2026, s. 17–18).">?</abbr>
@@ -477,9 +481,45 @@
         </label>
       </fieldset>
 
+
+      <!-- ---- Andelsägare (antagande, oförändrad från originalet) ---- -->
+      <fieldset class="indata-grupp">
+        <legend>Andelsägare (kooperativ)</legend>
+
+        <label>Antal andelar
+          <input type="number" step="1" id="antalandelar" class="indata" value="10">
+        </label>
+        <label>Elmängd per andel (kWh/år)
+          <input type="number" step="100" id="kwhperandel" class="indata" value="1000">
+          <span class="badge antagande">antagande</span>
+        </label>
+        <label>Insats per andel (kr)
+          <input type="number" step="100" id="insatsperandel" class="indata" value="6000">
+          <span class="badge antagande">antagande</span>
+        </label>
+        <label>Föreningens driftpåslag (öre/kWh)
+          <input type="number" step="0.5" id="driftpaslag" class="indata" value="3">
+          <span class="badge antagande">antagande</span>
+        </label>
+        <label>Spotpris hushållsel (kr/kWh)
+          <input type="number" step="0.01" id="spotpris" class="indata" value="0.6">
+        </label>
+        <label>Elhandelspåslag (kr/kWh)
+          <input type="number" step="0.01" id="elhandelspaslag" class="indata" value="0.08">
+          <span class="badge antagande">antagande</span>
+        </label>
+        <label>Energiskatt (kr/kWh, exkl. moms)
+          <input type="number" step="0.001" id="energiskatt" class="indata" value="0.428">
+          <span class="badge antagande">antagande</span>
+        </label>
+        <label>Moms (%)
+          <input type="number" step="1" id="momssats" class="indata" value="25">
+        </label>
+      </fieldset>
+
       <!-- ---- Närboende ---- -->
       <fieldset class="indata-grupp">
-        <legend>Närboende (bostäder per zon)</legend>
+        <legend><span class="nb-info" tabindex="0">Närboende</span> (vindkraftsersättning, SFS 2026:1113)</legend>
         <p class="hint" style="margin:0 0 .6rem">
           Kaufmann &amp; Westander (2026, s. 4, 16) anger cirka 200 bostäder men inte hur de fördelar sig på avstånd.
           Fördelningen nedan följer ytan av ringarna kring ett verk (jämn bebyggelsetäthet) och är en gissning.
@@ -517,41 +557,6 @@
         <label>Tak för närboendeersättning (% av parkens intäkt)
           <input type="number" step="0.1" id="tak" class="indata" value="2">
           <span class="badge lagstadgat">lagstadgat</span> <a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=15" target="_blank" rel="noopener">(Kaufmann &amp; Westander, 2026, s. 15)</a>
-        </label>
-      </fieldset>
-
-      <!-- ---- Andelsägare (antagande, oförändrad från originalet) ---- -->
-      <fieldset class="indata-grupp">
-        <legend>Andelsägare (kooperativ)</legend>
-
-        <label>Antal andelar
-          <input type="number" step="1" id="antalandelar" class="indata" value="10">
-        </label>
-        <label>Elmängd per andel (kWh/år)
-          <input type="number" step="100" id="kwhperandel" class="indata" value="1000">
-          <span class="badge antagande">antagande</span>
-        </label>
-        <label>Insats per andel (kr)
-          <input type="number" step="100" id="insatsperandel" class="indata" value="6000">
-          <span class="badge antagande">antagande</span>
-        </label>
-        <label>Föreningens driftpåslag (öre/kWh)
-          <input type="number" step="0.5" id="driftpaslag" class="indata" value="3">
-          <span class="badge antagande">antagande</span>
-        </label>
-        <label>Spotpris hushållsel (kr/kWh)
-          <input type="number" step="0.01" id="spotpris" class="indata" value="0.6">
-        </label>
-        <label>Elhandelspåslag (kr/kWh)
-          <input type="number" step="0.01" id="elhandelspaslag" class="indata" value="0.08">
-          <span class="badge antagande">antagande</span>
-        </label>
-        <label>Energiskatt (kr/kWh, exkl. moms)
-          <input type="number" step="0.001" id="energiskatt" class="indata" value="0.428">
-          <span class="badge antagande">antagande</span>
-        </label>
-        <label>Moms (%)
-          <input type="number" step="1" id="momssats" class="indata" value="25">
         </label>
       </fieldset>
 
