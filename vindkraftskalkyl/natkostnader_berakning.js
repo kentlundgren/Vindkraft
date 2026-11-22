@@ -125,11 +125,10 @@
   }
 
   /**
-   * Parkens produktion år 1 före bortfall från systemkrav (kWh). Kalkyler som anger fullasttimmar per verk
-   * (Långhult) räknar med dem. Övriga räknar med kapacitetsfaktor över 8 760 timmar.
+   * Parkens produktion år 1 före bortfall från systemkrav (kWh): effekt × 8 760 h × kapacitetsfaktor.
+   * Samma formel i alla kalkyler, så att den antagna kapacitetsfaktorn syns. Fullasttimmar = kapacitetsfaktor × 8 760.
    */
   function bruttoKWh(d, P_tot) {
-    if (Number.isFinite(d.fullasttimmar) && d.fullasttimmar > 0) return d.effekt * 1000 * d.fullasttimmar * d.antalverk;
     return P_tot * 8760 * d.kapfaktor * 1000;
   }
 

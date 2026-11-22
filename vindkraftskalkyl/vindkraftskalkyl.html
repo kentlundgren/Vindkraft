@@ -64,6 +64,8 @@
   UPPDATERING 2026-11-22 (senare igen): rullgardinen Kalkyler i brödsmulorna med länk till fallet Långhult. Version 1.14.
 
   UPPDATERING 2026-11-22 (senare igen): gemensam kärna kalkylkarna.js för finansmatematik och nätkopplingen, delad med fallet Långhult, och nätformateringen i natkostnader.css. Resultaten är oförändrade. Version 1.15.
+
+  UPPDATERING 2026-11-23: närboendeersättning enligt lagen (fem zoner, tak 2 %, SFS 2026:1113 11–14 §§), delad med Långhult via kalkylkarna.js. Fältet Spotpris och nytt fält Prisfaktor (förvalt 1, så pris och intäkt är oförändrade). Fullasttimmar visas under kapacitetsfaktorn. Version 1.16.
   ============================================================================
 -->
 <html lang="sv">
@@ -131,8 +133,14 @@
       <fieldset class="indata-grupp">
         <legend>Anläggning &amp; investering</legend>
 
-        <label>Intäkt för elen (kr/kWh)
+        <label>Spotpris (kr/kWh)
           <input type="number" step="0.01" id="elpris" class="indata" value="0.6">
+        </label>
+
+        <label>Prisfaktor (realiserat pris / spotpris, 0–1)
+          <abbr class="fk" tabindex="0" data-f="Prisfaktor: vindkraftens genomsnittliga intäktspris delat med genomsnittligt spotpris (0–1). Vindkraften producerar mest när elpriset är lågt, så faktorn blir ofta under 1. Kallas på engelska capture rate (EIFO, 2026: capture price som andel av genomsnittligt marknadspris). Kaufmann &amp; Westander (2026) kallar den viktning och talar om kannibalisering.">?</abbr>
+          <input type="number" step="0.01" min="0" max="1" id="prisfaktor" class="indata" value="1">
+          <span class="hint">Realiserat pris = spotpris × prisfaktor. Med 1 räknas elen till spotpriset, som tidigare. På engelska capture rate (<a href="https://eifo.dk/media/s1bjgkkq/capture-rate-analysis-marts-2026.pdf" target="_blank" rel="noopener">EIFO, 2026</a>).</span>
         </label>
 
         <label>Elområde
@@ -152,6 +160,7 @@
 
         <label>Kapacitetsfaktor (0–1)
           <input type="number" step="0.01" id="kapfaktor" class="indata" value="0.37">
+          <span class="hint" id="kf-timmar">–</span>
         </label>
 
         <label>Livslängd (år)
@@ -534,24 +543,40 @@
 
       <!-- ---- Grupp: Närboende (NU20 / prop. 2025/26:239) ---- -->
       <fieldset class="indata-grupp">
-        <legend><span class="nb-info" tabindex="0">Närboende</span> (vindkraftsersättning, NU20)</legend>
+        <legend><span class="nb-info" tabindex="0">Närboende</span> (vindkraftsersättning, SFS 2026:1113)</legend>
+        <p class="hint" style="margin:0 0 .6rem">Zonerna räknas från verkets höjd (fältet Verkshöjd ovan). Hur många bostäder som ligger i varje zon är ett antagande. Förvalet, 20 bostäder inom fem verkshöjder, motsvarar kalkylens tidigare förval. Zonerna står i <a href="#Tabell2">Tabell 2</a>.</p>
 
-        <label>Avstånd till närmaste verk (m)
-          <input type="number" step="10" id="avstand" class="indata" value="800">
+        <label>Bostäder i zon 1 (inom 5 verkshöjder)
+          <input type="number" step="1" id="bost1" class="indata" value="20">
+          <span class="badge antagande">antagande</span>
         </label>
-
-        <label>Antal verk inom fem verkshöjder
-          <input type="number" step="1" id="verkinom5" class="indata" value="2">
+        <label>Bostäder i zon 2 (5–6 verkshöjder)
+          <input type="number" step="1" id="bost2" class="indata" value="0">
+          <span class="badge antagande">antagande</span>
         </label>
-
-        <label>Antal ersättningsberättigade bostäder
-          <input type="number" step="1" id="antalbostader" class="indata" value="20">
+        <label>Bostäder i zon 3 (6–7 verkshöjder)
+          <input type="number" step="1" id="bost3" class="indata" value="0">
+          <span class="badge antagande">antagande</span>
+        </label>
+        <label>Bostäder i zon 4 (7–8 verkshöjder)
+          <input type="number" step="1" id="bost4" class="indata" value="0">
+          <span class="badge antagande">antagande</span>
+        </label>
+        <label>Bostäder i zon 5 (8–9 verkshöjder)
+          <input type="number" step="1" id="bost5" class="indata" value="0">
           <span class="badge antagande">antagande</span>
         </label>
 
-        <label>Maximal andel av intäkter (‰)
-          <input type="number" step="0.1" id="maxpromille" class="indata" value="2.5">
-          <span class="badge lagstadgat">lagstadgat tak</span>
+        <label>Verk som ger ersättning per bostad (1 eller 2)
+          <input type="number" step="1" min="1" max="2" id="verkperbostad" class="indata" value="2">
+          <span class="badge lagstadgat">högst två verk (13 §)</span>
+          <span class="badge antagande">båda verken i samma zon</span>
+          <span class="hint">Att båda verken ligger i samma zon som bostaden är en förenkling som ger en övre gräns. En park med ett verk ger ersättning från ett verk.</span>
+        </label>
+
+        <label>Tak för närboendeersättning (% av parkens intäkt)
+          <input type="number" step="0.1" id="tak" class="indata" value="2">
+          <span class="badge lagstadgat">lagstadgat (14 §)</span>
         </label>
       </fieldset>
 
@@ -690,30 +715,47 @@
 
     <!-- ---- Flik: Närboende ---- -->
     <div class="flik-panel" id="panel-narboende" role="tabpanel" hidden>
-      <h3><span class="nb-info" tabindex="0">Närboendeperspektivet</span> – vindkraftsersättning enligt NU20</h3>
+      <h3><span class="nb-info" tabindex="0">Närboendeperspektivet</span> – vindkraftsersättning enligt lag (SFS 2026:1113)</h3>
       <p class="hint">
-        Modellerar den nya lagen om intäktsdelning
-        (<a href="https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/vindkraft-i-kommuner_hd03239/" target="_blank" rel="noopener">prop. 2025/26:239</a>,
-        i kraft 1 juli 2026). Den <em>exakta</em> beräkningsmodellen fastställs i förordning; nedan är därför delvis schabloner.
+        Räknas enligt <a href="https://data.riksdagen.se/dokument/sfs-2026-1113.html" target="_blank" rel="noopener">lagen (2026:1113)</a>, 11–14 §§:
+        andelen av ett verks intäkt beror på avståndet (fem zoner), högst två verk räknas per bostad och summan är högst 2 % av parkens intäkter.
+        Räknesättet delas med fallet Långhult (<a href="vindkraftskalkyl_langhult.html">Långhult-kalkylen</a>) via kalkylkarna.js.
       </p>
+      <div class="tabell-rulla">
+        <table class="jamforelse-tabell" id="Tabell2">
+          <caption id="Tabell2-rubrik">Tabell 2. Närboendeersättning per avståndszon, hela parken, år 1</caption>
+          <thead>
+            <tr>
+              <th scope="col">Zon</th>
+              <th scope="col">Avstånd till verket</th>
+              <th scope="col" class="tal">Andel av verkets intäkt <span class="badge lagstadgat">lagstadgat</span></th>
+              <th scope="col" class="tal">Bostäder <span class="badge antagande">antagande</span></th>
+              <th scope="col" class="tal">Per bostad före tak (kr/år)</th>
+              <th scope="col" class="tal">Per bostad efter tak (kr/år)</th>
+              <th scope="col" class="tal">Zonen totalt efter tak (kr/år)</th>
+            </tr>
+          </thead>
+          <tbody id="nar-zon-kropp"></tbody>
+        </table>
+      </div>
       <dl class="resultatlista">
-        <div><dt>Fem verkshöjder</dt><dd id="nar-femhojder">–</dd></div>
-        <div><dt>Nio verkshöjder (yttre gräns)</dt><dd id="nar-niohojder">–</dd></div>
-        <div><dt>Inom ersättningszon (≤ 9 verkshöjder)?</dt><dd id="nar-inom">–</dd></div>
-        <div><dt>Distansfaktor (1 = närmast, 0 = vid yttre gräns)</dt><dd id="nar-faktor">–</dd></div>
-        <div class="framhavd"><dt>Årlig <span class="nb-info" tabindex="0">ersättning till en enskild närboende</span></dt><dd id="nar-enskild">–</dd></div>
+        <div><dt>Summa före tak</dt><dd id="nar-fore">–</dd></div>
+        <div><dt>Tak (2 % av parkens intäkt)</dt><dd id="nar-tak">–</dd></div>
+        <div><dt>Nås taket?</dt><dd id="nar-nas" style="white-space:normal;text-align:right">–</dd></div>
+        <div><dt>Nedsättning</dt><dd id="nar-skal">–</dd></div>
+        <div class="framhavd"><dt>Genomsnitt per bostad (<span class="nb-info" tabindex="0">ersättning till en enskild närboende</span>)</dt><dd id="nar-snitt">–</dd></div>
         <div class="framhavd"><dt>Total årlig ersättning (belastar verksamhetsutövaren)</dt><dd id="nar-total">–</dd></div>
       </dl>
 
       <div class="regel-lista">
         <h4>Regler och vad som är vad</h4>
         <ul>
-          <li><span class="badge lagstadgat">lagstadgat</span> Ersättning betalas av verksamhetsutövaren till ägare av bostadsbyggnader inom nio verkshöjder från ett verk.</li>
-          <li><span class="badge lagstadgat">lagstadgat</span> Ersättningen är högre ju närmare bostaden ligger och avtar med avståndet.</li>
-          <li><span class="badge lagstadgat">lagstadgat</span> Ersättningen utgör en andel av de årliga intäkterna, maximalt 2,5 promille.</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Ersättning betalas av verksamhetsutövaren till ägare av bostadsbyggnader inom nio verkshöjder från ett verk (12 §).</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Andelen av ett verks intäkt är 2,5, 2,0, 1,5, 1,0 och 0,5 promille vid högst 5, 6, 7, 8 och 9 verkshöjder (12 §).</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Ersättningen baseras på de två verk som ger mest, och är högst 2 % av anläggningens intäkter, annars sätts den ned i proportion (13–14 §§).</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Verkets intäkt är marknadsvärdet av elen: produktionen gånger dagen-före-priset (11 §). Här räknas den som produktion × spotpris × prisfaktor.</li>
           <li><span class="badge lagstadgat">lagstadgat</span> Ersättningen är skattefri till den del den avser privatbostad.</li>
-          <li><span class="badge antagande">antagande</span> Den linjära avståndsavtrappningen mellan 5 och 9 verkshöjder är en schablon; exakt kurva fastställs i förordning.</li>
-          <li><span class="badge antagande">antagande</span> Total ersättning skattas som antal bostäder × ersättning per bostad.</li>
+          <li><span class="badge antagande">antagande</span> Hur många bostäder som ligger i varje zon, och att båda verken ligger i samma zon som bostaden.</li>
         </ul>
         <p class="rimlighet" id="nar-rimlighet">–</p>
       </div>

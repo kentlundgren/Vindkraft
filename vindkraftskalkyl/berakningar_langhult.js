@@ -7,7 +7,7 @@
    Vad som är nytt jämfört med originalet:
      1. Indata hämtas ur Kaufmann & Westander (2026), "Intäktsdelning och ersättningar:
         Vindpark Långhult" (Westander Klimat och Energi, 2026-04-20):
-        20 verk, 6,6 MW, 3 610 fullasttimmar, 270 m, 50 öre/kWh, vikt 0,75, 30 år.
+        20 verk, 6,6 MW, 3 610 fullasttimmar (kapacitetsfaktor 0,4121), 270 m, 50 öre/kWh, prisfaktor 0,75, 30 år.
      2. Närboendeersättningen följer lagtexten som Kaufmann & Westander (2026) återger: fem zoner
         (2,5 / 2,0 / 1,5 / 1,0 / 0,5 promille av ETT VERKS intäkt), ersättning
         från de två närmaste verken, och ett tak på 2 % av parkens intäkter.
@@ -15,7 +15,7 @@
      3. Fastighetsskatt och bygdemedel är projektkostnader (Kaufmann & Westander, 2026, bilaga 1, avsnitt 4).
         Kommunstödet (cirka 20 000 kr/MW) betalas av staten och dras INTE från
         projektets resultat. Originalets schablon "kommunal ersättning" är borttagen.
-     4. Realiserat pris = spotpris × viktning (0,75, "kannibalisering").
+     4. Realiserat pris = spotpris × prisfaktor (0,75, som Kaufmann & Westander (2026) kallar viktning och kannibalisering).
      5. Nya tabeller: projektets ekonomi, närboende per zon, känslighet för elpris
         och en kontroll mot talen i Kaufmann & Westander (2026).
 
@@ -57,18 +57,8 @@ function fmtMkr(v, dec = 1) {
     jämnade slutperiod, se fastighetsskattPerVerk(). */
 const PM_LIVSLANGD = 30;
 
-/**
- * De fem avståndszonerna (lagtext återgiven av Kaufmann & Westander (2026, s. 14–15), "12 §").
- * `till` anges i antal verkshöjder: 5, 6, 7, 8 och 9. Andelen är promille av
- * ETT VERKS intäkt. Första zonen börjar vid verket (0).
- */
-const ZONER = [
-  { fran: 0, till: 5, promille: 2.5 },
-  { fran: 5, till: 6, promille: 2.0 },
-  { fran: 6, till: 7, promille: 1.5 },
-  { fran: 7, till: 8, promille: 1.0 },
-  { fran: 8, till: 9, promille: 0.5 }
-];
+/* De fem avståndszonerna (NARBOENDE_ZONER, 12 §) och närboendemetoden ligger i kalkylkarna.js. */
+const ZONER = NARBOENDE_ZONER;
 
 /** Elpriser (kr/kWh) för känslighetstabellerna. Kaufmann & Westander (2026, s. 16) visar 30–70 öre. 100 öre
     är tillagt som ett högt scenario (antagande, inte ur Kaufmann & Westander (2026)). */
@@ -100,11 +90,11 @@ function lasIndata() {
     // Anläggning
     antalverk:        Math.max(1, Math.round(tal('antalverk'))),
     effekt:           tal('effekt'),                   // MW per verk
-    fullasttimmar:    tal('fullasttimmar'),            // h/år
+    kapfaktor:        tal('kapfaktor'),                // 0–1 (Kaufmann & Westander (2026): 3 610 h / 8 760 h)
     verkshojd:        tal('verkshojd'),                // m
     livslangd:        Math.max(1, Math.round(tal('livslangd'))),
     elpris:           tal('elpris'),                   // spotpris, kr/kWh
-    viktning:         tal('viktning'),                 // 0,75
+    prisfaktor:       tal('prisfaktor'),               // 0,75 (Kaufmann & Westander (2026): viktning)
     elprisforandring: tal('elprisforandring') / 100,
     degradering:      tal('degradering') / 100,
 
@@ -132,9 +122,7 @@ function lasIndata() {
     co2varde:         tal('co2varde'),
 
     // Närboende
-    bost:             [1, 2, 3, 4, 5].map(i => Math.max(0, Math.round(tal('bost' + i)))),
-    verkperbostad:    Math.min(2, Math.max(1, Math.round(tal('verkperbostad')))),
-    tak:              tal('tak') / 100,                // % av parkens intäkt
+    ...lasNarboendeIndata(),                       // bost[5], verkperbostad, tak (kalkylkarna.js)
 
     // Andelsägare (antagande)
     antalandelar:     tal('antalandelar'),
@@ -168,51 +156,22 @@ function fastighetsskattPerVerk(t, d) {
   return Math.max(0, (d.fskattotal - d.fskattaar * d.fskatt1) / kvar);
 }
 
-/**
- * Närboendeersättning ett givet år.
- * @param {number} verkIntakt  ett verks intäkt (kr/år) = parkens intäkt / antal verk
- * @param {number} parkIntakt  parkens intäkt (kr/år)
- * @param {object} d           indata
- * Lagtext (återgiven ur Kaufmann & Westander (2026)):
- *   - andelen av ETT VERKS intäkt beror på avståndet (fem zoner, promille)
- *   - en bostad får ersättning från högst de två verk som ger mest
- *   - sammanlagt högst 2 % av anläggningens intäkter; överskjutande del
- *     sätts ned i proportion till respektive ägares andel
- */
-function beraknaNarboende(verkIntakt, parkIntakt, d) {
-  const perBostadFore = ZONER.map(z => (z.promille / 1000) * verkIntakt * d.verkperbostad);
-  const zonFore = perBostadFore.map((v, i) => v * d.bost[i]);
-  const fore = zonFore.reduce((a, b) => a + b, 0);
-  const cap = d.tak * parkIntakt;
-  const utbetalt = Math.min(fore, cap);
-  const skal = fore > cap && fore > 0 ? cap / fore : 1;
-  const perBostadEfter = perBostadFore.map(v => v * skal);
-  const zonEfter = zonFore.map(v => v * skal);
-  const antal = d.bost.reduce((a, b) => a + b, 0);
-  return {
-    perBostadFore, perBostadEfter, zonFore, zonEfter,
-    fore, cap, utbetalt, skal, antal,
-    taketNas: fore > cap,
-    snitt: antal > 0 ? utbetalt / antal : 0
-  };
-}
-
 function beraknaAllt(d) {
   const r = d.kalkylranta;
   const n = d.livslangd;
   const P_tot = d.effekt * d.antalverk;                     // MW, hela parken
 
   /* ---------- 3.1 Produktion och investerarens grundstorheter ------------- */
-  // Produktion per verk år 1 = effekt (kW) × fullasttimmar (Kaufmann & Westander, 2026: 6,6 MW × 3 610 h).
+  // Produktion per verk år 1 = effekt (kW) × 8 760 h × kapacitetsfaktor (Kaufmann & Westander, 2026: 6,6 MW × 3 610 h = 0,4121).
   // Nätens systemkrav kan ge ett bortfall (nat.bortfall, 0 i läget ingen), se kalkylkarna.js och natkostnader_berakning.js.
   const natBrutto = NATKOSTNAD.bruttoKWh(d, P_tot);                // kWh/år före bortfall
   const { nat, natPanel } = natPaverkan(d, P_tot, natBrutto);
-  const prodVerkkWh_ar1 = d.effekt * 1000 * d.fullasttimmar * (1 - nat.bortfall);
+  const prodVerkkWh_ar1 = natBrutto / d.antalverk * (1 - nat.bortfall);
   const produktionkWh_ar1 = prodVerkkWh_ar1 * d.antalverk;
   const produktionMWh_ar1 = produktionkWh_ar1 / 1000;
 
-  // Realiserat pris = spotpris × viktning (Kaufmann & Westander, 2026, s. 12, 16: 0,75).
-  const realPris_ar1 = d.elpris * d.viktning;
+  // Realiserat pris = spotpris × prisfaktor (kalkylkarna.js, realiseratPris; Kaufmann & Westander, 2026, s. 12, 16: 0,75).
+  const realPris_ar1 = realiseratPris(d.elpris, d.elprisforandring, d.prisfaktor, 1);
   const intaktAr1 = produktionkWh_ar1 * realPris_ar1;
 
   // Nätens löpande kostnad år 1 ingår i driften och nätens engångskostnad i investeringen (om den inte antas ingå).
@@ -231,10 +190,9 @@ function beraknaAllt(d) {
   const intaktAr = [];
   const driftAr = [];
   for (let t = 1; t <= n; t++) {
-    const spot = d.elpris * Math.pow(1 + d.elprisforandring, t - 1);
     const prod = produktionkWh_ar1 * Math.pow(1 - d.degradering, t - 1);
     prodkWhAr.push(prod);
-    intaktAr.push(prod * spot * d.viktning);
+    intaktAr.push(prod * realiseratPris(d.elpris, d.elprisforandring, d.prisfaktor, t));
     driftAr.push(prod * d.rorlig + d.fast * P_tot + nat.lopandeAr(t, prod));
   }
 
@@ -400,11 +358,6 @@ function laggRad(kropp, celler, klass) {
   kropp.appendChild(tr);
 }
 
-function zonEtikett(z, H) {
-  const fran = z.fran === 0 ? '0' : fmt(z.fran * H, 0);
-  return fran + '–' + fmt(z.till * H, 0) + ' m';
-}
-
 /* ---- Tabell 1: projektets ekonomi ---- */
 function ritaTabell1(res, d) {
   const k = document.getElementById('t1-kropp');
@@ -414,8 +367,8 @@ function ritaTabell1(res, d) {
   const neg = (v) => fmt(-v, 0);
   laggRad(k, [{t: 'Produktion (MWh)'}, {t: fmt(res.produktionMWh_ar1, 0), k: 'tal'}, {t: fmt(L.prodMWh, 0), k: 'tal'},
     {h: M.pm('s. 11, 16', '6,6 MW × 3 610 fullasttimmar × 20 verk')}]);
-  laggRad(k, [{t: 'Intäkt (spotpris × viktning)'}, {t: fmt(res.intaktAr1, 0), k: 'tal'}, {t: fmt(L.intakt, 0), k: 'tal'},
-    {h: M.pm('s. 12, 16', '50 öre/kWh och vikt 0,75')}]);
+  laggRad(k, [{t: 'Intäkt (spotpris × prisfaktor)'}, {t: fmt(res.intaktAr1, 0), k: 'tal'}, {t: fmt(L.intakt, 0), k: 'tal'},
+    {h: M.pm('s. 12, 16', '50 öre/kWh och viktning 0,75 (här prisfaktor)')}]);
   laggRad(k, [{t: 'Driftskostnad (rörlig + fast)'}, {t: neg(res.driftkostnadAr1), k: 'tal'}, {t: neg(L.drift), k: 'tal'},
     {h: M.ant('kalkylens standardvärden, ej ur Kaufmann &amp; Westander (2026)')}]);
   laggRad(k, [{t: 'Kapitalkostnad (annuitet)'}, {t: neg(res.kapitalkostnad), k: 'tal'}, {t: neg(L.kapital), k: 'tal'},
@@ -445,30 +398,13 @@ function ritaTabell1(res, d) {
 
 /* ---- Tabell 2: närboende per zon ---- */
 function ritaTabell2(res, d) {
-  const k = document.getElementById('t2-kropp');
-  if (!k) return;
-  k.innerHTML = '';
-  const n = res.nar;
-  ZONER.forEach((z, i) => {
-    laggRad(k, [
-      {t: 'Zon ' + (i + 1)},
-      {t: zonEtikett(z, d.verkshojd) + (z.fran === 0 ? ' (inom ' + z.till + ' verkshöjder)' : ' (' + z.fran + '–' + z.till + ' verkshöjder)')},
-      {t: fmt(z.promille, 1) + ' ‰', k: 'tal'},
-      {t: fmt(d.bost[i], 0), k: 'tal'},
-      {t: fmt(n.perBostadFore[i], 0), k: 'tal'},
-      {t: fmt(n.perBostadEfter[i], 0), k: 'tal'},
-      {t: fmt(n.zonEfter[i], 0), k: 'tal'}
-    ]);
-  });
-  laggRad(k, [{t: 'Summa'}, {t: ''}, {t: ''}, {t: fmt(n.antal, 0), k: 'tal'}, {t: ''}, {t: ''}, {t: fmt(n.utbetalt, 0), k: 'tal'}], 'summa');
-  satt('t2-fore', fmt(n.fore, 0, ' kr/år'));
-  satt('t2-tak', fmt(n.cap, 0, ' kr/år'));
-  satt('t2-skal', n.taketNas ? fmt(n.skal * 100, 1, ' % av beloppet före tak') : '100 % (taket nås inte)');
-  satt('t2-snitt', fmt(n.snitt, 0, ' kr/bostad och år'));
-  satt('t2-nas', n.taketNas ? 'Ja, taket nås och alla ersättningar sätts ned i proportion' : 'Nej, summan ligger under taket');
+  // Tabellen och sammanfattningen delas med övriga kalkyler (kalkylkarna.js).
+  ritaNarboendeZonTabell('t2-kropp', res.nar, d.verkshojd);
+  skrivNarboendeSummering('t2', res.nar);
 }
 
 function skrivUt(res, d) {
+  visaFullasttimmar(d.kapfaktor);
   /* ---- Nyckeltalsrad ---- */
   satt('nt-lcoe', fmt(res.lcoe, 2, ' kr/kWh'));
   satt('nt-overskott', fmtMkr(res.overskottNetto) + '/år');
@@ -549,11 +485,11 @@ function ritaKanslighet(d) {
   const k5 = document.getElementById('t5-kropp');
   if (k4) {
     k4.innerHTML = '';
-    const prodVerk = d.effekt * 1000 * d.fullasttimmar;
+    const prodVerk = d.effekt * 1000 * 8760 * d.kapfaktor;
     ZONER.forEach((z, i) => {
       const celler = [{t: zonEtikett(z, d.verkshojd)}];
       PRISER.forEach(p => {
-        const verkIntakt = prodVerk * p * d.viktning;
+        const verkIntakt = prodVerk * p * d.prisfaktor;
         celler.push({t: fmt((z.promille / 1000) * verkIntakt, 0), k: 'tal'});
       });
       laggRad(k4, celler);
@@ -594,7 +530,7 @@ function ritaKontroll(res, d) {
   };
   rad('Produktion per verk (GWh/år)', res.prodVerkkWh_ar1 / 1e6, PM_REF.produktionVerkGWh, 's. 11, 16', 'Kaufmann & Westander (2026) avrundar 23,826 till 23,8', 2, 1);
   ZONER.forEach((z, i) => {
-    const verkIntakt = res.prodVerkkWh_ar1 * d.elpris * d.viktning;
+    const verkIntakt = res.prodVerkkWh_ar1 * d.elpris * d.prisfaktor;
     const v = (z.promille / 1000) * verkIntakt;
     rad('Zon ' + (i + 1) + ' per verk (kr/år, 50 öre)', v, PM_REF.zonVerk50[i], 'Tabell 2, s. 16', 'Kaufmann & Westander (2026) avrundar till hundratal');
   });

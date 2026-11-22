@@ -14,17 +14,22 @@
      3. Nätkostnader och systemkrav, den del som hör ihop med investerarens
         kalkyl: radataNat, lasNatIndata, natPaverkan, natSammanfattning.
         (Själva nätmodellen finns i natkostnader_berakning.js, global NATKOSTNAD.)
+     4. Närboendeersättning (vindkraftsersättning): två metoder, en aktiv.
+        NARBOENDE_METOD väljer vilken. Aktiv är 'zoner' (SFS 2026:1113, 12–14 §§).
+        Metoden 'schablon' är den äldre förenklingen (linjär avtrappning 5–9 verkshöjder).
+        Den är kvar men inaktiv, så att ett byte av metod görs på ett ställe.
+     5. Pris: realiserat pris = spotpris × prisfaktor (realiseratPris).
 
    Filen laddas före respektive kalkyls egen fil. Funktionerna är globala i
    webbläsaren och exporteras som module.exports i Node, där test_kalkylkarna.js
    kör dem.
 
-   Version 1.0 (2026-11-22): skapad. Funktionerna flyttades oförändrade ur
+   Version 1.1 (2026-11-22): närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
    berakningar.js och berakningar_langhult.js.
    ============================================================================ */
 'use strict';
 
-const KARNA_VERSION = '1.0';
+const KARNA_VERSION = '1.1';
 
 /* ============================================================================
    1. LÄSA OCH FORMATERA VÄRDEN
@@ -61,6 +66,15 @@ function fmt(v, dec = 0, suffix = '') {
     maximumFractionDigits: dec
   });
   return str + suffix;
+}
+
+/**
+ * Visar fullasttimmar (kapacitetsfaktor × 8 760 h) i elementet kf-timmar, om det finns. Kapacitetsfaktorn är det
+ * som anges och räknas med. Timmarna är bara en omräkning, till exempel för jämförelse med en källa.
+ */
+function visaFullasttimmar(kapfaktor) {
+  const e = document.getElementById('kf-timmar');
+  if (e) e.textContent = '= ' + fmt(kapfaktor * 8760, 0, ' fullasttimmar per år (kapacitetsfaktor × 8 760 h)');
 }
 
 /* ============================================================================
@@ -256,9 +270,174 @@ function natSammanfattning(p) {
   return { natPerkWhLivs, natAndelLcoe, natLivsKr, natChart, kapitalkostnadGrund };
 }
 
+/* ============================================================================
+   4. NÄRBOENDEERSÄTTNING (vindkraftsersättning)
+   Lagtext: SFS 2026:1113, 11–14 §§ (https://data.riksdagen.se/dokument/sfs-2026-1113.html).
+     11 §  Verkets intäkt = anläggningens intäkt / antal verk. Intäkten är marknadsvärdet av elen
+           (produktion × dagen-före-pris per timme), alltså spotpris viktat med produktionen.
+     12 §  Andelen av ETT VERKS intäkt beror på avståndet: 2,5 / 2,0 / 1,5 / 1,0 / 0,5 promille
+           vid högst 5, 5–6, 6–7, 7–8 och 8–9 gånger verkets höjd.
+     13 §  Om flera verk ligger inom avstånden räknas de två som ger mest.
+     14 §  Högst 2 % av anläggningens intäkter. Överskjutande del sätts ned i proportion.
+   ============================================================================ */
+
+/** Metoden som används av alla kalkyler. 'zoner' (lagen) eller 'schablon' (inaktiv, äldre förenkling). */
+const NARBOENDE_METOD = 'zoner';
+
+/** De fem avståndszonerna (12 §). `till` i antal verkshöjder. Andelen är promille av ETT VERKS intäkt. */
+const NARBOENDE_ZONER = [
+  { fran: 0, till: 5, promille: 2.5 },
+  { fran: 5, till: 6, promille: 2.0 },
+  { fran: 6, till: 7, promille: 1.5 },
+  { fran: 7, till: 8, promille: 1.0 },
+  { fran: 8, till: 9, promille: 0.5 }
+];
+
+/** Läser närboendefälten ur formuläret. Fält som saknas i en kalkyl räknas som 0. */
+function lasNarboendeIndata() {
+  return {
+    // Zonmetoden (aktiv)
+    bost:          [1, 2, 3, 4, 5].map(i => Math.max(0, Math.round(tal('bost' + i)))),
+    verkperbostad: Math.min(2, Math.max(1, Math.round(tal('verkperbostad')))),
+    tak:           tal('tak') / 100,                    // % av parkens intäkt → andel
+    // Schablonmetoden (inaktiv): fälten finns inte i formulären just nu
+    avstand:       tal('avstand'),                     // m
+    verkinom5:     Math.max(0, Math.round(tal('verkinom5'))),
+    antalbostader: Math.max(0, Math.round(tal('antalbostader'))),
+    maxpromille:   tal('maxpromille') / 1000           // ‰ → andel
+  };
+}
+
+/**
+ * Zonmetoden (aktiv). Närboendeersättning ett givet år.
+ * @param {number} verkIntakt  ett verks intäkt (kr/år) = parkens intäkt / antal verk (11 §)
+ * @param {number} parkIntakt  parkens intäkt (kr/år)
+ * @param {object} d           indata: bost[5], verkperbostad (1–2), tak (andel), antalverk
+ */
+function beraknaNarboendeZoner(verkIntakt, parkIntakt, d) {
+  // 13 §: högst två verk, och aldrig fler verk än parken har.
+  const verkPerBostad = Math.min(d.verkperbostad, Math.max(1, d.antalverk || 1));
+  const perBostadFore = NARBOENDE_ZONER.map(z => (z.promille / 1000) * verkIntakt * verkPerBostad);
+  const zonFore = perBostadFore.map((v, i) => v * d.bost[i]);
+  const fore = zonFore.reduce((a, b) => a + b, 0);
+  const cap = d.tak * parkIntakt;
+  const utbetalt = Math.min(fore, cap);
+  const skal = fore > cap && fore > 0 ? cap / fore : 1;
+  const perBostadEfter = perBostadFore.map(v => v * skal);
+  const zonEfter = zonFore.map(v => v * skal);
+  const antal = d.bost.reduce((a, b) => a + b, 0);
+  return {
+    metod: 'zoner',
+    perBostadFore, perBostadEfter, zonFore, zonEfter,
+    bostPerZon: d.bost.slice(), verkPerBostad,
+    fore, cap, utbetalt, skal, antal,
+    taketNas: fore > cap,
+    snitt: antal > 0 ? utbetalt / antal : 0
+  };
+}
+
+/**
+ * Schablonmetoden (INAKTIV, äldre förenkling): ett avstånd, linjärt avtagande mellan 5 och 9 verkshöjder,
+ * maxpromille × distansfaktor × (verkets intäkt × antal verk inom fem verkshöjder) per bostad.
+ * Kvar så att metoden kan väljas igen genom NARBOENDE_METOD = 'schablon'. Kräver fälten avstand, verkshojd,
+ * verkinom5, antalbostader och maxpromille. Inget tak tillämpas (som i den ursprungliga schablonen).
+ */
+function beraknaNarboendeSchablon(verkIntakt, parkIntakt, d) {
+  const femhojder = 5 * d.verkshojd;
+  const niohojder = 9 * d.verkshojd;
+  let distansfaktor;
+  if (d.avstand > niohojder) distansfaktor = 0;
+  else if (d.avstand <= femhojder) distansfaktor = 1;
+  else distansfaktor = (niohojder - d.avstand) / (niohojder - femhojder);
+  const enskild = d.maxpromille * distansfaktor * (verkIntakt * d.verkinom5);
+  const utbetalt = enskild * d.antalbostader;
+  return {
+    metod: 'schablon',
+    perBostadFore: [enskild], perBostadEfter: [enskild], zonFore: [utbetalt], zonEfter: [utbetalt],
+    bostPerZon: [d.antalbostader],
+    fore: utbetalt, cap: Infinity, utbetalt, skal: 1, antal: d.antalbostader,
+    taketNas: false,
+    snitt: d.antalbostader > 0 ? utbetalt / d.antalbostader : 0,
+    femhojder, niohojder, distansfaktor, inomZon: d.avstand <= niohojder
+  };
+}
+
+/** Närboendeersättning ett givet år, med den aktiva metoden (NARBOENDE_METOD). */
+function beraknaNarboende(verkIntakt, parkIntakt, d) {
+  return NARBOENDE_METOD === 'schablon'
+    ? beraknaNarboendeSchablon(verkIntakt, parkIntakt, d)
+    : beraknaNarboendeZoner(verkIntakt, parkIntakt, d);
+}
+
+/** Zonens avstånd i meter, t.ex. "0–1 350 m", för en verkshöjd H (m). */
+function zonEtikett(z, H) {
+  const fran = z.fran === 0 ? '0' : fmt(z.fran * H, 0);
+  return fran + '–' + fmt(z.till * H, 0) + ' m';
+}
+
+/** Fyller en tabellkropp (tbody) med närboendeersättning per zon. Delas av alla kalkyler med närboende. */
+function ritaNarboendeZonTabell(kroppId, nar, H) {
+  const k = document.getElementById(kroppId);
+  if (!k || nar.metod !== 'zoner') return;
+  k.innerHTML = '';
+  const rad = (celler, klass) => {
+    const tr = document.createElement('tr');
+    if (klass) tr.className = klass;
+    celler.forEach((c, i) => {
+      const td = document.createElement(i === 0 ? 'th' : 'td');
+      if (i === 0) td.scope = 'row';
+      td.textContent = c.t;
+      if (c.k) td.className = c.k;
+      tr.appendChild(td);
+    });
+    k.appendChild(tr);
+  };
+  NARBOENDE_ZONER.forEach((z, i) => {
+    rad([
+      { t: 'Zon ' + (i + 1) },
+      { t: zonEtikett(z, H) + (z.fran === 0 ? ' (inom ' + z.till + ' verkshöjder)' : ' (' + z.fran + '–' + z.till + ' verkshöjder)') },
+      { t: fmt(z.promille, 1) + ' ‰', k: 'tal' },
+      { t: fmt(nar.bostPerZon[i], 0), k: 'tal' },
+      { t: fmt(nar.perBostadFore[i], 0), k: 'tal' },
+      { t: fmt(nar.perBostadEfter[i], 0), k: 'tal' },
+      { t: fmt(nar.zonEfter[i], 0), k: 'tal' }
+    ]);
+  });
+  rad([{ t: 'Summa' }, { t: '' }, { t: '' }, { t: fmt(nar.antal, 0), k: 'tal' }, { t: '' }, { t: '' }, { t: fmt(nar.utbetalt, 0), k: 'tal' }], 'summa');
+}
+
+/** Sammanfattningsraderna under zontabellen. prefix = id-prefix, t.ex. 't2' ger t2-fore, t2-tak, t2-nas, t2-skal, t2-snitt. */
+function skrivNarboendeSummering(prefix, nar) {
+  if (nar.metod !== 'zoner') return;
+  const satt = (id, v) => { const e = document.getElementById(prefix + '-' + id); if (e) e.textContent = v; };
+  satt('fore', fmt(nar.fore, 0, ' kr/år'));
+  satt('tak', fmt(nar.cap, 0, ' kr/år'));
+  satt('skal', nar.taketNas ? fmt(nar.skal * 100, 1, ' % av beloppet före tak') : '100 % (taket nås inte)');
+  satt('snitt', fmt(nar.snitt, 0, ' kr/bostad och år'));
+  satt('nas', nar.taketNas ? 'Ja, taket nås och alla ersättningar sätts ned i proportion' : 'Nej, summan ligger under taket');
+}
+
+/* ============================================================================
+   5. PRIS: realiserat pris = spotpris × prisfaktor
+   Prisfaktorn (0–1) är vindkraftens genomsnittliga intäktspris delat med genomsnittligt spotpris.
+   Den kallas på engelska capture rate: EIFO (2026), "Emerging trends in renewable power market earnings:
+   Analysis of capture rates in Western Europe", definierar capture price som vad producenterna tjänar och capture
+   rate som den som andel av genomsnittligt marknadspris (https://eifo.dk/media/s1bjgkkq/capture-rate-analysis-marts-2026.pdf).
+   Kaufmann & Westander (2026) kallar den viktning och talar om kannibalisering.
+   1,0 betyder att elen säljs till genomsnittligt spotpris. Lagen (SFS 2026:1113, 11 §) räknar närboendeersättningen
+   på marknadsvärdet av elen, alltså produktion × dagen-före-pris per timme, vilket är samma sak som spotpris × prisfaktor.
+   ============================================================================ */
+
+/** Realiserat pris (kr/kWh) år t, med elprisbana (andel per år) och prisfaktor. */
+function realiseratPris(spotprisAr1, elprisforandring, prisfaktor, t) {
+  return spotprisAr1 * Math.pow(1 + elprisforandring, t - 1) * prisfaktor;
+}
+
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     KARNA_VERSION, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode,
-    natPaverkan, natEngangTillaggAv, natSammanfattning
+    natPaverkan, natEngangTillaggAv, natSammanfattning,
+    NARBOENDE_METOD, NARBOENDE_ZONER, beraknaNarboende, beraknaNarboendeZoner, beraknaNarboendeSchablon, realiseratPris
   };
 }

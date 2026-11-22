@@ -15,6 +15,7 @@
   UPPDATERING 2026-11-22: rullgardinen Kalkyler och brödsmulor (korsreferens till huvudkalkylen).
   UPPDATERING 2026-11-22 (senare): nätkostnader och systemkrav (gruppen Nät och systemkrav, panelen Nätkostnader i siffror, förvalt läge Ingen) och
   gemensam kärna kalkylkarna.js för finansmatematik och nätkoppling, delad med huvudkalkylen.
+  UPPDATERING 2026-11-23: närboendeersättningen räknas i kalkylkarna.js (delas med huvudkalkylen), kapacitetsfaktor 0,4121 (= 3 610 h / 8 760) i stället för fullasttimmar, och viktning heter prisfaktor.
   ============================================================================
 -->
 <html lang="sv">
@@ -48,7 +49,7 @@
       (<a href="#ref-pm">se källan</a>).
       Det som inte står där är märkt som antagande. Ändra ett gult fält så räknas allt om.
     </p>
-    <p class="ingress">Kent Lundgren · version 2026-11-22 · kopia av <a href="vindkraftskalkyl.html" style="color:#fff">vindkraftskalkyl.html</a></p>
+    <p class="ingress">Kent Lundgren · version 2026-11-23 · kopia av <a href="vindkraftskalkyl.html" style="color:#fff">vindkraftskalkyl.html</a></p>
   </header>
 
   <!-- ========================================================================
@@ -97,11 +98,11 @@
           <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=3" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, s. 3, 11</a>
         </label>
 
-        <label>Fullasttimmar (h/år)
-          <abbr class="fk" tabindex="0" data-f="Fullasttimmar: antal timmar per år som verket skulle behöva gå på full effekt för att ge årets produktion. Produktion = effekt × fullasttimmar.">?</abbr>
-          <input type="number" step="10" id="fullasttimmar" class="indata" value="3610">
+        <label>Kapacitetsfaktor (0–1)
+          <abbr class="fk" tabindex="0" data-f="Kapacitetsfaktor: andelen av full effekt som verket i genomsnitt ger över året. Produktion = effekt × 8 760 h × kapacitetsfaktor. Fullasttimmar = kapacitetsfaktor × 8 760.">?</abbr>
+          <input type="number" step="0.0001" id="kapfaktor" class="indata" value="0.4121">
           <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=11" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, s. 11, 16</a>
-          <span class="hint">6,6 MW × 3 610 h = cirka 23,8 GWh per verk och år.</span>
+          <span class="hint">Kaufmann &amp; Westander (2026) anger 3 610 fullasttimmar, alltså 3 610 / 8 760 = 0,4121. <span id="kf-timmar">–</span> 6,6 MW × 3 610 h = cirka 23,8 GWh per verk och år.</span>
         </label>
 
         <label>Verkshöjd (m)
@@ -123,11 +124,11 @@
           <span class="hint">Kaufmann &amp; Westander (2026, s. 12, 16) utgår från 50 öre/kWh och visar 30–70 öre.</span>
         </label>
 
-        <label>Viktning av intäkten
-          <abbr class="fk" tabindex="0" data-f="Viktning: vindkraften producerar mest när elpriset är lågt. Intäkten per kWh blir därför lägre än medelspotpriset. Kaufmann &amp; Westander (2026, s. 12, 16) multiplicerar med 0,75.">?</abbr>
-          <input type="number" step="0.01" id="viktning" class="indata" value="0.75">
+        <label>Prisfaktor (realiserat pris / spotpris, 0–1)
+          <abbr class="fk" tabindex="0" data-f="Prisfaktor: vindkraftens genomsnittliga intäktspris delat med genomsnittligt spotpris (0–1). Vindkraften producerar mest när elpriset är lågt, så faktorn blir ofta under 1. Kallas på engelska capture rate (EIFO, 2026: capture price som andel av genomsnittligt marknadspris). Kaufmann &amp; Westander (2026) kallar den viktning och talar om kannibalisering.">?</abbr>
+          <input type="number" step="0.01" id="prisfaktor" class="indata" value="0.75">
           <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=12" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, s. 12, 16</a>
-          <span class="hint">Realiserat pris = spotpris × viktning = 0,375 kr/kWh med värdena i Kaufmann &amp; Westander (2026).</span>
+          <span class="hint">Realiserat pris = spotpris × prisfaktor = 0,375 kr/kWh med värdena i Kaufmann &amp; Westander (2026), som kallar faktorn viktning. På engelska capture rate (<a href="https://eifo.dk/media/s1bjgkkq/capture-rate-analysis-marts-2026.pdf" target="_blank" rel="noopener">EIFO, 2026</a>).</span>
         </label>
 
         <label>Elprisbana, årlig förändring (%/år)
@@ -689,10 +690,10 @@
     <!-- ---- Investerare ---- -->
     <div class="flik-panel aktiv" id="panel-investerare" role="tabpanel">
       <h3 id="Investerare">Investerarperspektivet<a class="ankare" href="#Investerare" aria-label="Länk till rubriken">#</a></h3>
-      <p class="hint">Basen är originalkalkylen. Nytt: realiserat pris (spotpris × viktning), fastighetsskatt och bygdemedel som kostnader samt närboendeersättning efter tak. Sammanställningen står i <a href="#Tabell1">Tabell 1</a>.</p>
+      <p class="hint">Basen är originalkalkylen. Nytt: realiserat pris (spotpris × prisfaktor), fastighetsskatt och bygdemedel som kostnader samt närboendeersättning efter tak. Sammanställningen står i <a href="#Tabell1">Tabell 1</a>.</p>
       <dl class="resultatlista">
         <div><dt>Produktion</dt><dd id="inv-produktion">–</dd></div>
-        <div><dt>Realiserat pris (spotpris × viktning)</dt><dd id="inv-realpris">–</dd></div>
+        <div><dt>Realiserat pris (spotpris × prisfaktor)</dt><dd id="inv-realpris">–</dd></div>
         <div><dt>Intäkt totalt per år</dt><dd id="inv-intakt">–</dd></div>
         <div><dt>Årlig driftskostnad</dt><dd id="inv-driftkostnad">–</dd></div>
         <div><dt>Investeringsutgift</dt><dd id="inv-investering">–</dd></div>

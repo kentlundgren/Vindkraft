@@ -40,8 +40,9 @@
    UPPDATERING 2026-11-22 (senare igen): Nätkostnader i siffror ligger sist i gruppen Nät och systemkrav och sammanfattningen mitt i gruppen är borttagen. Version 1.12.
    UPPDATERING 2026-11-22 (senare igen): radbrytning i sammanfattningen (kr per år för parken på en rad, per verk på raden under). Version 1.13.
    UPPDATERING 2026-11-22 (senare igen): rullgardinen Kalkyler (korsreferens till Långhult). Version 1.14.
-   UPPDATERING 2026-11-22 (senare igen): finansmatematik, formatering och nätkopplingen flyttade till den gemensamma kärnan kalkylkarna.js (delas med Långhult). Resultaten är oförändrade. Version 1.15. */
-const VERSION = '1.15';
+   UPPDATERING 2026-11-22 (senare igen): finansmatematik, formatering och nätkopplingen flyttade till den gemensamma kärnan kalkylkarna.js (delas med Långhult). Resultaten är oförändrade. Version 1.15.
+   UPPDATERING 2026-11-23: närboendeersättning enligt lagen (zoner, SFS 2026:1113) via kalkylkarna.js, prisfaktor (realiserat pris = spotpris × prisfaktor, förvalt 1) och visning av fullasttimmar. Version 1.16. */
+const VERSION = '1.16';
 const VERSIONSDATUM = '2026-11-22';
 
 /* ============================================================================
@@ -64,6 +65,7 @@ function lasIndata() {
   return {
     // Anläggning & investering
     elpris:           tal('elpris'),
+    prisfaktor:       tal('prisfaktor'),               // 0–1, realiserat pris / spotpris (capture rate)
     elomrade:         text('elomrade'),
     elprisforandring: tal('elprisforandring') / 100,   // %/år → andel
     kapfaktor:        tal('kapfaktor'),
@@ -101,11 +103,8 @@ function lasIndata() {
     energiskatt:      tal('energiskatt'),              // kr/kWh exkl moms
     momssats:         tal('momssats') / 100,           // % → andel
 
-    // Närboende (NU20)
-    avstand:          tal('avstand'),                  // m
-    verkinom5:        Math.max(0, Math.round(tal('verkinom5'))),
-    antalbostader:    Math.max(0, Math.round(tal('antalbostader'))),
-    maxpromille:      tal('maxpromille') / 1000,       // ‰ → andel
+    // Närboende (kalkylkarna.js, lasNarboendeIndata: bost[5], verkperbostad, tak)
+    ...lasNarboendeIndata(),
 
     // Nätkostnader och systemkrav (kalkylkarna.js, lasNatIndata)
     ...lasNatIndata()
@@ -134,8 +133,9 @@ function beraknaAllt(d) {
   const produktionMWh_ar1 = P_tot * 8760 * d.kapfaktor * (1 - nat.bortfall);
   const produktionkWh_ar1 = produktionMWh_ar1 * 1000;
 
-  // Intäkt totalt per år (år 1):  produktion(kWh) × elpris
-  const intaktAr1 = produktionkWh_ar1 * d.elpris;
+  // Intäkt totalt per år (år 1):  produktion(kWh) × realiserat pris (spotpris × prisfaktor, kalkylkarna.js)
+  const realPris_ar1 = realiseratPris(d.elpris, d.elprisforandring, d.prisfaktor, 1);
+  const intaktAr1 = produktionkWh_ar1 * realPris_ar1;
 
   // Årlig driftskostnad (år 1):  rörlig × produktion(kWh) + fast × total effekt
   // Nätens löpande kostnader (år 1) ingår i driftkostnaden när läget inte är ingen.
@@ -166,7 +166,7 @@ function beraknaAllt(d) {
   /* ---------- 3.2 Årsserier för elpris, produktion, intäkt och drift -------
      Vi bygger vektorer per år (1..n) för att kunna räkna LCOE, NPV, IRR och
      payback korrekt med elprisbana och degradering.
-     - Elpris år t   = elpris × (1 + elprisförändring)^(t−1)
+     - Realiserat pris år t = spotpris × (1 + elprisförändring)^(t−1) × prisfaktor
      - Produktion år t = produktion_år1 × (1 − degradering)^(t−1)
   */
   const elprisAr = [];      // kr/kWh per år
@@ -174,7 +174,7 @@ function beraknaAllt(d) {
   const intaktAr = [];      // kr per år
   const driftAr = [];       // kr per år
   for (let t = 1; t <= n; t++) {
-    const pris = d.elpris * Math.pow(1 + d.elprisforandring, t - 1);
+    const pris = realiseratPris(d.elpris, d.elprisforandring, d.prisfaktor, t);
     const prod = produktionkWh_ar1 * Math.pow(1 - d.degradering, t - 1);
     elprisAr.push(pris);
     prodkWhAr.push(prod);
@@ -201,46 +201,17 @@ function beraknaAllt(d) {
   /* ---------- 3.4 Kommunal ersättning (schablon) --------------------------- */
   const kommunAr = d.kommunersattning * P_tot;        // kr/år, konstant
 
-  /* ---------- 3.5 Närboende (NU20) – beräknas här eftersom både närboende- och
-     investerarperspektivet behöver den totala ersättningen ------------------
-     Modell (delvis schablon – exakt kurva fastställs i förordning):
-       - Ersättningszon: bostäder inom 9 verkshöjder får ersättning.
-       - Distansfaktor f: 1 inom 5 verkshöjder, linjärt avtagande till 0 vid 9.
-       - Bas B = årsintäkt per verk × antal verk inom fem verkshöjder.
-       - Ersättning per bostad = maxpromille × f × B (maxpromille = 2,5 ‰ lag).
-     Rimlighet: ~38 000 kr/år i SE4 och ~19 000 kr/år i SE1 vid ≥2 verk inom
-     fem verkshöjder – vilket faller ut av modellen eftersom SE4-priset (0,60)
-     är ungefär dubbelt SE1-priset (0,30).
-  */
-  const femhojder = 5 * d.verkshojd;
-  const niohojder = 9 * d.verkshojd;
-
-  // Distansfaktor beroende på avstånd (år-oberoende).
-  let distansfaktor;
-  if (d.avstand > niohojder) {
-    distansfaktor = 0;                                 // utanför zonen
-  } else if (d.avstand <= femhojder) {
-    distansfaktor = 1;                                 // full ersättning nära
-  } else {
-    // Linjärt avtagande mellan 5 och 9 verkshöjder.
-    distansfaktor = (niohojder - d.avstand) / (niohojder - femhojder);
-  }
-  const inomZon = d.avstand <= niohojder;
-
-  // Bas per år = årsintäkt per verk (år t) × antal verk inom fem verkshöjder.
-  // Årsintäkt per verk = intäkt totalt år t / antal verk.
-  const narboendeEnskildAr = [];   // kr/år till EN bostad
-  const narboendeTotalAr = [];     // kr/år som belastar verksamhetsutövaren
+  /* ---------- 3.5 Närboende – beräknas här eftersom både närboende- och
+     investerarperspektivet behöver den totala ersättningen. Räknesättet ligger i
+     kalkylkarna.js (beraknaNarboende, aktiv metod NARBOENDE_METOD = zoner, SFS 2026:1113 11–14 §§)
+     och delas med övriga kalkyler. -------------------------------------------- */
+  const narAr = [];                                    // objekt per år
   for (let t = 0; t < n; t++) {
-    const arsintaktPerVerk = intaktAr[t] / d.antalverk;
-    const bas = arsintaktPerVerk * d.verkinom5;
-    const enskild = d.maxpromille * distansfaktor * bas;
-    narboendeEnskildAr.push(enskild);
-    // Total = antal bostäder × ersättning per bostad (schablon).
-    narboendeTotalAr.push(enskild * d.antalbostader);
+    narAr.push(beraknaNarboende(intaktAr[t] / d.antalverk, intaktAr[t], d));
   }
-  const narboendeEnskildAr1 = narboendeEnskildAr[0] || 0;
-  const narboendeTotalAr1 = narboendeTotalAr[0] || 0;
+  const nar1 = narAr[0];
+  const narboendeTotalAr = narAr.map(x => x.utbetalt);    // kr/år som belastar verksamhetsutövaren
+  const narboendeTotalAr1 = nar1.utbetalt;
 
   /* ---------- 3.6 Investerarens kassaflöde, LCOE, NPV, IRR, payback ---------
      Netto per år = intäkt − drift − arrende − kommunal ersättning − närboende.
@@ -313,7 +284,7 @@ function beraknaAllt(d) {
   /* ---------- 3.9 Returnera allt i ett strukturerat objekt ----------------- */
   return {
     // Investerare
-    produktionMWh_ar1, intaktAr1, driftkostnadAr1, investering, invPerkWh,
+    produktionMWh_ar1, realPris_ar1, intaktAr1, driftkostnadAr1, investering, invPerkWh,
     kapitalkostnad, totalkostnad, kostnadPerkWh, overskott, overskottNetto,
     lcoe, paybackInvest, npvInvest, irrInvest, cf,
 
@@ -328,8 +299,7 @@ function beraknaAllt(d) {
     alternativkostnad, nettoAr1, aterbetalning, nuvardeAndel,
 
     // Närboende
-    femhojder, niohojder, inomZon, distansfaktor,
-    narboendeEnskildAr1, narboendeTotalAr1,
+    nar: nar1, narboendeTotalAr1,
 
     // Nätkostnader och systemkrav
     nat, natPanel, natEngangTillagg, natPerkWhLivs, natAndelLcoe, natChart, natLivsKr,
@@ -353,6 +323,7 @@ function satt(id, value) {
 }
 
 function skrivUt(res, d) {
+  visaFullasttimmar(d.kapfaktor);
   /* ---- Nyckeltalsrad (alltid synlig) ---- */
   satt('nt-lcoe', fmt(res.lcoe, 2, ' kr/kWh'));
   satt('nt-overskott', fmt(res.overskott, 0, ' kr/år'));
@@ -400,22 +371,18 @@ function skrivUt(res, d) {
   satt('and-aterbetalning', res.aterbetalning === null ? 'aldrig (ingen besparing)' : fmt(res.aterbetalning, 1, ' år'));
   satt('and-nuvarde', fmt(res.nuvardeAndel, 0, ' kr'));
 
-  /* ---- Närboende ---- */
-  satt('nar-femhojder', fmt(res.femhojder, 0, ' m'));
-  satt('nar-niohojder', fmt(res.niohojder, 0, ' m'));
-  satt('nar-inom', res.inomZon ? 'Ja' : 'Nej (utanför 9 verkshöjder)');
-  satt('nar-faktor', fmt(res.distansfaktor, 2));
-  satt('nar-enskild', fmt(res.narboendeEnskildAr1, 0, ' kr/år'));
+  /* ---- Närboende (tabell och summering delas med övriga kalkyler, kalkylkarna.js) ---- */
+  ritaNarboendeZonTabell('nar-zon-kropp', res.nar, d.verkshojd);
+  skrivNarboendeSummering('nar', res.nar);
   satt('nar-total', fmt(res.narboendeTotalAr1, 0, ' kr/år'));
 
-  // Rimlighetskontroll: jämför enskild ersättning mot lagens riktmärken.
+  // Rimlighetskontroll: högsta ersättning per bostad (zon 1, efter tak).
   const rimEl = document.getElementById('nar-rimlighet');
   if (rimEl) {
     rimEl.textContent =
-      'Rimlighetskontroll: högsta ersättning per bostad hamnar enligt lagens ' +
-      'storleksordning på ca 38 000 kr/år i SE4 och ca 19 000 kr/år i SE1 vid ' +
-      'minst två verk inom fem verkshöjder. Aktuellt värde (enskild): ' +
-      fmt(res.narboendeEnskildAr1, 0, ' kr/år') + '.';
+      'Rimlighetskontroll: högsta ersättning per bostad (zon 1, efter tak) är ' +
+      fmt(res.nar.perBostadEfter[0], 0, ' kr/år') + ' och genomsnittet per bostad ' +
+      fmt(res.nar.snitt, 0, ' kr/år') + '.';
   }
 
   /* ---- Nätkostnader i siffror (panel, investerarrader, exempelinfo) ---- */

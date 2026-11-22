@@ -51,12 +51,14 @@ function indata(fall, extra) {
 }
 const A = D.NAT_EXEMPEL.filter(f => f.id === 'A')[0];
 
-// bruttoKWh: kapacitetsfaktor (huvudkalkylen) och fullasttimmar (Långhult).
+// bruttoKWh: effekt × 8 760 h × kapacitetsfaktor, samma formel i alla kalkyler.
 lika('bruttoKWh kapacitetsfaktor', N.bruttoKWh({ effekt: 4, antalverk: 5, kapfaktor: 0.37 }, 20), 20 * 8760 * 0.37 * 1000, 1e-3);
-lika('bruttoKWh fullasttimmar', N.bruttoKWh({ effekt: 6.6, antalverk: 20, kapfaktor: 0.37, fullasttimmar: 3610 }, 132), 6.6 * 1000 * 3610 * 20, 1e-3);
+// Långhult: 3 610 fullasttimmar = kapacitetsfaktor 3 610 / 8 760 (förvalt värde 0,4121 i fältet).
+lika('bruttoKWh Långhult (3 610 h)', N.bruttoKWh({ effekt: 6.6, antalverk: 20, kapfaktor: 3610 / 8760 }, 132), 6.6 * 1000 * 3610 * 20, 1e-3);
+lika('kapacitetsfaktor 0,4121 ger 3 610 h inom 0,01 h', 0.4121 * 8760, 3610, 0.01);
 
 // Långhult, fall A, 132 MW: löpande nätkostnad −4 938 424 kr/år (1 250 000 + 23,1·132 000 + 1,23·20·132 000 − 2,62 öre × 476 520 000 kWh).
-const dL = indata(A, { effekt: 6.6, antalverk: 20, kapfaktor: 0.37, fullasttimmar: 3610 });
+const dL = indata(A, { effekt: 6.6, antalverk: 20, kapfaktor: 3610 / 8760 });
 const brL = N.bruttoKWh(dL, 132);
 const pL = K.natPaverkan(dL, 132, brL);
 lika('Långhult fall A löpande kr/år', pL.nat.lopandeAr1, 1250000 + 23.1 * 132000 + 1.23 * 20 * 132000 - 0.0262 * 476520000, 1);
@@ -81,12 +83,55 @@ lika('nät per kWh över livslängden', S.natPerkWhLivs, 10 / 1000, 1e-9);
 lika('nätens andel av LCOE', S.natAndelLcoe, 10 / 1000, 1e-9);
 lika('diagrampost utan engång = löpande år 1', S.natChart, 10, 1e-9);
 
+/* ---------- Närboendeersättning (SFS 2026:1113, 11–14 §§) ---------- */
+sant('aktiv närboendemetod är zoner', K.NARBOENDE_METOD === 'zoner');
+lika('fem zoner', K.NARBOENDE_ZONER.length, 5);
+lika('zon 1 promille', K.NARBOENDE_ZONER[0].promille, 2.5);
+lika('zon 5 promille', K.NARBOENDE_ZONER[4].promille, 0.5);
+// Ett verks intäkt 1 000 000 kr, två verk per bostad, 10 bostäder i zon 1 (2,5 ‰): 2,5 ‰ × 1 000 000 × 2 × 10 = 50 000 kr.
+const nb = { bost: [10, 0, 0, 0, 0], verkperbostad: 2, tak: 0.02, antalverk: 20 };
+const z1 = K.beraknaNarboendeZoner(1e6, 20e6, nb);
+lika('zon 1: summa före tak', z1.fore, 50000);
+lika('zon 1: per bostad före tak', z1.perBostadFore[0], 5000);
+sant('taket nås inte', !z1.taketNas && z1.utbetalt === 50000);
+// Alla fem zoner med en bostad var: (2,5 + 2,0 + 1,5 + 1,0 + 0,5) ‰ × 1 000 000 × 2 = 15 000 kr.
+lika('en bostad per zon', K.beraknaNarboendeZoner(1e6, 20e6, { bost: [1, 1, 1, 1, 1], verkperbostad: 2, tak: 0.02, antalverk: 20 }).fore, 15000);
+// 14 §: taket 2 % av 20 000 000 = 400 000 kr. 100 bostäder i zon 1 ger 500 000 före tak → sätts ned i proportion.
+const ztak = K.beraknaNarboendeZoner(1e6, 20e6, { bost: [100, 0, 0, 0, 0], verkperbostad: 2, tak: 0.02, antalverk: 20 });
+lika('taket: före tak', ztak.fore, 500000);
+lika('taket: utbetalt', ztak.utbetalt, 400000);
+lika('taket: nedsättning', ztak.skal, 0.8);
+lika('taket: per bostad efter tak', ztak.perBostadEfter[0], 4000);
+sant('taket: taketNas', ztak.taketNas);
+// 13 §: aldrig ersättning från fler verk än parken har. Ett verk: 2,5 ‰ × 1 000 000 × 1 × 10 = 25 000 kr.
+lika('ett verk ger ersättning från ett verk', K.beraknaNarboendeZoner(1e6, 1e6, { bost: [10, 0, 0, 0, 0], verkperbostad: 2, tak: 1, antalverk: 1 }).fore, 25000);
+// Den aktiva metoden används av beraknaNarboende.
+lika('beraknaNarboende = zoner', K.beraknaNarboende(1e6, 20e6, nb).utbetalt, z1.utbetalt);
+sant('metod markeras på resultatet', K.beraknaNarboende(1e6, 20e6, nb).metod === 'zoner');
+
+// Den inaktiva schablonen finns kvar och räknar som förut: 2,5 ‰ × distansfaktor × (verkets intäkt × verk inom 5) × bostäder.
+const sch = { verkshojd: 200, avstand: 800, verkinom5: 2, antalbostader: 20, maxpromille: 0.0025 };
+const s1 = K.beraknaNarboendeSchablon(1e6, 20e6, sch);
+lika('schablon: inom fem verkshöjder (distansfaktor 1)', s1.utbetalt, 0.0025 * 1 * (1e6 * 2) * 20);
+lika('schablon: distansfaktor', s1.distansfaktor, 1);
+// 7 verkshöjder (1 400 m) = mitt emellan 5 (1 000 m) och 9 (1 800 m) → faktor 0,5
+lika('schablon: linjär avtrappning', K.beraknaNarboendeSchablon(1e6, 20e6, Object.assign({}, sch, { avstand: 1400 })).distansfaktor, 0.5);
+lika('schablon: utanför nio verkshöjder', K.beraknaNarboendeSchablon(1e6, 20e6, Object.assign({}, sch, { avstand: 1900 })).utbetalt, 0);
+// Zonmetoden med 20 bostäder i zon 1 och ingen tak-påverkan ger samma belopp som schablonen inom fem verkshöjder.
+lika('zoner och schablon stämmer inom fem verkshöjder', K.beraknaNarboendeZoner(1e6, 1e9, { bost: [20, 0, 0, 0, 0], verkperbostad: 2, tak: 0.02, antalverk: 5 }).utbetalt, s1.utbetalt);
+
+/* ---------- Pris: realiserat pris = spotpris × prisfaktor ---------- */
+lika('realiserat pris år 1, prisfaktor 1', K.realiseratPris(0.6, 0, 1, 1), 0.6);
+lika('realiserat pris år 1, prisfaktor 0,75', K.realiseratPris(0.5, 0, 0.75, 1), 0.375);
+lika('realiserat pris år 3 med 2 %/år', K.realiseratPris(0.5, 0.02, 0.75, 3), 0.5 * 1.02 ** 2 * 0.75, 1e-12);
+
 /* ---------- Alla kalkyler använder kärnan ---------- */
 const KALKYLER = [
   { html: 'vindkraftskalkyl.html', js: 'berakningar.js' },
   { html: 'vindkraftskalkyl_langhult.html', js: 'berakningar_langhult.js' }
 ];
-const FORBJUDNA = ['annuitet', 'npv', 'irr', 'payback', 'fmt', 'tal', 'text', 'radataNat', 'lcoeAvKassaflode', 'lasNatIndata', 'natPaverkan', 'natSammanfattning'];
+const FORBJUDNA = ['annuitet', 'npv', 'irr', 'payback', 'fmt', 'tal', 'text', 'radataNat', 'lcoeAvKassaflode', 'lasNatIndata', 'natPaverkan', 'natSammanfattning',
+  'beraknaNarboende', 'beraknaNarboendeZoner', 'beraknaNarboendeSchablon', 'lasNarboendeIndata', 'zonEtikett', 'realiseratPris'];
 KALKYLER.forEach(k => {
   const js = fs.readFileSync(k.js, 'utf8');
   const html = fs.readFileSync(k.html, 'utf8');
@@ -95,6 +140,11 @@ KALKYLER.forEach(k => {
   });
   sant(k.js + ' anropar lcoeAvKassaflode', /lcoeAvKassaflode\(/.test(js));
   sant(k.js + ' anropar natPaverkan', /natPaverkan\(/.test(js));
+  sant(k.js + ' anropar beraknaNarboende', /beraknaNarboende\(/.test(js));
+  sant(k.js + ' anropar realiseratPris', /realiseratPris\(/.test(js));
+  sant(k.js + ' räknar produktion med kapacitetsfaktor (inte fullasttimmar)', /kapfaktor/.test(js) && !/tal\('fullasttimmar'\)/.test(js));
+  sant(k.html + ' har fältet prisfaktor', html.indexOf('id="prisfaktor"') > -1);
+  sant(k.html + ' har fältet kapfaktor', html.indexOf('id="kapfaktor"') > -1);
   sant(k.html + ' laddar kalkylkarna.js före ' + k.js, html.indexOf('<script src="kalkylkarna.js">') > -1 && html.indexOf('<script src="kalkylkarna.js">') < html.indexOf('<script src="' + k.js + '">'));
   sant(k.html + ' laddar natkostnader.css', html.indexOf('natkostnader.css') > -1);
   sant(k.html + ' har rullgardinen Kalkyler', html.indexOf('class="kalkylmeny"') > -1);
