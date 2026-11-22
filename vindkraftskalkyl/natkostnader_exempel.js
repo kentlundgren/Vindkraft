@@ -22,10 +22,10 @@
    km, natavstavstand km, natenergi öre/kWh (negativt = ersättning),
    natutredning kkr, natengangschablon kkr/MW.
 
-   Version 1.2 · 2026-11-22 (typfall efter parkens effekt, NAT_TYPFALL, tillagt)
+   Version 1.3 · 2026-11-22 (källan om stamnätsanslutning, NAT_STAMNATSKALLA, tillagd)
    ============================================================================ */
 
-var NAT_DATA_VERSION = '1.2';
+var NAT_DATA_VERSION = '1.3';
 var NAT_DATA_DATUM = '2026-11-22';
 
 /** Utgångspunkten för analysen: ledaren och inlägget som återger den. Ingår i källistan. */
@@ -34,11 +34,19 @@ var NAT_UTGANGSPUNKT = [
   { text: 'Svensk Vindkraft (2026) LinkedIn-inlägg 19 november som återger ledarens inledning (visar att branschorganisationen lyfter frågan)', url: 'https://www.linkedin.com/posts/svensk-vindkraft_i-senaste-numret-av-v%C3%A5r-tidning-svensk-vindkraft-activity-7529084415403253761-pt5K', hamtad: '2026-11-22' }
 ];
 
+/** Källan om vem som kan ansluta till stamnätet. Ingår i källistan. */
+var NAT_STAMNATSKALLA = {
+  text: 'Svenska kraftnät (2025a) Principer och vägledning för anslutning till Stamnätet, version 2025-07-01 (lägsta lämpliga spänningsnivå, regionnätsföretaget ansöker, gränsen 100 MW och 300 MW gäller ny station)',
+  url: 'https://www.svk.se/49e695/siteassets/aktorsportalen/anslut-till-transmissionsnatet/principer-och-vagledning-for-anslutning-till-stamnatet/principer-och-vagledning-for-anslutning-till-stamnatet.pdf',
+  hamtad: '2026-11-22'
+};
+
 /** Typfall efter parkens totala effekt. Kalkylen föreslår (och väljer, om användaren inte valt själv)
     fallet `litet` upp till `gransMW` och fallet `stort` över den. Gränsen 15 MW är Kents val (2026-11-22)
     och följer en vägledande figur över sannolik överföringsförmåga per spänningsnivå: ungefär 10 MW vid 10 kV,
     15 MW vid 20 kV och 40 MW vid 40 kV. Det är ett riktmärke och inte belagt i Vattenfalls tariff. Över
-    `stamnatMW` anges bara att direktanslutning till stamnätet (fall C–E) kan bli aktuell. */
+    `stamnatMW` hänvisar kalkylen till avsnittet om stamnätsanslutning: gränsen 100 MW (220 kV) och 300 MW (400 kV) gäller
+    när Svenska kraftnät bygger en ny station, och anslutning sker i första hand via regionnätet. */
 var NAT_TYPFALL = {
   gransMW: 15,
   stamnatMW: 100,
@@ -337,5 +345,5 @@ var NAT_EXEMPEL = [
 ];
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { NAT_EXEMPEL: NAT_EXEMPEL, NAT_REGELVERK: NAT_REGELVERK, NAT_NORMALFALL: NAT_NORMALFALL, NAT_NORMALFALL_ANGIVELSE: NAT_NORMALFALL_ANGIVELSE, natTomtFalt: natTomtFalt, NAT_UTGANGSPUNKT: NAT_UTGANGSPUNKT, NAT_TYPFALL: NAT_TYPFALL };
+  module.exports = { NAT_EXEMPEL: NAT_EXEMPEL, NAT_REGELVERK: NAT_REGELVERK, NAT_NORMALFALL: NAT_NORMALFALL, NAT_NORMALFALL_ANGIVELSE: NAT_NORMALFALL_ANGIVELSE, natTomtFalt: natTomtFalt, NAT_UTGANGSPUNKT: NAT_UTGANGSPUNKT, NAT_TYPFALL: NAT_TYPFALL, NAT_STAMNATSKALLA: NAT_STAMNATSKALLA };
 }

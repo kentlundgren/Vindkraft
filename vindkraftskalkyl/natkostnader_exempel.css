@@ -70,3 +70,5 @@
 .tech-card h4 { margin: 0 0 .2rem; font-size: .88rem; }
 .tech-card p { margin: 0; font-size: .82rem; }
 @media (max-width: 600px) { .tech-grid { grid-template-columns: 1fr; } }
+
+.markering.direkt { background: #e6eef7; color: #1d3f66; border: 1px solid #b9cde3; }

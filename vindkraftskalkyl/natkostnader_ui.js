@@ -58,9 +58,11 @@
     txt.appendChild(document.createTextNode('Förslag för ' + fmt(P, 1) + ' MW (' + d.antalverk + (d.antalverk === 1 ? ' verk' : ' verk') + '): fall ' + t.id + ', ' + f.namn + '. ' +
       'En park upp till cirka ' + NAT_TYPFALL.gransMW + ' MW ansluts ofta på 10–20 kV och en större på 30–50 kV. Det är en vägledning och inte belagt i Vattenfalls tariff, och nätägaren avgör nivån. ' +
       'Fall A och B är Vattenfalls regionnät. Ellevio och E.ON är inte genomgångna. ' +
-      (t.stamnat ? 'Över cirka ' + NAT_TYPFALL.stamnatMW + ' MW kan direktanslutning till stamnätet (fall C–E) bli aktuell. ' : '')));
+      (t.stamnat ? 'Över cirka ' + NAT_TYPFALL.stamnatMW + ' MW är direktanslutning till stamnätet (fall C–E) ändå inte given: gränsen 100 MW (220 kV) och 300 MW (400 kV) gäller när Svenska kraftnät bygger en ny station, och anslutning sker i första hand via regionnätet. ' : '')));
     const a = document.createElement('a'); a.href = 'natkostnader_exempel.html#normalfall-rubrik'; a.textContent = 'Läs varför';
-    txt.appendChild(a); txt.appendChild(document.createTextNode('.'));
+    txt.appendChild(a); txt.appendChild(document.createTextNode('. '));
+    const a2 = document.createElement('a'); a2.href = 'natkostnader_exempel.html#stamnat-rubrik'; a2.textContent = 'Varför kan jag inte välja Svenska kraftnät?';
+    txt.appendChild(a2);
     if (knapp) knapp.hidden = (el('natexempel').value === t.id);
   }
 
@@ -75,7 +77,7 @@
     NAT_EXEMPEL.forEach(f => {
       const o = document.createElement('option');
       o.value = f.id;
-      o.textContent = f.id + '. ' + f.namn + (f.belagd ? '' : (f.eget ? '' : ' (ej belagd)'));
+      o.textContent = f.id + '. ' + f.namn + (f.belagd ? '' : (f.eget ? '' : ' (ej belagd)')) + (f.typ === 'stamnät direkt' ? ' (direktansluten)' : '');
       sel.appendChild(o);
     });
     sel.value = 'H';
@@ -389,6 +391,9 @@
     if (f.sarfall) txt += 'Fallet är ett särfall och inte representativt. ';
     if (d.antalverk === 1 && f.falt.natfast !== null && f.falt.natfast !== undefined) {
       txt += 'Obs: fallet har en fast årsavgift per anslutning. För ett enskilt verk skulle nätägaren troligen anvisa en lägre spänningsnivå med en annan fast avgift, så öre per kWh är här ett räkneexempel och inte en belagd kostnad för ett ensamt verk. ';
+    }
+    if (f.typ === 'stamnät direkt') {
+      txt += 'Obs: fallet gäller en direktansluten anläggning, normalt en stor. En park på 4 eller 20 MW ansluts i regel via regionnätet, så fallet är inte ett alternativ för den och inte jämförbart med A och B. Engångskostnaden för en egen anslutning saknas. ';
     }
     rad.appendChild(document.createTextNode(txt));
 

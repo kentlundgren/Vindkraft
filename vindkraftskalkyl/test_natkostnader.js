@@ -144,5 +144,13 @@ sant('alla belagda fall har komplett.lopande', D.NAT_EXEMPEL.filter(f => f.belag
   sant('typfallets källa har länk', !!T.kalla.url);
 }
 
+
+/* Källan om stamnätsanslutning och märkning av direktanslutna fall. */
+{
+  sant('stamnätskällan har länk', !!D.NAT_STAMNATSKALLA && /^https:\/\//.test(D.NAT_STAMNATSKALLA.url));
+  const direkta = D.NAT_EXEMPEL.filter(f => f.typ === 'stamnät direkt').map(f => f.id).sort().join('');
+  sant('direktanslutna fall är C, D och E', direkta === 'CDE');
+}
+
 console.log((fel === 0 ? 'ALLA TESTER OK' : 'TESTFEL') + ': ' + ok + ' godkända, ' + fel + ' fel');
 process.exit(fel === 0 ? 0 : 1);

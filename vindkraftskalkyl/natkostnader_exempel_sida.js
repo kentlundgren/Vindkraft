@@ -9,13 +9,14 @@
    skript (regel 19 i kent-bygg-sidor).
    UPPDATERING 2026-11-22: sidan skapades. Version 1.0.
    UPPDATERING 2026-11-22 (senare igen): länk "Visa i kalkylen" vid varje fall. Version 1.2.
+   UPPDATERING 2026-11-22 (senare igen): märkning av direktanslutna fall (C–E), förklaring vid hovring, källan om stamnätsanslutning i källistan. Version 1.5.
    UPPDATERING 2026-11-22 (senare igen): avsnittet Typfall efter parkens storlek (fall B upp till 15 MW, fall A över) ersätter normalfallstexten. Version 1.4.
    UPPDATERING 2026-11-22 (senare igen): växlare ett verk / fem verk (förvalt ett verk), förklaringar vid hovring i Diagram 1, förbehåll för ett ensamt verk, utgångspunkten i källistan. Version 1.3.
    UPPDATERING 2026-11-22 (senare): avsnittet Det som saknas anger antagandet att engångskostnaden ingår i investeringsutgiften. Version 1.1.
    ============================================================================ */
 'use strict';
 
-const VERSION = '1.4';
+const VERSION = '1.5';
 const VERSIONSDATUM = '2026-11-22';
 
 (function () {
@@ -106,7 +107,7 @@ const VERSIONSDATUM = '2026-11-22';
     const e = sv(r.lopandeOre.energi, 2), fast = sv(r.lopandeOre.fastSumma, 2), tot = sv(r.lopandeOre.summa, 2);
     let t;
     if (f.id === 'C' || f.id === 'E') {
-      t = 'Negativ nätkostnad (en ersättning): i södra Sverige minskar inmatningen stamnätets förluster, så Svenska kraftnäts energiavgift blir en kredit (' + e + ' öre/kWh). Den är större än den fasta delen (' + fast + ' öre/kWh), så producenten får netto ' + sv(-r.lopandeOre.summa, 2) + ' öre/kWh.';
+      t = 'Negativ nätkostnad (en ersättning): i södra Sverige minskar inmatningen stamnätets förluster, så Svenska kraftnäts energiavgift blir en kredit (' + e + ' öre/kWh). Den är större än den fasta delen (' + fast + ' öre/kWh), så producenten får netto ' + sv(-r.lopandeOre.summa, 2) + ' öre/kWh. Gäller en direktansluten anläggning, normalt stor, och är inte ett alternativ för 4 eller 20 MW. Engångskostnaden för egen anslutning saknas.';
     } else if (f.id === 'A' || f.id === 'B') {
       const naraNoll = Math.abs(r.lopandeOre.summa) < 1;
       t = 'Energiersättningen (' + e + ' öre/kWh) och de fasta avgifterna (' + fast + ' öre/kWh) ' +
@@ -114,7 +115,7 @@ const VERSIONSDATUM = '2026-11-22';
                   : 'tar inte ut varandra: ' + (r.lopandeOre.summa > 0 ? 'de fasta avgifterna väger tyngre' : 'ersättningen väger tyngre') + ' (' + tot + ' öre/kWh).') +
         ' Den fasta årsavgiften (' + sv(f.falt.natfast / 1000, 0) + ' kkr/år) är per anslutning och slås ut på produktionen: fler verk ger lägre öre per kWh, ett verk ger högre.';
     } else if (f.id === 'D') {
-      t = 'Positiv nätkostnad: i norr ökar inmatningen stamnätets förluster (positiv förlustkoefficient), så producenten betalar energiavgiften (' + e + ' öre/kWh) utöver effektavgiften. Ingen fast årsavgift, så parkens storlek påverkar inte öre per kWh.';
+      t = 'Positiv nätkostnad: i norr ökar inmatningen stamnätets förluster (positiv förlustkoefficient), så producenten betalar energiavgiften (' + e + ' öre/kWh) utöver effektavgiften. Ingen fast årsavgift, så parkens storlek påverkar inte öre per kWh. Gäller en direktansluten anläggning.';
     } else if (f.id === 'F') {
       t = 'Hög nätkostnad: ett lokalnät som en vindkraftutvecklare äger, med hög effektavgift (170 kr/kW) och positiv överföringsavgift (' + e + ' öre/kWh). Särfall, inte representativt.';
     } else if (f.id === 'G') {
@@ -149,6 +150,7 @@ const VERSIONSDATUM = '2026-11-22';
       const namnCell = document.createElement('span'); namnCell.appendChild(namn);
       if (f.sarfall) namnCell.appendChild(marke('särfall', 'sarfall'));
       if (!f.belagd) namnCell.appendChild(marke('ej belagd', 'ejbelagd'));
+      if (f.typ === 'stamnät direkt') namnCell.appendChild(marke('direktansluten', 'direkt'));
       tr.appendChild(td(namnCell));
       tr.appendChild(td(f.typ + (f.ar ? ', ' + f.ar : '')));
       const fastSaknas = f.falt.natfast === null && f.falt.nateffekt === null && f.falt.natavstavg === null && f.falt.natsyslop === null;
@@ -228,7 +230,9 @@ const VERSIONSDATUM = '2026-11-22';
       const p2 = document.createElement('p');
       p2.appendChild(document.createTextNode('Skälet är en vägledande figur över sannolik överföringsförmåga per spänningsnivå: ungefär 10 MW vid 10 kV, 15 MW vid 20 kV och 40 MW vid 40 kV (' ));
       p2.appendChild(lank(tf.kalla.url, 'Vindkraftutredning för Norrbottens kust- och skärgårdsområde, s. 32–33'));
-      p2.appendChild(document.createTextNode(', där figuren anger Energimyndigheten 2007 som källa). Det är ett riktmärke och inte belagt i Vattenfalls tariff: nätägaren avgör anslutningsnivån efter nätets kapacitet och avstånd. Över cirka ' + tf.stamnatMW + ' MW kan direktanslutning till stamnätet (fall C–E) bli aktuell. Fall A och B är Vattenfalls regionnät, och Ellevio och E.ON är inte genomgångna.'));
+      p2.appendChild(document.createTextNode(', där figuren anger Energimyndigheten 2007 som källa). Det är ett riktmärke och inte belagt i Vattenfalls tariff: nätägaren avgör anslutningsnivån efter nätets kapacitet och avstånd. Fall A och B är Vattenfalls regionnät, och Ellevio och E.ON är inte genomgångna. Över cirka ' + tf.stamnatMW + ' MW är direktanslutning till stamnätet (fall C–E) ändå inte given: gränsen 100 MW för 220 kV och 300 MW för 400 kV gäller när Svenska kraftnät bygger en ny station, och anslutning sker i första hand via regionnätet. Se '));
+      p2.appendChild(lank('#stamnat-rubrik', 'Varför kan jag inte välja Svenska kraftnät?'));
+      p2.lastChild.removeAttribute('target');
       nf.appendChild(p2);
       const p3 = document.createElement('p');
       p3.appendChild(document.createTextNode('I kalkylen väljs förslaget automatiskt när läget går från ingen, om användaren inte har valt ett fall eller ändrat ett fält. Förslaget följer sedan antal verk och effekt tills användaren väljer själv.'));
@@ -328,6 +332,7 @@ const VERSIONSDATUM = '2026-11-22';
     NAT_REGELVERK.forEach(r => { if (r.kalla && r.kalla.url) unika[r.kalla.url] = r.kalla; });
     (typeof NAT_UTGANGSPUNKT !== 'undefined' ? NAT_UTGANGSPUNKT : []).forEach(k => { unika[k.url] = k; });
     if (typeof NAT_TYPFALL !== 'undefined' && NAT_TYPFALL.kalla) unika[NAT_TYPFALL.kalla.url] = NAT_TYPFALL.kalla;
+    if (typeof NAT_STAMNATSKALLA !== 'undefined') unika[NAT_STAMNATSKALLA.url] = NAT_STAMNATSKALLA;
     Object.keys(unika).map(u => unika[u]).sort((a, b) => a.text.localeCompare(b.text, 'sv')).forEach(k => {
       const li = document.createElement('li');
       li.appendChild(lank(k.url, k.text));

@@ -2,7 +2,7 @@
 
 **Hör till:** [PRD_natkostnader.md](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/PRD_natkostnader.md)
 **Skapad:** 2026-11-22
-**Version:** 0.3
+**Version:** 0.4
 **Status:** Pågående. Anslutning, nya systemkrav, löpande nätavgifter för producenter och Svenska kraftnäts egna prislistor 2026 och 2027 är genomgångna mot publicerade källor. Regionnätens 2027-avgifter och fler nätägare återstår.
 **Hämtdatum för alla webbkällor:** 2026-11-22
 
@@ -93,7 +93,7 @@ Tabell 3. Räkneexempel: vad de löpande nätavgifterna motsvarar [#](#tabell-3)
 
 <a id="svk-prislista"></a>
 
-Svenska kraftnät tar ut avgifter av dem som är direktanslutna till stamnätet, och regionnätsbolagen för vidare avgifterna till sina kunder. Principen är att avgiften är en punktavgift: den är oberoende av vem producenten säljer till. Kapacitetsavgiften för inmatning är högst i norr och minskar linjärt söderut ([Svenska kraftnät, 2025](https://www.svk.se/en/stakeholders-portal/electricity-market/connecting-to-the-grid/tariffcharges/)).
+Svenska kraftnät tar ut avgifter av dem som är direktanslutna till stamnätet, och regionnätsbolagen för vidare avgifterna till sina kunder. Principen är att avgiften är en punktavgift: den är oberoende av vem producenten säljer till. Kapacitetsavgiften för inmatning är högst i norr och minskar linjärt söderut ([Svenska kraftnät, 2025b](https://www.svk.se/en/stakeholders-portal/electricity-market/connecting-to-the-grid/tariffcharges/)).
 
 **Så fungerar avgiften**
 
@@ -151,7 +151,8 @@ Alfabetiskt.
 - Energimarknadsinspektionen (2026a) *Energimarknadsinspektionens föreskrifter och allmänna råd om anslutningsavgifter för elektriska anläggningar* (remissutkast, EIFS 20ÅÅ:nr). Eskilstuna: Energimarknadsinspektionen. Tillgänglig: [ei.se](https://ei.se/download/18.c64bc1a19b353d7ad72d854/1770105807164/Remissutkast%20F%C3%B6reskrifter%20Anslutningsavgifter.pdf) (hämtad 2026-11-22). *(Utkast till föreskrift om hur nätföretag utformar anslutningsavgifter; 3 kap. gäller alla anläggningar, 4 kap. bara anläggningar med mätarsäkring om högst 25 ampere.)*
 - Energimarknadsinspektionen (2026b) *Konsekvensutredning avseende Energimarknadsinspektionens föreskrifter och allmänna råd om fastställande av generellt tillämpliga krav för nätanslutning av kraftproduktionsmoduler* (remissutkast, ärendenummer 2025-103407, 2026-02-19). Eskilstuna: Energimarknadsinspektionen. Tillgänglig: [ei.se](https://ei.se/download/18.1825c33b19c47ab9719fc38/1771849540664/Remissutkast-Konsekvensutredning-Eis-f%C3%B6reskrifter-och-allm%C3%A4nna-r%C3%A5d-om-fastst%C3%A4llande-av-generellt-till%C3%A4mpliga-krav-f%C3%B6r-n%C3%A4tanslutning-av-kraftproduktionsmoduler.pdf) (hämtad 2026-11-22). *(Beskriver varför föreskriften EIFS 2018:2 föreslås ersättas, vilka krav som flyttas till platsspecifik kravställning och vilka kostnader som påverkas.)*
 - OX2 (2026) *Tariffer Brobacken Nät AB 2026* (2026-01-30). Stockholm: OX2. Tillgänglig: [ox2.com](https://www.ox2.com/files/Sweden_documents/Natbolag/tariff-brobacken-nat-2026.pdf) (hämtad 2026-11-22). *(Prislista för ett nät som ägs av en vindkraftutvecklare, med avgifter för inmatning och uttag.)*
-- Svenska kraftnät (2025) *Tariff/Charges* (sida granskad 2025-09-04). Sundbyberg: Svenska kraftnät. Tillgänglig: [svk.se](https://www.svk.se/en/stakeholders-portal/electricity-market/connecting-to-the-grid/tariffcharges/) (hämtad 2026-11-22). *(Beskriver hur transmissionsnätsavgiften är uppbyggd: effektavgift, energiavgift och förlustkoefficient.)*
+- Svenska kraftnät (2025a) *Principer och vägledning för anslutning till Stamnätet* (version 2025-07-01). Sundbyberg: Svenska kraftnät. Tillgänglig: [svk.se](https://www.svk.se/49e695/siteassets/aktorsportalen/anslut-till-transmissionsnatet/principer-och-vagledning-for-anslutning-till-stamnatet/principer-och-vagledning-for-anslutning-till-stamnatet.pdf) (hämtad 2026-11-22). *(Vem som kan ansöka om stamnätsanslutning, principen lägsta lämpliga spänningsnivå och gränsen 100 MW för 220 kV och 300 MW för 400 kV vid ny station.)*
+- Svenska kraftnät (2025b) *Tariff/Charges* (sida granskad 2025-09-04). Sundbyberg: Svenska kraftnät. Tillgänglig: [svk.se](https://www.svk.se/en/stakeholders-portal/electricity-market/connecting-to-the-grid/tariffcharges/) (hämtad 2026-11-22). *(Beskriver hur transmissionsnätsavgiften är uppbyggd: effektavgift, energiavgift och förlustkoefficient.)*
 - Svenska kraftnät (2026a) *Beslutad transmissionsnätsavgift och avgifter för balansansvariga parter 2027* (2026-09-28). Sundbyberg: Svenska kraftnät. Tillgänglig: [svk.se](https://www.svk.se/press-och-nyheter/nyheter/elmarknad-allmant/2026/beslutad-transmissionsnatsavgift-och-avgifter-for-balansansvariga-parter-2027/) (hämtad 2026-11-22). *(Styrelsens beslut om 2027 års avgift och den nya avgiftsmodellen.)*
 - Svenska kraftnät (2026b) *Prislista 2026 för transmissionsnätet*. Sundbyberg: Svenska kraftnät. Tillgänglig: [svk.se](https://www.svk.se/4a909a/siteassets/aktorsportalen/anslut-till-transmissionsnatet/transmissionsnatstariff/aktuella-prislistor/prislista-transmissionsnatet-20262.pdf) (hämtad 2026-11-22). *(Effektavgift och förlustkoefficient per anslutningspunkt 2026.)*
 - Svenska kraftnät (2026c) *Prislista 2027 för transmissionsnätet*. Sundbyberg: Svenska kraftnät. Tillgänglig: [svk.se](https://www.svk.se/4a90bc/siteassets/aktorsportalen/anslut-till-transmissionsnatet/transmissionsnatstariff/aktuella-prislistor/prislista-transmissionsnatet-2027.pdf) (hämtad 2026-11-22). *(Fast avgift, kundspecifik avgift, energiavgift och skuggpriser per abonnemangspunkt 2027.)*
@@ -165,13 +166,33 @@ Alfabetiskt.
 ## 5. att läsa härnäst [#](#5-att-lasa-harnast)
 
 - Ei:s rapport R2026:04 om förutsägbarhet och träffsäkerhet för anslutnings- och överföringsavgifter (på remiss hos regeringen med svar senast 2026-12-07).
-- Svenska kraftnäts *Principer och vägledning för anslutning till stamnätet* (2026-07-01).
+- Den version av Svenska kraftnäts *Principer och vägledning för anslutning till stamnätet* som gäller från 2026-07-01. Versionen daterad 2025-07-01 är läst (avsnitt 6). Sökträffar anger att anslutningsansökan från 2026-07-01 först ska gå via befintligt regionnät, vilket inte är kontrollerat mot originalet.
 - Ei:s remissutkast till konsekvensutredning om anslutningsavgifter (för producenter med större anläggningar).
 - Ett nätbolags publicerade principer för kostnadsfördelning vid teknisk anpassning (4 kap. 12 § ellagen) och regionnätstariff, för nätavgifter och anslutning via distributionsnät.
 - Status: har Ei beslutat någon av de två föreskrifterna? Ellagens nuvarande lydelse och en eventuell ny elmarknadslag ska kontrolleras mot gällande SFS-text.
 - Vattenfalls och fler regionnätsbolags avgifter för 2027 (Svenska kraftnäts nya modell slår igenom i regionnäten). Vattenfalls egen bekräftelse av att Svenska kraftnäts avgifter läggs ovanpå regionnätsavgifterna.
 - Fler nätägares inmatningstariffer (till exempel Ellevio och E.ON), så att fler fall kan jämföras.
 - Svenska kraftnäts promemoria om den nya tariffmodellen (hur kundspecifik avgift och fördelningsfaktor är uppbyggda och hur införandet trappas).
+
+<a id="6-stamnatet"></a>
+
+## 6. anslutning till stamnätet: vem och när [#](#6-stamnatet)
+
+Källa: Svenska kraftnät (2025a) *Principer och vägledning för anslutning till Stamnätet*, version daterad 2025-07-01, 39 sidor ([svk.se](https://www.svk.se/49e695/siteassets/aktorsportalen/anslut-till-transmissionsnatet/principer-och-vagledning-for-anslutning-till-stamnatet/principer-och-vagledning-for-anslutning-till-stamnatet.pdf), hämtad 2026-11-22, läst i originaltext).
+
+| Fråga | Vad dokumentet säger | Avsnitt |
+| ----- | -------------------- | ------- |
+| Var ska en anläggning anslutas? | På den lägsta lämpliga spänningsnivån. Ägaren ska i första hand vända sig till det elnätsföretag som har områdeskoncession i området, och hänvisas uppåt i nätstrukturen först om företaget med giltiga skäl enligt ellagen inte kan tillgodose behovet. | 2.1.1 och 6.1 |
+| Vem ansöker om stamnätsanslutning i praktiken? | I de flesta fall regionnätsföretaget, när det behöver öka inmatningen till eller uttaget från stamnätet för att möjliggöra en anslutning. | 6.1 |
+| Gränsen 100 MW och 300 MW | För att en ny station (ny anslutningspunkt) i stamnätet ska bli aktuell krävs ett samlat effektbehov om minst 100 MW för 220 kV-nätet och 300 MW för 400 kV-nätet. Anslutning ska i första hand ske via befintlig anslutningspunkt och genom befintligt distributionssystem. Undantag kan medges om befintligt eller planerat elnät saknas i området. Gränsen gäller alltså nya stationer och är inte en gräns för parkens storlek i sig. | 2.2.2 |
+| Vem bestämmer anslutningspunkten? | Svenska kraftnät, efter en samlad bedömning av driftsäkerhet, nätstruktur, kostnader och miljö. | 2.2.1 |
+| Indikativ förfrågan | Kan lämnas för behov upp till 300 MW (minst tre år fram i tiden). Större behov kräver dialog och formell ansökan. | 6.3 |
+
+Slutsatser för kalkylen (med förbehåll):
+
+- Under cirka 100 MW är direktanslutning till stamnätet i regel inte aktuell: anläggningen ansluts via regionnätsföretaget, som betalar stamnätsavgifterna och för dem vidare. Då gäller regionnätets löpande avgifter, som i fall A och B.
+- Fall C–E (direktansluten) gäller en anläggning som är ansluten direkt till stamnätet, normalt en stor anläggning vid en befintlig eller ny station. De är inte ett alternativ för en park på 4 eller 20 MW.
+- Dokumentet är daterat 2025-07-01. Svenska kraftnät uppger enligt sökträffar att en ny version införs 2026-07-01, bland annat med regeln att ansökan först görs via regionnätet. Den versionen är inte läst.
 
 ## Repo
 
