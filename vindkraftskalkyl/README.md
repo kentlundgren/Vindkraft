@@ -71,7 +71,7 @@ Projektet består av tre huvudfiler i denna mapp, plus en förklaringsruta och e
 | [`natkostnader_exempel.js`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/natkostnader_exempel.js) | Datafil med exempelfall och regelverk. Läses av både kalkylen och läsarsidan. |
 | [`natkostnader_exempel.html`](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/natkostnader_exempel.html) | Läsarsida: exempelfall, källor, spridning och regelverk. Med [`natkostnader_exempel_sida.js`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/natkostnader_exempel_sida.js) och [`natkostnader_exempel.css`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/natkostnader_exempel.css). |
 | [`test_natkostnader.js`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/test_natkostnader.js) | Test för nätkostnadsmodulen och datafilen: `node test_natkostnader.js`. |
-| [`PRD_natkostnader.md`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/PRD_natkostnader.md) | PRD för nätkostnader (version 1.11, fryst). |
+| [`PRD_natkostnader.md`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/PRD_natkostnader.md) | PRD för nätkostnader (version 1.12, fryst). |
 | [`KALLOR_natkostnader.md`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/KALLOR_natkostnader.md) | Källor och räkneexempel för nätkostnader. |
 | [`dokument.json`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/dokument.json) | Lista över dokumenten i mappen för brödsmulorna (`brodsmulor.css`). |
 

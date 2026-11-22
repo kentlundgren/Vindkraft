@@ -32,7 +32,9 @@
   }
 
   /* ---------- Typfall efter parkens effekt ---------- */
-  let autoVald = false;
+  // Rutan "Välj nätfall efter parkens storlek automatiskt" styr om fallet följer parkens storlek.
+  const autoPa = () => { const c = el('natautofall'); return !!(c && c.checked); };
+  const sattAuto = (v) => { const c = el('natautofall'); if (c) c.checked = v; };
 
   function parkEffekt() {
     return (parseFloat(el('effekt').value) || 0) * (Math.max(1, Math.round(parseFloat(el('antalverk').value)) || 1));
@@ -44,7 +46,7 @@
     const t = typfallNu();
     el('natexempel').value = t.id;
     fyllExempel(t.id);
-    autoVald = true;
+    sattAuto(true);
     uppdateraLank();
   }
 
@@ -55,14 +57,27 @@
     const t = NATKOSTNAD.typfallForEffekt(P, NAT_TYPFALL);
     const f = hittaFall(t.id);
     txt.textContent = '';
-    txt.appendChild(document.createTextNode('Förslag för ' + fmt(P, 1) + ' MW (' + d.antalverk + (d.antalverk === 1 ? ' verk' : ' verk') + '): fall ' + t.id + ', ' + f.namn + '. ' +
-      'En park upp till cirka ' + NAT_TYPFALL.gransMW + ' MW ansluts ofta på 10–20 kV och en större på 30–50 kV. Det är en vägledning och inte belagt i Vattenfalls tariff, och nätägaren avgör nivån. ' +
-      'Fall A och B är Vattenfalls regionnät. Ellevio och E.ON är inte genomgångna. ' +
+    const p1 = document.createElement('p');
+    p1.textContent = 'Förslag för ' + fmt(P, 1) + ' MW (' + d.antalverk + ' verk): fall ' + t.id + ', ' + f.namn + '. Det här passar vilken parkeffekt:';
+    txt.appendChild(p1);
+    const ul = document.createElement('ul'); ul.className = 'nat-storlek';
+    NAT_TYPFALL.trappa.forEach(st => {
+      const li = document.createElement('li');
+      const nu = P > st.franMW && P <= st.tillMW;
+      li.appendChild(nu ? document.createElement('strong') : document.createTextNode(''));
+      const mal = nu ? li.firstChild : li;
+      mal.appendChild(document.createTextNode(st.effekt + ': ' + st.text + (nu ? ' (din park)' : '')));
+      ul.appendChild(li);
+    });
+    txt.appendChild(ul);
+    const p2 = document.createElement('p');
+    p2.appendChild(document.createTextNode('Riktmärkena bygger på en vägledande figur över överföringsförmåga per spänningsnivå och är inte belagda i Vattenfalls tariff. Nätägaren avgör nivån. Fall A och B är Vattenfalls regionnät, och Ellevio och E.ON är inte genomgångna. ' +
       (t.stamnat ? 'Över cirka ' + NAT_TYPFALL.stamnatMW + ' MW är direktanslutning till stamnätet (fall C–E) ändå inte given: gränsen 100 MW (220 kV) och 300 MW (400 kV) gäller när Svenska kraftnät bygger en ny station, och anslutning sker i första hand via regionnätet. ' : '')));
     const a = document.createElement('a'); a.href = 'natkostnader_exempel.html#normalfall-rubrik'; a.textContent = 'Läs varför';
-    txt.appendChild(a); txt.appendChild(document.createTextNode('. '));
+    p2.appendChild(a); p2.appendChild(document.createTextNode('. '));
     const a2 = document.createElement('a'); a2.href = 'natkostnader_exempel.html#stamnat-rubrik'; a2.textContent = 'Varför kan jag inte välja Svenska kraftnät?';
-    txt.appendChild(a2);
+    p2.appendChild(a2);
+    txt.appendChild(p2);
     if (knapp) knapp.hidden = (el('natexempel').value === t.id);
   }
 
@@ -98,13 +113,17 @@
 
     // Typfall efter parkens effekt. Väljs automatiskt när läget går från ingen och användaren inte har
     // valt själv, och följer sedan antal verk och effekt tills användaren väljer eller ändrar ett fält.
-    FALT.forEach(k => { const e = el(k); if (e) e.addEventListener('input', () => { autoVald = false; }); });
-    sel.addEventListener('change', () => { autoVald = false; });
+    FALT.forEach(k => { const e = el(k); if (e) e.addEventListener('input', () => { sattAuto(false); }); });
+    sel.addEventListener('change', () => { sattAuto(false); });
+    const ac = el('natautofall');
+    if (ac) ac.addEventListener('change', () => {
+      if (ac.checked) { tillampaTypfall(); el('natlage').dispatchEvent(new Event('change', { bubbles: true })); }
+    });
 
     let foregLage = el('natlage').value;
     el('natlage').addEventListener('change', () => {
       const ny = el('natlage').value;
-      if (foregLage === 'ingen' && ny !== 'ingen' && allaNatFaltTomma() && sel.value === 'H') {
+      if (foregLage === 'ingen' && ny !== 'ingen' && allaNatFaltTomma() && sel.value === 'H' && autoPa()) {
         if (typeof NAT_NORMALFALL !== 'undefined' && NAT_NORMALFALL && hittaFall(NAT_NORMALFALL)) {
           sel.value = NAT_NORMALFALL;
           fyllExempel(NAT_NORMALFALL);
@@ -115,7 +134,7 @@
       foregLage = ny;
     });
     ['antalverk', 'effekt'].forEach(id => el(id).addEventListener('input', () => {
-      if (autoVald && typfallNu().id !== sel.value) tillampaTypfall();
+      if (autoPa() && sel.value !== 'H' && typfallNu().id !== sel.value) tillampaTypfall();
     }));
     const fk = el('nat-forslag-knapp');
     if (fk) fk.addEventListener('click', () => {
@@ -133,7 +152,7 @@
      Läge skrivs utan å, ä, ö: Ingen, Lag, Bas, Hog. */
   const LAGE_TILL_HASH = { ingen: 'Ingen', lag: 'Lag', bas: 'Bas', hog: 'Hog' };
   const HASH_TILL_LAGE = { Ingen: 'ingen', Lag: 'lag', Bas: 'bas', Hog: 'hog' };
-  const HASH_MONSTER = /^#Natkostnad_(Ingen|Lag|Bas|Hog)(?:_Exempel_([A-H]))?(?:_Engang_(Ja|Nej))?(?:_Verk_(1|5))?$/;
+  const HASH_MONSTER = /^#Natkostnad_(Ingen|Lag|Bas|Hog)(?:_Exempel_([A-H])|_(Typfall))?(?:_Engang_(Ja|Nej))?(?:_Verk_(1|5))?$/;
 
   function antalVerk() {
     const v = Math.round(parseFloat(el('antalverk').value));
@@ -154,7 +173,8 @@
     const verk = antalVerk();
     if (lage === 'ingen' && (ex === 'H' || !ex) && ing === 'ja' && verk !== 5) return '';
     let h = '#Natkostnad_' + LAGE_TILL_HASH[lage];
-    if (ex && ex !== 'H') h += '_Exempel_' + ex;
+    if (lage !== 'ingen' && autoPa() && ex === typfallNu().id) h += '_Typfall';
+    else if (ex && ex !== 'H') h += '_Exempel_' + ex;
     if (ing === 'nej') h += '_Engang_Nej';
     if (verk === 5) h += '_Verk_5';
     return h;
@@ -163,17 +183,20 @@
   function tillampaHash() {
     const m = HASH_MONSTER.exec(location.hash);
     if (!m) return false;
-    autoVald = false;
     el('natlage').value = HASH_TILL_LAGE[m[1]];
-    const ex = m[2] || 'H';
-    el('natexempel').value = ex;
-    fyllExempel(ex);
-    el('natengangingar').value = (m[3] === 'Nej') ? 'nej' : 'ja';
     // Utan _Verk_ i länken gäller förvalet, ett verk.
-    el('antalverk').value = (m[4] === '5') ? '5' : '1';
+    el('antalverk').value = (m[5] === '5') ? '5' : '1';
     markeraVerkknappar();
-    const platshallare = el('natengangingar');
-    platshallare.dispatchEvent(new Event('change'));
+    if (m[3] === 'Typfall') {
+      tillampaTypfall();
+    } else {
+      const ex = m[2] || 'H';
+      el('natexempel').value = ex;
+      fyllExempel(ex);
+      sattAuto(false);
+    }
+    el('natengangingar').value = (m[4] === 'Nej') ? 'nej' : 'ja';
+    el('natengangingar').dispatchEvent(new Event('change'));
     return true;
   }
 

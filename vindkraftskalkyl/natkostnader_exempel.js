@@ -23,10 +23,10 @@
    natutredning kkr (fast del), natutredningpermw kkr/MW, natutredningtak kkr (högst),
    natengangschablon kkr/MW. Utredningsavgiften = natutredning + natutredningpermw × MW, högst natutredningtak.
 
-   Version 1.5 · 2026-11-22 (EIFS 2026:10 beslutad, elmarknadslagen, Svenska kraftnäts vägledning 2026-07-01, utredningsavgift per MW)
+   Version 1.6 · 2026-11-22 (NAT_TYPFALL.trappa: vilken parkeffekt som passar vilket nätfall)
    ============================================================================ */
 
-var NAT_DATA_VERSION = '1.5';
+var NAT_DATA_VERSION = '1.6';
 var NAT_DATA_DATUM = '2026-11-22';
 
 /** Utgångspunkten för analysen: ledaren och inlägget som återger den. Ingår i källistan. */
@@ -62,6 +62,14 @@ var NAT_TYPFALL = {
   stamnatMW: 100,
   litet: 'B',
   stort: 'A',
+  /** Vilken parkeffekt som passar vilket nätfall (riktmärke ur figur 2.6:1: ungefär 10 MW vid 10 kV, 15 MW vid 20 kV,
+      40 MW vid 40 kV, 100 MW vid 70 kV, 300 MW vid 130 kV). Fall A och B är de enda regionnätsfallen i kalkylen. */
+  trappa: [
+    { franMW: 0, tillMW: 15, id: 'B', effekt: 'Upp till cirka 15 MW', kV: '20–6 kV', text: 'Fall B, Vattenfall 20–6 kV. Figuren anger ungefär 10 MW vid 10 kV och 15 MW vid 20 kV.' },
+    { franMW: 15, tillMW: 40, id: 'A', effekt: 'Cirka 15 till 40 MW', kV: '50–30 kV', text: 'Fall A, Vattenfall 50–30 kV. Figuren anger ungefär 40 MW vid 40 kV.' },
+    { franMW: 40, tillMW: 100, id: 'A', effekt: 'Cirka 40 till 100 MW', kV: '70 kV', text: 'Figuren pekar på 70 kV, som varken fall A eller B täcker. Kalkylen använder fall A som närmaste underlag, med förbehåll.' },
+    { franMW: 100, tillMW: 1e9, id: 'A', effekt: 'Över cirka 100 MW', kV: '130 kV och högre', text: 'Figuren pekar på 130 kV och högre. Fall A används som närmaste underlag, med förbehåll. Direktanslutning till stamnätet (fall C–E) är ändå inte given.' }
+  ],
   kalla: {
     text: 'Vindkraftutredning för Norrbottens kust- och skärgårdsområde, avsnitt 2.6 Elnät och befintlig kraftproduktion, s. 32–33, figur 2.6:1 Sannolik överföringsförmåga av effekt vid olika systemspänning (figuren anger Energimyndigheten 2007 som källa; utredningens utgivningsår är inte kontrollerat)',
     url: 'https://www.kalix.se/globalassets/filer/bygga-bo-och-miljo/planer/vindkraftsutredning/s32-33.pdf',

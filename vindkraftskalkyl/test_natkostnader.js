@@ -169,5 +169,15 @@ sant('alla belagda fall har komplett.lopande', D.NAT_EXEMPEL.filter(f => f.belag
   sant('kraftproduktionsmoduler är fortfarande remissutkast', rv['ei-fs-kraftproduktionsmoduler'].status === 'remissutkast');
 }
 
+
+/* Trappan över parkeffekt och nätfall hänger ihop med typfallet. */
+{
+  const T = D.NAT_TYPFALL;
+  sant('trappan täcker alla effekter utan glapp', T.trappa[0].franMW === 0 && T.trappa.every((st, i) => i === 0 || st.franMW === T.trappa[i - 1].tillMW));
+  const idFor = (P) => T.trappa.find(st => P > st.franMW && P <= st.tillMW).id;
+  [4, 8, 15, 16, 20, 40, 60, 150].forEach(P => sant('trappan och typfallsfunktionen ger samma fall vid ' + P + ' MW', idFor(P) === N.typfallForEffekt(P, T).id));
+  sant('trappans fall finns i datafilen', T.trappa.every(st => !!byid[st.id]));
+}
+
 console.log((fel === 0 ? 'ALLA TESTER OK' : 'TESTFEL') + ': ' + ok + ' godkända, ' + fel + ' fel');
 process.exit(fel === 0 ? 0 : 1);

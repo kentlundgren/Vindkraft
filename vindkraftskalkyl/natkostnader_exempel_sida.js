@@ -9,6 +9,7 @@
    skript (regel 19 i kent-bygg-sidor).
    UPPDATERING 2026-11-22: sidan skapades. Version 1.0.
    UPPDATERING 2026-11-22 (senare igen): länk "Visa i kalkylen" vid varje fall. Version 1.2.
+   UPPDATERING 2026-11-22 (senare igen): Tabell 4 (parkeffekt och nätfall) med markering av vald storlek. Version 1.8.
    UPPDATERING 2026-11-22 (senare igen): fältet för utredningsavgift per MW, Svenska kraftnäts vägledning 2026-07-01 i källistan. Version 1.7.
    UPPDATERING 2026-11-22 (senare igen): typfallet märks i Diagram 1 (ram och etikett), övriga fall tonas ned, fler källor om stamnätsanslutning. Version 1.6.
    UPPDATERING 2026-11-22 (senare igen): märkning av direktanslutna fall (C–E), förklaring vid hovring, källan om stamnätsanslutning i källistan. Version 1.5.
@@ -18,7 +19,7 @@
    ============================================================================ */
 'use strict';
 
-const VERSION = '1.7';
+const VERSION = '1.8';
 const VERSIONSDATUM = '2026-11-22';
 
 (function () {
@@ -135,6 +136,18 @@ const VERSIONSDATUM = '2026-11-22';
   function bygg() {
     const x = indata();
     markeraKnappar(x.P);
+    const tk = el('tabell-typfall-kropp');
+    if (tk && typeof NAT_TYPFALL !== 'undefined' && NAT_TYPFALL.trappa) {
+      tk.textContent = '';
+      NAT_TYPFALL.trappa.forEach(st => {
+        const tr = document.createElement('tr');
+        if (x.P > st.franMW && x.P <= st.tillMW) tr.className = 'nu';
+        tr.appendChild(td(st.effekt));
+        tr.appendChild(td(st.kV));
+        tr.appendChild(td(st.text));
+        tk.appendChild(tr);
+      });
+    }
     const fall = NAT_EXEMPEL.filter(f => !f.eget);
     const rader = fall.map(f => ({ f, r: raknaFall(f, x) }));
     rader.sort((a, b) => a.r.lopandeOre.summa - b.r.lopandeOre.summa);

@@ -45,6 +45,9 @@
 
   UPPDATERING 2026-11-22 (senare igen): panelen Nätkostnader i siffror är hopfälld. Förvalt syns bara summa löpande
   kostnader (öre/kWh) och summa löpande nätkostnad år 1 (kr/år), och resten fälls ut. Version 1.8.
+
+  UPPDATERING 2026-11-22 (senare igen): rutan Välj nätfall efter parkens storlek (förvalt ikryssad) så att fallet byts när antal
+  verk ändras, och en trappa som visar vilken parkeffekt som passar fall B och A. Version 1.9.
   ============================================================================
 -->
 <html lang="sv">
@@ -213,7 +216,8 @@
         <p class="hint nat-lank"><a href="natkostnader_exempel.html">Se alla exempelfall, källor och regelverk</a></p>
 
         <div class="nat-forslag" id="nat-forslag" aria-live="polite">
-          <p id="nat-forslag-text">–</p>
+          <label class="nat-auto"><input type="checkbox" id="natautofall" checked> Välj nätfall efter parkens storlek automatiskt <span class="hjalp" tabindex="0" data-hjalp="När rutan är ikryssad byter kalkylen exempelfall (fall B eller A) när du ändrar antal verk eller effekt. Väljer du ett fall själv, eller ändrar ett nätfält, kryssas rutan ur och fallet följer inte längre storleken. Kryssa i den igen för att låta kalkylen välja.">?</span></label>
+          <div id="nat-forslag-text">–</div>
           <button type="button" class="nat-kopiera" id="nat-forslag-knapp" hidden>Använd förslaget</button>
         </div>
 
