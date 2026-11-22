@@ -28,8 +28,9 @@
    UPPDATERING 2026-11-22 (senare igen): infällbar nätgrupp, sammanfattning, delbar länk, öre/kWh vid
    fälten (natkostnader_ui.js). Version 1.2.
    UPPDATERING 2026-11-22 (senare igen): förvalt antal verk är 1 (4 MW), växlare mellan ett och fem verk,
-   löpande nätkostnad i kronor per verk och för parken (tabell i panelen) och nuvärde över livslängden. Version 1.3. */
-const VERSION = '1.3';
+   löpande nätkostnad i kronor per verk och för parken (tabell i panelen) och nuvärde över livslängden. Version 1.3.
+   UPPDATERING 2026-11-22 (senare igen): typfall efter parkens effekt (natkostnader_ui.js, NAT_TYPFALL). Version 1.4. */
+const VERSION = '1.4';
 const VERSIONSDATUM = '2026-11-22';
 
 /* ============================================================================

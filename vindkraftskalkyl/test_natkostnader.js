@@ -129,5 +129,20 @@ sant('alla belagda fall har komplett.lopande', D.NAT_EXEMPEL.filter(f => f.belag
   sant('utgångspunkten finns med länk', D.NAT_UTGANGSPUNKT.length === 2 && D.NAT_UTGANGSPUNKT.every(k => k.url));
 }
 
+
+/* Typfall efter parkens effekt: B upp till 15 MW, A över. */
+{
+  const T = D.NAT_TYPFALL;
+  sant('typfall: gränsen är 15 MW', T.gransMW === 15);
+  sant('typfall: 4 MW ger B', N.typfallForEffekt(4, T).id === 'B');
+  sant('typfall: 8 MW ger B', N.typfallForEffekt(8, T).id === 'B');
+  sant('typfall: exakt 15 MW ger B', N.typfallForEffekt(15, T).id === 'B');
+  sant('typfall: 20 MW ger A', N.typfallForEffekt(20, T).id === 'A');
+  sant('typfall: 20 MW är inte stamnät', N.typfallForEffekt(20, T).stamnat === false);
+  sant('typfall: 150 MW ger stamnätsnotis', N.typfallForEffekt(150, T).stamnat === true);
+  sant('typfallens fall finns i datafilen', !!byid[T.litet] && !!byid[T.stort]);
+  sant('typfallets källa har länk', !!T.kalla.url);
+}
+
 console.log((fel === 0 ? 'ALLA TESTER OK' : 'TESTFEL') + ': ' + ok + ' godkända, ' + fel + ' fel');
 process.exit(fel === 0 ? 0 : 1);

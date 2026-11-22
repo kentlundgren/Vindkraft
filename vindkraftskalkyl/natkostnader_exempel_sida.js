@@ -9,12 +9,13 @@
    skript (regel 19 i kent-bygg-sidor).
    UPPDATERING 2026-11-22: sidan skapades. Version 1.0.
    UPPDATERING 2026-11-22 (senare igen): länk "Visa i kalkylen" vid varje fall. Version 1.2.
+   UPPDATERING 2026-11-22 (senare igen): avsnittet Typfall efter parkens storlek (fall B upp till 15 MW, fall A över) ersätter normalfallstexten. Version 1.4.
    UPPDATERING 2026-11-22 (senare igen): växlare ett verk / fem verk (förvalt ett verk), förklaringar vid hovring i Diagram 1, förbehåll för ett ensamt verk, utgångspunkten i källistan. Version 1.3.
    UPPDATERING 2026-11-22 (senare): avsnittet Det som saknas anger antagandet att engångskostnaden ingår i investeringsutgiften. Version 1.1.
    ============================================================================ */
 'use strict';
 
-const VERSION = '1.3';
+const VERSION = '1.4';
 const VERSIONSDATUM = '2026-11-22';
 
 (function () {
@@ -218,12 +219,20 @@ const VERSIONSDATUM = '2026-11-22';
 
     /* ---- Normalfall ---- */
     const nf = el('normalfall-text'); nf.textContent = '';
-    const nfFall = (typeof NAT_NORMALFALL !== 'undefined' && NAT_NORMALFALL) ? NAT_EXEMPEL.find(f => f.id === NAT_NORMALFALL) : null;
-    if (nfFall) {
-      nf.textContent = 'Kent har utsett fall ' + nfFall.id + ' (' + nfFall.namn + ') till normalfall. ' + (NAT_NORMALFALL_ANGIVELSE || '') +
-        ' Det läses in i kalkylen när läget går från ingen till bas och alla nätfält är orörda.';
-    } else {
-      nf.textContent = 'Inget normalfall är utsett än. Ett normalfall utses av Kent genom att han anger en anslutning som många anser vara vanlig. Den läggs då in som ett fall i datafilen och läses in i kalkylen när läget går från ingen till bas och alla nätfält är orörda.';
+    const tf = (typeof NAT_TYPFALL !== 'undefined') ? NAT_TYPFALL : null;
+    if (tf) {
+      const fl = NAT_EXEMPEL.find(f => f.id === tf.litet), fs = NAT_EXEMPEL.find(f => f.id === tf.stort);
+      const p1 = document.createElement('p');
+      p1.appendChild(document.createTextNode('Olika nätanslutningar passar olika stora anläggningar. Kalkylen föreslår fall ' + tf.litet + ' (' + fl.namn + ') för en park upp till ' + tf.gransMW + ' MW, och fall ' + tf.stort + ' (' + fs.namn + ') för en större. Ett verk om 4 MW passar därmed fall ' + tf.litet + ', och fem verk om 4 MW (20 MW) fall ' + tf.stort + '. Gränsen ' + tf.gransMW + ' MW är Kents val.'));
+      nf.appendChild(p1);
+      const p2 = document.createElement('p');
+      p2.appendChild(document.createTextNode('Skälet är en vägledande figur över sannolik överföringsförmåga per spänningsnivå: ungefär 10 MW vid 10 kV, 15 MW vid 20 kV och 40 MW vid 40 kV (' ));
+      p2.appendChild(lank(tf.kalla.url, 'Vindkraftutredning för Norrbottens kust- och skärgårdsområde, s. 32–33'));
+      p2.appendChild(document.createTextNode(', där figuren anger Energimyndigheten 2007 som källa). Det är ett riktmärke och inte belagt i Vattenfalls tariff: nätägaren avgör anslutningsnivån efter nätets kapacitet och avstånd. Över cirka ' + tf.stamnatMW + ' MW kan direktanslutning till stamnätet (fall C–E) bli aktuell. Fall A och B är Vattenfalls regionnät, och Ellevio och E.ON är inte genomgångna.'));
+      nf.appendChild(p2);
+      const p3 = document.createElement('p');
+      p3.appendChild(document.createTextNode('I kalkylen väljs förslaget automatiskt när läget går från ingen, om användaren inte har valt ett fall eller ändrat ett fält. Förslaget följer sedan antal verk och effekt tills användaren väljer själv.'));
+      nf.appendChild(p3);
     }
   }
 
@@ -318,6 +327,7 @@ const VERSIONSDATUM = '2026-11-22';
     NAT_EXEMPEL.forEach(f => f.kalla.forEach(k => { if (k.url) unika[k.url] = k; }));
     NAT_REGELVERK.forEach(r => { if (r.kalla && r.kalla.url) unika[r.kalla.url] = r.kalla; });
     (typeof NAT_UTGANGSPUNKT !== 'undefined' ? NAT_UTGANGSPUNKT : []).forEach(k => { unika[k.url] = k; });
+    if (typeof NAT_TYPFALL !== 'undefined' && NAT_TYPFALL.kalla) unika[NAT_TYPFALL.kalla.url] = NAT_TYPFALL.kalla;
     Object.keys(unika).map(u => unika[u]).sort((a, b) => a.text.localeCompare(b.text, 'sv')).forEach(k => {
       const li = document.createElement('li');
       li.appendChild(lank(k.url, k.text));

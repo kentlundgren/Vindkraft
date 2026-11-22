@@ -556,3 +556,7 @@ h2:hover > .ankare, h3:hover > .ankare, .ankare:focus { opacity: 1; }
 .nat-tabell thead th, .nat-tabell tbody th { background: var(--farg-framhavd); font-weight: 600; }
 .nat-tabell td.tal { text-align: right; white-space: nowrap; }
 .nat-tabell tr.framhavd th, .nat-tabell tr.framhavd td { font-weight: 700; }
+
+/* Förslag på typfall efter parkens effekt */
+.nat-forslag { margin: .5rem 0; padding: .5rem .7rem; background: var(--farg-framhavd); border: 1px solid var(--farg-ram); border-radius: 6px; font-size: .82rem; }
+.nat-forslag p { margin: 0 0 .3rem; }

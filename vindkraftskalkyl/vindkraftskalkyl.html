@@ -31,6 +31,9 @@
   UPPDATERING 2026-11-22 (senare igen): förvalt är ett verk om 4 MW (som den ursprungliga kalkylen),
   växlare mellan ett och fem verk i gruppen Nät och systemkrav, löpande nätkostnad i kronor per
   verk och för parken, och ledaren i Svensk Vindkraft som utgångspunkt i källistan. Version 1.3.
+
+  UPPDATERING 2026-11-22 (senare igen): förslag på typfall efter parkens effekt (fall B upp till 15 MW, fall A över),
+  som väljs automatiskt när läget går från ingen och användaren inte har valt själv. Version 1.4.
   ============================================================================
 -->
 <html lang="sv">
@@ -197,6 +200,11 @@
           <select id="natexempel" class="indata"></select>
         </label>
         <p class="hint nat-lank"><a href="natkostnader_exempel.html">Se alla exempelfall, källor och regelverk</a></p>
+
+        <div class="nat-forslag" id="nat-forslag" aria-live="polite">
+          <p id="nat-forslag-text">–</p>
+          <button type="button" class="nat-kopiera" id="nat-forslag-knapp" hidden>Använd förslaget</button>
+        </div>
 
         <label>Ingår engångskostnaden redan i investeringsutgiften? <span class="hjalp" tabindex="0" data-hjalp="Ja (förvalt): engångskostnaderna antas ingå i den specifika investeringskostnaden (12 000 kkr/MW) och läggs inte till. De visas ändå i panelen Nätkostnader i siffror. Nej: engångskostnaderna läggs till investeringsutgiften. Antagandet är inte belagt i någon källa.">?</span>
           <select id="natengangingar" class="indata">
@@ -691,6 +699,9 @@
         <em>Svensk Vindkraft</em>, publicerad 2026-11-16 (hämtad 2026-11-22), som Svensk Vindkraft återgav i ett
         <a href="https://www.linkedin.com/posts/svensk-vindkraft_i-senaste-numret-av-v%C3%A5r-tidning-svensk-vindkraft-activity-7529084415403253761-pt5K" target="_blank" rel="noopener">LinkedIn-inlägg</a>
         2026-11-19. Ledaren pekar ut nätavgifter, anslutningskostnader och nya systemkrav som svåra att förutse. Den anger inga belopp.
+        Förslaget om vilket fall som passar vilken parkstorlek bygger på en vägledande figur i
+        <a href="https://www.kalix.se/globalassets/filer/bygga-bo-och-miljo/planer/vindkraftsutredning/s32-33.pdf" target="_blank" rel="noopener"><em>Vindkraftutredning för Norrbottens kust- och skärgårdsområde</em>, s. 32–33</a>
+        (figuren anger Energimyndigheten 2007 som källa).
         Nätkostnader och systemkrav bygger på exempelfall och regelverk som redovisas
         på sidan <a href="natkostnader_exempel.html">Exempelfall och källor för nätkostnader</a>.
         Huvudkällor (hämtade 2026-11-22):

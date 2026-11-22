@@ -115,7 +115,12 @@
     return t;
   }
 
-  const API = { NAT_FALT, faktorForLage, beraknaNat, tommaFalt };
+  /** Typfall efter total effekt (MW): `litet` upp till gransMW, annars `stort`. `stamnat` är sant över stamnatMW. */
+  function typfallForEffekt(P, t) {
+    return { id: P > t.gransMW ? t.stort : t.litet, stamnat: P > t.stamnatMW };
+  }
+
+  const API = { NAT_FALT, faktorForLage, beraknaNat, tommaFalt, typfallForEffekt };
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
   else rot.NATKOSTNAD = API;
 })(typeof window !== 'undefined' ? window : this);

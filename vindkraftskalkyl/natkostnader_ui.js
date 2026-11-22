@@ -31,6 +31,39 @@
     });
   }
 
+  /* ---------- Typfall efter parkens effekt ---------- */
+  let autoVald = false;
+
+  function parkEffekt() {
+    return (parseFloat(el('effekt').value) || 0) * (Math.max(1, Math.round(parseFloat(el('antalverk').value)) || 1));
+  }
+  function typfallNu() {
+    return NATKOSTNAD.typfallForEffekt(parkEffekt(), NAT_TYPFALL);
+  }
+  function tillampaTypfall() {
+    const t = typfallNu();
+    el('natexempel').value = t.id;
+    fyllExempel(t.id);
+    autoVald = true;
+    uppdateraLank();
+  }
+
+  function uppdateraForslag(d) {
+    const txt = el('nat-forslag-text'), knapp = el('nat-forslag-knapp');
+    if (!txt) return;
+    const P = d.effekt * d.antalverk;
+    const t = NATKOSTNAD.typfallForEffekt(P, NAT_TYPFALL);
+    const f = hittaFall(t.id);
+    txt.textContent = '';
+    txt.appendChild(document.createTextNode('Förslag för ' + fmt(P, 1) + ' MW (' + d.antalverk + (d.antalverk === 1 ? ' verk' : ' verk') + '): fall ' + t.id + ', ' + f.namn + '. ' +
+      'En park upp till cirka ' + NAT_TYPFALL.gransMW + ' MW ansluts ofta på 10–20 kV och en större på 30–50 kV. Det är en vägledning och inte belagt i Vattenfalls tariff, och nätägaren avgör nivån. ' +
+      'Fall A och B är Vattenfalls regionnät. Ellevio och E.ON är inte genomgångna. ' +
+      (t.stamnat ? 'Över cirka ' + NAT_TYPFALL.stamnatMW + ' MW kan direktanslutning till stamnätet (fall C–E) bli aktuell. ' : '')));
+    const a = document.createElement('a'); a.href = 'natkostnader_exempel.html#normalfall-rubrik'; a.textContent = 'Läs varför';
+    txt.appendChild(a); txt.appendChild(document.createTextNode('.'));
+    if (knapp) knapp.hidden = (el('natexempel').value === t.id);
+  }
+
   function allaNatFaltTomma() {
     return FALT.every(k => { const e = el(k); return !e || e.value.trim() === ''; });
   }
@@ -61,15 +94,31 @@
       if (sel.value === 'H' && el('nat-detaljer')) el('nat-detaljer').open = true;
     });
 
+    // Typfall efter parkens effekt. Väljs automatiskt när läget går från ingen och användaren inte har
+    // valt själv, och följer sedan antal verk och effekt tills användaren väljer eller ändrar ett fält.
+    FALT.forEach(k => { const e = el(k); if (e) e.addEventListener('input', () => { autoVald = false; }); });
+    sel.addEventListener('change', () => { autoVald = false; });
+
     let foregLage = el('natlage').value;
     el('natlage').addEventListener('change', () => {
       const ny = el('natlage').value;
-      if (foregLage === 'ingen' && ny !== 'ingen' && allaNatFaltTomma() &&
-          typeof NAT_NORMALFALL !== 'undefined' && NAT_NORMALFALL && hittaFall(NAT_NORMALFALL)) {
-        sel.value = NAT_NORMALFALL;
-        fyllExempel(NAT_NORMALFALL);
+      if (foregLage === 'ingen' && ny !== 'ingen' && allaNatFaltTomma() && sel.value === 'H') {
+        if (typeof NAT_NORMALFALL !== 'undefined' && NAT_NORMALFALL && hittaFall(NAT_NORMALFALL)) {
+          sel.value = NAT_NORMALFALL;
+          fyllExempel(NAT_NORMALFALL);
+        } else {
+          tillampaTypfall();
+        }
       }
       foregLage = ny;
+    });
+    ['antalverk', 'effekt'].forEach(id => el(id).addEventListener('input', () => {
+      if (autoVald && typfallNu().id !== sel.value) tillampaTypfall();
+    }));
+    const fk = el('nat-forslag-knapp');
+    if (fk) fk.addEventListener('click', () => {
+      tillampaTypfall();
+      el('natlage').dispatchEvent(new Event('change', { bubbles: true }));
     });
 
     kopplaLank();
@@ -112,6 +161,7 @@
   function tillampaHash() {
     const m = HASH_MONSTER.exec(location.hash);
     if (!m) return false;
+    autoVald = false;
     el('natlage').value = HASH_TILL_LAGE[m[1]];
     const ex = m[2] || 'H';
     el('natexempel').value = ex;
@@ -223,6 +273,7 @@
     satt('nat-info', info + tillagg);
 
     uppdateraKronor(res, d);
+    uppdateraForslag(d);
     uppdateraExempelInfo(res, d);
     uppdateraSammanfattning(res, d);
   }
