@@ -3,7 +3,7 @@
 **Namn:** PRD_natkostnader
 **Plats:** `vindkraftskalkyl/PRD_natkostnader.md`
 **Skapad:** 2026-11-22
-**Version:** 0.7
+**Version:** 0.8
 **Status:** Utkast. Ingen kod är ändrad. Inga belopp är fastställda (se fas 1, avsnitt 8). Fas 1 pågår: ledaren är läst och definierar inte "nya systemkrav" eller anger belopp. Anslutning, systemkrav och löpande nätavgifter för producenter är genomgångna mot publicerade källor i [KALLOR_natkostnader.md](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/KALLOR_natkostnader.md). Svenska kraftnäts egna prislistor för 2026 och 2027 är också genomgångna. Regionnätens avgifter för 2027 och fler nätägare återstår.
 **Typ:** Tilläggs-PRD till [vindkraftskalkylen](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html) (huvudversionen, GitHub Pages).
 
@@ -146,6 +146,82 @@ Kolumnen "Förvalt värde" anger varifrån värdet kommer. De faktiska talen lä
 - **Sekundära nyckeltal** (visas mindre framträdande): löpande kostnad i kr/MW och år, nätkostnadens andel av LCOE och total nätkostnad per kWh över hela livslängden (diskonterad).
 - **Nyckeltalen visas alltid**, även i läget "ingen". De räknas då på fältens värden (läget bas), så att läsaren kan se vad nätkostnader skulle vara utan att slå på dem i kalkylen. Beräkningen av NPV, IRR, LCOE och payback påverkas bara av läget som är valt.
 
+### fas 2: fältnamn, beräkningssteg och exempelfall [#](#fas-2)
+
+<a id="fas-2"></a>
+
+Det här avsnittet fastställer det som avsnitt 5 lämnade öppet: exakta fältnamn, hur nätkostnaderna kopplas in steg för steg, och vilka värden exempelfallen har. Det ersätter inte formlerna ovan, det gör dem körbara.
+
+Tabell 6. Fältnamn (id i HTML och `lasIndata()`) [#](#tabell-6)
+
+<a id="tabell-6"></a>
+
+| id | Etikett | Enhet | Typ | Förvalt |
+| --- | --- | --- | --- | --- |
+| `natlage` | Nätkostnader | ingen / låg / bas / hög | select | ingen |
+| `natexempel` | Exempelfall | lista (Tabell 7) | select | eget |
+| `natavstand` | Avstånd till anslutningspunkt | km | number | 0 |
+| `natledning` | Ledningskostnad | kkr/km | number | 0 |
+| `natstation` | Station och fast del | kkr | number | 0 |
+| `natforstark` | Andel av förstärkning och nätägarens anslutningsavgift | kkr | number | 0 |
+| `natutredning` | Utredning och förprojektering | kkr | number | 0 |
+| `natfast` | Fast årsavgift (inklusive kundspecifik avgift) | kr/år | number | 0 |
+| `nateffekt` | Effektavgift eller fast avgift per kW | kr/kW och år | number | 0 |
+| `natavstavg` | Avståndsberoende avgift | kr/kW och km | number | 0 |
+| `natavstavstand` | Avstånd för avståndsberoende avgift | km | number | 0 |
+| `natenergi` | Energiavgift (negativt = ersättning) | öre/kWh | number | 0 |
+| `natforandring` | Årlig förändring av nätavgifter | %/år | number | 0 |
+| `natsyseng` | Systemkrav, engångskostnad | kkr/MW | number | 0 |
+| `natsyslop` | Systemkrav, löpande kostnad | kr/MW och år | number | 0 |
+| `natsysbortfall` | Systemkrav, produktionsbortfall | % | number | 0 |
+| `natfaktorlag` | Faktor i läget låg | gånger | number | 0,5 (antagande) |
+| `natfaktorhog` | Faktor i läget hög | gånger | number | 1,5 (antagande) |
+
+Alla fält utom väljarna är gula (`#FFF9C4`) indatafält. Alla belopp står på 0 tills ett exempelfall väljs eller läsaren fyller i egna värden, eftersom ingen källa anger belopp för ledning, station, förstärkning och systemkrav.
+
+**Beräkningssteg (i `beraknaAllt`)**
+
+1. Hjälpfunktionen `beraknaNat(d, faktor, produktionkWh)` returnerar alla poster i kr (engång) respektive kr per år (löpande) för en given faktor. Den läser bara de nya fälten.
+2. Faktorn för läget är `ingen = 0`, `låg = natfaktorlag`, `bas = 1`, `hög = natfaktorhog`. Faktorn multiplicerar alla poster utom energiavgiften, som följer marknad och förluster och inte skalas.
+3. Produktion med bortfall: `bortfall = min(1, faktor × natsysbortfall / 100)`, och `produktionkWh_ar1 = P_tot × 8760 × kapfaktor × 1000 × (1 − bortfall)`.
+4. Engångsposter i kr: `ledning = natavstand × natledning × 1000`, `station = natstation × 1000`, `forstarkning = natforstark × 1000`, `utredning = natutredning × 1000`, `system = natsyseng × 1000 × P_tot`. Summan `natEngang = faktor × (ledning + station + forstarkning + utredning + system)`.
+5. Löpande poster år 1 i kr: `fast = natfast`, `effekt = nateffekt × P_tot × 1000`, `avstand = natavstavg × natavstavstand × P_tot × 1000`, `system = natsyslop × P_tot`, `energi = natenergi / 100 × produktionkWh_ar1`. Faktorn multiplicerar de fyra första. År t: `natLopande[t] = (faktor × (fast + effekt + avstand + system) + natenergi / 100 × prodkWhAr[t]) × (1 + natforandring / 100)^(t−1)`.
+6. Koppling in i kalkylen: `investering += natEngang`, `driftAr[t] += natLopande[t]`. Resten (annuitet, LCOE, NPV, IRR, payback, andelsägarens självkostnad) följer av de befintliga formlerna.
+7. Panelen "Nätkostnader i siffror" räknas med `beraknaNat(d, faktorPanel, …)` där `faktorPanel = faktor` om läget inte är ingen, annars 1 (bas). Då visas storleken även i läget ingen, utan att nyckeltalen NPV, IRR, LCOE och payback ändras.
+8. Huvudnyckeltalen i panelen: engångsposter `post / P_tot` i kr/MW, och summan som procent av `specinv × 1000`. Löpande poster `post / produktionkWh_ar1 × 100` i öre/kWh. Är produktionen 0 visas "–".
+9. Sekundära nyckeltal: löpande summa per MW och år, total nätkostnad per kWh över livslängden `(natEngang + Σ natLopande[t] / (1 + r)^t) / disEnergi`, och dess andel av LCOE. Andelen av LCOE visas som "–" i läget ingen.
+
+Tabell 7. Exempelfall (värden ur källfilen, 20 MW som i kalkylens förvalda värden) [#](#tabell-7)
+
+<a id="tabell-7"></a>
+
+| Exempelfall | `natfast` kr/år | `nateffekt` kr/kW | `natavstavg` kr/kW,km | `natavstavstand` km | `natenergi` öre/kWh | `natutredning` kkr | Källa och kommentar |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| A. Vattenfall PT1 (50–30 kV) med Svenska kraftnät, södra Sverige | 1 250 000 | 23,1 | 1,23 | 20 | −2,62 | 0 | Vattenfall: fast 1 250 tkr, effekt 17, avstånd 1,23, energiersättning −1,12. Svenska kraftnät via Vattenfall: 6,1 kr/kW och −1,5 öre/kWh, enligt min läsning ovanpå. Avståndet 20 km är ett antagande. |
+| B. Vattenfall PT2 (20–6 kV) med Svenska kraftnät, södra Sverige | 680 000 | 19,1 | 2,89 | 20 | −4,19 | 0 | Vattenfall: fast 680 tkr, effekt 13, avstånd 2,89, energiersättning −2,69, plus Svenska kraftnät som i A. |
+| C. Svenska kraftnät direkt, söder, 2026 (Alvesta) | 0 | 14 | 0 | 0 | −3,87 | 124 | Effektavgift 14 kr/kW, förlustkoefficient −6,3 procent vid elpriset 0,60 kr/kWh: (600 + 15) × −0,063 = −38,7 kr/MWh. Utredning: 100 kkr + 1,2 kkr/MW (2025). |
+| D. Svenska kraftnät direkt, norr, 2026 (Messaure) | 0 | 31 | 0 | 0 | 2,39 | 124 | Effektavgift 31 kr/kW, koefficient 7,6 procent vid elpriset 0,30 kr/kWh: (300 + 15) × 0,076 = 23,9 kr/MWh. |
+| E. Svenska kraftnät direkt, söder, 2027 (Alvesta) | 144 000 | 22 | 0 | 0 | −4,04 | 124 | Fast avgift 22 kr/kW och år, kundspecifik avgift 12 000 kr/månad, koefficient −7,3 procent och fördelningsfaktor 0,9 vid elpriset 0,60 kr/kWh. Svenska kraftnäts reducering av energiavgiften är inte inräknad. |
+| F. Lokalnät för en vindpark (OX2 Brobacken Nät) | 0 | 170,21 | 0 | 0 | 1,77 | 0 | Inmatningsabonnemang 170,21 kr/kW och 17,67 kr/MWh. Ett nät som en vindkraftutvecklare äger, inte representativt. |
+| G. Eget | 0 | 0 | 0 | 0 | 0 | 0 | Läsarens egna värden. |
+
+Engångsposterna för ledning, station, förstärkning och systemkrav står på 0 i alla exempelfall, eftersom ingen publicerad källa anger belopp. Hjälptexten säger att beloppen kommer ur nätägarens offert.
+
+Tabell 8. Förväntade resultat för exempelfallen, som test (20 MW, kapacitetsfaktor 0,37, 64 824 000 kWh per år, läge bas) [#](#tabell-8)
+
+<a id="tabell-8"></a>
+
+| Exempelfall | Löpande totalt, kr per år | Löpande totalt, öre per kWh | Engångsposter, kr per MW |
+| --- | --- | --- | --- |
+| A | 505 600 | 0,78 | 0 |
+| B | −498 100 | −0,77 | 0 |
+| C | −2 231 600 | −3,44 | 6 200 |
+| D | 2 171 900 | 3,35 | 6 200 |
+| E | −2 035 200 | −3,14 | 6 200 |
+| F | 4 549 600 | 7,02 | 0 |
+
+Fas 2 är klar när formlerna ovan har granskats mot källfilens enheter (klart i den här versionen) och Kent har godkänt exempelfallen och faktorerna 0,5 och 1,5.
+
 <a id="6-granssnitt"></a>
 
 ## 6. gränssnitt [#](#6-granssnitt)
@@ -178,7 +254,7 @@ Tabell 4. Faser med resultat och kontroll [#](#tabell-4)
 | --- | --- | --- |
 | 0 | Den här PRD:n | Kent har godkänt, och en genomläsning med fräscha ögon är gjord |
 | 1 | Källinsamling: verifierade källor och en tabell med värde, enhet, år, sida och källa per fält | Alla fält i tabell 3 har värde med källa eller är märkta antaganden |
-| 2 | Formler och fältnamn fastställs i detalj | Formlerna i avsnitt 5 är överens med fas 1:s enheter |
+| 2 | Formler, fältnamn och exempelfall fastställs i detalj (avsnittet fas 2) | Formlerna är överens med fas 1:s enheter och Kent har godkänt exempelfallen och faktorerna |
 | 3 | Bygg i huvudkalkylen: indata, exempelfall, beräkning, panelen Nätkostnader i siffror, diagram, hjälptexter, källor, README, version | Acceptanskriterierna i avsnitt 9 uppfylls |
 | 4 | Test: nollfall, handräkning, känslighet | Tabell 5 avprickad |
 | 5 | Senare steg, var för sig: Långhult-kopian, ver2, ver3 | Eget beslut per version |
@@ -231,8 +307,8 @@ Behövs ett SPEC.md-steg härifrån? **Nej.** Ändringen är begränsad (ett få
 Modellfrågorna är avgjorda (Tabell 1). Kvar är sådant som bara källor eller Kent kan avgöra:
 
 1. Vilka belopp gäller för nya systemkrav? Ingen källa anger något. Fälten står på 0 tills det finns belägg eller Kent anger ett antagande.
-2. Vilka exempelfall ska finnas, och vilka värden ska de ha? Förslag: Vattenfall PT1 och PT2, Svenska kraftnät söder och norr, samt ett eget fall. Värdena läggs in i fas 2.
-3. Vilka faktorer ska låg och hög ha? Fastställs ur källornas spridning i fas 2, annars märkta antaganden.
+2. Godkänner Kent exempelfallen A–G i Tabell 7 och faktorerna 0,5 (låg) och 1,5 (hög)? Faktorerna är antaganden.
+3. Vill Kent ange ett illustrativt antagande för ledning, station och förstärkning (kkr), tydligt märkt som antagande, så att engångsposten i kr/MW inte står på 0 i exempelfallen? Ingen publicerad källa anger belopp.
 4. Har Ei beslutat föreskrifterna om anslutningsavgifter och om krav för kraftproduktionsmoduler? Båda är i källfilen remissutkast.
 5. Regionnätens avgifter för 2027 och fler nätägare (Ellevio, E.ON) behöver genomgås, så att exempelfallen speglar mer än Vattenfall.
 6. Hur ofta behöver exempelfallen uppdateras, och vem gör det när tarifferna ändras varje årsskifte?
