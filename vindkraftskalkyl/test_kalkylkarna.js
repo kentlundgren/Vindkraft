@@ -128,7 +128,8 @@ lika('realiserat pris år 3 med 2 %/år', K.realiseratPris(0.5, 0.02, 0.75, 3), 
 /* ---------- Alla kalkyler använder kärnan ---------- */
 const KALKYLER = [
   { html: 'vindkraftskalkyl.html', js: 'berakningar.js' },
-  { html: 'vindkraftskalkyl_langhult.html', js: 'berakningar_langhult.js' }
+  { html: 'vindkraftskalkyl_langhult.html', js: 'berakningar_langhult.js' },
+  { html: 'vindkraftskalkyl_Onnerup.html', js: 'berakningar.js' }
 ];
 const FORBJUDNA = ['annuitet', 'npv', 'irr', 'payback', 'fmt', 'tal', 'text', 'radataNat', 'lcoeAvKassaflode', 'lasNatIndata', 'natPaverkan', 'natSammanfattning',
   'beraknaNarboende', 'beraknaNarboendeZoner', 'beraknaNarboendeSchablon', 'lasNarboendeIndata', 'zonEtikett', 'realiseratPris'];

@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  Vindkraftskalkyl, fall Önnerup (Lomma kommun)
+  ----------------------------------------------------------------------------
+  Samma kalkyl som huvudkalkylen (vindkraftskalkyl.html), med förvalda värden för
+  Önnerupsprojektet: tre vindkraftverk i Önnerup, Lomma kommun, elområde SE4.
+  All beräkning ligger i berakningar.js (samma fil som huvudkalkylen) och i den
+  gemensamma kärnan kalkylkarna.js, och formateringen i stil.css. Bara förvalen
+  och texterna skiljer. Ändras ett räknesätt slår det därför igenom här också.
+
+  Underlag: Mark- och miljööverdomstolens dom 2022-01-27, mål P 14634-20 (tre verk,
+  navhöjd 100 m, totalhöjd högst 150 m, årsproduktion 22 704 MWh efter 10 %
+  säkerhetsmarginal). Effekt per verk (3,3 MW) och antal bostäder per zon saknas i
+  domen och är märkta som antagande eller saknas.
+
+  UPPDATERING 2026-11-23: sidan skapades. Version delas med huvudkalkylen (berakningar.js).
+  ============================================================================
+-->
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vindkraftskalkyl, fall Önnerup</title>
+  <meta name="description" content="Kalkyl för Önnerupsprojektet, tre vindkraftverk i Lomma kommun (elområde SE4), i fem perspektiv: investerare, markägare, kommun, andelsägare och närboende. Samma räknelogik som huvudkalkylen.">
+
+  <!-- Extern CSS länkas i head med relativ sökväg -->
+  <link rel="stylesheet" href="stil.css">
+<link rel="stylesheet" href="natkostnader.css">
+<link rel="stylesheet" href="brodsmulor.css">
+<link rel="stylesheet" href="kalkylmeny.css">
+</head>
+
+<body>
+<!-- brodsmulor:start (genereras av brodsmulor.py från dokument.json: ändra dokument.json, inte här) -->
+<nav class="brodsmulor" aria-label="Brödsmulor och dokument i samma mapp">
+<ol><li><a href="vindkraftskalkyl.html">Vindkraftskalkyl, fem perspektiv</a></li><li aria-current="page">Kalkyl för fallet Önnerup</li></ol>
+<p class="syskon">Fler dokument i samma mapp: <a href="vindkraftskalkyl.html">Kalkylen</a><span class="sep">·</span><a href="vindkraftskalkyl_langhult.html">Kalkyl för fallet Långhult</a><span class="sep">·</span><strong aria-current="page">Kalkyl för fallet Önnerup</strong><span class="sep">·</span><a href="natkostnader_exempel.html">Exempelfall och källor för nätkostnader</a></p>
+</nav>
+<!-- brodsmulor:slut -->
+<!-- kalkylmeny:start (genereras av kalkylmeny.py från dokument.json: ändra dokument.json, inte här) -->
+<div class="kalkylmeny"><details><summary>Kalkyler: Fallet Önnerup ▾</summary><ul><li><a href="vindkraftskalkyl.html">Huvudkalkylen</a><small>Fem perspektiv, med nätkostnader</small></li><li><a href="vindkraftskalkyl_langhult.html">Fallet Långhult</a><small>Vindpark Långhult, 20 verk, indata ur Kaufmann &amp; Westander (2026)</small></li><li><span aria-current="page"><strong>Fallet Önnerup</strong> (du är här)</span><small>Tre verk i Lomma kommun (SE4), underlag ur domen P 14634-20</small></li></ul></details></div>
+<!-- kalkylmeny:slut -->
+
+  <header class="sidhuvud">
+    <h1 id="Onnerup">Vindkraftskalkyl, fall Önnerup (Lomma kommun)</h1>
+    <p class="ingress">
+      Kalkyl för Önnerupsprojektet: tre vindkraftverk i Önnerup, Lomma kommun, elområde SE4. Utgångspunkten är
+      uppgifterna i <a href="#ref-mod">Mark- och miljööverdomstolens dom P 14634-20</a> (2022-01-27). Kalkylen visar ekonomin för
+      <strong>investeraren</strong>, <strong>markägaren</strong>, <strong>kommunen/samhället</strong>, <strong>andelsägaren</strong> och
+      <strong>den <span class="nb-info" tabindex="0">närboende</span></strong>, med samma räknelogik som
+      <a href="vindkraftskalkyl.html">huvudkalkylen</a>. Det som inte står i domen är märkt som antagande eller saknas.
+      Ändra ett gult fält så räknas allt om.
+    </p>
+    <p class="ingress"><strong>Vad som saknas:</strong> effekt per verk (3,3 MW är en muntlig uppgift, inte ur domen), antal bostäder per avståndszon
+      (närboendeersättningen blir 0 tills du fyller i dem), anslutningskostnad och nya systemkrav (se gruppen Nät och systemkrav),
+      samt kostnader och intäkter som projektet självt inte har redovisat.</p>
+  </header>
+
+  <!-- ========================================================================
+       INDATA
+       Alla indatafält har gul bakgrund (klassen "indata") för att tydligt
+       markera att detta är värden användaren kan mata in och ändra.
+       ==================================================================== -->
+  <section class="indata-panel" aria-labelledby="indata-rubrik">
+    <h2 id="indata-rubrik">Indata</h2>
+
+    <div class="indata-grupper">
+
+      <!-- ---- Grupp: Anläggning och investering (investerarbasen) ---- -->
+      <fieldset class="indata-grupp">
+        <legend>Anläggning &amp; investering</legend>
+
+        <label>Spotpris (kr/kWh)
+          <input type="number" step="0.01" id="elpris" class="indata" value="0.6">
+        </label>
+
+        <label>Prisfaktor (realiserat pris / spotpris, 0–1)
+          <abbr class="fk" tabindex="0" data-f="Prisfaktor: vindkraftens genomsnittliga intäktspris delat med genomsnittligt spotpris (0–1). Vindkraften producerar mest när elpriset är lågt, så faktorn blir ofta under 1. Kallas på engelska capture rate (EIFO, 2026: capture price som andel av genomsnittligt marknadspris). Kaufmann &amp; Westander (2026) kallar den viktning och talar om kannibalisering.">?</abbr>
+          <input type="number" step="0.01" min="0" max="1" id="prisfaktor" class="indata" value="0.75">
+          <span class="badge antagande">antagande</span>
+          <span class="hint">Realiserat pris = spotpris × prisfaktor. 0,75 är värdet som Kaufmann &amp; Westander (2026) använder för Långhult (SE3) och ligger i den försiktiga delen av vad timpriser 2022–2025 ger för SE3 och SE4 (ungefärligt, inte belagt för Önnerup). På engelska capture rate (<a href="https://eifo.dk/media/s1bjgkkq/capture-rate-analysis-marts-2026.pdf" target="_blank" rel="noopener">EIFO, 2026</a>).</span>
+        </label>
+
+        <label>Elområde
+          <select id="elomrade" class="indata">
+            <option value="SE1">SE1 (norra)</option>
+            <option value="SE2">SE2</option>
+            <option value="SE3">SE3 (mellersta)</option>
+            <option value="SE4" selected>SE4 (södra)</option>
+          </select>
+          <span class="hint">Byte fyller i ett schablonpris för området (kan ändras).</span>
+        </label>
+
+        <label>Elprisbana – årlig förändring (%/år)
+          <input type="number" step="0.1" id="elprisforandring" class="indata" value="0">
+          <span class="hint">0 = platt elprisbana.</span>
+        </label>
+
+        <label>Kapacitetsfaktor (0–1)
+          <input type="number" step="0.0001" id="kapfaktor" class="indata" value="0.2618">
+          <span class="badge pm">härledd ur domen</span>
+          <span class="hint">22 704 MWh/år (efter 10 % säkerhetsmarginal) / (3 verk × 3,3 MW × 8 760 h) = 0,2618. Västanby AB anger idag cirka 39 000 MWh/år för 10 MW (cirka 0,45), och orsaken till skillnaden är inte verifierad. <span id="kf-timmar">–</span></span>
+        </label>
+
+        <label>Livslängd (år)
+          <input type="number" step="1" id="livslangd" class="indata" value="25">
+        </label>
+
+        <label>Effekt per verk (MW)
+          <input type="number" step="0.1" id="effekt" class="indata" value="3.3">
+          <span class="badge antagande">antagande</span>
+          <span class="hint">3,3 MW per verk är en uppgift från en samtalspartner (3 × 3,3 MW = strax under 10 MW). Den står inte i domen.</span>
+        </label>
+
+        <label>Antal verk
+          <input type="number" step="1" id="antalverk" class="indata" value="3">
+          <span class="badge pm">Mark- och miljööverdomstolen, P 14634-20</span>
+        </label>
+
+        <label>Verkshöjd (m)
+          <input type="number" step="1" id="verkshojd" class="indata" value="150">
+          <span class="badge pm">Mark- och miljööverdomstolen, P 14634-20</span>
+          <span class="hint">Högsta totalhöjd 150 m enligt domen (navhöjd 100 m). Används för närboendes avståndszoner (5 och 9 verkshöjder).</span>
+        </label>
+
+        <label>Degradering (%/år)
+          <input type="number" step="0.1" id="degradering" class="indata" value="0.5">
+          <span class="hint">Valfri. Minskad produktion per år. 0 = ingen degradering.</span>
+        </label>
+
+        <label>Specifik investeringskostnad (kkr/MW)
+          <input type="number" step="10" id="specinv" class="indata" value="12000">
+          <span class="hint">Antagande: nätanslutningens engångskostnad (utredning, ledning, station och anslutningsavgift till nätägaren) antas ingå i detta värde. Se gruppen "Nät och systemkrav".</span>
+        </label>
+
+        <label>Kalkylränta (0–1)
+          <input type="number" step="0.0001" id="kalkylranta" class="indata" value="0.1215">
+        </label>
+      </fieldset>
+
+      <!-- ---- Grupp: Drift, nedmontering och restvärde ---- -->
+      <fieldset class="indata-grupp">
+        <legend>Drift &amp; livscykel</legend>
+
+        <label>Rörlig driftskostnad (kr/kWh)
+          <input type="number" step="0.01" id="rorlig" class="indata" value="0.11">
+        </label>
+
+        <label>Fast driftskostnad (kr/MW/år)
+          <input type="number" step="100" id="fast" class="indata" value="42100">
+        </label>
+
+        <label>Nedmonteringskostnad (kkr/MW)
+          <input type="number" step="10" id="nedmontering" class="indata" value="600">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Restvärde (kkr/MW)
+          <input type="number" step="10" id="restvarde" class="indata" value="0">
+          <span class="badge antagande">antagande</span>
+        </label>
+      </fieldset>
+
+      <!-- ---- Grupp: Nät och systemkrav (PRD_natkostnader.md) ----
+           Förvalt läge är "ingen": resultaten är då identiska med kalkylen före
+           nätkostnaderna lades till. Ett tomt fält betyder "ej angivet" och
+           räknas som 0. Alla belopp är tillägg till investeringsutgiften. -->
+      <fieldset class="indata-grupp" id="nat-grupp">
+        <legend>Nät och systemkrav</legend>
+
+        <label>Nätkostnader <span class="hjalp" tabindex="0" data-hjalp="Ingen: nätkostnader ingår inte i resultaten (förvalt, samma resultat som tidigare). Bas: fältens värden. Låg och hög: alla poster utom energiavgiften multipliceras med faktorerna längst ned i gruppen.">?</span>
+          <select id="natlage" class="indata">
+            <option value="ingen" selected>Ingen (förvalt)</option>
+            <option value="lag">Låg</option>
+            <option value="bas">Bas</option>
+            <option value="hog">Hög</option>
+          </select>
+        </label>
+
+        <label>Exempelfall <span class="hjalp" tabindex="0" data-hjalp="Fyller fälten med ett exempel ur datafilen natkostnader_exempel.js. Alla fall, källor och regelverk finns på sidan Exempelfall och källor.">?</span>
+          <select id="natexempel" class="indata"></select>
+        </label>
+        <p class="hint nat-lank"><a href="natkostnader_exempel.html">Se alla exempelfall, källor och regelverk</a></p>
+
+        <div class="nat-forslag" id="nat-forslag" aria-live="polite">
+          <label class="nat-auto"><input type="checkbox" id="natautofall" checked> Välj nätfall efter parkens storlek automatiskt <span class="hjalp" tabindex="0" data-hjalp="När rutan är ikryssad byter kalkylen exempelfall (fall B eller A) när du ändrar antal verk eller effekt. Väljer du ett fall själv, eller ändrar ett nätfält, kryssas rutan ur och fallet följer inte längre storleken. Kryssa i den igen för att låta kalkylen välja.">?</span></label>
+          <div id="nat-forslag-text">–</div>
+          <button type="button" class="nat-kopiera" id="nat-forslag-knapp" hidden>Använd förslaget</button>
+        </div>
+
+        <label>Ingår engångskostnaden redan i investeringsutgiften? <span class="hjalp" tabindex="0" data-hjalp="Ja (förvalt): engångskostnaderna antas ingå i den specifika investeringskostnaden (12 000 kkr/MW) och läggs inte till. De visas ändå i panelen Nätkostnader i siffror. Nej: engångskostnaderna läggs till investeringsutgiften. Antagandet är inte belagt i någon källa.">?</span>
+          <select id="natengangingar" class="indata">
+            <option value="ja" selected>Ja, ingår (antagande)</option>
+            <option value="nej">Nej, lägg till</option>
+          </select>
+        </label>
+
+        <div class="nat-valdlank">
+          <button type="button" id="nat-kopiera" class="nat-kopiera">Kopiera länk till det här valet</button>
+          <p class="hint">Länken återger läge, exempelfall, antal verk och om engångskostnaden ingår. Samma adress finns i webbläsarens adressfält.</p>
+          <p class="hint" id="nat-lank-varning" hidden>Värden som du har ändrat för hand följer inte med i länken. Länken återger valt läge och exempelfall.</p>
+        </div>
+
+        <details id="nat-detaljer" class="nat-detaljer">
+          <summary>Visa och ändra alla nätfält</summary>
+
+        <h4 class="nat-delrubrik"><span class="hjalp hjalp-term" tabindex="0" data-hjalp="Engångskostnader för att ansluta parken till nätet: utredning, ledning, station och förstärkning eller anslutningsavgift. Visas som kr per MW och jämförs med investeringsutgiften per MW.">Anslutning (engångskostnad)</span></h4>
+
+
+        <label>Avstånd till anslutningspunkt (km)
+          <input type="number" step="0.1" id="natavstand" class="indata" value="" placeholder="ej angivet">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Ledningskostnad (kkr/km)
+          <input type="number" step="10" id="natledning" class="indata" value="" placeholder="ej angivet">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Station och fast del (kkr)
+          <input type="number" step="100" id="natstation" class="indata" value="" placeholder="ej angivet">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Andel av förstärkning och nätägarens anslutningsavgift (kkr)
+          <input type="number" step="100" id="natforstark" class="indata" value="" placeholder="ej angivet">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Utredning och förprojektering, fast del (kkr) <span class="hjalp" tabindex="0" data-hjalp="Utredningsavgiften = fast del + kkr per MW × parkens effekt, högst ett tak. Svenska kraftnäts avgift för anslutning till stamnätet är 100 kkr plus 1,2 kkr per MW (2025). kkr betyder tusen kronor.">?</span>
+          <input type="number" step="1" id="natutredning" class="indata" value="" placeholder="ej angivet">
+          <span class="badge schablon">schablon</span>
+        </label>
+
+        <label>Utredning, del per MW (kkr/MW)
+          <input type="number" step="0.1" id="natutredningpermw" class="indata" value="" placeholder="ej angivet">
+          <span class="badge schablon">schablon</span>
+        </label>
+
+        <label>Utredning, tak (kkr, högst)
+          <input type="number" step="10" id="natutredningtak" class="indata" value="" placeholder="inget tak">
+        </label>
+
+        <label>Engångskostnad, schablon (kkr/MW) <span class="hjalp" tabindex="0" data-hjalp="Används när uppdelning i ledning, station och förstärkning saknas. Ingen publicerad källa anger ett belopp: fyll i från nätägarens offert eller ditt eget antagande.">?</span>
+          <input type="number" step="10" id="natengangschablon" class="indata" value="" placeholder="ej angivet">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <h4 class="nat-delrubrik"><span class="hjalp hjalp-term" tabindex="0" data-hjalp="Löpande avgifter för att mata in el, per år: fast årsavgift, effektavgift, avståndsberoende avgift och energiavgift. Visas som öre per kWh. Energiavgiften kan vara negativ, en ersättning.">Nätavgifter (löpande, per år)</span></h4>
+
+        <label>Fast årsavgift, inklusive kundspecifik avgift (kr/år)
+          <input type="number" step="1000" id="natfast" class="indata" value="" placeholder="ej angivet">
+          <span class="nat-ore" id="nat-ore-natfast"></span>
+        </label>
+
+        <label>Effektavgift eller fast avgift per kW (kr/kW och år) <span class="hjalp" tabindex="0" data-hjalp="Svenska kraftnäts effektavgift (2026) eller fasta avgift per kW (2027), och regionnätets årseffektavgift. Flera avgifter läggs ihop i fältet.">?</span>
+          <input type="number" step="0.1" id="nateffekt" class="indata" value="" placeholder="ej angivet">
+          <span class="nat-ore" id="nat-ore-nateffekt"></span>
+        </label>
+
+        <label>Avståndsberoende avgift (kr/kW och km)
+          <input type="number" step="0.01" id="natavstavg" class="indata" value="" placeholder="ej angivet">
+          <span class="nat-ore" id="nat-ore-natavstavg"></span>
+        </label>
+
+        <label>Avstånd för avståndsberoende avgift (km) <span class="hjalp" tabindex="0" data-hjalp="Fågelvägsavståndet från anslutningspunkten till närmaste stamnätspunkt som är ansluten till regionnätet (Vattenfalls tariff, avsnitt 5.1).">?</span>
+          <input type="number" step="0.1" id="natavstavstand" class="indata" value="" placeholder="ej angivet">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Energiavgift (öre/kWh, negativt = ersättning) <span class="hjalp" tabindex="0" data-hjalp="Rörlig del. Negativt värde är en ersättning till producenten för minskade förluster i nätet. Svenska kraftnäts energiavgift är (börspris + 15 kr/MWh) × förlustkoefficient och räknas här om till öre/kWh vid ett givet elpris.">?</span>
+          <input type="number" step="0.01" id="natenergi" class="indata" value="" placeholder="ej angivet">
+        </label>
+
+        <p class="nat-ore-summa">Summa löpande nätavgifter (fast och rörlig del): <strong id="nat-ore-summa">–</strong></p>
+
+        <label>Årlig förändring av nätavgifter (%/år)
+          <input type="number" step="0.1" id="natforandring" class="indata" value="" placeholder="ej angivet">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <h4 class="nat-delrubrik"><span class="hjalp hjalp-term" tabindex="0" data-hjalp="Kostnader för tekniska krav på produktionsanläggningar (utrustning, provning, drift) och eventuell nedreglering. Ingen källa anger belopp, så fälten står tomma.">Nya systemkrav</span></h4>
+
+        <label>Systemkrav, engångskostnad (kkr/MW) <span class="hjalp" tabindex="0" data-hjalp="Utrustning och provning för krav på produktionsanläggningar. Ingen källa anger belopp: fyll i vid behov.">?</span>
+          <input type="number" step="10" id="natsyseng" class="indata" value="" placeholder="ej angivet">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Systemkrav, löpande kostnad (kr/MW och år)
+          <input type="number" step="100" id="natsyslop" class="indata" value="" placeholder="ej angivet">
+          <span class="nat-ore" id="nat-ore-natsyslop"></span>
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Systemkrav, produktionsbortfall (%)
+          <input type="number" step="0.1" id="natsysbortfall" class="indata" value="" placeholder="ej angivet">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <h4 class="nat-delrubrik"><span class="hjalp hjalp-term" tabindex="0" data-hjalp="Läget låg och hög multiplicerar alla poster utom energiavgiften med faktorn. Låg 0,5 och hög 1,5 är antaganden som visar hur osäkerheten i nätkostnaderna kan slå mot resultatet. Energiavgiften skalas inte, eftersom den följer marknad och förluster.">Faktorer för låg och hög</span></h4>
+
+        <label>Faktor i läget låg (gånger)
+          <input type="number" step="0.1" id="natfaktorlag" class="indata" value="0.5">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Faktor i läget hög (gånger)
+          <input type="number" step="0.1" id="natfaktorhog" class="indata" value="1.5">
+          <span class="badge antagande">antagande</span>
+        </label>
+        </details>
+
+        <div class="nat-resultat" id="nat-panel" aria-labelledby="nat-rubrik">
+          <h4 class="nat-delrubrik" id="nat-rubrik">Nätkostnader i siffror <a class="ankare" href="#nat-rubrik" aria-label="Länk till den här rubriken">#</a></h4>
+          <!-- Engångskostnader visas som kr per MW och jämförs med investeringsutgiften per MW. Löpande kostnader visas som öre per kWh,
+               delat i fast och rörlig del. Panelen räknas på läget bas när läget är "ingen", så att storleken syns utan att
+               resultaten påverkas. -->
+          <div class="nat-topp" aria-live="polite">
+            <dl class="resultatlista">
+              <div class="framhavd"><dt>Summa löpande kostnader</dt><dd id="nat-t-ore">–</dd></div>
+              <div class="framhavd"><dt>Summa löpande nätkostnad, år 1</dt><dd id="nat-t-kr">–</dd></div>
+            </dl>
+            <p class="hint" id="nat-t-engang"></p>
+            <p class="hint" id="nat-t-not"></p>
+          </div>
+      
+          <details id="nat-panel-detaljer" class="nat-detaljer">
+          <summary>Visa alla nätkostnader i siffror</summary>
+      
+          <p class="hint" id="nat-info">–</p>
+      
+          <div class="nat-block">
+            <h3 id="nat-engang-rubrik">Engångskostnader, kr per MW <a class="ankare" href="#nat-engang-rubrik" aria-label="Länk till den här rubriken">#</a></h3>
+            <dl class="resultatlista">
+              <div><dt>Ledning</dt><dd id="nat-e-ledning">–</dd></div>
+              <div><dt>Station och fast del</dt><dd id="nat-e-station">–</dd></div>
+              <div><dt>Förstärkning och anslutningsavgift</dt><dd id="nat-e-forstark">–</dd></div>
+              <div><dt>Utredning och förprojektering</dt><dd id="nat-e-utredning">–</dd></div>
+              <div><dt>Systemkrav, utrustning</dt><dd id="nat-e-system">–</dd></div>
+              <div><dt>Schablon (utan uppdelning)</dt><dd id="nat-e-schablon">–</dd></div>
+              <div class="framhavd"><dt>Summa engångskostnader</dt><dd id="nat-e-summa">–</dd></div>
+              <div class="framhavd"><dt>Andel av investeringsutgiften per MW</dt><dd id="nat-e-procent">–</dd></div>
+            </dl>
+          </div>
+      
+          <div class="nat-block">
+            <h3 id="nat-lopande-rubrik">Löpande kostnader, öre per kWh <a class="ankare" href="#nat-lopande-rubrik" aria-label="Länk till den här rubriken">#</a></h3>
+            <dl class="resultatlista">
+              <div><dt>Fast årsavgift</dt><dd id="nat-l-fast">–</dd></div>
+              <div><dt>Effektavgift</dt><dd id="nat-l-effekt">–</dd></div>
+              <div><dt>Avståndsberoende avgift</dt><dd id="nat-l-avstand">–</dd></div>
+              <div><dt>Systemkrav, löpande</dt><dd id="nat-l-system">–</dd></div>
+              <div class="framhavd"><dt>Fast del, summa</dt><dd id="nat-l-fastsumma">–</dd></div>
+              <div class="framhavd"><dt>Rörlig del (energiavgift)</dt><dd id="nat-l-energi">–</dd></div>
+              <div class="framhavd"><dt>Summa löpande kostnader</dt><dd id="nat-l-summa">–</dd></div>
+            </dl>
+          </div>
+      
+          <div class="nat-block">
+            <h3 id="nat-kronor-rubrik">Löpande kostnader i kronor <a class="ankare" href="#nat-kronor-rubrik" aria-label="Länk till den här rubriken">#</a></h3>
+            <p class="hint" id="nat-kronor-info">–</p>
+            <div class="tabell-rulla">
+              <table class="nat-tabell" id="nat-kronor-tabell">
+                <caption id="NatTabell1">Tabell 1. Löpande nätkostnad i kronor, år 1 och över livslängden</caption>
+                <thead><tr><th scope="col">Post</th><th scope="col" class="kol-verk">Per verk</th><th scope="col" class="kol-park" id="nat-kol-park">Hela parken</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">Produktion år 1 (kWh)</th><td class="tal kol-verk" id="nat-k-prod-verk">–</td><td class="tal kol-park" id="nat-k-prod-park">–</td></tr>
+                  <tr><th scope="row">Fast årsavgift (kr/år)</th><td class="tal kol-verk" id="nat-k-fast-verk">–</td><td class="tal kol-park" id="nat-k-fast-park">–</td></tr>
+                  <tr><th scope="row">Effektavgift (kr/år)</th><td class="tal kol-verk" id="nat-k-effekt-verk">–</td><td class="tal kol-park" id="nat-k-effekt-park">–</td></tr>
+                  <tr><th scope="row">Avståndsberoende avgift (kr/år)</th><td class="tal kol-verk" id="nat-k-avstand-verk">–</td><td class="tal kol-park" id="nat-k-avstand-park">–</td></tr>
+                  <tr><th scope="row">Systemkrav, löpande (kr/år)</th><td class="tal kol-verk" id="nat-k-system-verk">–</td><td class="tal kol-park" id="nat-k-system-park">–</td></tr>
+                  <tr class="framhavd"><th scope="row">Fast del, summa (kr/år)</th><td class="tal kol-verk" id="nat-k-fastsumma-verk">–</td><td class="tal kol-park" id="nat-k-fastsumma-park">–</td></tr>
+                  <tr class="framhavd"><th scope="row">Rörlig del: energiavgift × produktion (kr/år)</th><td class="tal kol-verk" id="nat-k-energi-verk">–</td><td class="tal kol-park" id="nat-k-energi-park">–</td></tr>
+                  <tr class="framhavd"><th scope="row">Summa löpande nätkostnad, år 1 (kr/år)</th><td class="tal kol-verk" id="nat-k-summa-verk">–</td><td class="tal kol-park" id="nat-k-summa-park">–</td></tr>
+                  <tr><th scope="row">Nuvärde över livslängden (kr)</th><td class="tal kol-verk" id="nat-k-livs-verk">–</td><td class="tal kol-park" id="nat-k-livs-park">–</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+      
+          <p class="hint" id="nat-exempel-info"></p>
+          <p class="hint">Tomma poster är ej angivna och räknas som 0. Ett minustecken betyder en ersättning till producenten. Sekundärt: löpande kostnad per MW och år <span id="nat-l-permwar">–</span>, total nätkostnad per kWh över livslängden <span id="nat-s-livs">–</span> och dess andel av LCOE <span id="nat-s-andel">–</span>.</p>
+          </details>
+        </div>
+      </fieldset>
+
+      <!-- ---- Grupp: Markägare ---- -->
+      <fieldset class="indata-grupp">
+        <legend>Markägare (arrende)</legend>
+
+        <label>Arrendemodell
+          <select id="arrendemodell" class="indata">
+            <option value="procent" selected>% av bruttointäkt</option>
+            <option value="krmw">kr/MW/år</option>
+          </select>
+        </label>
+
+        <label>Arrende (% av bruttointäkt)
+          <input type="number" step="0.1" id="arrendeprocent" class="indata" value="3.5">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Arrende (kr/MW/år)
+          <input type="number" step="1000" id="arrendekrmw" class="indata" value="40000">
+          <span class="badge antagande">antagande</span>
+        </label>
+      </fieldset>
+
+      <!-- ---- Grupp: Kommun/samhälle ---- -->
+      <fieldset class="indata-grupp">
+        <legend>Kommun &amp; samhälle</legend>
+
+        <label>Kommunal ersättning (kr/MW/år)
+          <input type="number" step="1000" id="kommunersattning" class="indata" value="15000">
+          <span class="badge antagande">schablon</span>
+        </label>
+
+        <label>CO₂-faktor, undviken (kg/kWh)
+          <input type="number" step="0.01" id="co2faktor" class="indata" value="0.3">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Värdering av CO₂ (kr/kg)
+          <input type="number" step="0.1" id="co2varde" class="indata" value="1.0">
+          <span class="badge antagande">antagande</span>
+        </label>
+      </fieldset>
+
+      <!-- ---- Grupp: Andelsägare (kooperativ modell) ---- -->
+      <fieldset class="indata-grupp">
+        <legend>Andelsägare (kooperativ)</legend>
+
+        <label>Antal andelar
+          <input type="number" step="1" id="antalandelar" class="indata" value="10">
+        </label>
+
+        <label>Elmängd per andel (kWh/år)
+          <input type="number" step="100" id="kwhperandel" class="indata" value="1000">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Insats per andel (kr)
+          <input type="number" step="100" id="insatsperandel" class="indata" value="6000">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Föreningens driftpåslag (öre/kWh)
+          <input type="number" step="0.5" id="driftpaslag" class="indata" value="3">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Spotpris hushållsel (kr/kWh)
+          <input type="number" step="0.01" id="spotpris" class="indata" value="0.6">
+        </label>
+
+        <label>Elhandelspåslag (kr/kWh)
+          <input type="number" step="0.01" id="elhandelspaslag" class="indata" value="0.08">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Energiskatt (kr/kWh, exkl. moms)
+          <input type="number" step="0.001" id="energiskatt" class="indata" value="0.428">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Moms (%)
+          <input type="number" step="1" id="momssats" class="indata" value="25">
+        </label>
+      </fieldset>
+
+      <!-- ---- Grupp: Närboende (NU20 / prop. 2025/26:239) ---- -->
+      <fieldset class="indata-grupp">
+        <legend><span class="nb-info" tabindex="0">Närboende</span> (vindkraftsersättning, SFS 2026:1113) – uppgift saknas</legend>
+        <p class="hint" style="margin:0 0 .6rem"><strong>Uppgiften saknas:</strong> hur många bostäder som ligger inom fem, sex, sju, åtta och nio verkshöjder (750–1 350 m från ett verk) finns inte i domen. Fälten står på 0, så ersättningen blir 0 tills du fyller i antalet. Zonerna räknas från verkets höjd (150 m). Zonerna står i <a href="#Tabell2">Tabell 2</a>.</p>
+
+        <label>Bostäder i zon 1 (inom 5 verkshöjder)
+          <input type="number" step="1" id="bost1" class="indata" value="0">
+          <span class="badge antagande">antagande</span>
+        </label>
+        <label>Bostäder i zon 2 (5–6 verkshöjder)
+          <input type="number" step="1" id="bost2" class="indata" value="0">
+          <span class="badge antagande">antagande</span>
+        </label>
+        <label>Bostäder i zon 3 (6–7 verkshöjder)
+          <input type="number" step="1" id="bost3" class="indata" value="0">
+          <span class="badge antagande">antagande</span>
+        </label>
+        <label>Bostäder i zon 4 (7–8 verkshöjder)
+          <input type="number" step="1" id="bost4" class="indata" value="0">
+          <span class="badge antagande">antagande</span>
+        </label>
+        <label>Bostäder i zon 5 (8–9 verkshöjder)
+          <input type="number" step="1" id="bost5" class="indata" value="0">
+          <span class="badge antagande">antagande</span>
+        </label>
+
+        <label>Verk som ger ersättning per bostad (1 eller 2)
+          <input type="number" step="1" min="1" max="2" id="verkperbostad" class="indata" value="2">
+          <span class="badge lagstadgat">högst två verk (13 §)</span>
+          <span class="badge antagande">båda verken i samma zon</span>
+          <span class="hint">Att båda verken ligger i samma zon som bostaden är en förenkling som ger en övre gräns. En park med ett verk ger ersättning från ett verk.</span>
+        </label>
+
+        <label>Tak för närboendeersättning (% av parkens intäkt)
+          <input type="number" step="0.1" id="tak" class="indata" value="2">
+          <span class="badge lagstadgat">lagstadgat (14 §)</span>
+        </label>
+      </fieldset>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       NYCKELTALSRAD (alltid synlig, oavsett vald flik)
+       Sammanfattar de viktigaste talen från investerarperspektivet.
+       ==================================================================== -->
+  <section class="nyckeltalsrad" aria-labelledby="nyckeltal-rubrik">
+    <h2 id="nyckeltal-rubrik" class="visuellt-dold">Sammanfattande nyckeltal</h2>
+    <div class="nyckeltal-kort">
+      <div class="kort"><span class="kort-etikett">LCOE</span><span class="kort-varde" id="nt-lcoe">–</span></div>
+      <div class="kort"><span class="kort-etikett">Överskott/år</span><span class="kort-varde" id="nt-overskott">–</span></div>
+      <div class="kort"><span class="kort-etikett">Payback</span><span class="kort-varde" id="nt-payback">–</span></div>
+      <div class="kort"><span class="kort-etikett">NPV</span><span class="kort-varde" id="nt-npv">–</span></div>
+      <div class="kort"><span class="kort-etikett">IRR</span><span class="kort-varde" id="nt-irr">–</span></div>
+      <div class="kort"><span class="kort-etikett">Produktion</span><span class="kort-varde" id="nt-produktion">–</span></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       JÄMFÖRELSETABELL (alltid synlig, oavsett vald flik)
+       Kolumner: Senaste / Tidigare / Förändring.
+       Uppdateras vid "change"-händelse (när fältet lämnas), inte medan man
+       skriver. Detaljerad minneslogik finns i berakningar.js.
+       ==================================================================== -->
+  <section class="jamforelse" aria-labelledby="jamforelse-rubrik">
+    <h2 id="jamforelse-rubrik">Jämförelse mot föregående ändring</h2>
+    <p class="hint">
+      När du ändrar ett fält och lämnar det flyttas det tidigare "Senaste"-värdet
+      till "Tidigare", det nya värdet hamnar i "Senaste" och skillnaden visas i
+      "Förändring". Vid första beräkningen visas "–".
+    </p>
+    <table class="jamforelse-tabell">
+      <thead>
+        <tr>
+          <th scope="col">Nyckeltal</th>
+          <th scope="col">Senaste resultatet</th>
+          <th scope="col">Tidigare resultatet</th>
+          <th scope="col">Förändringen</th>
+        </tr>
+      </thead>
+      <!-- Rader fylls dynamiskt av berakningar.js -->
+      <tbody id="jamforelse-kropp"></tbody>
+    </table>
+  </section>
+
+  <!-- ========================================================================
+       FLIKAR – ett perspektiv i taget
+       ==================================================================== -->
+  <section class="flik-omrade" aria-labelledby="flik-rubrik">
+    <h2 id="flik-rubrik" class="visuellt-dold">Perspektiv</h2>
+
+    <!-- Flikknappar. role="tablist" för tillgänglighet. -->
+    <div class="flik-knappar" role="tablist" aria-label="Perspektiv">
+      <button class="flik-knapp aktiv" role="tab" aria-selected="true"  data-flik="investerare">Investerare</button>
+      <button class="flik-knapp"       role="tab" aria-selected="false" data-flik="markagare">Markägare</button>
+      <button class="flik-knapp"       role="tab" aria-selected="false" data-flik="kommun">Kommun/samhälle</button>
+      <button class="flik-knapp"       role="tab" aria-selected="false" data-flik="andelsagare">Andelsägare</button>
+      <button class="flik-knapp"       role="tab" aria-selected="false" data-flik="narboende">Närboende</button>
+    </div>
+
+    <!-- ---- Flik: Investerare ---- -->
+    <div class="flik-panel aktiv" id="panel-investerare" role="tabpanel">
+      <h3>Investerarperspektivet</h3>
+      <p class="hint">Basen är Kent Lundgrens ursprungliga kalkyl, kompletterad med LCOE, payback, NPV och IRR.</p>
+      <dl class="resultatlista">
+        <div><dt>Produktion</dt><dd id="inv-produktion">–</dd></div>
+        <div><dt>Intäkt totalt per år</dt><dd id="inv-intakt">–</dd></div>
+        <div><dt>Årlig driftskostnad</dt><dd id="inv-driftkostnad">–</dd></div>
+        <div><dt>Investeringsutgift</dt><dd id="inv-investering">–</dd></div>
+        <div><dt>Investeringsutgift per årskWh</dt><dd id="inv-invperkwh">–</dd></div>
+        <div><dt>Årlig kapitalkostnad (annuitet)</dt><dd id="inv-kapitalkostnad">–</dd></div>
+        <div><dt>Årlig total kostnad</dt><dd id="inv-totalkostnad">–</dd></div>
+        <div><dt>Kostnad per kWh</dt><dd id="inv-kostnadperkwh">–</dd></div>
+        <div><dt>Överskott per år (bas)</dt><dd id="inv-overskott">–</dd></div>
+        <div><dt>Överskott per år efter lokala ersättningar</dt><dd id="inv-overskottnetto">–</dd></div>
+        <div><dt>Nätkostnad per kWh över livslängden</dt><dd id="inv-nat-livs">–</dd></div>
+        <div><dt>Nätkostnadens andel av LCOE</dt><dd id="inv-nat-andel">–</dd></div>
+        <div class="framhavd"><dt>LCOE</dt><dd id="inv-lcoe">–</dd></div>
+        <div class="framhavd"><dt>Payback (enkel)</dt><dd id="inv-payback">–</dd></div>
+        <div class="framhavd"><dt>NPV (nettonuvärde)</dt><dd id="inv-npv">–</dd></div>
+        <div class="framhavd"><dt>IRR (internränta)</dt><dd id="inv-irr">–</dd></div>
+      </dl>
+      <div class="diagram-ruta">
+        <h4>Kassaflöde per år (netto, nominellt)</h4>
+        <canvas id="diagram-kassaflode" height="140"></canvas>
+      </div>
+    </div>
+
+    <!-- ---- Flik: Markägare ---- -->
+    <div class="flik-panel" id="panel-markagare" role="tabpanel" hidden>
+      <h3>Markägarperspektivet</h3>
+      <dl class="resultatlista">
+        <div><dt>Årlig arrendeintäkt (år 1)</dt><dd id="mark-arrende-ar">–</dd></div>
+        <div><dt>Total arrendeintäkt (hela livslängden)</dt><dd id="mark-arrende-total">–</dd></div>
+        <div class="framhavd"><dt>Nuvärde av arrendet</dt><dd id="mark-arrende-nuvarde">–</dd></div>
+      </dl>
+    </div>
+
+    <!-- ---- Flik: Kommun/samhälle ---- -->
+    <div class="flik-panel" id="panel-kommun" role="tabpanel" hidden>
+      <h3>Kommun- och samhällsperspektivet</h3>
+      <dl class="resultatlista">
+        <div><dt>Lokala intäkter år 1 (arrende + kommun + <span class="nb-info" tabindex="0">närboende</span>)</dt><dd id="kom-lokala-ar">–</dd></div>
+        <div><dt>Lokala intäkter totalt (hela livslängden)</dt><dd id="kom-lokala-total">–</dd></div>
+        <div><dt>Kommunal ersättning år 1</dt><dd id="kom-kommun-ar">–</dd></div>
+        <div><dt>Undviken CO₂ per år</dt><dd id="kom-co2-ton">–</dd></div>
+        <div class="framhavd"><dt>Värderad samhällsnytta (undviken CO₂)</dt><dd id="kom-samhallsnytta">–</dd></div>
+      </dl>
+      <p class="hint"><span class="badge antagande">schablon</span> Samhällsnyttan är en förenklad, tydligt schabloniserad post och ingen exakt siffra.</p>
+      <div class="diagram-ruta">
+        <h4>Kostnadsnedbrytning år 1 (investerarens perspektiv)</h4>
+        <canvas id="diagram-kostnader" height="160"></canvas>
+      </div>
+    </div>
+
+    <!-- ---- Flik: Andelsägare ---- -->
+    <div class="flik-panel" id="panel-andelsagare" role="tabpanel" hidden>
+      <h3>Andelsägarperspektivet (kooperativ modell)</h3>
+      <p class="hint">Klassisk modell: en andel = en fast årlig elmängd. Medlemmen får el till självkostnadspris i stället för marknadspris.</p>
+      <dl class="resultatlista">
+        <div><dt>Årlig elmängd från andelarna</dt><dd id="and-elmangd">–</dd></div>
+        <div><dt>Total insats (bunden)</dt><dd id="and-insats">–</dd></div>
+        <div><dt>Självkostnad per kWh</dt><dd id="and-sjalvkostnad">–</dd></div>
+        <div><dt>Marknadspris hushållsel per kWh (inkl. moms)</dt><dd id="and-marknadspris">–</dd></div>
+        <div><dt>Årlig besparing mot marknadsel</dt><dd id="and-besparing">–</dd></div>
+        <div><dt>Alternativkostnad för bunden insats</dt><dd id="and-alternativkostnad">–</dd></div>
+        <div class="framhavd"><dt>Hushållets nettoresultat per år</dt><dd id="and-netto">–</dd></div>
+        <div class="framhavd"><dt>Återbetalningstid på insatsen</dt><dd id="and-aterbetalning">–</dd></div>
+        <div class="framhavd"><dt>Nettonuvärde för hushållet</dt><dd id="and-nuvarde">–</dd></div>
+      </dl>
+    </div>
+
+    <!-- ---- Flik: Närboende ---- -->
+    <div class="flik-panel" id="panel-narboende" role="tabpanel" hidden>
+      <h3><span class="nb-info" tabindex="0">Närboendeperspektivet</span> – vindkraftsersättning enligt lag (SFS 2026:1113)</h3>
+      <p class="hint">
+        Räknas enligt <a href="https://data.riksdagen.se/dokument/sfs-2026-1113.html" target="_blank" rel="noopener">lagen (2026:1113)</a>, 11–14 §§:
+        andelen av ett verks intäkt beror på avståndet (fem zoner), högst två verk räknas per bostad och summan är högst 2 % av parkens intäkter.
+        Räknesättet delas med fallet Långhult (<a href="vindkraftskalkyl_langhult.html">Långhult-kalkylen</a>) via kalkylkarna.js.
+      </p>
+      <div class="tabell-rulla">
+        <table class="jamforelse-tabell" id="Tabell2">
+          <caption id="Tabell2-rubrik">Tabell 2. Närboendeersättning per avståndszon, hela parken, år 1</caption>
+          <thead>
+            <tr>
+              <th scope="col">Zon</th>
+              <th scope="col">Avstånd till verket</th>
+              <th scope="col" class="tal">Andel av verkets intäkt <span class="badge lagstadgat">lagstadgat</span></th>
+              <th scope="col" class="tal">Bostäder <span class="badge antagande">antagande</span></th>
+              <th scope="col" class="tal">Per bostad före tak (kr/år)</th>
+              <th scope="col" class="tal">Per bostad efter tak (kr/år)</th>
+              <th scope="col" class="tal">Zonen totalt efter tak (kr/år)</th>
+            </tr>
+          </thead>
+          <tbody id="nar-zon-kropp"></tbody>
+        </table>
+      </div>
+      <dl class="resultatlista">
+        <div><dt>Summa före tak</dt><dd id="nar-fore">–</dd></div>
+        <div><dt>Tak (2 % av parkens intäkt)</dt><dd id="nar-tak">–</dd></div>
+        <div><dt>Nås taket?</dt><dd id="nar-nas" style="white-space:normal;text-align:right">–</dd></div>
+        <div><dt>Nedsättning</dt><dd id="nar-skal">–</dd></div>
+        <div class="framhavd"><dt>Genomsnitt per bostad (<span class="nb-info" tabindex="0">ersättning till en enskild närboende</span>)</dt><dd id="nar-snitt">–</dd></div>
+        <div class="framhavd"><dt>Total årlig ersättning (belastar verksamhetsutövaren)</dt><dd id="nar-total">–</dd></div>
+      </dl>
+
+      <div class="regel-lista">
+        <h4>Regler och vad som är vad</h4>
+        <ul>
+          <li><span class="badge lagstadgat">lagstadgat</span> Ersättning betalas av verksamhetsutövaren till ägare av bostadsbyggnader inom nio verkshöjder från ett verk (12 §).</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Andelen av ett verks intäkt är 2,5, 2,0, 1,5, 1,0 och 0,5 promille vid högst 5, 6, 7, 8 och 9 verkshöjder (12 §).</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Ersättningen baseras på de två verk som ger mest, och är högst 2 % av anläggningens intäkter, annars sätts den ned i proportion (13–14 §§).</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Verkets intäkt är marknadsvärdet av elen: produktionen gånger dagen-före-priset (11 §). Här räknas den som produktion × spotpris × prisfaktor.</li>
+          <li><span class="badge lagstadgat">lagstadgat</span> Ersättningen är skattefri till den del den avser privatbostad.</li>
+          <li><span class="badge antagande">antagande</span> Hur många bostäder som ligger i varje zon, och att båda verken ligger i samma zon som bostaden.</li>
+        </ul>
+        <p class="rimlighet" id="nar-rimlighet">–</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       KÄLLOR (Harvardformat, klickbara och verifierade länkar)
+       ==================================================================== -->
+  <section class="kallor" aria-labelledby="kallor-rubrik">
+    <h2 id="kallor-rubrik">Källor och antaganden</h2>
+    <ol>
+      <li id="ref-mod">
+        Mark- och miljööverdomstolen (2022) <em>Dom 2022-01-27, mål nr P 14634-20, Bygglov för tre vindkraftverk m.m. på fastigheterna A och B i Lomma kommun</em>
+        (<a href="https://www.domstol.se/globalassets/filer/domstol/markochmiljooverdomstolen/avgoranden/2022/p-14634-20-dom-2022-01-27.pdf" target="_blank" rel="noopener">domstol.se</a>).
+        Underlag för tre verk (s. 8), navhöjd 100 m och årsproduktion 22 704 MWh efter 10 % säkerhetsmarginal (s. 8), maximal totalhöjd 150 m (s. 11, 13)
+        och medelvind cirka 8,0 m/s vid navhöjd. Domen anger ingen effekt per verk och inga bostäder per zon. Hämtad 2026-11-23.
+      </li>
+      <li id="ref-vastanby">
+        Västanby AB (u.å.) <em>Aktuella vindkraftsprojekt</em>
+        (<a href="https://vastanby.se/vindkraftsprojekt/" target="_blank" rel="noopener">vastanby.se</a>).
+        Anger idag 10 MW vindkraft och batterilager 10 MW / 40 MWh med årsproduktion cirka 39 000 MWh, vilket avviker från domens 22 704 MWh.
+        Uppgiften är hämtad ur anteckningarna i repot (<a href="https://github.com/kentlundgren/Vindkraft/blob/main/skanes-vindkraftsakademi/2026-09-02-anteckningar.md" target="_blank" rel="noopener">2026-09-02, avsnitt 10</a>), inte läst på Västanbys sida.
+      </li>
+      <li>
+        Regeringen (2026) <em>Proposition 2025/26:239 Vindkraft i kommuner.</em>
+        Tillgänglig:
+        <a href="https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/vindkraft-i-kommuner_hd03239/" target="_blank" rel="noopener">https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/vindkraft-i-kommuner_hd03239/</a>
+        (hämtad 3 juli 2026).
+      </li>
+      <li>
+        Sveriges riksdag (2026) <em>Vindkraft i kommuner. Betänkande 2025/26:NU20.</em>
+        Tillgänglig:
+        <a href="https://www.riksdagen.se/sv/dokument-och-lagar/dokument/betankande/vindkraft-i-kommuner_hd01nu20/" target="_blank" rel="noopener">https://www.riksdagen.se/sv/dokument-och-lagar/dokument/betankande/vindkraft-i-kommuner_hd01nu20/</a>
+        (hämtad 3 juli 2026).
+      </li>
+      <li>
+        Energimyndigheten (2024) <em>Kostnaden för att bygga vindkraft fortsätter att öka.</em>
+        Tillgänglig:
+        <a href="https://www.energimyndigheten.se/nyhetsarkiv/2024/kostnaden-for-att-bygga-vindkraft-fortsatter-att-oka/" target="_blank" rel="noopener">https://www.energimyndigheten.se/nyhetsarkiv/2024/kostnaden-for-att-bygga-vindkraft-fortsatter-att-oka/</a>
+        (hämtad 3 juli 2026). Underlag för investerings- och kostnadsantaganden (LCOE).
+      </li>
+      <li>
+        Energimyndigheten (2026) <em>Vindkraft.</em>
+        Tillgänglig:
+        <a href="https://www.energimyndigheten.se/fornybart/vindkraft/" target="_blank" rel="noopener">https://www.energimyndigheten.se/fornybart/vindkraft/</a>
+        (hämtad 3 juli 2026). Allmänt underlag om produktion och kapacitetsfaktorer.
+      </li>
+      <li id="kallor-nat">
+        Utgångspunkten för analysen av nätkostnader är ledaren
+        Denli, S. (2026) <a href="https://svenskvindkraft.com/vindkraftens-ekonomi-handlar-om-mer-an-elpriset/" target="_blank" rel="noopener">Vindkraftens ekonomi handlar om mer än elpriset</a>,
+        <em>Svensk Vindkraft</em>, publicerad 2026-11-16 (hämtad 2026-11-22), som Svensk Vindkraft återgav i ett
+        <a href="https://www.linkedin.com/posts/svensk-vindkraft_i-senaste-numret-av-v%C3%A5r-tidning-svensk-vindkraft-activity-7529084415403253761-pt5K" target="_blank" rel="noopener">LinkedIn-inlägg</a>
+        2026-11-19. Ledaren pekar ut nätavgifter, anslutningskostnader och nya systemkrav som svåra att förutse. Den anger inga belopp.
+        Förslaget om vilket fall som passar vilken parkstorlek bygger på en vägledande figur i
+        <a href="https://www.kalix.se/globalassets/filer/bygga-bo-och-miljo/planer/vindkraftsutredning/s32-33.pdf" target="_blank" rel="noopener"><em>Vindkraftutredning för Norrbottens kust- och skärgårdsområde</em>, s. 32–33</a>
+        (figuren anger Energimyndigheten 2007 som källa). Att en park på 4 eller 20 MW normalt ansluts via regionnätet och inte direkt till stamnätet bygger på
+        Svenska kraftnät (2026h) <a href="https://www.svk.se/49ed15/siteassets/om-oss/rapporter/2026/principer-och-vagledning-for-anslutning-till-stamnatet-260701---uppdatering-webben.pdf" target="_blank" rel="noopener"><em>Principer och vägledning för anslutning till Stamnätet</em></a>, version 2026-07-01 (försättsbladet har kvar mallfält, så det framgår inte om texten är slutlig).
+        Nätkostnader och systemkrav bygger på exempelfall och regelverk som redovisas
+        på sidan <a href="natkostnader_exempel.html">Exempelfall och källor för nätkostnader</a>.
+        Huvudkällor (hämtade 2026-11-22):
+        Ellag (1997:857), 4 kap.
+        (<a href="https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/ellag-1997857_sfs-1997-857/" target="_blank" rel="noopener">riksdagen.se</a>);
+        Svenska kraftnät (2026) <em>Prislista 2026 för transmissionsnätet</em>
+        (<a href="https://www.svk.se/4a909a/siteassets/aktorsportalen/anslut-till-transmissionsnatet/transmissionsnatstariff/aktuella-prislistor/prislista-transmissionsnatet-20262.pdf" target="_blank" rel="noopener">svk.se</a>)
+        och <em>Prislista 2027 för transmissionsnätet</em>
+        (<a href="https://www.svk.se/4a90bc/siteassets/aktorsportalen/anslut-till-transmissionsnatet/transmissionsnatstariff/aktuella-prislistor/prislista-transmissionsnatet-2027.pdf" target="_blank" rel="noopener">svk.se</a>);
+        Vattenfall Eldistribution (2026) <em>Tillämpningsbestämmelser och nättariffer för regionnätet</em>
+        (<a href="https://www.vattenfalleldistribution.se/globalassets/2.-foretag/abonnemang-och-avgifter/avtal-och-elnatsavgift/tillampningsbestammelser-och-nattariffer-for-vattenfall-eldistributions-regionnat-2026-01-01.pdf" target="_blank" rel="noopener">vattenfalleldistribution.se</a>);
+        Energimarknadsinspektionen (2026c) <em>EIFS 2026:10, föreskrifter och allmänna råd om anslutningsavgifter för elektriska anläggningar</em>, beslutad 2026-08-03, gäller från 2027-01-01
+        (<a href="https://ei.se/download/18.85fb75b19ed45a9d5148405/1786425499922/EIFS-2026-10-om-anslutningsavgifter-f%C3%B6r-elektriska-anl%C3%A4ggningar.pdf" target="_blank" rel="noopener">ei.se</a>);
+        Elmarknadslag (2026:1281), i kraft 2027-01-01
+        (<a href="https://data.riksdagen.se/dokument/sfs-2026-1281.html" target="_blank" rel="noopener">riksdagen.se</a>).
+        Siffrorna är hämtade ur källorna, inte kvalitetssäkrade. Kontrollera mot nätägarens gällande tariff innan något återges.
+      </li>
+    </ol>
+    <p class="hint">
+      Standardvärdena i verktyget bygger på Kent Lundgrens ursprungliga kalkyl
+      (<a href="https://kentlundgren.se/kalkyler/vindkraftskalkyl.html" target="_blank" rel="noopener">kentlundgren.se/kalkyler/vindkraftskalkyl.html</a>)
+      kompletterad med ovanstående källor. Fält märkta <span class="badge antagande">antagande</span>/<span class="badge antagande">schablon</span>
+      är förenklingar; fält märkta <span class="badge lagstadgat">lagstadgat</span> följer lagtexten.
+    </p>
+  </section>
+
+  <footer class="sidfot">
+    <p>Byggt med enbart HTML, CSS och JavaScript. Diagram via Chart.js (CDN).</p>
+    <p class="versionsrad">Version <span id="versionsrad-nr">–</span> · <span id="versionsrad-datum">–</span> · Kent Lundgren</p>
+  </footer>
+
+  <!-- ========================================================================
+       UPPDATERING (2026-07-03): TEKNIK-MODAL FÖR TRANSPARENS
+       ------------------------------------------------------------------------
+       Här skedde en uppdatering: en flytande "teknik"-knapp lades till i nedre
+       högra hörnet. När man klickar på den öppnas en modal som visar den
+       ORIGINALPROMPT som användes för att skapa detta program med språkmodellen
+       Claude Opus 4.8 High. Syftet är transparens – att visa exakt vilken
+       instruktion verktyget bygger på. Knappens/modalens formatering ligger i
+       stil.css och öppna/stäng-logiken i berakningar.js.
+       ==================================================================== -->
+
+  <!-- ========================================================================
+       UPPDATERING (2026-07-03): DISKRET GITHUB-LÄNK NERE TILL VÄNSTER
+       ------------------------------------------------------------------------
+       Här skedde en uppdatering: en diskret länk till projektets GitHub-repo
+       lades till fast i nedre vänstra hörnet (samma idé som på sidan för
+       Bjerreds Saltsjöbad). Det är en vanlig länk (ingen JavaScript behövs).
+       ==================================================================== -->
+  <a id="github-lank" class="corner corner-left"
+     href="https://github.com/kentlundgren/Vindkraft/tree/main/vindkraftskalkyl"
+     target="_blank" rel="noopener"
+     title="Öppna projektets mapp på GitHub">&#123; &#125; GitHub</a>
+
+  <!-- Flytande knapp, fast i nedre högra hörnet -->
+  <button id="teknik-knapp" class="corner corner-right" type="button"
+          aria-haspopup="dialog" aria-controls="teknik-modal" aria-label="Tekniköversikt"
+          title="Teknik och den ursprungliga prompten">&lt;/&gt; teknik</button>
+
+  <!-- Modal (dold tills knappen klickas). role="dialog" för tillgänglighet. -->
+  <div id="teknik-modal" class="modal-overlay" role="dialog" aria-modal="true"
+       aria-labelledby="teknik-modal-rubrik" hidden>
+    <div class="modal-ruta">
+      <div class="modal-huvud">
+        <h2 id="teknik-modal-rubrik">Teknik &amp; metod</h2>
+        <button id="teknik-stang" class="modal-stang" type="button" aria-label="Stäng">&times;</button>
+      </div>
+
+      <div class="modal-innehall">
+        <h3>Tekniken</h3>
+        <p>Den här sidan är huvudkalkylen med förvalda värden för Önnerup. Beräkningen ligger i <code>berakningar.js</code> (samma fil som huvudkalkylen) och i den gemensamma kärnan <code>kalkylkarna.js</code>, som också Långhult-kalkylen använder: annuitet, NPV, IRR, payback, LCOE, närboendeersättning och realiserat pris. Ändras ett räknesätt där slår det igenom i alla kalkyler.</p>
+        <p>Allt räknas i webbläsaren. Ingen data skickas någonstans. Diagrammen ritas med Chart.js via CDN.</p>
+        <h3>Metoden</h3>
+        <p>Förvalen bygger på Mark- och miljööverdomstolens dom P 14634-20: tre verk, totalhöjd 150 m, årsproduktion 22 704 MWh efter 10 % säkerhetsmarginal. Kapacitetsfaktorn 0,2618 är härledd ur den produktionen och en antagen effekt på 3,3 MW per verk. Västanby AB anger idag en annan produktion, och orsaken är inte verifierad.</p>
+        <p>Närboendeersättningen räknas enligt SFS 2026:1113, 11–14 §§ (fem zoner, de två närmaste verken, tak 2 %). Antalet bostäder per zon saknas och står på 0. Nätkostnader finns med men är avstängda (läge Ingen). Siffrorna är hämtade ur källorna, inte kvalitetssäkrade, och ska kontrolleras mot källan.</p>
+      </div>
+    </div>
+  </div>
+
+  <!--
+    Chart.js via CDN. Läggs före vår egen skriptfil så att biblioteket finns
+    tillgängligt när berakningar.js körs. Endast Chart.js används, i enlighet
+    med kraven, och bara för diagrammen.
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Gemensam kärna för alla kalkyler (finansmatematik, formatering, nätkopplingen). Laddas först. -->
+  <script src="kalkylkarna.js"></script>
+
+  <!-- Nätkostnader: data, ren beräkningsmodul och gränssnitt. Laddas före berakningar.js. -->
+  <script src="natkostnader_exempel.js"></script>
+  <script src="natkostnader_berakning.js"></script>
+  <script src="natkostnader_hjalp.js"></script>
+  <script src="natkostnader_ui.js"></script>
+
+  <!-- Vår egen logik länkas sist, strax före </body>, med relativ sökväg -->
+  <script src="berakningar.js"></script>
+  <!-- Förklaringsruta för "närboende" (hovring, fokus, tryck) -->
+  <script src="narboende_info.js"></script>
+</body>
+</html>

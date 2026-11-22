@@ -23,6 +23,10 @@ Adress: `https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskal
 
 Adress: `https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl_langhult.html`
 
+**Fall Önnerup (tre verk i Lomma kommun, SE4): [Öppna Önnerup-kalkylen (Live Page)](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl_Onnerup.html)**
+
+Önnerup-sidan [`vindkraftskalkyl_Onnerup.html`](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl_Onnerup.html) är huvudkalkylen med förvalda värden för Önnerupsprojektet och delar all beräkning med den (`berakningar.js` och `kalkylkarna.js`). Underlag: Mark- och miljööverdomstolens dom P 14634-20 (tre verk, totalhöjd 150 m, 22 704 MWh/år efter 10 % säkerhetsmarginal). Effekt per verk (3,3 MW) och antal bostäder per zon saknas i domen och är märkta som antagande eller saknas.
+
 ## Fall Långhult (kopia av kalkylen)
 
 Kopian [`vindkraftskalkyl_langhult.html`](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl_langhult.html) (Live Page) lägger in vindpark Långhult

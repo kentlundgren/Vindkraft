@@ -27,7 +27,8 @@ Samlar vindkraftsrelaterat innehåll:
 
 ## Regel – En gemensam räknekärna för alla kalkyler
 
-Kalkylerna i `vindkraftskalkyl/` (huvudkalkylen, Långhult, senare Önnerup) **delar kärnan `kalkylkarna.js`** (annuitet, NPV, IRR, payback, LCOE, formatering och nätkopplingen) och nätmodellen `natkostnader_berakning.js`. Det som ska räknas lika i alla kalkyler läggs där, aldrig som en kopia i en kalkyls egen fil.
+Kalkylerna i `vindkraftskalkyl/` (huvudkalkylen, Långhult och Önnerup) **delar kärnan `kalkylkarna.js`** (annuitet, NPV, IRR, payback, LCOE, formatering och nätkopplingen) och nätmodellen `natkostnader_berakning.js`. Det som ska räknas lika i alla kalkyler läggs där, aldrig som en kopia i en kalkyls egen fil.
+- Önnerup är huvudkalkylens HTML med egna förvalda värden och delar `berakningar.js`. En ny kalkyl som bara behöver andra förval ska göras så, och ingen ny beräkningsfil.
 - En ny kalkyl laddar `kalkylkarna.js` före sin egen fil, lägger bara det som är specifikt för den (till exempel produktion, viktning, närboendezoner) i sin egen `berakningar_*.js`, och läggs i `kalkyler` i `dokument.json` (kör `python kalkylmeny.py`) så att rullgardinen Kalkyler får den.
 - **Gemensamma benämningar och metoder:** produktion = effekt × 8 760 h × **kapacitetsfaktor** (fullasttimmar är en härledd visning). Realiserat pris = spotpris × **prisfaktor** (0–1, engelska capture rate, EIFO 2026; Kaufmann & Westander (2026) säger viktning). **Närboendeersättning** räknas med zonmetoden (SFS 2026:1113, 11–14 §§) via `NARBOENDE_METOD` i `kalkylkarna.js`. Schablonen finns kvar men är inaktiv. Byte av metod görs på det stället, och metodens fält måste då finnas i formuläret.
 - Kör `node test_kalkylkarna.js` och `node test_natkostnader.js` före leverans. Det första testet fångar om en kalkyl återinför en egen kopia av en kärnfunktion.

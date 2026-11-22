@@ -185,7 +185,8 @@
     if (!m) return false;
     el('natlage').value = HASH_TILL_LAGE[m[1]];
     // Utan _Verk_ i länken gäller förvalet, ett verk.
-    el('antalverk').value = (m[5] === '5') ? '5' : '1';
+    // Antal verk styrs av länken bara när sidan har verkväxeln (huvudkalkylen). Andra kalkyler behåller sitt eget antal.
+    if (document.querySelector('.nat-verkknapp')) el('antalverk').value = (m[5] === '5') ? '5' : '1';
     markeraVerkknappar();
     if (m[3] === 'Typfall') {
       tillampaTypfall();
