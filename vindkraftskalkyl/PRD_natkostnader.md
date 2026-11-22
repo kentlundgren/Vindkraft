@@ -3,8 +3,8 @@
 **Namn:** PRD_natkostnader
 **Plats:** `vindkraftskalkyl/PRD_natkostnader.md`
 **Skapad:** 2026-11-22
-**Version:** 0.4
-**Status:** Utkast. Ingen kod är ändrad. Inga belopp är fastställda (se fas 1, avsnitt 8). Fas 1 pågår: ledaren är läst och definierar inte "nya systemkrav" eller anger belopp. Anslutning och systemkrav är genomgångna mot primärkällor i [KALLOR_natkostnader.md](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/KALLOR_natkostnader.md). Nätavgifter återstår.
+**Version:** 0.5
+**Status:** Utkast. Ingen kod är ändrad. Inga belopp är fastställda (se fas 1, avsnitt 8). Fas 1 pågår: ledaren är läst och definierar inte "nya systemkrav" eller anger belopp. Anslutning, systemkrav och löpande nätavgifter för producenter är genomgångna mot publicerade källor i [KALLOR_natkostnader.md](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/KALLOR_natkostnader.md). Kontroller mot Svenska kraftnäts egen tariff och fler nätägare återstår.
 **Typ:** Tilläggs-PRD till [vindkraftskalkylen](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html) (huvudversionen, GitHub Pages).
 
 > Dokumentet säger *vad* som ska byggas och *varför*, innan kod. Det är inte en SPEC.md. Ställningstagande till SPEC.md står i avsnitt 10.
@@ -49,7 +49,7 @@ Vad inlägget inte ger: inga belopp för nätkostnader, ingen definition av "nya
 - Varje nytt indatafält är märkt som lagstadgat, schablon eller antagande, och varje belopp har en källa med författare, år och sida, enligt samma princip som Långhult-kopian.
 - **Förvalt läge är "ingen nätkostnad".** Kalkylen visar då exakt samma resultat som före ändringen, vilket Kent kan jämföra mot sina övriga vindkraftskalkyler som har samma förvalda värden. Läsaren väljer själv att ta med nätkostnader.
 - Nätkostnaderna kan visas som ett spann (låg, bas, hög) så att läsaren ser hur osäkerheten slår mot NPV, IRR och LCOE (se ursprung).
-- Läsaren ser hur stor del av kostnaden som är nät (kr/kWh och andel av LCOE).
+- Läsaren ser hur stor del av kostnaden som är nät: nyckeltal i kr/MW (engångs) och kr/MW och år (löpande), som procent av investeringsutgiften per MW, i öre/kWh och som andel av LCOE.
 - I läget "ingen" (förvalt) blir alla nyckeltal identiska med dagens, oavsett vad de nya fälten innehåller.
 
 **Icke-mål (första versionen)**
@@ -109,7 +109,9 @@ Tabell 3. Nya indatafält (förslag, namn och enheter slutgiltigt fastställs i 
 | Anslutning | nätägarens anslutningsavgift | kkr/MW | fastställs i fas 1 |
 | Nätavgift | fast årsavgift | kr/år | fastställs i fas 1 |
 | Nätavgift | effektavgift | kr/kW/år | fastställs i fas 1 |
-| Nätavgift | inmatningsavgift | öre/kWh | fastställs i fas 1 |
+| Nätavgift | avståndsberoende effektavgift (gäller regionnät) | kr/kW och km | fastställs i fas 1 |
+| Nätavgift | avstånd för avståndsberoende avgift | km | fastställs i fas 1 |
+| Nätavgift | energiavgift (negativt tecken = ersättning) | öre/kWh | fastställs i fas 1 |
 | Nätavgift | årlig förändring av nätavgifter | %/år | 0 (real kalkyl, som elpriset) |
 | Systemkrav | engångskostnad | kkr/MW | fastställs i fas 1 |
 | Systemkrav | löpande kostnad (provning, drift) | kr/MW/år | fastställs i fas 1 |
@@ -126,7 +128,13 @@ Tabell 3. Nya indatafält (förslag, namn och enheter slutgiltigt fastställs i 
 - `driftkostnadAr1` får `natLopande[1]`, så att `totalkostnad`, `kostnadPerkWh` och andelsägarens självkostnad följer med.
 - LCOE: `natEngang` ingår i `investering` och `natLopande[t]` i `driftAr[t]`, så formeln för `disKostnad` behöver ingen ändring.
 - **Läge och spann:** en väljare "nätkostnader: ingen / låg / bas / hög" med **ingen som förvalt**. Fältens värden i tabell 3 gäller i läget bas. Läget ingen sätter alla nätkostnader till 0, så att beräkningen blir identisk med dagens. Låg och hög multiplicerar kostnaderna med en faktor per läge. Faktorerna och om de ska gälla alla poster lika fastställs i fas 1 ur källornas spridning, annars märks de som antagande. En liten tabell visar NPV, IRR och LCOE för de fyra lägena.
-- Nya utdata: nätkostnad per kWh (diskonterad engångs- och löpande kostnad delat med diskonterad energi) och nätkostnadens andel av LCOE.
+- **Nyckeltal för nätkostnader** (nya utdata, så att läsaren snabbt ser storleksordningen):
+  - *Engångsdelen per MW:* `natEngang / P_tot` i kr/MW, och som procent av investeringsutgiften per MW (förvalt cirka 12 000 kkr/MW).
+  - *Löpande per MW och år:* `natLopande[1] / P_tot` i kr/MW och år, och som procent av investeringsutgiften per MW och år.
+  - *Öre per kWh:* löpande nätkostnad år 1 delat med produktionen år 1 (kWh) × 100, och engångsdelens annuitet delat med produktionen, så att engångs- och löpande delar kan jämföras i samma enhet. Varje post (anslutning, nätavgifter, systemkrav) visas för sig och som summa.
+  - *Teckenregeln:* energidelen i nätavgifterna kan vara negativ (en ersättning för minskade förluster, vilket förekommer i södra Sverige enligt källorna). Nyckeltalen får därför vara negativa och visas då med minustecken och förklaring.
+  - *Nätkostnad per kWh över hela livslängden* (diskonterad) och nätkostnadens andel av LCOE.
+- **Nyckeltalen visas alltid**, även i läget "ingen". De räknas då på fältens värden (läget bas), så att läsaren kan se vad nätkostnader skulle vara utan att slå på dem i kalkylen. Beräkningen av NPV, IRR, LCOE och payback påverkas bara av läget som är valt.
 
 <a id="6-granssnitt"></a>
 
@@ -180,6 +188,9 @@ Tabell 5. Tester som ska passera [#](#tabell-5)
 | Fast årsavgift Y kr/år, `n` år | Driftkostnad år 1 ökar med Y, NPV minskar med diskonterad summa av Y |
 | Produktionsbortfall 5 % | Produktion och intäkt minskar med 5 %, procentbaserat arrende och närboendeersättning minskar med samma andel |
 | Spann låg / bas / hög | Bas använder fältens värden oförändrade; hög ger lägre NPV och IRR än bas, låg ger högre; alla tre ger lägre NPV än läget ingen |
+| Nyckeltal kr/MW och öre/kWh | Handräknat exempel stämmer: 20 MW, kapacitetsfaktor 0,37 och en löpande kostnad på 100 000 kr/MW och år ger cirka 3,09 öre/kWh och 0,83 procent av 12 000 kkr/MW |
+| Negativ energidel | En energiersättning ger negativ löpande nätkostnad och negativt nyckeltal, med minustecken och förklaring |
+| Nyckeltal i läget ingen | Nyckeltalen visas och räknas på fältens värden, medan NPV, IRR, LCOE och payback är oförändrade |
 | Nätkostnad per kWh | Diskonterad nätkostnad delat med diskonterad energi stämmer med handräkning |
 | Diagram | Posterna summerar till `totalkostnad` plus övriga lokala poster, utan dubbelräkning |
 | Fält | Nya indatafält är gula, märkta och har förklaring; inga andra element är gula |
