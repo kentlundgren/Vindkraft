@@ -1,0 +1,10 @@
+/* Rullgardin med kalkylerna i mappen (kalkylmeny.py). Gult används inte. */
+.kalkylmeny { background: #fff; border-bottom: 1px solid #d3e0ec; padding: 4px 16px; font: 14px/1.5 "Segoe UI", Helvetica, Arial, sans-serif; color: #17283b; }
+.kalkylmeny details { position: relative; display: inline-block; }
+.kalkylmeny summary { cursor: pointer; font-weight: 600; color: #185fa5; padding: 2px 0; }
+.kalkylmeny summary:focus-visible, .kalkylmeny a:focus-visible { outline: 3px solid #185fa5; outline-offset: 2px; }
+.kalkylmeny ul { list-style: none; margin: 4px 0 0; padding: 8px 12px; background: #fff; border: 1px solid #d3e0ec; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,.12); min-width: 18rem; max-width: calc(100vw - 32px); position: absolute; z-index: 20; }
+.kalkylmeny li { padding: 4px 0; }
+.kalkylmeny li small { display: block; color: #5a738c; font-size: 12px; }
+.kalkylmeny a { color: #185fa5; }
+@media print { .kalkylmeny { display: none; } }

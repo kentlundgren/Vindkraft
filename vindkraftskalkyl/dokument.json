@@ -2,6 +2,11 @@
   "titel": "Vindkraftskalkyl, fem perspektiv",
   "dokument": [
     {"fil": "vindkraftskalkyl.html", "namn": "Kalkylen", "roll": "huvud"},
+    {"fil": "vindkraftskalkyl_langhult.html", "namn": "Kalkyl för fallet Långhult", "roll": "sida"},
     {"fil": "natkostnader_exempel.html", "namn": "Exempelfall och källor för nätkostnader", "roll": "sida"}
+  ],
+  "kalkyler": [
+    {"fil": "vindkraftskalkyl.html", "namn": "Huvudkalkylen", "beskr": "Fem perspektiv, med nätkostnader"},
+    {"fil": "vindkraftskalkyl_langhult.html", "namn": "Fallet Långhult", "beskr": "Vindpark Långhult, 20 verk, indata ur Kaufmann & Westander (2026)"}
   ]
 }

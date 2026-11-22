@@ -76,6 +76,7 @@ Projektet består av tre huvudfiler i denna mapp, plus en förklaringsruta och e
 | [`PRD_natkostnader.md`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/PRD_natkostnader.md) | PRD för nätkostnader (version 1.16, fryst). |
 | [`KALLOR_natkostnader.md`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/KALLOR_natkostnader.md) | Källor och räkneexempel för nätkostnader. |
 | [`dokument.json`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/dokument.json) | Lista över dokumenten i mappen för brödsmulorna (`brodsmulor.css`). |
+| [`kalkylmeny.py`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/kalkylmeny.py) och [`kalkylmeny.css`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/kalkylmeny.css) | Rullgardinen Kalkyler med länkar mellan huvudkalkylen och fallet Långhult. Listan "kalkyler" i `dokument.json`; kör `python kalkylmeny.py` efter `brodsmulor.py`. |
 
 CSS länkas i `<head>` och JavaScript strax före `</body>`, båda med relativa
 sökvägar. [Chart.js](https://www.chartjs.org/) laddas via CDN och används endast
