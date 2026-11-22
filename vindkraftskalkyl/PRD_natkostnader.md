@@ -3,8 +3,8 @@
 **Namn:** PRD_natkostnader
 **Plats:** `vindkraftskalkyl/PRD_natkostnader.md`
 **Skapad:** 2026-11-22
-**Version:** 0.2
-**Status:** Utkast. Ingen kod är ändrad. Inga belopp är fastställda (se fas 1, avsnitt 8). Fas 1 pågår: ledaren som inlägget hänvisar till är inte hittad än.
+**Version:** 0.3
+**Status:** Utkast. Ingen kod är ändrad. Inga belopp är fastställda (se fas 1, avsnitt 8). Fas 1 pågår: ledaren är läst och definierar inte "nya systemkrav" eller anger belopp, så primärkällor återstår.
 **Typ:** Tilläggs-PRD till [vindkraftskalkylen](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html) (huvudversionen, GitHub Pages).
 
 > Dokumentet säger *vad* som ska byggas och *varför*, innan kod. Det är inte en SPEC.md. Ställningstagande till SPEC.md står i avsnitt 10.
@@ -29,7 +29,7 @@ Tre kostnadsslag saknas:
 
 <a id="ursprung"></a>
 
-Uppdraget föddes ur ett LinkedIn-inlägg som Svensk Vindkraft publicerade 2026-11-19: [inlägget](https://www.linkedin.com/posts/svensk-vindkraft_i-senaste-numret-av-v%C3%A5r-tidning-svensk-vindkraft-activity-7529084415403253761-pt5K). Inlägget återger inledningen på en ledare i tidningen *Svensk Vindkraft*, "Vindkraftens ekonomi handlar om mer än elpriset", skriven av SD, styrelseledamot i Svensk Vindkraftförening ([Svensk Vindkraft, 2026](https://www.linkedin.com/posts/svensk-vindkraft_i-senaste-numret-av-v%C3%A5r-tidning-svensk-vindkraft-activity-7529084415403253761-pt5K), inlägg på LinkedIn, hämtat 2026-11-22). Själva ledaren är inte läst än (fas 1).
+Uppdraget föddes ur ett LinkedIn-inlägg som Svensk Vindkraft publicerade 2026-11-19: [inlägget](https://www.linkedin.com/posts/svensk-vindkraft_i-senaste-numret-av-v%C3%A5r-tidning-svensk-vindkraft-activity-7529084415403253761-pt5K). Inlägget återger inledningen på en ledare i tidningen *Svensk Vindkraft*, "Vindkraftens ekonomi handlar om mer än elpriset", skriven av SD, styrelseledamot i Svensk Vindkraftförening ([SD, 2026](https://svenskvindkraft.com/vindkraftens-ekonomi-handlar-om-mer-an-elpriset/), ledare publicerad 2026-11-16 på svenskvindkraft.com, hämtad 2026-11-22). Ledaren är kort och har samma text som LinkedIn-inlägget ([Svensk Vindkraft, 2026](https://www.linkedin.com/posts/svensk-vindkraft_i-senaste-numret-av-v%C3%A5r-tidning-svensk-vindkraft-activity-7529084415403253761-pt5K), hämtat 2026-11-22).
 
 Det inlägget säger om nätkostnader, med egna ord: nätavgifter, anslutningskostnader och nya systemkrav kan få stor betydelse för investeringar som ska bära sig i flera decennier, och när kostnaderna är svåra att förutse ökar osäkerheten inför investeringsbesluten. Därför är det enligt inlägget också en fråga om att attrahera kapital till ny elproduktion.
 
@@ -39,7 +39,7 @@ Vad inlägget ger PRD:n:
 - **Kravet på osäkerhet:** att kostnaderna är svåra att förutse är själva poängen. Därför ska kalkylen kunna visa ett spann (låg, bas, hög) och inte bara ett värde (avsnitt 5 och 9).
 - **Producentens perspektiv:** Svensk Vindkraft är en branschorganisation för producenterna och vill "lyfta producenternas perspektiv". Inlägget är ett underlag för vad som behöver modelleras, inte en källa till belopp.
 
-Vad inlägget inte ger: inga belopp för nätkostnader, ingen definition av "nya systemkrav" och ingen hänvisning till vilka regler som avses. Det är fas 1:s uppgift att hitta det i ledaren och i primärkällor. Siffrorna om datacenter i inlägget används inte i kalkylen.
+Vad inlägget inte ger: inga belopp för nätkostnader, ingen definition av "nya systemkrav" och ingen hänvisning till vilka regler som avses. Det är fas 1:s uppgift att hitta det i primärkällor (Svenska kraftnät, Ei, nätbolag). Siffrorna om datacenter i inlägget används inte i kalkylen.
 
 ## 2. mål och icke-mål [#](#2-mal)
 
@@ -47,9 +47,10 @@ Vad inlägget inte ger: inga belopp för nätkostnader, ingen definition av "nya
 
 - Investerarens kassaflöde, LCOE, NPV, IRR och payback inkluderar de tre kostnadsslagen.
 - Varje nytt indatafält är märkt som lagstadgat, schablon eller antagande, och varje belopp har en källa med författare, år och sida, enligt samma princip som Långhult-kopian.
+- **Förvalt läge är "ingen nätkostnad".** Kalkylen visar då exakt samma resultat som före ändringen, vilket Kent kan jämföra mot sina övriga vindkraftskalkyler som har samma förvalda värden. Läsaren väljer själv att ta med nätkostnader.
 - Nätkostnaderna kan visas som ett spann (låg, bas, hög) så att läsaren ser hur osäkerheten slår mot NPV, IRR och LCOE (se ursprung).
 - Läsaren ser hur stor del av kostnaden som är nät (kr/kWh och andel av LCOE).
-- Med alla nya fält satta till 0 blir alla nyckeltal identiska med dagens.
+- I läget "ingen" (förvalt) blir alla nyckeltal identiska med dagens, oavsett vad de nya fälten innehåller.
 
 **Icke-mål (första versionen)**
 
@@ -101,6 +102,7 @@ Tabell 3. Nya indatafält (förslag, namn och enheter slutgiltigt fastställs i 
 
 | Post | Fält | Enhet | Förvalt värde |
 | --- | --- | --- | --- |
+| Läge | nätkostnader: ingen / låg / bas / hög | val | ingen |
 | Anslutning | avstånd till anslutningspunkt | km | fastställs i fas 1 |
 | Anslutning | ledningskostnad | kkr/km | fastställs i fas 1 |
 | Anslutning | station och fast del | kkr | fastställs i fas 1 |
@@ -123,7 +125,7 @@ Tabell 3. Nya indatafält (förslag, namn och enheter slutgiltigt fastställs i 
   `natLopande[t] = (fastAvgift + effektavgift × P_tot × 1000 + systemLopande × P_tot) × (1 + förändring)^(t−1) + inmatning/100 × prodkWhAr[t] × (1 + förändring)^(t−1)`.
 - `driftkostnadAr1` får `natLopande[1]`, så att `totalkostnad`, `kostnadPerkWh` och andelsägarens självkostnad följer med.
 - LCOE: `natEngang` ingår i `investering` och `natLopande[t]` i `driftAr[t]`, så formeln för `disKostnad` behöver ingen ändring.
-- **Spann:** en väljare "nätkostnad: låg / bas / hög" (förvalt bas) multiplicerar de belopp som är kostnader i tabell 3 med en faktor per läge. Faktorerna och om de ska gälla alla poster lika fastställs i fas 1 ur källornas spridning, annars märks de som antagande. En liten tabell visar NPV, IRR och LCOE för de tre lägena.
+- **Läge och spann:** en väljare "nätkostnader: ingen / låg / bas / hög" med **ingen som förvalt**. Fältens värden i tabell 3 gäller i läget bas. Läget ingen sätter alla nätkostnader till 0, så att beräkningen blir identisk med dagens. Låg och hög multiplicerar kostnaderna med en faktor per läge. Faktorerna och om de ska gälla alla poster lika fastställs i fas 1 ur källornas spridning, annars märks de som antagande. En liten tabell visar NPV, IRR och LCOE för de fyra lägena.
 - Nya utdata: nätkostnad per kWh (diskonterad engångs- och löpande kostnad delat med diskonterad energi) och nätkostnadens andel av LCOE.
 
 <a id="6-granssnitt"></a>
@@ -172,11 +174,12 @@ Tabell 5. Tester som ska passera [#](#tabell-5)
 
 | Test | Förväntat resultat |
 | --- | --- |
-| Alla nya fält = 0 | Alla nyckeltal, kassaflöden och diagram identiska med dagens |
+| Läge ingen (förvalt) | Alla nyckeltal, kassaflöden och diagram identiska med dagens, även när de nya fälten har värden |
+| Sidan öppnas | Läget är "ingen" och resultaten är desamma som före ändringen |
 | Anslutningskostnad ökar med X kr | `investering` ökar med X, kapitalkostnad enligt annuitet, NPV minskar med X |
 | Fast årsavgift Y kr/år, `n` år | Driftkostnad år 1 ökar med Y, NPV minskar med diskonterad summa av Y |
 | Produktionsbortfall 5 % | Produktion och intäkt minskar med 5 %, procentbaserat arrende och närboendeersättning minskar med samma andel |
-| Spann låg / bas / hög | Bas ger samma resultat som utan väljare; hög ger lägre NPV och IRR än bas, låg ger högre |
+| Spann låg / bas / hög | Bas använder fältens värden oförändrade; hög ger lägre NPV och IRR än bas, låg ger högre; alla tre ger lägre NPV än läget ingen |
 | Nätkostnad per kWh | Diskonterad nätkostnad delat med diskonterad energi stämmer med handräkning |
 | Diagram | Posterna summerar till `totalkostnad` plus övriga lokala poster, utan dubbelräkning |
 | Fält | Nya indatafält är gula, märkta och har förklaring; inga andra element är gula |
@@ -201,7 +204,8 @@ Behövs ett SPEC.md-steg härifrån? **Nej.** Ändringen är begränsad (ett få
 
 ## 12. öppna frågor [#](#12-oppna-fragor)
 
-1. Vilka konkreta "nya systemkrav" avser Kent? Inlägget som uppdraget utgår från nämner "nya systemkrav" utan att definiera dem. Tolkningen i tabell 1 är en arbetshypotes tills fas 1 har gett källor (ledaren, Svenska kraftnät).
-2. Ska nätavgifterna få en årlig förändring (förvalt 0) eller hållas konstanta i den första versionen?
-3. Ska förvalda värden skilja på elområde? Beror på vad fas 1 visar.
-4. Ska Långhult-kopian få egna nätvärden ur samma källa som övriga indata, och i så fall när?
+1. Vad "nätkostnader" egentligen är: planeringen fortsätter med att pröva varje post (anslutning, nätavgifter, systemkrav) mot primärkällor innan fälten i tabell 3 läggs fast.
+2. Vilka konkreta "nya systemkrav" avser Kent? Inlägget som uppdraget utgår från nämner "nya systemkrav" utan att definiera dem. Tolkningen i tabell 1 är en arbetshypotes tills fas 1 har gett källor (Svenska kraftnät, Ei).
+3. Ska nätavgifterna få en årlig förändring (förvalt 0) eller hållas konstanta i den första versionen?
+4. Ska förvalda värden skilja på elområde? Beror på vad fas 1 visar.
+5. Ska Långhult-kopian få egna nätvärden ur samma källa som övriga indata, och i så fall när?
