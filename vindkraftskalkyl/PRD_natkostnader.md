@@ -4,8 +4,8 @@
 **Plats:** `vindkraftskalkyl/PRD_natkostnader.md`
 **Skapad:** 2026-11-22
 **Uppdaterad:** 2026-11-22
-**Version:** 1.15
-**Status:** **Fryst 2026-11-22 (version 1.15).** Kent har godkänt exempelfallen, faktorerna 0,5 och 1,5 och att PRD:n fryses efter genomläsning med fräscha ögon. Fas 1 (källor, [KALLOR_natkostnader.md](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/KALLOR_natkostnader.md)) och fas 2 (fältnamn, formler, exempelfall) är genomförda. Ändringar efter frysning görs som ny version. Regionnätens avgifter för 2027, fler nätägare, belägg för engångskostnader och belägg för gränsen 15 MW återstår (avsnitt 12). Fas 3 är byggd (se README i mappen). Tabell 6 stämmer med testerna i `test_natkostnader.js`.
+**Version:** 1.16
+**Status:** **Fryst 2026-11-22 (version 1.16).** Kent har godkänt exempelfallen, faktorerna 0,5 och 1,5 och att PRD:n fryses efter genomläsning med fräscha ögon. Fas 1 (källor, [KALLOR_natkostnader.md](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/KALLOR_natkostnader.md)) och fas 2 (fältnamn, formler, exempelfall) är genomförda. Ändringar efter frysning görs som ny version. Regionnätens avgifter för 2027, fler nätägare, belägg för engångskostnader och belägg för gränsen 15 MW återstår (avsnitt 12). Fas 3 är byggd (se README i mappen). Tabell 6 stämmer med testerna i `test_natkostnader.js`.
 **Typ:** Tilläggs-PRD till [vindkraftskalkylen](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html) (huvudversionen, GitHub Pages).
 
 > Dokumentet säger *vad* som ska byggas och *varför*, innan kod. Det är inte en SPEC.md. Ställningstagande till SPEC.md står i avsnitt 10.

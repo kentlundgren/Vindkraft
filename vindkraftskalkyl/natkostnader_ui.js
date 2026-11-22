@@ -324,9 +324,17 @@
     const n = Math.max(1, d.antalverk);
     satt('nat-t-ore', fmt(np.lopandeOre.summa, 2, ' öre/kWh'));
     const park = np.lopande.summa;
-    satt('nat-t-kr', n === 1
-      ? fmt(park, 0, ' kr/år')
-      : fmt(park, 0, ' kr/år') + ' för parken (' + fmt(park / n, 0, ' kr/år') + ' per verk)');
+    // Huvudvärdet står på en rad och uppdelningen per verk på en rad under, så att långa texter inte spiller över rutan.
+    const kr = el('nat-t-kr');
+    if (kr) {
+      kr.textContent = fmt(park, 0, ' kr/år');
+      if (n > 1) {
+        const del = document.createElement('span');
+        del.className = 'nat-t-del';
+        del.textContent = 'för parken (' + fmt(park / n, 0, ' kr/år') + ' per verk)';
+        kr.appendChild(del);
+      }
+    }
     const t = d.natTomma || {};
     const saknas = ['natavstand', 'natledning', 'natstation', 'natforstark', 'natutredning', 'natengangschablon', 'natsyseng', 'natsyslop', 'natsysbortfall'].every(k => t[k]);
     const lage = d.natlage === 'ingen' ? 'Om nätkostnaderna togs med (läge bas)' : 'Läge ' + LAGE_TEXT[d.natlage];

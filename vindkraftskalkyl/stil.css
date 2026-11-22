@@ -592,3 +592,8 @@ details.nat-dela[open] > summary { margin-bottom: .4rem; }
 .nat-resultat .nat-block { margin-top: .6rem; }
 .nat-resultat .tabell-rulla { overflow-x: auto; }
 .nat-resultat .nat-tabell { font-size: .8rem; }
+
+/* Sammanfattningen i en smal kolumn: värdet får radbrytas och uppdelningen per verk står på egen rad */
+.nat-topp .resultatlista { grid-template-columns: 1fr; }
+.nat-topp .resultatlista dd { white-space: normal; text-align: right; }
+.nat-t-del { display: block; font-size: .8rem; font-weight: 400; color: #40504d; }
