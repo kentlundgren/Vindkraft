@@ -36,8 +36,9 @@
    UPPDATERING 2026-11-22 (senare igen): panelen Nätkostnader i siffror är hopfälld, med de två summorna synliga (natkostnader_ui.js). Version 1.8.
    UPPDATERING 2026-11-22 (senare igen): rutan Välj nätfall efter parkens storlek och trappan över parkeffekt och nätfall (natkostnader_ui.js). Version 1.9.
    UPPDATERING 2026-11-22 (senare igen): delningsraden med adressen till natkostnader/ och miniatyr av delningsbilden. Version 1.10.
-   UPPDATERING 2026-11-22 (senare igen): fältet med länken till valet är borttaget (knappen Kopiera länk finns kvar) och delningsraden är hopfälld. Version 1.11. */
-const VERSION = '1.11';
+   UPPDATERING 2026-11-22 (senare igen): fältet med länken till valet är borttaget (knappen Kopiera länk finns kvar) och delningsraden är hopfälld. Version 1.11.
+   UPPDATERING 2026-11-22 (senare igen): Nätkostnader i siffror ligger sist i gruppen Nät och systemkrav och sammanfattningen mitt i gruppen är borttagen. Version 1.12. */
+const VERSION = '1.12';
 const VERSIONSDATUM = '2026-11-22';
 
 /* ============================================================================

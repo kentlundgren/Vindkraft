@@ -330,6 +330,18 @@
     const t = d.natTomma || {};
     const saknas = ['natavstand', 'natledning', 'natstation', 'natforstark', 'natutredning', 'natengangschablon', 'natsyseng', 'natsyslop', 'natsysbortfall'].every(k => t[k]);
     const lage = d.natlage === 'ingen' ? 'Om nätkostnaderna togs med (läge bas)' : 'Läge ' + LAGE_TEXT[d.natlage];
+    // Engångskostnaden: visas bara när något är ifyllt. Annars står den som saknad i raden Ingår inte.
+    const engangFalt = ['natavstand', 'natledning', 'natstation', 'natforstark', 'natutredning', 'natengangschablon', 'natsyseng'];
+    const engangSaknas = engangFalt.every(k => t[k]);
+    const pe = np.engangPerMW;
+    const inv = d.specinv * 1000;
+    const eng = el('nat-t-engang');
+    if (eng) {
+      eng.hidden = engangSaknas;
+      eng.textContent = engangSaknas ? '' : 'Engångskostnad: ' + fmt(pe.summa, 0, ' kr/MW') +
+        (inv > 0 ? ' (' + fmt(pe.summa / inv * 100, 1, ' % av investeringsutgiften per MW') + ')' : '') +
+        (d.natengangingar === 'ja' ? ', antas ingå i investeringsutgiften.' : ', läggs till investeringsutgiften.');
+    }
     satt('nat-t-not', lage + ', ' + n + (n === 1 ? ' verk' : ' verk') + ' om ' + fmt(d.effekt, 1) + ' MW. ' +
       (saknas ? 'Ingår inte: anslutningskostnader och nya systemkrav saknar belopp, så totalbilden är högre. ' : '') +
       'Alla poster finns under "Visa alla nätkostnader i siffror".');

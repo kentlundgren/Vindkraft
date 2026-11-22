@@ -586,3 +586,9 @@ h2:hover > .ankare, h3:hover > .ankare, .ankare:focus { opacity: 1; }
 /* Hopfälld delningsrad */
 details.nat-dela > summary { cursor: pointer; font-weight: 600; font-size: .85rem; color: var(--farg-primar); }
 details.nat-dela[open] > summary { margin-bottom: .4rem; }
+
+/* Nätkostnader i siffror inne i gruppen Nät och systemkrav (en kolumn) */
+.nat-resultat { margin-top: .8rem; padding-top: .6rem; border-top: 2px solid var(--farg-ram); }
+.nat-resultat .nat-block { margin-top: .6rem; }
+.nat-resultat .tabell-rulla { overflow-x: auto; }
+.nat-resultat .nat-tabell { font-size: .8rem; }

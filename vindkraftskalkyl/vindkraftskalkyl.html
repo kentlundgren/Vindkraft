@@ -54,6 +54,10 @@
 
   UPPDATERING 2026-11-22 (senare igen): fältet med länken till valet är borttaget (adressen finns i webbläsarens adressfält, och
   knappen Kopiera länk finns kvar), och delningsraden är hopfälld. Version 1.11.
+
+  UPPDATERING 2026-11-22 (senare igen): Nätkostnader i siffror flyttad in i gruppen Nät och systemkrav (sist), så att all information
+  om nätkostnader står på samma ställe. Den löpande sammanfattningen mitt i gruppen är borttagen och engångsraden finns i den nya
+  sammanfattningen. Version 1.12.
   ============================================================================
 -->
 <html lang="sv">
@@ -234,12 +238,6 @@
           </select>
         </label>
 
-        <div class="nat-sammanfattning" id="nat-sammanfattning" aria-live="polite">
-          <p id="nat-sam-lopande">–</p>
-          <p id="nat-sam-engang">–</p>
-          <p id="nat-sam-saknas" class="nat-saknas" hidden></p>
-        </div>
-
         <div class="nat-valdlank">
           <button type="button" id="nat-kopiera" class="nat-kopiera">Kopiera länk till det här valet</button>
           <p class="hint">Länken återger läge, exempelfall, antal verk och om engångskostnaden ingår. Samma adress finns i webbläsarens adressfält.</p>
@@ -364,6 +362,79 @@
           <span class="badge antagande">antagande</span>
         </label>
         </details>
+
+        <div class="nat-resultat" id="nat-panel" aria-labelledby="nat-rubrik">
+          <h4 class="nat-delrubrik" id="nat-rubrik">Nätkostnader i siffror <a class="ankare" href="#nat-rubrik" aria-label="Länk till den här rubriken">#</a></h4>
+          <!-- Engångskostnader visas som kr per MW och jämförs med investeringsutgiften per MW. Löpande kostnader visas som öre per kWh,
+               delat i fast och rörlig del. Panelen räknas på läget bas när läget är "ingen", så att storleken syns utan att
+               resultaten påverkas. -->
+          <div class="nat-topp" aria-live="polite">
+            <dl class="resultatlista">
+              <div class="framhavd"><dt>Summa löpande kostnader</dt><dd id="nat-t-ore">–</dd></div>
+              <div class="framhavd"><dt>Summa löpande nätkostnad, år 1</dt><dd id="nat-t-kr">–</dd></div>
+            </dl>
+            <p class="hint" id="nat-t-engang"></p>
+            <p class="hint" id="nat-t-not"></p>
+          </div>
+      
+          <details id="nat-panel-detaljer" class="nat-detaljer">
+          <summary>Visa alla nätkostnader i siffror</summary>
+      
+          <p class="hint" id="nat-info">–</p>
+      
+          <div class="nat-block">
+            <h3 id="nat-engang-rubrik">Engångskostnader, kr per MW <a class="ankare" href="#nat-engang-rubrik" aria-label="Länk till den här rubriken">#</a></h3>
+            <dl class="resultatlista">
+              <div><dt>Ledning</dt><dd id="nat-e-ledning">–</dd></div>
+              <div><dt>Station och fast del</dt><dd id="nat-e-station">–</dd></div>
+              <div><dt>Förstärkning och anslutningsavgift</dt><dd id="nat-e-forstark">–</dd></div>
+              <div><dt>Utredning och förprojektering</dt><dd id="nat-e-utredning">–</dd></div>
+              <div><dt>Systemkrav, utrustning</dt><dd id="nat-e-system">–</dd></div>
+              <div><dt>Schablon (utan uppdelning)</dt><dd id="nat-e-schablon">–</dd></div>
+              <div class="framhavd"><dt>Summa engångskostnader</dt><dd id="nat-e-summa">–</dd></div>
+              <div class="framhavd"><dt>Andel av investeringsutgiften per MW</dt><dd id="nat-e-procent">–</dd></div>
+            </dl>
+          </div>
+      
+          <div class="nat-block">
+            <h3 id="nat-lopande-rubrik">Löpande kostnader, öre per kWh <a class="ankare" href="#nat-lopande-rubrik" aria-label="Länk till den här rubriken">#</a></h3>
+            <dl class="resultatlista">
+              <div><dt>Fast årsavgift</dt><dd id="nat-l-fast">–</dd></div>
+              <div><dt>Effektavgift</dt><dd id="nat-l-effekt">–</dd></div>
+              <div><dt>Avståndsberoende avgift</dt><dd id="nat-l-avstand">–</dd></div>
+              <div><dt>Systemkrav, löpande</dt><dd id="nat-l-system">–</dd></div>
+              <div class="framhavd"><dt>Fast del, summa</dt><dd id="nat-l-fastsumma">–</dd></div>
+              <div class="framhavd"><dt>Rörlig del (energiavgift)</dt><dd id="nat-l-energi">–</dd></div>
+              <div class="framhavd"><dt>Summa löpande kostnader</dt><dd id="nat-l-summa">–</dd></div>
+            </dl>
+          </div>
+      
+          <div class="nat-block">
+            <h3 id="nat-kronor-rubrik">Löpande kostnader i kronor <a class="ankare" href="#nat-kronor-rubrik" aria-label="Länk till den här rubriken">#</a></h3>
+            <p class="hint" id="nat-kronor-info">–</p>
+            <div class="tabell-rulla">
+              <table class="nat-tabell" id="nat-kronor-tabell">
+                <caption id="NatTabell1">Tabell 1. Löpande nätkostnad i kronor, år 1 och över livslängden</caption>
+                <thead><tr><th scope="col">Post</th><th scope="col" class="kol-verk">Per verk</th><th scope="col" class="kol-park" id="nat-kol-park">Hela parken</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">Produktion år 1 (kWh)</th><td class="tal kol-verk" id="nat-k-prod-verk">–</td><td class="tal kol-park" id="nat-k-prod-park">–</td></tr>
+                  <tr><th scope="row">Fast årsavgift (kr/år)</th><td class="tal kol-verk" id="nat-k-fast-verk">–</td><td class="tal kol-park" id="nat-k-fast-park">–</td></tr>
+                  <tr><th scope="row">Effektavgift (kr/år)</th><td class="tal kol-verk" id="nat-k-effekt-verk">–</td><td class="tal kol-park" id="nat-k-effekt-park">–</td></tr>
+                  <tr><th scope="row">Avståndsberoende avgift (kr/år)</th><td class="tal kol-verk" id="nat-k-avstand-verk">–</td><td class="tal kol-park" id="nat-k-avstand-park">–</td></tr>
+                  <tr><th scope="row">Systemkrav, löpande (kr/år)</th><td class="tal kol-verk" id="nat-k-system-verk">–</td><td class="tal kol-park" id="nat-k-system-park">–</td></tr>
+                  <tr class="framhavd"><th scope="row">Fast del, summa (kr/år)</th><td class="tal kol-verk" id="nat-k-fastsumma-verk">–</td><td class="tal kol-park" id="nat-k-fastsumma-park">–</td></tr>
+                  <tr class="framhavd"><th scope="row">Rörlig del: energiavgift × produktion (kr/år)</th><td class="tal kol-verk" id="nat-k-energi-verk">–</td><td class="tal kol-park" id="nat-k-energi-park">–</td></tr>
+                  <tr class="framhavd"><th scope="row">Summa löpande nätkostnad, år 1 (kr/år)</th><td class="tal kol-verk" id="nat-k-summa-verk">–</td><td class="tal kol-park" id="nat-k-summa-park">–</td></tr>
+                  <tr><th scope="row">Nuvärde över livslängden (kr)</th><td class="tal kol-verk" id="nat-k-livs-verk">–</td><td class="tal kol-park" id="nat-k-livs-park">–</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+      
+          <p class="hint" id="nat-exempel-info"></p>
+          <p class="hint">Tomma poster är ej angivna och räknas som 0. Ett minustecken betyder en ersättning till producenten. Sekundärt: löpande kostnad per MW och år <span id="nat-l-permwar">–</span>, total nätkostnad per kWh över livslängden <span id="nat-s-livs">–</span> och dess andel av LCOE <span id="nat-s-andel">–</span>.</p>
+          </details>
+        </div>
       </fieldset>
 
       <!-- ---- Grupp: Markägare ---- -->
@@ -474,82 +545,6 @@
       </fieldset>
 
     </div>
-  </section>
-
-  <!-- ========================================================================
-       NÄTKOSTNADER I SIFFROR (alltid synlig)
-       Engångskostnader visas som kr per MW och jämförs med investeringsutgiften
-       per MW. Löpande kostnader visas som öre per kWh, delat i fast och rörlig
-       del. Panelen räknas på läget bas när läget är "ingen", så att storleken
-       syns utan att resultaten ovan påverkas.
-       ==================================================================== -->
-  <section class="nat-panel" id="nat-panel" aria-labelledby="nat-rubrik">
-    <h2 id="nat-rubrik">Nätkostnader i siffror <a class="ankare" href="#nat-rubrik" aria-label="Länk till den här rubriken">#</a></h2>
-    <div class="nat-topp" aria-live="polite">
-      <dl class="resultatlista">
-        <div class="framhavd"><dt>Summa löpande kostnader</dt><dd id="nat-t-ore">–</dd></div>
-        <div class="framhavd"><dt>Summa löpande nätkostnad, år 1</dt><dd id="nat-t-kr">–</dd></div>
-      </dl>
-      <p class="hint" id="nat-t-not"></p>
-    </div>
-
-    <details id="nat-panel-detaljer" class="nat-detaljer">
-    <summary>Visa alla nätkostnader i siffror</summary>
-
-    <p class="hint" id="nat-info">–</p>
-
-    <div class="nat-block">
-      <h3 id="nat-engang-rubrik">Engångskostnader, kr per MW <a class="ankare" href="#nat-engang-rubrik" aria-label="Länk till den här rubriken">#</a></h3>
-      <dl class="resultatlista">
-        <div><dt>Ledning</dt><dd id="nat-e-ledning">–</dd></div>
-        <div><dt>Station och fast del</dt><dd id="nat-e-station">–</dd></div>
-        <div><dt>Förstärkning och anslutningsavgift</dt><dd id="nat-e-forstark">–</dd></div>
-        <div><dt>Utredning och förprojektering</dt><dd id="nat-e-utredning">–</dd></div>
-        <div><dt>Systemkrav, utrustning</dt><dd id="nat-e-system">–</dd></div>
-        <div><dt>Schablon (utan uppdelning)</dt><dd id="nat-e-schablon">–</dd></div>
-        <div class="framhavd"><dt>Summa engångskostnader</dt><dd id="nat-e-summa">–</dd></div>
-        <div class="framhavd"><dt>Andel av investeringsutgiften per MW</dt><dd id="nat-e-procent">–</dd></div>
-      </dl>
-    </div>
-
-    <div class="nat-block">
-      <h3 id="nat-lopande-rubrik">Löpande kostnader, öre per kWh <a class="ankare" href="#nat-lopande-rubrik" aria-label="Länk till den här rubriken">#</a></h3>
-      <dl class="resultatlista">
-        <div><dt>Fast årsavgift</dt><dd id="nat-l-fast">–</dd></div>
-        <div><dt>Effektavgift</dt><dd id="nat-l-effekt">–</dd></div>
-        <div><dt>Avståndsberoende avgift</dt><dd id="nat-l-avstand">–</dd></div>
-        <div><dt>Systemkrav, löpande</dt><dd id="nat-l-system">–</dd></div>
-        <div class="framhavd"><dt>Fast del, summa</dt><dd id="nat-l-fastsumma">–</dd></div>
-        <div class="framhavd"><dt>Rörlig del (energiavgift)</dt><dd id="nat-l-energi">–</dd></div>
-        <div class="framhavd"><dt>Summa löpande kostnader</dt><dd id="nat-l-summa">–</dd></div>
-      </dl>
-    </div>
-
-    <div class="nat-block">
-      <h3 id="nat-kronor-rubrik">Löpande kostnader i kronor <a class="ankare" href="#nat-kronor-rubrik" aria-label="Länk till den här rubriken">#</a></h3>
-      <p class="hint" id="nat-kronor-info">–</p>
-      <div class="tabell-rulla">
-        <table class="nat-tabell" id="nat-kronor-tabell">
-          <caption id="NatTabell1">Tabell 1. Löpande nätkostnad i kronor, år 1 och över livslängden</caption>
-          <thead><tr><th scope="col">Post</th><th scope="col" class="kol-verk">Per verk</th><th scope="col" class="kol-park" id="nat-kol-park">Hela parken</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">Produktion år 1 (kWh)</th><td class="tal kol-verk" id="nat-k-prod-verk">–</td><td class="tal kol-park" id="nat-k-prod-park">–</td></tr>
-            <tr><th scope="row">Fast årsavgift (kr/år)</th><td class="tal kol-verk" id="nat-k-fast-verk">–</td><td class="tal kol-park" id="nat-k-fast-park">–</td></tr>
-            <tr><th scope="row">Effektavgift (kr/år)</th><td class="tal kol-verk" id="nat-k-effekt-verk">–</td><td class="tal kol-park" id="nat-k-effekt-park">–</td></tr>
-            <tr><th scope="row">Avståndsberoende avgift (kr/år)</th><td class="tal kol-verk" id="nat-k-avstand-verk">–</td><td class="tal kol-park" id="nat-k-avstand-park">–</td></tr>
-            <tr><th scope="row">Systemkrav, löpande (kr/år)</th><td class="tal kol-verk" id="nat-k-system-verk">–</td><td class="tal kol-park" id="nat-k-system-park">–</td></tr>
-            <tr class="framhavd"><th scope="row">Fast del, summa (kr/år)</th><td class="tal kol-verk" id="nat-k-fastsumma-verk">–</td><td class="tal kol-park" id="nat-k-fastsumma-park">–</td></tr>
-            <tr class="framhavd"><th scope="row">Rörlig del: energiavgift × produktion (kr/år)</th><td class="tal kol-verk" id="nat-k-energi-verk">–</td><td class="tal kol-park" id="nat-k-energi-park">–</td></tr>
-            <tr class="framhavd"><th scope="row">Summa löpande nätkostnad, år 1 (kr/år)</th><td class="tal kol-verk" id="nat-k-summa-verk">–</td><td class="tal kol-park" id="nat-k-summa-park">–</td></tr>
-            <tr><th scope="row">Nuvärde över livslängden (kr)</th><td class="tal kol-verk" id="nat-k-livs-verk">–</td><td class="tal kol-park" id="nat-k-livs-park">–</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <p class="hint" id="nat-exempel-info"></p>
-    <p class="hint">Tomma poster är ej angivna och räknas som 0. Ett minustecken betyder en ersättning till producenten. Sekundärt: löpande kostnad per MW och år <span id="nat-l-permwar">–</span>, total nätkostnad per kWh över livslängden <span id="nat-s-livs">–</span> och dess andel av LCOE <span id="nat-s-andel">–</span>.</p>
-    </details>
   </section>
 
   <!-- ========================================================================
