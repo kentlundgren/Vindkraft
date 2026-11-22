@@ -9,6 +9,7 @@
    skript (regel 19 i kent-bygg-sidor).
    UPPDATERING 2026-11-22: sidan skapades. Version 1.0.
    UPPDATERING 2026-11-22 (senare igen): länk "Visa i kalkylen" vid varje fall. Version 1.2.
+   UPPDATERING 2026-11-22 (senare igen): fältet för utredningsavgift per MW, Svenska kraftnäts vägledning 2026-07-01 i källistan. Version 1.7.
    UPPDATERING 2026-11-22 (senare igen): typfallet märks i Diagram 1 (ram och etikett), övriga fall tonas ned, fler källor om stamnätsanslutning. Version 1.6.
    UPPDATERING 2026-11-22 (senare igen): märkning av direktanslutna fall (C–E), förklaring vid hovring, källan om stamnätsanslutning i källistan. Version 1.5.
    UPPDATERING 2026-11-22 (senare igen): avsnittet Typfall efter parkens storlek (fall B upp till 15 MW, fall A över) ersätter normalfallstexten. Version 1.4.
@@ -17,7 +18,7 @@
    ============================================================================ */
 'use strict';
 
-const VERSION = '1.6';
+const VERSION = '1.7';
 const VERSIONSDATUM = '2026-11-22';
 
 (function () {
@@ -265,7 +266,9 @@ const VERSIONSDATUM = '2026-11-22';
     ['natledning', 'Ledningskostnad', 'kkr/km'],
     ['natstation', 'Station och fast del', 'kkr'],
     ['natforstark', 'Förstärkning och anslutningsavgift', 'kkr'],
-    ['natutredning', 'Utredning och förprojektering', 'kkr'],
+    ['natutredning', 'Utredning och förprojektering, fast del', 'kkr'],
+    ['natutredningpermw', 'Utredning, del per MW', 'kkr/MW'],
+    ['natutredningtak', 'Utredning, tak', 'kkr'],
     ['natengangschablon', 'Engångskostnad, schablon', 'kkr/MW'],
     ['natfast', 'Fast årsavgift (inklusive kundspecifik avgift)', 'kr/år'],
     ['nateffekt', 'Effektavgift eller fast avgift per kW', 'kr/kW och år'],

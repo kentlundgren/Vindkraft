@@ -148,9 +148,25 @@ sant('alla belagda fall har komplett.lopande', D.NAT_EXEMPEL.filter(f => f.belag
 /* Källan om stamnätsanslutning och märkning av direktanslutna fall. */
 {
   sant('stamnätskällan har länk', !!D.NAT_STAMNATSKALLA && /^https:\/\//.test(D.NAT_STAMNATSKALLA.url));
-  sant('tre källor om stamnätsanslutning med länk', D.NAT_STAMNATSKALLOR.length === 3 && D.NAT_STAMNATSKALLOR.every(k => /^https:\/\//.test(k.url)));
+  sant('två källor om stamnätsanslutning med länk', D.NAT_STAMNATSKALLOR.length === 2 && D.NAT_STAMNATSKALLOR.every(k => /^https:\/\//.test(k.url)));
   const direkta = D.NAT_EXEMPEL.filter(f => f.typ === 'stamnät direkt').map(f => f.id).sort().join('');
   sant('direktanslutna fall är C, D och E', direkta === 'CDE');
+}
+
+
+/* Utredningsavgiften räknas på parkens effekt; Ei:s föreskrift är beslutad. */
+{
+  const utr = (id, PP) => N.beraknaNat(indata(byid[id]), 1, PP, PP * 8760 * 0.37 * 1000).engang.utredning;
+  lika('fall C: utredning 20 MW = 124 kkr', utr('C', 20), 124000, 1e-6);
+  lika('fall C: utredning 4 MW = 104,8 kkr', utr('C', 4), 104800, 1e-6);
+  lika('fall E: utredning 100 MW = 220 kkr', utr('E', 100), 220000, 1e-6);
+  const dT = indata(byid.C); dT.natutredning = 150; dT.natutredningpermw = 1; dT.natutredningtak = 400;
+  lika('utredning med tak: 20 MW = 170 kkr', N.beraknaNat(dT, 1, 20, 1).engang.utredning, 170000, 1e-6);
+  lika('utredning med tak: 500 MW kapas vid 400 kkr', N.beraknaNat(dT, 1, 500, 1).engang.utredning, 400000, 1e-6);
+  const rv = {}; D.NAT_REGELVERK.forEach(r => { rv[r.id] = r; });
+  sant('EIFS 2026:10 är beslutad', rv['ei-fs-anslutningsavgifter'].status === 'beslutad' && /2027-01-01/.test(rv['ei-fs-anslutningsavgifter'].datum));
+  sant('elmarknadslagen finns och används i fall E', !!rv['elmarknadslag-6kap'] && byid.E.regelverk.indexOf('elmarknadslag-6kap') >= 0);
+  sant('kraftproduktionsmoduler är fortfarande remissutkast', rv['ei-fs-kraftproduktionsmoduler'].status === 'remissutkast');
 }
 
 console.log((fel === 0 ? 'ALLA TESTER OK' : 'TESTFEL') + ': ' + ok + ' godkända, ' + fel + ' fel');

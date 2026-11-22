@@ -20,12 +20,13 @@
 
    Fältens enheter: natfast kr/år, nateffekt kr/kW och år, natavstavg kr/kW och
    km, natavstavstand km, natenergi öre/kWh (negativt = ersättning),
-   natutredning kkr, natengangschablon kkr/MW.
+   natutredning kkr (fast del), natutredningpermw kkr/MW, natutredningtak kkr (högst),
+   natengangschablon kkr/MW. Utredningsavgiften = natutredning + natutredningpermw × MW, högst natutredningtak.
 
-   Version 1.4 · 2026-11-22 (fler källor om stamnätsanslutning, NAT_STAMNATSKALLOR)
+   Version 1.5 · 2026-11-22 (EIFS 2026:10 beslutad, elmarknadslagen, Svenska kraftnäts vägledning 2026-07-01, utredningsavgift per MW)
    ============================================================================ */
 
-var NAT_DATA_VERSION = '1.4';
+var NAT_DATA_VERSION = '1.5';
 var NAT_DATA_DATUM = '2026-11-22';
 
 /** Utgångspunkten för analysen: ledaren och inlägget som återger den. Ingår i källistan. */
@@ -37,18 +38,13 @@ var NAT_UTGANGSPUNKT = [
 /** Källor om vem som kan ansluta till stamnätet. Ingår i källistan. */
 var NAT_STAMNATSKALLOR = [
   {
-    text: 'Svenska kraftnät (2025a) Principer och vägledning för anslutning till Stamnätet, version 2025-07-01 (lägsta lämpliga spänningsnivå, regionnätsföretaget ansöker, gränsen 100 MW och 300 MW gäller ny station)',
+    text: 'Svenska kraftnät (2026h) Principer och vägledning för anslutning till Stamnätet, version 2026-07-01 (lägsta lämpliga spänningsnivå, inget generellt effektkrav, vägledande 100 MW och 300 MW avser samlat behov för en ny station, obligatorisk trepartsdialog; försättsbladet har kvar mallfält, så det framgår inte om texten är slutlig)',
+    url: 'https://www.svk.se/49ed15/siteassets/om-oss/rapporter/2026/principer-och-vagledning-for-anslutning-till-stamnatet-260701---uppdatering-webben.pdf',
+    hamtad: '2026-11-22'
+  },
+  {
+    text: 'Svenska kraftnät (2025a) Principer och vägledning för anslutning till Stamnätet, version 2025-07-01 (föregående version)',
     url: 'https://www.svk.se/49e695/siteassets/aktorsportalen/anslut-till-transmissionsnatet/principer-och-vagledning-for-anslutning-till-stamnatet/principer-och-vagledning-for-anslutning-till-stamnatet.pdf',
-    hamtad: '2026-11-22'
-  },
-  {
-    text: 'Svenska kraftnät (2026f) Effektkrav vid anslutning till elsystemet, preliminära förslag mars 2026 (gränsen 100 MW och 300 MW är ett tekniskt riktmärke i nätplaneringen, och ansökan ska alltid först ske via befintligt distributionssystem; förslaget anges införas 2026-07-01)',
-    url: 'https://www.svk.se/49374e/siteassets/om-oss/rapporter/2026/preliminara-forslag_effektkrav-vid-anslutning_regeringsuppdrag-om-att-se-over-anslutningsprocessen.pdf',
-    hamtad: '2026-11-22'
-  },
-  {
-    text: 'Svenska kraftnät (2026g) Svenska kraftnät avser införa nya verktyg för effektivare anslutning, nyhet 2026-05-04 (grundprincipen lägsta lämpliga spänningsnivå, obligatorisk trepartsdialog)',
-    url: 'https://www.svk.se/press-och-nyheter/nyheter/allmanna-nyheter/2026/svenska-kraftnat-avser-infora-nya-verktyg-for-effektivare-anslutning/',
     hamtad: '2026-11-22'
   }
 ];
@@ -59,7 +55,8 @@ var NAT_STAMNATSKALLA = NAT_STAMNATSKALLOR[0];
     och följer en vägledande figur över sannolik överföringsförmåga per spänningsnivå: ungefär 10 MW vid 10 kV,
     15 MW vid 20 kV och 40 MW vid 40 kV. Det är ett riktmärke och inte belagt i Vattenfalls tariff. Över
     `stamnatMW` hänvisar kalkylen till avsnittet om stamnätsanslutning: gränsen 100 MW (220 kV) och 300 MW (400 kV) gäller
-    när Svenska kraftnät bygger en ny station, och anslutning sker i första hand via regionnätet. */
+    när Svenska kraftnät bygger en ny station (och avser det samlade behovet, inte en enskild anläggning), och anslutning sker
+    i första hand via befintligt distributionssystem. */
 var NAT_TYPFALL = {
   gransMW: 15,
   stamnatMW: 100,
@@ -83,17 +80,26 @@ var NAT_REGELVERK = [
     titel: 'Ellag (1997:857), 4 kap. (anslutning), bland annat 10 §',
     styr: 'Avgiften för anslutning ska täcka nätföretagets skäliga kostnader. Särskild hänsyn ska tas till anslutningspunktens läge och avtalad effekt.',
     status: 'gällande',
-    datum: 'Gäller. Ei har föreslagit en föreskrift som ska ersätta 10 §.',
+    datum: 'Gäller till 2026-12-31. Ny elmarknadslagstiftning börjar gälla 2027-01-01 (Ei, 2026).',
     kalla: { text: 'Sveriges riksdag, Ellag (1997:857)', url: 'https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/ellag-1997857_sfs-1997-857/', hamtad: '2026-11-22' }
   },
   {
+    id: 'elmarknadslag-6kap',
+    kort: 'Elmarknadslagen 6 kap.',
+    titel: 'Elmarknadslag (2026:1281), 6 kap. (anslutning till elnätet)',
+    styr: 'Den som har nätkoncession ska ansluta en elektrisk anläggning på objektiva, icke-diskriminerande och i övrigt skäliga villkor (6 kap. 1 §). Föreskrifter får meddelas om hur anslutningsavgifter ska utformas (6 kap. 2 §).',
+    status: 'beslutad',
+    datum: 'Utfärdad 2026-06-18, i kraft 2027-01-01.',
+    kalla: { text: 'Sveriges riksdag, Elmarknadslag (2026:1281)', url: 'https://data.riksdagen.se/dokument/sfs-2026-1281.html', hamtad: '2026-11-22' }
+  },
+  {
     id: 'ei-fs-anslutningsavgifter',
-    kort: 'Ei-utkast om anslutningsavgifter',
-    titel: 'Ei:s föreskrifter och allmänna råd om anslutningsavgifter för elektriska anläggningar',
-    styr: 'Hur nätföretag utformar anslutningsavgifter: kundspecifik andel av kostnaderna från närmaste matande transformatorstation, engångsavgift, schabloner för små anläggningar.',
-    status: 'remissutkast',
-    datum: 'Föreslaget ikraftträdande 2027-01-01. Inte beslutad enligt det jag har läst.',
-    kalla: { text: 'Energimarknadsinspektionen (2026a), remissutkast', url: 'https://ei.se/download/18.c64bc1a19b353d7ad72d854/1770105807164/Remissutkast%20F%C3%B6reskrifter%20Anslutningsavgifter.pdf', hamtad: '2026-11-22' }
+    kort: 'EIFS 2026:10',
+    titel: 'EIFS 2026:10, Ei:s föreskrifter och allmänna råd om anslutningsavgifter för elektriska anläggningar',
+    styr: 'Anslutningsavgiften är en engångsavgift och utgår från den kundspecifika andelen av kostnaderna från närmaste faktiskt matande eller mottagande nätdel fram till anslutningspunkten (3 kap. 3 §). Är det en ny ledning som bara den anslutande använder, är andelen 100 procent enligt de allmänna råden. Är kostnadstäckningen liten, eller finns andra särskilda skäl, utgår avgiften från den kundspecifika andelen av den totala kostnaden (3 kap. 5 §). Föreskriften anger inga belopp.',
+    status: 'beslutad',
+    datum: 'Beslutad 2026-08-03, gäller från 2027-01-01.',
+    kalla: { text: 'Energimarknadsinspektionen (2026c), EIFS 2026:10', url: 'https://ei.se/download/18.85fb75b19ed45a9d5148405/1786425499922/EIFS-2026-10-om-anslutningsavgifter-f%C3%B6r-elektriska-anl%C3%A4ggningar.pdf', hamtad: '2026-11-22' }
   },
   {
     id: 'eifs-2018-2',
@@ -101,7 +107,7 @@ var NAT_REGELVERK = [
     titel: 'EIFS 2018:2, krav för nätanslutning av generatorer (nuvarande föreskrift)',
     styr: 'Nationella krav på produktionsanläggningar, bland annat reaktiv effekt för kraftparksmoduler (vindkraftverk).',
     status: 'gällande',
-    datum: 'Gäller. Ei har föreslagit att den ersätts.',
+    datum: 'Gäller. Ei har föreslagit att den ersätts, men ingen ersättande föreskrift fanns i Ei:s förteckning över föreskrifter 2026-11-22.',
     kalla: { text: 'Energimarknadsinspektionen (2026b), konsekvensutredning', url: 'https://ei.se/download/18.1825c33b19c47ab9719fc38/1771849540664/Remissutkast-Konsekvensutredning-Eis-f%C3%B6reskrifter-och-allm%C3%A4nna-r%C3%A5d-om-fastst%C3%A4llande-av-generellt-till%C3%A4mpliga-krav-f%C3%B6r-n%C3%A4tanslutning-av-kraftproduktionsmoduler.pdf', hamtad: '2026-11-22' }
   },
   {
@@ -110,7 +116,7 @@ var NAT_REGELVERK = [
     titel: 'Ei:s föreskrifter om generellt tillämpliga krav för nätanslutning av kraftproduktionsmoduler (ersätter EIFS 2018:2)',
     styr: 'Fler krav fastställs platsspecifikt av systemansvariga. Ei bedömer att kostnaderna sammantaget minskar men att det är svårt att kvantifiera.',
     status: 'remissutkast',
-    datum: 'Föreslaget ikraftträdande 2026-07-01 med övergångsregler till 2026-12-31. Om utkastet är beslutat har jag inte kontrollerat.',
+    datum: 'Föreslaget ikraftträdande 2026-07-01 med övergångsregler till 2026-12-31. Inte funnen som beslutad i Ei:s förteckning över föreskrifter 2026-11-22.',
     kalla: { text: 'Energimarknadsinspektionen (2026b), konsekvensutredning', url: 'https://ei.se/download/18.1825c33b19c47ab9719fc38/1771849540664/Remissutkast-Konsekvensutredning-Eis-f%C3%B6reskrifter-och-allm%C3%A4nna-r%C3%A5d-om-fastst%C3%A4llande-av-generellt-till%C3%A4mpliga-krav-f%C3%B6r-n%C3%A4tanslutning-av-kraftproduktionsmoduler.pdf', hamtad: '2026-11-22' }
   },
   {
@@ -184,7 +190,7 @@ var NAT_REGELVERK_SYSTEMKRAV = ['eifs-2018-2', 'ei-fs-kraftproduktionsmoduler', 
 function natTomtFalt() {
   return {
     natavstand: null, natledning: null, natstation: null, natforstark: null,
-    natutredning: null, natengangschablon: null, natfast: null, nateffekt: null,
+    natutredning: null, natutredningpermw: null, natutredningtak: null, natengangschablon: null, natfast: null, nateffekt: null,
     natavstavg: null, natavstavstand: null, natenergi: null, natforandring: null,
     natsyseng: null, natsyslop: null, natsysbortfall: null
   };
@@ -244,7 +250,7 @@ var NAT_EXEMPEL = [
     namn: 'Svenska kraftnät, direktansluten i söder, 2026 (Alvesta, elområde 4)',
     typ: 'stamnät direkt',
     ar: 2026,
-    falt: natFall({ nateffekt: 14, natenergi: -3.87, natutredning: 124 }),
+    falt: natFall({ nateffekt: 14, natenergi: -3.87, natutredning: 100, natutredningpermw: 1.2 }),
     belagd: true, sarfall: false,
     komplett: { lopande: true, engang: false },
     kalla: [
@@ -253,7 +259,7 @@ var NAT_EXEMPEL = [
     ],
     antaganden: [
       'Elpriset 0,60 kr/kWh (kalkylens förvalda för elområde 4): (600 + 15) × −0,063 = −38,7 kr/MWh = −3,87 öre/kWh.',
-      'Utredningsavgiften är 2025 års nivå, uträknad för 20 MW: 100 + 1,2 × 20 = 124 kkr.',
+      'Utredningsavgiften är 2025 års nivå: 100 kkr + 1,2 kkr/MW, räknad på parkens effekt (124 kkr för 20 MW).',
       'Svenska kraftnäts reducering av energiavgiften med flaskhalsinkomster är inte inräknad.'
     ],
     ejMedraknat: ['Själva anslutningsavgiften (kundspecifika åtgärder) saknar belopp.', 'Systemkrav saknar belopp.'],
@@ -265,7 +271,7 @@ var NAT_EXEMPEL = [
     namn: 'Svenska kraftnät, direktansluten i norr, 2026 (Messaure, elområde 1)',
     typ: 'stamnät direkt',
     ar: 2026,
-    falt: natFall({ nateffekt: 31, natenergi: 2.39, natutredning: 124 }),
+    falt: natFall({ nateffekt: 31, natenergi: 2.39, natutredning: 100, natutredningpermw: 1.2 }),
     belagd: true, sarfall: false,
     komplett: { lopande: true, engang: false },
     kalla: [
@@ -274,7 +280,7 @@ var NAT_EXEMPEL = [
     ],
     antaganden: [
       'Elpriset 0,30 kr/kWh (kalkylens förvalda för elområde 1): (300 + 15) × 0,076 = 23,9 kr/MWh = 2,39 öre/kWh.',
-      'Utredningsavgiften är 2025 års nivå för 20 MW: 124 kkr.',
+      'Utredningsavgiften är 2025 års nivå: 100 kkr + 1,2 kkr/MW, räknad på parkens effekt (124 kkr för 20 MW).',
       'Svenska kraftnäts reducering av energiavgiften är inte inräknad.'
     ],
     ejMedraknat: ['Själva anslutningsavgiften saknar belopp.', 'Systemkrav saknar belopp.'],
@@ -286,7 +292,7 @@ var NAT_EXEMPEL = [
     namn: 'Svenska kraftnät, direktansluten i söder, 2027 (Alvesta, ny avgiftsmodell)',
     typ: 'stamnät direkt',
     ar: 2027,
-    falt: natFall({ natfast: 144000, nateffekt: 22, natenergi: -4.04, natutredning: 124 }),
+    falt: natFall({ natfast: 144000, nateffekt: 22, natenergi: -4.04, natutredning: 100, natutredningpermw: 1.2 }),
     belagd: true, sarfall: false,
     komplett: { lopande: true, engang: false },
     kalla: [
@@ -299,7 +305,7 @@ var NAT_EXEMPEL = [
       'Svenska kraftnäts reducering av energiavgiften (80 procent av 2025 års debiterade energiavgift) är inte inräknad. Den beror på kundens egen debitering 2025.'
     ],
     ejMedraknat: ['Själva anslutningsavgiften saknar belopp.', 'Systemkrav saknar belopp.'],
-    regelverk: ['svk-prislista-2027', 'svk-vagledning', 'ellag-4kap', 'ei-fs-anslutningsavgifter', 'eu-elmarknadsforordning-18'].concat(NAT_REGELVERK_SYSTEMKRAV),
+    regelverk: ['svk-prislista-2027', 'svk-vagledning', 'ellag-4kap', 'elmarknadslag-6kap', 'ei-fs-anslutningsavgifter', 'eu-elmarknadsforordning-18'].concat(NAT_REGELVERK_SYSTEMKRAV),
     kontrollerad: '2026-11-22'
   },
   {

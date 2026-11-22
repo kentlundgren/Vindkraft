@@ -21,7 +21,7 @@
 
   /** Fältens id i HTML. Tomt fält = "ej angivet" (räknas som 0). */
   const NAT_FALT = [
-    'natavstand', 'natledning', 'natstation', 'natforstark', 'natutredning',
+    'natavstand', 'natledning', 'natstation', 'natforstark', 'natutredning', 'natutredningpermw', 'natutredningtak',
     'natengangschablon', 'natfast', 'nateffekt', 'natavstavg', 'natavstavstand',
     'natenergi', 'natforandring', 'natsyseng', 'natsyslop', 'natsysbortfall'
   ];
@@ -48,12 +48,16 @@
     const bortfall = Math.min(1, Math.max(0, faktor * n(d.natsysbortfall) / 100));
     const produktionAr1 = produktionBrutto * (1 - bortfall);
 
+    // Utredningsavgiften räknas på parkens effekt: fast del + kkr/MW × MW, högst taket om ett tak anges.
+    let utredningKkr = n(d.natutredning) + n(d.natutredningpermw) * P_tot;
+    if (n(d.natutredningtak) > 0) utredningKkr = Math.min(utredningKkr, n(d.natutredningtak));
+
     // Engångsposter (kr), före faktor.
     const e = {
       ledning:     n(d.natavstand) * n(d.natledning) * 1000,
       station:     n(d.natstation) * 1000,
       forstarkning: n(d.natforstark) * 1000,
-      utredning:   n(d.natutredning) * 1000,
+      utredning:   utredningKkr * 1000,
       system:      n(d.natsyseng) * 1000 * P_tot,
       schablon:    n(d.natengangschablon) * 1000 * P_tot
     };

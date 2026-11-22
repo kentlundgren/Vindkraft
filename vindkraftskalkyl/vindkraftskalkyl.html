@@ -39,6 +39,9 @@
   vägledning om stamnätsanslutning, och källan är tillagd. Version 1.5.
 
   UPPDATERING 2026-11-22 (senare igen): raden Ingår inte (anslutningskostnader och systemkrav) i sammanfattningen. Version 1.6.
+
+  UPPDATERING 2026-11-22 (senare igen): utredningsavgiften räknas på parkens effekt (tre fält), EIFS 2026:10 beslutad,
+  elmarknadslagen och Svenska kraftnäts vägledning 2026-07-01 som källor. Version 1.7.
   ============================================================================
 -->
 <html lang="sv">
@@ -258,9 +261,18 @@
           <span class="badge antagande">antagande</span>
         </label>
 
-        <label>Utredning och förprojektering (kkr) <span class="hjalp" tabindex="0" data-hjalp="Svenska kraftnäts utredningsavgift för anslutning till stamnätet är 100 kkr plus 1,2 kkr per MW (2025). kkr betyder tusen kronor.">?</span>
+        <label>Utredning och förprojektering, fast del (kkr) <span class="hjalp" tabindex="0" data-hjalp="Utredningsavgiften = fast del + kkr per MW × parkens effekt, högst ett tak. Svenska kraftnäts avgift för anslutning till stamnätet är 100 kkr plus 1,2 kkr per MW (2025). kkr betyder tusen kronor.">?</span>
           <input type="number" step="1" id="natutredning" class="indata" value="" placeholder="ej angivet">
           <span class="badge schablon">schablon</span>
+        </label>
+
+        <label>Utredning, del per MW (kkr/MW)
+          <input type="number" step="0.1" id="natutredningpermw" class="indata" value="" placeholder="ej angivet">
+          <span class="badge schablon">schablon</span>
+        </label>
+
+        <label>Utredning, tak (kkr, högst)
+          <input type="number" step="10" id="natutredningtak" class="indata" value="" placeholder="inget tak">
         </label>
 
         <label>Engångskostnad, schablon (kkr/MW) <span class="hjalp" tabindex="0" data-hjalp="Används när uppdelning i ledning, station och förstärkning saknas. Ingen publicerad källa anger ett belopp: fyll i från nätägarens offert eller ditt eget antagande.">?</span>
@@ -708,7 +720,7 @@
         Förslaget om vilket fall som passar vilken parkstorlek bygger på en vägledande figur i
         <a href="https://www.kalix.se/globalassets/filer/bygga-bo-och-miljo/planer/vindkraftsutredning/s32-33.pdf" target="_blank" rel="noopener"><em>Vindkraftutredning för Norrbottens kust- och skärgårdsområde</em>, s. 32–33</a>
         (figuren anger Energimyndigheten 2007 som källa). Att en park på 4 eller 20 MW normalt ansluts via regionnätet och inte direkt till stamnätet bygger på
-        Svenska kraftnät (2025a) <a href="https://www.svk.se/49e695/siteassets/aktorsportalen/anslut-till-transmissionsnatet/principer-och-vagledning-for-anslutning-till-stamnatet/principer-och-vagledning-for-anslutning-till-stamnatet.pdf" target="_blank" rel="noopener"><em>Principer och vägledning för anslutning till Stamnätet</em></a>, version 2025-07-01.
+        Svenska kraftnät (2026h) <a href="https://www.svk.se/49ed15/siteassets/om-oss/rapporter/2026/principer-och-vagledning-for-anslutning-till-stamnatet-260701---uppdatering-webben.pdf" target="_blank" rel="noopener"><em>Principer och vägledning för anslutning till Stamnätet</em></a>, version 2026-07-01 (försättsbladet har kvar mallfält, så det framgår inte om texten är slutlig).
         Nätkostnader och systemkrav bygger på exempelfall och regelverk som redovisas
         på sidan <a href="natkostnader_exempel.html">Exempelfall och källor för nätkostnader</a>.
         Huvudkällor (hämtade 2026-11-22):
@@ -720,8 +732,10 @@
         (<a href="https://www.svk.se/4a90bc/siteassets/aktorsportalen/anslut-till-transmissionsnatet/transmissionsnatstariff/aktuella-prislistor/prislista-transmissionsnatet-2027.pdf" target="_blank" rel="noopener">svk.se</a>);
         Vattenfall Eldistribution (2026) <em>Tillämpningsbestämmelser och nättariffer för regionnätet</em>
         (<a href="https://www.vattenfalleldistribution.se/globalassets/2.-foretag/abonnemang-och-avgifter/avtal-och-elnatsavgift/tillampningsbestammelser-och-nattariffer-for-vattenfall-eldistributions-regionnat-2026-01-01.pdf" target="_blank" rel="noopener">vattenfalleldistribution.se</a>);
-        Energimarknadsinspektionen (2026) remissutkast om anslutningsavgifter
-        (<a href="https://ei.se/download/18.c64bc1a19b353d7ad72d854/1770105807164/Remissutkast%20F%C3%B6reskrifter%20Anslutningsavgifter.pdf" target="_blank" rel="noopener">ei.se</a>).
+        Energimarknadsinspektionen (2026c) <em>EIFS 2026:10, föreskrifter och allmänna råd om anslutningsavgifter för elektriska anläggningar</em>, beslutad 2026-08-03, gäller från 2027-01-01
+        (<a href="https://ei.se/download/18.85fb75b19ed45a9d5148405/1786425499922/EIFS-2026-10-om-anslutningsavgifter-f%C3%B6r-elektriska-anl%C3%A4ggningar.pdf" target="_blank" rel="noopener">ei.se</a>);
+        Elmarknadslag (2026:1281), i kraft 2027-01-01
+        (<a href="https://data.riksdagen.se/dokument/sfs-2026-1281.html" target="_blank" rel="noopener">riksdagen.se</a>).
         Siffrorna är hämtade ur källorna, inte kvalitetssäkrade. Kontrollera mot nätägarens gällande tariff innan något återges.
       </li>
     </ol>

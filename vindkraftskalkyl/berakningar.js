@@ -31,8 +31,9 @@
    löpande nätkostnad i kronor per verk och för parken (tabell i panelen) och nuvärde över livslängden. Version 1.3.
    UPPDATERING 2026-11-22 (senare igen): typfall efter parkens effekt (natkostnader_ui.js, NAT_TYPFALL). Version 1.4.
    UPPDATERING 2026-11-22 (senare igen): direktanslutna fall märks, förslagsraden följer stamnätsvägledningen. Version 1.5.
-   UPPDATERING 2026-11-22 (senare igen): raden Ingår inte i sammanfattningen (natkostnader_ui.js). Version 1.6. */
-const VERSION = '1.6';
+   UPPDATERING 2026-11-22 (senare igen): raden Ingår inte i sammanfattningen (natkostnader_ui.js). Version 1.6.
+   UPPDATERING 2026-11-22 (senare igen): utredningsavgiften räknas på parkens effekt (fast del, kkr/MW och tak), Ei:s föreskrift EIFS 2026:10 beslutad, ny version av Svenska kraftnäts vägledning. Version 1.7. */
+const VERSION = '1.7';
 const VERSIONSDATUM = '2026-11-22';
 
 /* ============================================================================
@@ -216,7 +217,9 @@ function lasIndata() {
     natledning:       tal('natledning'),               // kkr/km
     natstation:       tal('natstation'),               // kkr
     natforstark:      tal('natforstark'),              // kkr
-    natutredning:     tal('natutredning'),             // kkr
+    natutredning:     tal('natutredning'),             // kkr, fast del
+    natutredningpermw: tal('natutredningpermw'),       // kkr/MW
+    natutredningtak:  tal('natutredningtak'),          // kkr, högst
     natengangschablon: tal('natengangschablon'),       // kkr/MW
     natfast:          tal('natfast'),                  // kr/år
     nateffekt:        tal('nateffekt'),                // kr/kW och år
