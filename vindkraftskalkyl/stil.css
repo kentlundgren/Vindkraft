@@ -567,3 +567,7 @@ h2:hover > .ankare, h3:hover > .ankare, .ankare:focus { opacity: 1; }
 .nat-notis p, .nat-notis ul { margin: .3rem 0; }
 
 .nat-saknas { font-weight: 600; color: #1d3f66; }
+
+/* Hopfälld panel: de två summorna syns alltid */
+.nat-topp .resultatlista dd { font-size: 1.15rem; font-weight: 700; }
+.nat-topp { margin-bottom: .6rem; }

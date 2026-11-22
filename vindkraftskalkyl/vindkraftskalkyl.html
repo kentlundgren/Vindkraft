@@ -42,6 +42,9 @@
 
   UPPDATERING 2026-11-22 (senare igen): utredningsavgiften räknas på parkens effekt (tre fält), EIFS 2026:10 beslutad,
   elmarknadslagen och Svenska kraftnäts vägledning 2026-07-01 som källor. Version 1.7.
+
+  UPPDATERING 2026-11-22 (senare igen): panelen Nätkostnader i siffror är hopfälld. Förvalt syns bara summa löpande
+  kostnader (öre/kWh) och summa löpande nätkostnad år 1 (kr/år), och resten fälls ut. Version 1.8.
   ============================================================================
 -->
 <html lang="sv">
@@ -464,6 +467,17 @@
        ==================================================================== -->
   <section class="nat-panel" id="nat-panel" aria-labelledby="nat-rubrik">
     <h2 id="nat-rubrik">Nätkostnader i siffror <a class="ankare" href="#nat-rubrik" aria-label="Länk till den här rubriken">#</a></h2>
+    <div class="nat-topp" aria-live="polite">
+      <dl class="resultatlista">
+        <div class="framhavd"><dt>Summa löpande kostnader</dt><dd id="nat-t-ore">–</dd></div>
+        <div class="framhavd"><dt>Summa löpande nätkostnad, år 1</dt><dd id="nat-t-kr">–</dd></div>
+      </dl>
+      <p class="hint" id="nat-t-not"></p>
+    </div>
+
+    <details id="nat-panel-detaljer" class="nat-detaljer">
+    <summary>Visa alla nätkostnader i siffror</summary>
+
     <p class="hint" id="nat-info">–</p>
 
     <div class="nat-block">
@@ -517,6 +531,7 @@
 
     <p class="hint" id="nat-exempel-info"></p>
     <p class="hint">Tomma poster är ej angivna och räknas som 0. Ett minustecken betyder en ersättning till producenten. Sekundärt: löpande kostnad per MW och år <span id="nat-l-permwar">–</span>, total nätkostnad per kWh över livslängden <span id="nat-s-livs">–</span> och dess andel av LCOE <span id="nat-s-andel">–</span>.</p>
+    </details>
   </section>
 
   <!-- ========================================================================

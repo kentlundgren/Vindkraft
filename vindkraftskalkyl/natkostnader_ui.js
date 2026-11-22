@@ -275,9 +275,27 @@
     satt('nat-info', info + tillagg);
 
     uppdateraKronor(res, d);
+    uppdateraTopp(res, d);
     uppdateraForslag(d);
     uppdateraExempelInfo(res, d);
     uppdateraSammanfattning(res, d);
+  }
+
+  /* Det som syns när panelen är hopfälld: summa löpande kostnader i öre/kWh och i kronor år 1. */
+  function uppdateraTopp(res, d) {
+    const np = res.natPanel;
+    const n = Math.max(1, d.antalverk);
+    satt('nat-t-ore', fmt(np.lopandeOre.summa, 2, ' öre/kWh'));
+    const park = np.lopande.summa;
+    satt('nat-t-kr', n === 1
+      ? fmt(park, 0, ' kr/år')
+      : fmt(park, 0, ' kr/år') + ' för parken (' + fmt(park / n, 0, ' kr/år') + ' per verk)');
+    const t = d.natTomma || {};
+    const saknas = ['natavstand', 'natledning', 'natstation', 'natforstark', 'natutredning', 'natengangschablon', 'natsyseng', 'natsyslop', 'natsysbortfall'].every(k => t[k]);
+    const lage = d.natlage === 'ingen' ? 'Om nätkostnaderna togs med (läge bas)' : 'Läge ' + LAGE_TEXT[d.natlage];
+    satt('nat-t-not', lage + ', ' + n + (n === 1 ? ' verk' : ' verk') + ' om ' + fmt(d.effekt, 1) + ' MW. ' +
+      (saknas ? 'Ingår inte: anslutningskostnader och nya systemkrav saknar belopp, så totalbilden är högre. ' : '') +
+      'Alla poster finns under "Visa alla nätkostnader i siffror".');
   }
 
   /* Tabell 1 (panelen): löpande nätkostnad i kronor, per verk och för parken.
