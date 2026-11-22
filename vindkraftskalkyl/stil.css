@@ -516,3 +516,30 @@ h2:hover > .ankare, h3:hover > .ankare, .ankare:focus { opacity: 1; }
 .corner-left { left: 14px; }
 .corner-right { right: 14px; }
 @media (max-width: 600px) { .corner { bottom: 10px; } .corner-left { left: 10px; } .corner-right { right: 10px; } }
+
+/* Gruppen Nät och systemkrav: infällbar del, sammanfattning, delbar länk, förklaringar */
+.hjalp.hjalp-term {
+  display: inline; width: auto; height: auto; line-height: inherit;
+  font-size: inherit; font-weight: inherit; text-align: inherit;
+  background: none; border: 0; border-bottom: 1px dotted var(--farg-primar);
+  border-radius: 0; color: inherit; cursor: help;
+}
+.nat-sammanfattning {
+  margin: .6rem 0; padding: .5rem .7rem;
+  background: var(--farg-framhavd); border: 1px solid var(--farg-ram); border-radius: 6px;
+  font-size: .85rem;
+}
+.nat-sammanfattning p { margin: .15rem 0; }
+.nat-valdlank { margin: .4rem 0; }
+.nat-valdlank label { display: block; font-size: .8rem; }
+.natlank { width: 100%; margin-top: .2rem; padding: .3rem .4rem; font-size: .78rem; background: #eef0f0; border: 1px solid var(--farg-ram); border-radius: 4px; color: #40504d; }
+.nat-kopiera { margin-top: .3rem; padding: .25rem .7rem; font-size: .8rem; cursor: pointer; border: 1px solid var(--farg-primar-ljus); background: #fff; color: var(--farg-primar); border-radius: 4px; }
+.nat-kopiera:hover, .nat-kopiera:focus-visible { background: var(--farg-framhavd); }
+.nat-detaljer { margin-top: .5rem; border-top: 1px solid var(--farg-ram); padding-top: .4rem; }
+.nat-detaljer > summary { cursor: pointer; font-weight: 600; color: var(--farg-primar); padding: .2rem 0; }
+.nat-ore { display: block; font-size: .75rem; color: #40504d; margin-top: .1rem; }
+.nat-ore:empty { display: none; }
+.nat-ore-summa { margin: .3rem 0; padding: .3rem .5rem; background: var(--farg-framhavd); border-radius: 4px; font-size: .82rem; }
+
+/* Attributet hidden ska alltid dölja, även för klasser som sätter display. */
+[hidden] { display: none !important; }

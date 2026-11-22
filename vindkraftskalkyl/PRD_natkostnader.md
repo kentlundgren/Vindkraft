@@ -4,8 +4,8 @@
 **Plats:** `vindkraftskalkyl/PRD_natkostnader.md`
 **Skapad:** 2026-11-22
 **Uppdaterad:** 2026-11-22
-**Version:** 1.4
-**Status:** **Fryst 2026-11-22 (version 1.4).** Kent har godkänt exempelfallen, faktorerna 0,5 och 1,5 och att PRD:n fryses efter genomläsning med fräscha ögon. Fas 1 (källor, [KALLOR_natkostnader.md](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/KALLOR_natkostnader.md)) och fas 2 (fältnamn, formler, exempelfall) är genomförda. Ändringar efter frysning görs som ny version. Regionnätens avgifter för 2027, fler nätägare, belägg för engångskostnader och ett normalfall återstår (avsnitt 12). Fas 3 är byggd (se README i mappen). Tabell 6 stämmer med testerna i `test_natkostnader.js`.
+**Version:** 1.5
+**Status:** **Fryst 2026-11-22 (version 1.5).** Kent har godkänt exempelfallen, faktorerna 0,5 och 1,5 och att PRD:n fryses efter genomläsning med fräscha ögon. Fas 1 (källor, [KALLOR_natkostnader.md](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/KALLOR_natkostnader.md)) och fas 2 (fältnamn, formler, exempelfall) är genomförda. Ändringar efter frysning görs som ny version. Regionnätens avgifter för 2027, fler nätägare, belägg för engångskostnader och ett normalfall återstår (avsnitt 12). Fas 3 är byggd (se README i mappen). Tabell 6 stämmer med testerna i `test_natkostnader.js`.
 **Typ:** Tilläggs-PRD till [vindkraftskalkylen](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html) (huvudversionen, GitHub Pages).
 
 > Dokumentet säger *vad* som ska byggas och *varför*, innan kod. Det är inte en SPEC.md. Ställningstagande till SPEC.md står i avsnitt 10.
@@ -253,6 +253,9 @@ Fas 2 är klar när formlerna har granskats mot källfilens enheter (gjort) och 
 - Jämförelsetabellen (Senaste / Tidigare / Förändring) fungerar som i dag för de nya nyckeltalen.
 - Vid väljaren "exempelfall" finns länken "Se alla exempelfall och källor" till läsarsidan. När ett fall är valt visas en rad med fallets öre/kWh och spannet över alla fall. Läsarens egna värden placeras på samma sätt i spannet.
 - Vid fältet för specifik investeringskostnad står en hint om antagandet att nätanslutningens engångskostnad ingår. Tomma nätfält visar platshållaren "ej angivet", eller "ingår i investeringsutgiften" när fältet för ingår är ja.
+- Gruppen "Nät och systemkrav" kan fällas in. Väljarna för läge, exempelfall och "ingår engångskostnaden" och en sammanfattning (löpande öre/kWh och engång kr/MW) syns alltid. De övriga nätfälten ligger i en infällbar del som är stängd förvalt och öppnas automatiskt när eget fall väljs.
+- Vid varje löpande fält visas fältets värde i öre/kWh, och efter nätavgifterna en summa i öre/kWh. Rubrikerna i gruppen (Anslutning, Nätavgifter, Nya systemkrav, Faktorer för låg och hög) har förklaringar vid hovring, fokus och tryck.
+- Delbar länk: valet av läge, exempelfall och om engångskostnaden ingår skrivs i adressens ankare, till exempel `#Natkostnad_Bas_Exempel_B` (läge Ingen, Lag, Bas eller Hog, utan å, ä, ö, och valfritt `_Engang_Nej`). Länken läses in när sidan öppnas eller ankaret ändras, och visas i ett fält med knappen "Kopiera länk". Värden som ändrats för hand följer inte med, och det anges. Läsarsidan länkar varje fall till kalkylen.
 - Hörnparet är diskret (`{ } GitHub` nedre vänster, `</> teknik` nedre höger), som på Bjerreds Saltsjöbad, och GitHub-länken pekar på mappen.
 - Versionsrad: sidan har ingen versionsrad i dag. Den läggs till (`VERSION` och `VERSIONSDATUM` i JS) enligt regel 19 i `kent-bygg-sidor`, och höjs sedan vid varje ändring.
 
@@ -349,6 +352,8 @@ Tabell 8. Tester som ska passera [#](#tabell-8)
 | Regelverk | Varje fall visar sina regelverk med status, och ett fall som bygger på ett remissutkast är märkt |
 | Engångskostnad ingår (ja) | Med `natengangingar = ja` är `investering` lika med investeringsutgiften utan nät, även när engångsfält har värden. Panelen visar ändå engångskostnaden i kr/MW |
 | Engångskostnad läggs till (nej) | Med `natengangingar = nej` ökar `investering` med `natEngang` |
+| Delbar länk | `#Natkostnad_Bas_Exempel_B` ger läge bas och exempelfall B, `#Natkostnad_Ingen` ger förvalt läge, och en ändring av väljarna uppdaterar länken. Ett ogiltigt ankare ignoreras |
+| Infällbar grupp | Läge, exempelfall, ingår-fältet, sammanfattningen och länken syns när de övriga fälten är infällda. Öre/kWh visas vid de löpande fälten |
 | Version | `VERSION` och `VERSIONSDATUM` är satta och uppdaterade i samma ändring, på kalkylen och på läsarsidan |
 
 <a id="10-spec"></a>

@@ -8,11 +8,12 @@
    VERSION och VERSIONSDATUM ska höjas vid varje ändring av sidan eller dess
    skript (regel 19 i kent-bygg-sidor).
    UPPDATERING 2026-11-22: sidan skapades. Version 1.0.
+   UPPDATERING 2026-11-22 (senare igen): länk "Visa i kalkylen" vid varje fall. Version 1.2.
    UPPDATERING 2026-11-22 (senare): avsnittet Det som saknas anger antagandet att engångskostnaden ingår i investeringsutgiften. Version 1.1.
    ============================================================================ */
 'use strict';
 
-const VERSION = '1.1';
+const VERSION = '1.2';
 const VERSIONSDATUM = '2026-11-22';
 
 (function () {
@@ -251,6 +252,13 @@ const VERSIONSDATUM = '2026-11-22';
         const ul4 = document.createElement('ul');
         reg.forEach(r => { const li = document.createElement('li'); li.textContent = (r.kort || r.titel) + ' (' + r.status + ')'; ul4.appendChild(li); });
         inre.appendChild(ul4);
+      }
+      if (f.belagd || f.id === 'G') {
+        const pl = document.createElement('p');
+        const al = document.createElement('a');
+        al.href = 'vindkraftskalkyl.html#Natkostnad_Bas_Exempel_' + f.id;
+        al.textContent = 'Visa fall ' + f.id + ' i kalkylen (läge bas)';
+        pl.appendChild(al); inre.appendChild(pl);
       }
       const p = document.createElement('p'); p.className = 'hint';
       p.textContent = 'Senast kontrollerad: ' + (f.kontrollerad || '–') + '. Nättyp: ' + f.typ + '.';

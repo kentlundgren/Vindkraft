@@ -23,6 +23,10 @@
   UPPDATERING 2026-11-22 (senare): diskret hörnpar (</> teknik), fältet "Ingår
   engångskostnaden redan i investeringsutgiften?", platshållare "ej angivet" på nätfälten
   och en hint vid specifik investeringskostnad. Version 1.1.
+
+  UPPDATERING 2026-11-22 (senare igen): gruppen Nät och systemkrav kan fällas in, en
+  sammanfattning och en delbar länk (#Natkostnad_Bas_Exempel_B) finns alltid synliga,
+  öre/kWh visas vid varje löpande fält och rubrikerna har förklaringar. Version 1.2.
   ============================================================================
 -->
 <html lang="sv">
@@ -184,14 +188,31 @@
         </label>
         <p class="hint nat-lank"><a href="natkostnader_exempel.html">Se alla exempelfall, källor och regelverk</a></p>
 
-        <h4 class="nat-delrubrik">Anslutning (engångskostnad)</h4>
-
         <label>Ingår engångskostnaden redan i investeringsutgiften? <span class="hjalp" tabindex="0" data-hjalp="Ja (förvalt): engångskostnaderna antas ingå i den specifika investeringskostnaden (12 000 kkr/MW) och läggs inte till. De visas ändå i panelen Nätkostnader i siffror. Nej: engångskostnaderna läggs till investeringsutgiften. Antagandet är inte belagt i någon källa.">?</span>
           <select id="natengangingar" class="indata">
             <option value="ja" selected>Ja, ingår (antagande)</option>
             <option value="nej">Nej, lägg till</option>
           </select>
         </label>
+
+        <div class="nat-sammanfattning" id="nat-sammanfattning" aria-live="polite">
+          <p id="nat-sam-lopande">–</p>
+          <p id="nat-sam-engang">–</p>
+        </div>
+
+        <div class="nat-valdlank">
+          <label>Länk till det här valet (läge, exempelfall och om engångskostnaden ingår)
+            <input type="text" id="nat-valdlank-falt" class="natlank" readonly value="">
+          </label>
+          <button type="button" id="nat-kopiera" class="nat-kopiera">Kopiera länk</button>
+          <p class="hint" id="nat-lank-varning" hidden>Värden som du har ändrat för hand följer inte med i länken. Länken återger valt läge och exempelfall.</p>
+        </div>
+
+        <details id="nat-detaljer" class="nat-detaljer">
+          <summary>Visa och ändra alla nätfält</summary>
+
+        <h4 class="nat-delrubrik"><span class="hjalp hjalp-term" tabindex="0" data-hjalp="Engångskostnader för att ansluta parken till nätet: utredning, ledning, station och förstärkning eller anslutningsavgift. Visas som kr per MW och jämförs med investeringsutgiften per MW.">Anslutning (engångskostnad)</span></h4>
+
 
         <label>Avstånd till anslutningspunkt (km)
           <input type="number" step="0.1" id="natavstand" class="indata" value="" placeholder="ej angivet">
@@ -223,18 +244,21 @@
           <span class="badge antagande">antagande</span>
         </label>
 
-        <h4 class="nat-delrubrik">Nätavgifter (löpande, per år)</h4>
+        <h4 class="nat-delrubrik"><span class="hjalp hjalp-term" tabindex="0" data-hjalp="Löpande avgifter för att mata in el, per år: fast årsavgift, effektavgift, avståndsberoende avgift och energiavgift. Visas som öre per kWh. Energiavgiften kan vara negativ, en ersättning.">Nätavgifter (löpande, per år)</span></h4>
 
         <label>Fast årsavgift, inklusive kundspecifik avgift (kr/år)
           <input type="number" step="1000" id="natfast" class="indata" value="" placeholder="ej angivet">
+          <span class="nat-ore" id="nat-ore-natfast"></span>
         </label>
 
         <label>Effektavgift eller fast avgift per kW (kr/kW och år) <span class="hjalp" tabindex="0" data-hjalp="Svenska kraftnäts effektavgift (2026) eller fasta avgift per kW (2027), och regionnätets årseffektavgift. Flera avgifter läggs ihop i fältet.">?</span>
           <input type="number" step="0.1" id="nateffekt" class="indata" value="" placeholder="ej angivet">
+          <span class="nat-ore" id="nat-ore-nateffekt"></span>
         </label>
 
         <label>Avståndsberoende avgift (kr/kW och km)
           <input type="number" step="0.01" id="natavstavg" class="indata" value="" placeholder="ej angivet">
+          <span class="nat-ore" id="nat-ore-natavstavg"></span>
         </label>
 
         <label>Avstånd för avståndsberoende avgift (km) <span class="hjalp" tabindex="0" data-hjalp="Fågelvägsavståndet från anslutningspunkten till närmaste stamnätspunkt som är ansluten till regionnätet (Vattenfalls tariff, avsnitt 5.1).">?</span>
@@ -246,12 +270,14 @@
           <input type="number" step="0.01" id="natenergi" class="indata" value="" placeholder="ej angivet">
         </label>
 
+        <p class="nat-ore-summa">Summa löpande nätavgifter (fast och rörlig del): <strong id="nat-ore-summa">–</strong></p>
+
         <label>Årlig förändring av nätavgifter (%/år)
           <input type="number" step="0.1" id="natforandring" class="indata" value="" placeholder="ej angivet">
           <span class="badge antagande">antagande</span>
         </label>
 
-        <h4 class="nat-delrubrik">Nya systemkrav</h4>
+        <h4 class="nat-delrubrik"><span class="hjalp hjalp-term" tabindex="0" data-hjalp="Kostnader för tekniska krav på produktionsanläggningar (utrustning, provning, drift) och eventuell nedreglering. Ingen källa anger belopp, så fälten står tomma.">Nya systemkrav</span></h4>
 
         <label>Systemkrav, engångskostnad (kkr/MW) <span class="hjalp" tabindex="0" data-hjalp="Utrustning och provning för krav på produktionsanläggningar. Ingen källa anger belopp: fyll i vid behov.">?</span>
           <input type="number" step="10" id="natsyseng" class="indata" value="" placeholder="ej angivet">
@@ -260,6 +286,7 @@
 
         <label>Systemkrav, löpande kostnad (kr/MW och år)
           <input type="number" step="100" id="natsyslop" class="indata" value="" placeholder="ej angivet">
+          <span class="nat-ore" id="nat-ore-natsyslop"></span>
           <span class="badge antagande">antagande</span>
         </label>
 
@@ -268,7 +295,7 @@
           <span class="badge antagande">antagande</span>
         </label>
 
-        <h4 class="nat-delrubrik">Faktorer för låg och hög</h4>
+        <h4 class="nat-delrubrik"><span class="hjalp hjalp-term" tabindex="0" data-hjalp="Läget låg och hög multiplicerar alla poster utom energiavgiften med faktorn. Låg 0,5 och hög 1,5 är antaganden som visar hur osäkerheten i nätkostnaderna kan slå mot resultatet. Energiavgiften skalas inte, eftersom den följer marknad och förluster.">Faktorer för låg och hög</span></h4>
 
         <label>Faktor i läget låg (gånger)
           <input type="number" step="0.1" id="natfaktorlag" class="indata" value="0.5">
@@ -279,6 +306,7 @@
           <input type="number" step="0.1" id="natfaktorhog" class="indata" value="1.5">
           <span class="badge antagande">antagande</span>
         </label>
+        </details>
       </fieldset>
 
       <!-- ---- Grupp: Markägare ---- -->

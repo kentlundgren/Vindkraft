@@ -55,7 +55,11 @@
     }
     if (ingar) { ingar.addEventListener('change', uppdateraPlatshallare); uppdateraPlatshallare(); }
 
-    sel.addEventListener('change', () => { fyllExempel(sel.value); });
+    sel.addEventListener('change', () => {
+      fyllExempel(sel.value);
+      // Eget fall: fäll ut fälten så att läsaren kan fylla i egna värden.
+      if (sel.value === 'H' && el('nat-detaljer')) el('nat-detaljer').open = true;
+    });
 
     let foregLage = el('natlage').value;
     el('natlage').addEventListener('change', () => {
@@ -68,7 +72,72 @@
       foregLage = ny;
     });
 
+    kopplaLank();
     if (typeof window.kopplaHjalp === 'function') window.kopplaHjalp();
+  }
+
+  /* ---------- Delbar länk: #Natkostnad_Bas_Exempel_B ----------
+     Länken återger läge, exempelfall och om engångskostnaden ingår i
+     investeringsutgiften. Värden som ändrats för hand följer inte med.
+     Läge skrivs utan å, ä, ö: Ingen, Lag, Bas, Hog. */
+  const LAGE_TILL_HASH = { ingen: 'Ingen', lag: 'Lag', bas: 'Bas', hog: 'Hog' };
+  const HASH_TILL_LAGE = { Ingen: 'ingen', Lag: 'lag', Bas: 'bas', Hog: 'hog' };
+  const HASH_MONSTER = /^#Natkostnad_(Ingen|Lag|Bas|Hog)(?:_Exempel_([A-H]))?(?:_Engang_(Ja|Nej))?$/;
+
+  function byggHash() {
+    const lage = el('natlage').value, ex = el('natexempel').value, ing = el('natengangingar').value;
+    if (lage === 'ingen' && (ex === 'H' || !ex) && ing === 'ja') return '';
+    let h = '#Natkostnad_' + LAGE_TILL_HASH[lage];
+    if (ex && ex !== 'H') h += '_Exempel_' + ex;
+    if (ing === 'nej') h += '_Engang_Nej';
+    return h;
+  }
+
+  function tillampaHash() {
+    const m = HASH_MONSTER.exec(location.hash);
+    if (!m) return false;
+    el('natlage').value = HASH_TILL_LAGE[m[1]];
+    const ex = m[2] || 'H';
+    el('natexempel').value = ex;
+    fyllExempel(ex);
+    el('natengangingar').value = (m[3] === 'Nej') ? 'nej' : 'ja';
+    const platshallare = el('natengangingar');
+    platshallare.dispatchEvent(new Event('change'));
+    return true;
+  }
+
+  function uppdateraLank() {
+    const h = byggHash();
+    try {
+      history.replaceState(null, '', location.pathname + location.search + h);
+    } catch (e) { /* t.ex. vissa lokala miljöer: länken visas ändå nedan */ }
+    const falt = el('nat-valdlank-falt');
+    if (falt) falt.value = location.origin === 'null' || location.protocol === 'file:'
+      ? location.href.split('#')[0] + h
+      : location.origin + location.pathname + location.search + h;
+  }
+
+  function kopplaLank() {
+    ['natlage', 'natexempel', 'natengangingar'].forEach(id => el(id).addEventListener('change', uppdateraLank));
+    const knapp = el('nat-kopiera');
+    if (knapp) knapp.addEventListener('click', () => {
+      const falt = el('nat-valdlank-falt');
+      const klart = () => { knapp.textContent = 'Kopierad'; setTimeout(() => { knapp.textContent = 'Kopiera länk'; }, 1800); };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(falt.value).then(klart, () => { falt.select(); document.execCommand('copy'); klart(); });
+      } else { falt.select(); document.execCommand('copy'); klart(); }
+    });
+    window.addEventListener('hashchange', () => {
+      if (tillampaHash()) {
+        el('natlage').dispatchEvent(new Event('change', { bubbles: true }));
+        el('nat-grupp').scrollIntoView();
+      }
+    });
+    if (tillampaHash()) {
+      // Räkna om efter att berakningar.js har initierat och visa gruppen.
+      window.addEventListener('load', () => { el('nat-grupp').scrollIntoView(); });
+    }
+    uppdateraLank();
   }
 
   /* ---------- Panelen "Nätkostnader i siffror" ---------- */
@@ -127,6 +196,54 @@
     satt('nat-info', info + tillagg);
 
     uppdateraExempelInfo(res, d);
+    uppdateraSammanfattning(res, d);
+  }
+
+  /* Sammanfattning som alltid syns, öre/kWh vid varje löpande fält och
+     varning när värden ändrats för hand (de följer inte med i länken). */
+  function uppdateraSammanfattning(res, d) {
+    const np = res.natPanel, lo = np.lopandeOre, pe = np.engangPerMW;
+    const t = d.natTomma || {};
+    const ingen = d.natlage === 'ingen';
+    const lagetext = ingen ? 'Om nätkostnaderna togs med (läge bas)' : 'Med läget ' + LAGE_TEXT[d.natlage];
+    satt('nat-sam-lopande', lagetext + ': löpande nätkostnader ' + fmt(lo.summa, 2, ' öre/kWh') +
+      ' (fast del ' + fmt(lo.fastSumma, 2) + ' och rörlig del ' + fmt(lo.energi, 2) + ' öre/kWh).');
+    const inv = d.specinv * 1000;
+    satt('nat-sam-engang', 'Engångskostnad: ' + fmt(pe.summa, 0, ' kr/MW') +
+      (inv > 0 ? ' (' + fmt(pe.summa / inv * 100, 1, ' % av investeringsutgiften per MW') + ')' : '') +
+      (d.natengangingar === 'ja' ? ', antas ingå i investeringsutgiften.' : ', läggs till investeringsutgiften.'));
+
+    // Öre/kWh per löpande fält, räknat på fältets eget värde (faktor 1).
+    const P = d.effekt * d.antalverk;
+    const bas = NATKOSTNAD.beraknaNat(d, 1, P, P * 8760 * d.kapfaktor * 1000);
+    const o = bas.lopandeOre;
+    const visa = (id, ids, v) => {
+      const e = el('nat-ore-' + id);
+      if (e) e.textContent = ids.every(k => t[k]) ? '' : '= ' + fmt(v, 2, ' öre/kWh');
+    };
+    visa('natfast', ['natfast'], o.fast);
+    visa('nateffekt', ['nateffekt'], o.effekt);
+    visa('natavstavg', ['natavstavg', 'natavstavstand'], o.avstand);
+    visa('natsyslop', ['natsyslop'], o.system);
+    const summaNat = o.fast + o.effekt + o.avstand + o.energi;
+    satt('nat-ore-summa', fmt(summaNat, 2, ' öre/kWh'));
+
+    // Avvikelse mot valt exempelfall: värden ändrade för hand följer inte med i länken.
+    const f = hittaFall(d.natexempel);
+    const varn = el('nat-lank-varning');
+    if (varn) {
+      let avviker = false;
+      if (f && !f.eget) {
+        avviker = FALT.some(k => {
+          const e = el(k); const v = e ? e.value.trim() : '';
+          const fv = (f.falt[k] === null || f.falt[k] === undefined) ? '' : String(f.falt[k]);
+          return v !== fv;
+        });
+      } else {
+        avviker = !allaNatFaltTomma();
+      }
+      varn.hidden = !avviker;
+    }
   }
 
   /* Rad om valt exempelfall: värde, spridning över belagda fall och regelverk. */

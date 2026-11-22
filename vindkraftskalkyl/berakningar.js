@@ -24,8 +24,10 @@
    investering, drift, produktion, LCOE och diagram. Förvalt läge är "ingen",
    som ger exakt samma resultat som tidigare. Versionsrad tillagd. Version 1.0.
    UPPDATERING 2026-11-22 (senare): fältet natengangingar (ja = engångskostnaderna antas ingå i
-   investeringsutgiften och läggs inte till; förvalt), diskret hörnpar. Version 1.1. */
-const VERSION = '1.1';
+   investeringsutgiften och läggs inte till; förvalt), diskret hörnpar. Version 1.1.
+   UPPDATERING 2026-11-22 (senare igen): infällbar nätgrupp, sammanfattning, delbar länk, öre/kWh vid
+   fälten (natkostnader_ui.js). Version 1.2. */
+const VERSION = '1.2';
 const VERSIONSDATUM = '2026-11-22';
 
 /* ============================================================================
