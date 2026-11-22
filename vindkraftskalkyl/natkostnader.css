@@ -1,0 +1,171 @@
+/* natkostnader.css: gemensam formatering för nätkostnader och systemkrav. Länkas från både vindkraftskalkyl.html och
+   vindkraftskalkyl_langhult.html, efter respektive stil_*.css. Flyttad ur stil.css 2026-11-22 så att båda kalkylerna delar den. */
+
+/* ==========================================================================
+   NÄTKOSTNADER OCH SYSTEMKRAV (2026-11-22, PRD_natkostnader.md)
+   Fältgruppen, panelen "Nätkostnader i siffror", förklaringsrutor och
+   versionsraden. Gult används bara på indatafälten.
+   ========================================================================== */
+.badge.schablon { background: #ffe6c7; color: #8a4b00; border: 1px solid #f0c48a; }
+
+.nat-delrubrik {
+  margin: .9rem 0 .2rem;
+  font-size: .85rem;
+  color: var(--farg-primar);
+  border-bottom: 1px solid var(--farg-ram);
+  padding-bottom: .15rem;
+}
+.nat-lank { margin: .1rem 0 .3rem; }
+
+.nat-panel {
+  max-width: 1100px;
+  margin: 1.2rem auto;
+  padding: 1rem 1.2rem;
+  background: var(--farg-panel);
+  border: 1px solid var(--farg-ram);
+  border-radius: 8px;
+  box-shadow: var(--skugga);
+}
+.nat-panel h2 { margin-top: 0; }
+.nat-block { margin-top: .8rem; }
+.nat-block h3 { font-size: 1rem; margin: 0 0 .3rem; color: var(--farg-primar); }
+@media (min-width: 800px) {
+  .nat-panel { display: grid; grid-template-columns: 1fr 1fr; column-gap: 1.6rem; }
+  .nat-panel > h2, .nat-panel > p { grid-column: 1 / -1; }
+}
+
+.ankare {
+  margin-left: .35rem;
+  font-size: .8em;
+  color: #8a9a97;
+  text-decoration: none;
+  opacity: 0;
+}
+h2:hover > .ankare, h3:hover > .ankare, .ankare:focus { opacity: 1; }
+
+/* Förklaringsmarkör (hovring, fokus och tryck) och själva rutan */
+.hjalp {
+  display: inline-block;
+  width: 1.15rem; height: 1.15rem;
+  line-height: 1.15rem;
+  text-align: center;
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--farg-primar);
+  background: #e4f1f0;
+  border: 1px solid var(--farg-primar-ljus);
+  border-radius: 50%;
+  cursor: help;
+  vertical-align: middle;
+}
+.hjalp:focus-visible { outline: 3px solid var(--farg-indata-kant); outline-offset: 2px; }
+.hjalp-ruta {
+  position: absolute;
+  z-index: 1500;
+  padding: .5rem .7rem;
+  font-size: .82rem;
+  line-height: 1.35;
+  color: var(--farg-text);
+  background: #fff;
+  border: 1px solid var(--farg-primar-ljus);
+  border-radius: 6px;
+  box-shadow: 0 3px 10px rgba(0,0,0,.2);
+}
+.hjalp-ruta[hidden] { display: none; }
+
+.versionsrad { font-size: .8rem; color: #5a6a67; margin: .2rem 0 0; }
+
+/* Diskret hörnpar (som på Bjerreds Saltsjöbad): GitHub nedre vänster, teknik nedre höger. */
+.corner {
+  position: fixed; bottom: 14px; z-index: 1000;
+  font-family: "Courier New", Courier, monospace; font-size: .78rem;
+  color: var(--farg-text); background: #fff; border: 1px solid var(--farg-ram);
+  border-radius: 999px; padding: .3rem .7rem;
+  text-decoration: none; cursor: pointer;
+  opacity: .55; transition: opacity .2s ease;
+}
+.corner:hover, .corner:focus-visible { opacity: 1; }
+.corner-left { left: 14px; }
+.corner-right { right: 14px; }
+@media (max-width: 600px) { .corner { bottom: 10px; } .corner-left { left: 10px; } .corner-right { right: 10px; } }
+
+/* Gruppen Nät och systemkrav: infällbar del, sammanfattning, delbar länk, förklaringar */
+.hjalp.hjalp-term {
+  display: inline; width: auto; height: auto; line-height: inherit;
+  font-size: inherit; font-weight: inherit; text-align: inherit;
+  background: none; border: 0; border-bottom: 1px dotted var(--farg-primar);
+  border-radius: 0; color: inherit; cursor: help;
+}
+.nat-sammanfattning {
+  margin: .6rem 0; padding: .5rem .7rem;
+  background: var(--farg-framhavd); border: 1px solid var(--farg-ram); border-radius: 6px;
+  font-size: .85rem;
+}
+.nat-sammanfattning p { margin: .15rem 0; }
+.nat-valdlank { margin: .4rem 0; }
+.nat-valdlank label { display: block; font-size: .8rem; }
+.natlank { width: 100%; margin-top: .2rem; padding: .3rem .4rem; font-size: .78rem; background: #eef0f0; border: 1px solid var(--farg-ram); border-radius: 4px; color: #40504d; }
+.nat-kopiera { margin-top: .3rem; padding: .25rem .7rem; font-size: .8rem; cursor: pointer; border: 1px solid var(--farg-primar-ljus); background: #fff; color: var(--farg-primar); border-radius: 4px; }
+.nat-kopiera:hover, .nat-kopiera:focus-visible { background: var(--farg-framhavd); }
+.nat-detaljer { margin-top: .5rem; border-top: 1px solid var(--farg-ram); padding-top: .4rem; }
+.nat-detaljer > summary { cursor: pointer; font-weight: 600; color: var(--farg-primar); padding: .2rem 0; }
+.nat-ore { display: block; font-size: .75rem; color: #40504d; margin-top: .1rem; }
+.nat-ore:empty { display: none; }
+.nat-ore-summa { margin: .3rem 0; padding: .3rem .5rem; background: var(--farg-framhavd); border-radius: 4px; font-size: .82rem; }
+
+/* Attributet hidden ska alltid dölja, även för klasser som sätter display. */
+[hidden] { display: none !important; }
+
+/* Växlare ett verk / fem verk och tabellen över löpande nätkostnad i kronor */
+.nat-verkvaxel { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin: .2rem 0 .6rem; font-size: .85rem; }
+.nat-verkknapp { padding: .3rem .8rem; cursor: pointer; border: 1px solid var(--farg-primar-ljus); background: #fff; color: var(--farg-primar); border-radius: 999px; font-size: .85rem; }
+.nat-verkknapp[aria-pressed="true"] { background: var(--farg-primar); color: #fff; border-color: var(--farg-primar); }
+.nat-verkknapp:focus-visible { outline: 2px solid var(--farg-primar); outline-offset: 2px; }
+.tabell-rulla { overflow-x: auto; }
+.nat-tabell { border-collapse: collapse; width: 100%; font-size: .88rem; }
+.nat-tabell caption { text-align: left; font-weight: 600; margin-bottom: .4rem; }
+.nat-tabell th, .nat-tabell td { border: 1px solid var(--farg-ram); padding: .35rem .5rem; text-align: left; }
+.nat-tabell thead th, .nat-tabell tbody th { background: var(--farg-framhavd); font-weight: 600; }
+.nat-tabell td.tal { text-align: right; white-space: nowrap; }
+.nat-tabell tr.framhavd th, .nat-tabell tr.framhavd td { font-weight: 700; }
+
+/* Förslag på typfall efter parkens effekt */
+.nat-forslag { margin: .5rem 0; padding: .5rem .7rem; background: var(--farg-framhavd); border: 1px solid var(--farg-ram); border-radius: 6px; font-size: .82rem; }
+.nat-forslag p { margin: 0 0 .3rem; }
+
+/* Blå notis (gult är reserverat för inmatning) */
+.nat-notis { margin: 1rem 0; padding: .7rem .9rem; background: #e8f1fb; border: 1px solid #b9cde3; border-left: 4px solid #1d5fa6; border-radius: 6px; font-size: .9rem; }
+.nat-notis h3 { margin: 0 0 .4rem; font-size: 1rem; }
+.nat-notis p, .nat-notis ul { margin: .3rem 0; }
+
+.nat-saknas { font-weight: 600; color: #1d3f66; }
+
+/* Hopfälld panel: de två summorna syns alltid */
+.nat-topp .resultatlista dd { font-size: 1.15rem; font-weight: 700; }
+.nat-topp { margin-bottom: .6rem; }
+
+/* Typfall: automatisk följning och trappa över parkeffekt */
+.nat-auto { display: block; font-size: .85rem; margin-bottom: .4rem; font-weight: 600; }
+.nat-auto input { width: auto; margin-right: .3rem; }
+.nat-storlek { margin: .3rem 0 .5rem 1.1rem; padding: 0; font-size: .8rem; }
+.nat-tabell tr.nu td, .nat-tabell tr.nu th { background: #e8f1fb; font-weight: 700; }
+
+/* Delningsraden med adress och miniatyr av delningsbilden */
+.nat-dela { margin: .6rem 0; padding: .6rem .7rem; border: 1px solid var(--farg-ram); border-radius: 6px; background: var(--farg-framhavd); }
+.nat-dela label { display: block; font-size: .8rem; }
+.nat-dela-bild { display: block; width: 100%; max-width: 360px; height: auto; border: 1px solid var(--farg-ram); border-radius: 4px; margin-top: .3rem; }
+
+/* Hopfälld delningsrad */
+details.nat-dela > summary { cursor: pointer; font-weight: 600; font-size: .85rem; color: var(--farg-primar); }
+details.nat-dela[open] > summary { margin-bottom: .4rem; }
+
+/* Nätkostnader i siffror inne i gruppen Nät och systemkrav (en kolumn) */
+.nat-resultat { margin-top: .8rem; padding-top: .6rem; border-top: 2px solid var(--farg-ram); }
+.nat-resultat .nat-block { margin-top: .6rem; }
+.nat-resultat .tabell-rulla { overflow-x: auto; }
+.nat-resultat .nat-tabell { font-size: .8rem; }
+
+/* Sammanfattningen i en smal kolumn: värdet får radbrytas och uppdelningen per verk står på egen rad */
+.nat-topp .resultatlista { grid-template-columns: 1fr; }
+.nat-topp .resultatlista dd { white-space: normal; text-align: right; }
+.nat-t-del { display: block; font-size: .8rem; font-weight: 400; color: #40504d; }

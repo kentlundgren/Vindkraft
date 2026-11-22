@@ -5,8 +5,8 @@
 **Live (Vercel-app, statisk):** https://vindkraft-rosy.vercel.app
 **Live (Vercel-app, Functions):** https://vindkraft-ver2.vercel.app
 **Live (Vercel-app, Next.js App Router):** https://vindkraft-ver3.vercel.app
-**Senast uppdaterad:** 2026-10-05
-**Version:** 1.8
+**Senast uppdaterad:** 2026-11-22
+**Version:** 1.9
 
 ---
 
@@ -22,6 +22,15 @@ Samlar vindkraftsrelaterat innehåll:
 | `vindkraftskalkyl_Vercel_ver3/` | Kalkylen ombyggd som Next.js-app (App Router, TypeScript, Tailwind). Egna adresser per perspektiv, `/api/elpris`, `/api/scenario` med delningslänkar och serverritad OG-bild. Projektet `vindkraft-ver3` i teamet Effektiv, Root Directory = mappen. Live: https://vindkraft-ver3.vercel.app. Formlerna är portade från ver2 och testas mot ver2:s egna tal (`npm test`). |
 | `.cursor/skills/` | Projekt-skills som Cursor läser automatiskt. Dual-publiceringsmönstret ligger här. |
 | `skanes-vindkraftsakademi/` | Anteckningar och research kopplat till styrelsearbete i Skånes vindkraftsakademi. |
+
+---
+
+## Regel – En gemensam räknekärna för alla kalkyler
+
+Kalkylerna i `vindkraftskalkyl/` (huvudkalkylen, Långhult, senare Önnerup) **delar kärnan `kalkylkarna.js`** (annuitet, NPV, IRR, payback, LCOE, formatering och nätkopplingen) och nätmodellen `natkostnader_berakning.js`. Det som ska räknas lika i alla kalkyler läggs där, aldrig som en kopia i en kalkyls egen fil.
+- En ny kalkyl laddar `kalkylkarna.js` före sin egen fil, lägger bara det som är specifikt för den (till exempel produktion, viktning, närboendezoner) i sin egen `berakningar_*.js`, och läggs i `kalkyler` i `dokument.json` (kör `python kalkylmeny.py`) så att rullgardinen Kalkyler får den.
+- Kör `node test_kalkylkarna.js` och `node test_natkostnader.js` före leverans. Det första testet fångar om en kalkyl återinför en egen kopia av en kärnfunktion.
+- Vercel-apparna (`vindkraftskalkyl_Vercel*`) har egna kopior och ingår inte än.
 
 ---
 
@@ -107,6 +116,7 @@ den globala filen `AI\Claude\CLAUDE.md` på Kents lokala maskin.
 
 ## Uppdateringslogg
 
+- 2026-11-22 (v1.9): Regel om gemensam räknekärna (`kalkylkarna.js`) för alla kalkyler, och rullgardinen Kalkyler.
 - 2026-10-05 (v1.8): Regel om namn och struktur på anteckningsfiler (datum först, samma struktur varje gång). Äldre fil `anteckningar-2026-09-02.md` bytt till `2026-09-02-anteckningar.md`. Mötessammanfattningen 2026-10-05 lades till i `skanes-vindkraftsakademi/`.
 - 2026-09-16 (v1.7): `vindkraftskalkyl_Vercel_ver3/` live på https://vindkraft-ver3.vercel.app. Ver3 är en Next.js-app (App Router) och den enda av lagren som *inte* går att spegla på GitHub Pages — den behöver en server. Rot-README:n fick en rad per Vercel-app.
 - 2026-09-15 (v1.6): `Hur-skaffa-nyckel-hos-ENTSO-E.md` i ver2; live-URL för `vindkraft-ver2`.

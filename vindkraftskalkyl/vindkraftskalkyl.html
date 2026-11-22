@@ -62,6 +62,8 @@
   UPPDATERING 2026-11-22 (senare igen): radbrytning i sammanfattningen så att långa belopp inte spiller över rutan. Version 1.13.
 
   UPPDATERING 2026-11-22 (senare igen): rullgardinen Kalkyler i brödsmulorna med länk till fallet Långhult. Version 1.14.
+
+  UPPDATERING 2026-11-22 (senare igen): gemensam kärna kalkylkarna.js för finansmatematik och nätkopplingen, delad med fallet Långhult, och nätformateringen i natkostnader.css. Resultaten är oförändrade. Version 1.15.
   ============================================================================
 -->
 <html lang="sv">
@@ -88,6 +90,7 @@
 
   <!-- Extern CSS länkas i head med relativ sökväg -->
   <link rel="stylesheet" href="stil.css">
+<link rel="stylesheet" href="natkostnader.css">
 <link rel="stylesheet" href="brodsmulor.css">
 <link rel="stylesheet" href="kalkylmeny.css">
 </head>
@@ -891,6 +894,9 @@
     med kraven, och bara för diagrammen.
   -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Gemensam kärna för alla kalkyler (finansmatematik, formatering, nätkopplingen). Laddas först. -->
+  <script src="kalkylkarna.js"></script>
 
   <!-- Nätkostnader: data, ren beräkningsmodul och gränssnitt. Laddas före berakningar.js. -->
   <script src="natkostnader_exempel.js"></script>

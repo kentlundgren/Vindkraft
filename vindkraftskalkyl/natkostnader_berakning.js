@@ -124,7 +124,16 @@
     return { id: P > t.gransMW ? t.stort : t.litet, stamnat: P > t.stamnatMW };
   }
 
-  const API = { NAT_FALT, faktorForLage, beraknaNat, tommaFalt, typfallForEffekt };
+  /**
+   * Parkens produktion år 1 före bortfall från systemkrav (kWh). Kalkyler som anger fullasttimmar per verk
+   * (Långhult) räknar med dem. Övriga räknar med kapacitetsfaktor över 8 760 timmar.
+   */
+  function bruttoKWh(d, P_tot) {
+    if (Number.isFinite(d.fullasttimmar) && d.fullasttimmar > 0) return d.effekt * 1000 * d.fullasttimmar * d.antalverk;
+    return P_tot * 8760 * d.kapfaktor * 1000;
+  }
+
+  const API = { NAT_FALT, faktorForLage, beraknaNat, tommaFalt, typfallForEffekt, bruttoKWh };
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
   else rot.NATKOSTNAD = API;
 })(typeof window !== 'undefined' ? window : this);

@@ -410,7 +410,7 @@
 
     // Öre/kWh per löpande fält, räknat på fältets eget värde (faktor 1).
     const P = d.effekt * d.antalverk;
-    const bas = NATKOSTNAD.beraknaNat(d, 1, P, P * 8760 * d.kapfaktor * 1000);
+    const bas = NATKOSTNAD.beraknaNat(d, 1, P, NATKOSTNAD.bruttoKWh(d, P));
     const o = bas.lopandeOre;
     const visa = (id, ids, v) => {
       const e = el('nat-ore-' + id);
@@ -454,7 +454,7 @@
       return;
     }
     const P = d.effekt * d.antalverk;
-    const brutto = P * 8760 * d.kapfaktor * 1000;
+    const brutto = NATKOSTNAD.bruttoKWh(d, P);
     const orePerFall = (fall) => {
       const x = {};
       FALT.forEach(k => { const v = fall.falt[k]; x[k] = (v === null || v === undefined) ? 0 : v; });

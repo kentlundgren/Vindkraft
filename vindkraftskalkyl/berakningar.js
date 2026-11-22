@@ -39,126 +39,17 @@
    UPPDATERING 2026-11-22 (senare igen): fältet med länken till valet är borttaget (knappen Kopiera länk finns kvar) och delningsraden är hopfälld. Version 1.11.
    UPPDATERING 2026-11-22 (senare igen): Nätkostnader i siffror ligger sist i gruppen Nät och systemkrav och sammanfattningen mitt i gruppen är borttagen. Version 1.12.
    UPPDATERING 2026-11-22 (senare igen): radbrytning i sammanfattningen (kr per år för parken på en rad, per verk på raden under). Version 1.13.
-   UPPDATERING 2026-11-22 (senare igen): rullgardinen Kalkyler (korsreferens till Långhult). Version 1.14. */
-const VERSION = '1.14';
+   UPPDATERING 2026-11-22 (senare igen): rullgardinen Kalkyler (korsreferens till Långhult). Version 1.14.
+   UPPDATERING 2026-11-22 (senare igen): finansmatematik, formatering och nätkopplingen flyttade till den gemensamma kärnan kalkylkarna.js (delas med Långhult). Resultaten är oförändrade. Version 1.15. */
+const VERSION = '1.15';
 const VERSIONSDATUM = '2026-11-22';
 
 /* ============================================================================
    DEL 0 – HJÄLPFUNKTIONER
    ============================================================================ */
 
-/**
- * Hämtar det numeriska värdet ur ett indatafält via dess id.
- * Returnerar 0 om fältet saknas eller inte innehåller ett tal, så att
- * beräkningarna aldrig kraschar på tomma fält.
- */
-function tal(id) {
-  const el = document.getElementById(id);
-  if (!el) return 0;
-  const v = parseFloat(el.value);
-  return Number.isFinite(v) ? v : 0;
-}
-
-/** Hämtar textvärdet (t.ex. för select) via id. */
-function text(id) {
-  const el = document.getElementById(id);
-  return el ? el.value : '';
-}
-
-/** Rådata (textvärden) för nätkostnadsfälten. Tomt fält = "ej angivet". */
-function radataNat() {
-  const r = {};
-  if (typeof NATKOSTNAD === 'undefined') return r;
-  NATKOSTNAD.NAT_FALT.forEach(id => {
-    const el = document.getElementById(id);
-    r[id] = el ? el.value.trim() : '';
-  });
-  return r;
-}
-
-/**
- * Formaterar ett tal med svenska tusentalsavgränsare.
- * Använder toLocaleString('sv-SE') enligt kravet.
- * @param {number} v      talet
- * @param {number} dec    antal decimaler (default 0)
- * @param {string} suffix enhet som läggs efter, t.ex. " kr/år"
- */
-function fmt(v, dec = 0, suffix = '') {
-  if (!Number.isFinite(v)) return '–';
-  const str = v.toLocaleString('sv-SE', {
-    minimumFractionDigits: dec,
-    maximumFractionDigits: dec
-  });
-  return str + suffix;
-}
-
-/* ============================================================================
-   DEL 1 – FINANSIELLA HJÄLPFUNKTIONER
-   ============================================================================ */
-
-/**
- * Annuitet – Kent Lundgrens ursprungliga logik för årlig kapitalkostnad.
- * Formel:  kapitalkostnad = Investering × r / (1 − (1 + r)^(−n))
- * Detta fördelar investeringen jämnt över livslängden givet kalkylräntan.
- */
-function annuitet(investering, r, n) {
-  if (r === 0) return investering / n;               // specialfall: 0 % ränta
-  return investering * r / (1 - Math.pow(1 + r, -n));
-}
-
-/**
- * Nettonuvärde (NPV) av en serie kassaflöden.
- * cashflows[0] är år 0 (diskonteras inte), cashflows[t] år t (diskonteras).
- * NPV = Σ  CF_t / (1 + r)^t
- */
-function npv(r, cashflows) {
-  let summa = 0;
-  for (let t = 0; t < cashflows.length; t++) {
-    summa += cashflows[t] / Math.pow(1 + r, t);
-  }
-  return summa;
-}
-
-/**
- * Internränta (IRR) – den ränta där NPV = 0.
- * Löses numeriskt med bisektion (robust och enkelt) mellan −90 % och +100 %.
- * Returnerar NaN om ingen teckenväxling hittas (t.ex. om projektet aldrig går
- * med vinst).
- */
-function irr(cashflows) {
-  const f = (r) => npv(r, cashflows);
-  let lo = -0.9, hi = 1.0;
-  let flo = f(lo), fhi = f(hi);
-  // Om båda ändpunkterna har samma tecken finns ingen rot i intervallet.
-  if (flo * fhi > 0) return NaN;
-  for (let i = 0; i < 200; i++) {
-    const mid = (lo + hi) / 2;
-    const fmid = f(mid);
-    if (Math.abs(fmid) < 1e-6) return mid;           // tillräckligt nära noll
-    if (flo * fmid < 0) { hi = mid; fhi = fmid; }
-    else { lo = mid; flo = fmid; }
-  }
-  return (lo + hi) / 2;
-}
-
-/**
- * Enkel payback (återbetalningstid) på nominella (ej diskonterade) kassaflöden.
- * Går igenom kumulativt kassaflöde och interpolerar inom det år då summan
- * passerar noll. Returnerar null om investeringen aldrig betalar tillbaka sig.
- */
-function payback(cashflows) {
-  let kum = 0;
-  for (let t = 0; t < cashflows.length; t++) {
-    const foreg = kum;
-    kum += cashflows[t];
-    if (kum >= 0 && t > 0) {
-      // Linjär interpolation inom år t för en mjukare siffra.
-      const andel = foreg < 0 ? (-foreg / (kum - foreg)) : 0;
-      return (t - 1) + andel;
-    }
-  }
-  return null;
-}
+/* tal, text, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode och nätkopplingen (radataNat, lasNatIndata,
+   natPaverkan, natSammanfattning) ligger i kalkylkarna.js, som delas med övriga kalkyler. */
 
 /* ============================================================================
    DEL 2 – LÄSA INDATA
@@ -216,30 +107,8 @@ function lasIndata() {
     antalbostader:    Math.max(0, Math.round(tal('antalbostader'))),
     maxpromille:      tal('maxpromille') / 1000,       // ‰ → andel
 
-    // Nätkostnader och systemkrav (PRD_natkostnader.md). Tomt fält räknas som 0.
-    natlage:          text('natlage') || 'ingen',
-    natengangingar:   text('natengangingar') || 'ja',   // ja = ingår i investeringsutgiften (antagande)
-    natexempel:       text('natexempel'),
-    natavstand:       tal('natavstand'),               // km
-    natledning:       tal('natledning'),               // kkr/km
-    natstation:       tal('natstation'),               // kkr
-    natforstark:      tal('natforstark'),              // kkr
-    natutredning:     tal('natutredning'),             // kkr, fast del
-    natutredningpermw: tal('natutredningpermw'),       // kkr/MW
-    natutredningtak:  tal('natutredningtak'),          // kkr, högst
-    natengangschablon: tal('natengangschablon'),       // kkr/MW
-    natfast:          tal('natfast'),                  // kr/år
-    nateffekt:        tal('nateffekt'),                // kr/kW och år
-    natavstavg:       tal('natavstavg'),               // kr/kW och km
-    natavstavstand:   tal('natavstavstand'),           // km
-    natenergi:        tal('natenergi'),                // öre/kWh (negativt = ersättning)
-    natforandring:    tal('natforandring'),            // %/år
-    natsyseng:        tal('natsyseng'),                // kkr/MW
-    natsyslop:        tal('natsyslop'),                // kr/MW och år
-    natsysbortfall:   tal('natsysbortfall'),           // %
-    natfaktorlag:     tal('natfaktorlag'),             // gånger
-    natfaktorhog:     tal('natfaktorhog'),             // gånger
-    natTomma:         (typeof NATKOSTNAD !== 'undefined') ? NATKOSTNAD.tommaFalt(radataNat()) : {}
+    // Nätkostnader och systemkrav (kalkylkarna.js, lasNatIndata)
+    ...lasNatIndata()
   };
 }
 
@@ -255,12 +124,11 @@ function beraknaAllt(d) {
 
   /* ---------- 3.1 Investerare: grundstorheter (Kents ursprungslogik) -------- */
 
-  // Nätkostnader och systemkrav (ren modul, se natkostnader_berakning.js).
+  // Nätkostnader och systemkrav (gemensam kärna, se kalkylkarna.js och natkostnader_berakning.js).
   // `nat` gäller i det valda läget (ingen = 0 överallt). `natPanel` används av
   // panelen "Nätkostnader i siffror" och räknas på läget bas när läget är ingen.
-  const natBrutto = P_tot * 8760 * d.kapfaktor * 1000;           // kWh/år före bortfall
-  const nat = NATKOSTNAD.beraknaNat(d, NATKOSTNAD.faktorForLage(d.natlage, d), P_tot, natBrutto);
-  const natPanel = (d.natlage === 'ingen') ? NATKOSTNAD.beraknaNat(d, 1, P_tot, natBrutto) : nat;
+  const natBrutto = NATKOSTNAD.bruttoKWh(d, P_tot);              // kWh/år före bortfall
+  const { nat, natPanel } = natPaverkan(d, P_tot, natBrutto);
 
   // Produktion år 1 i MWh:  Effekt(MW) × 8760 h × kapacitetsfaktor × (1 − bortfall från systemkrav)
   const produktionMWh_ar1 = P_tot * 8760 * d.kapfaktor * (1 - nat.bortfall);
@@ -277,7 +145,7 @@ function beraknaAllt(d) {
   // plus nätens engångskostnader (tillägg, 0 i läget ingen).
   const investeringGrund = d.specinv * 1000 * P_tot;
   // Förvalt (ja): engångskostnaderna antas ingå i investeringsutgiften och läggs inte till.
-  const natEngangTillagg = (d.natengangingar === 'nej') ? nat.natEngang : 0;
+  const natEngangTillagg = natEngangTillaggAv(d, nat);
   const investering = investeringGrund + natEngangTillagg;
 
   // Investeringsutgift per årskWh:  investering / produktion(kWh) år 1
@@ -398,36 +266,12 @@ function beraknaAllt(d) {
   // Överskott efter lokala ersättningar (år 1) – jämförelse mot basöverskottet.
   const overskottNetto = intaktAr1 - totalkostnad - arrendeAr1 - kommunAr - narboendeTotalAr1;
 
-  /* LCOE (Levelized Cost of Energy):
-     LCOE = ( Investering + Σ drift_t/(1+r)^t + nedmontering/(1+r)^n − restvärde/(1+r)^n )
-            / ( Σ energi_t(kWh)/(1+r)^t )
-     Både kostnader och energi diskonteras – standardmetod. */
-  let disKostnad = investering;
-  let disEnergi = 0;
-  for (let t = 1; t <= n; t++) {
-    disKostnad += driftAr[t - 1] / Math.pow(1 + r, t);
-    disEnergi += prodkWhAr[t - 1] / Math.pow(1 + r, t);
-  }
-  disKostnad += nedmonteringTot / Math.pow(1 + r, n);
-  disKostnad -= restvardeTot / Math.pow(1 + r, n);
-  const lcoe = disEnergi > 0 ? disKostnad / disEnergi : 0;
-
-  /* Nätkostnad per kWh över livslängden: diskonterad engångs- och löpande
-     nätkostnad delat med diskonterad energi, samt dess andel av LCOE. */
-  let disNat = natEngangTillagg;
-  for (let t = 1; t <= n; t++) {
-    disNat += nat.lopandeAr(t, prodkWhAr[t - 1]) / Math.pow(1 + r, t);
-  }
-  // Panelens löpande nätkostnad i kronor över livslängden (nuvärde), även i läget ingen.
-  let natLivsKr = 0;
-  for (let t = 1; t <= n; t++) {
-    natLivsKr += natPanel.lopandeAr(t, prodkWhAr[t - 1]) / Math.pow(1 + r, t);
-  }
-  const natPerkWhLivs = disEnergi > 0 ? disNat / disEnergi : NaN;
-  const natAndelLcoe = (lcoe > 0 && natPerkWhLivs === natPerkWhLivs) ? natPerkWhLivs / lcoe : NaN;
-  // Diagrammets nätpost: löpande nätkostnad år 1 + annuiteten på engångsdelen.
-  const kapitalkostnadGrund = annuitet(investeringGrund, r, n);
-  const natChart = nat.lopandeAr1 + (annuitet(investering, r, n) - kapitalkostnadGrund);
+  /* LCOE (gemensam definition, kalkylkarna.js: lcoeAvKassaflode). Nätkostnad per kWh över livslängden och
+     dess andel av LCOE, nätens löpande kostnad i kronor och diagrammets nätpost: natSammanfattning. */
+  const { lcoe, disEnergi } = lcoeAvKassaflode(investering, driftAr, prodkWhAr, r, nedmonteringTot, restvardeTot);
+  const { natPerkWhLivs, natAndelLcoe, natLivsKr, natChart, kapitalkostnadGrund } = natSammanfattning({
+    nat, natPanel, natEngangTillagg, investeringGrund, investering, prodkWhAr, r, n, lcoe, disEnergi
+  });
 
   /* ---------- 3.7 Kommun/samhälle: sammanställning ------------------------- */
   const lokalaIntakterAr1 = arrendeAr1 + kommunAr + narboendeTotalAr1;

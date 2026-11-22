@@ -34,34 +34,7 @@
    DEL 0 – HJÄLPFUNKTIONER
    ============================================================================ */
 
-/** Hämtar det numeriska värdet ur ett indatafält via dess id (0 om tomt). */
-function tal(id) {
-  const el = document.getElementById(id);
-  if (!el) return 0;
-  const v = parseFloat(el.value);
-  return Number.isFinite(v) ? v : 0;
-}
-
-/** Hämtar textvärdet (t.ex. för select) via id. */
-function text(id) {
-  const el = document.getElementById(id);
-  return el ? el.value : '';
-}
-
-/**
- * Formaterar ett tal med svenska tusentalsavgränsare (toLocaleString('sv-SE')).
- * @param {number} v      talet
- * @param {number} dec    antal decimaler
- * @param {string} suffix enhet efter talet, t.ex. " kr/år"
- */
-function fmt(v, dec = 0, suffix = '') {
-  if (!Number.isFinite(v)) return '–';
-  const str = v.toLocaleString('sv-SE', {
-    minimumFractionDigits: dec,
-    maximumFractionDigits: dec
-  });
-  return str + suffix;
-}
+/* tal, text och fmt ligger i kalkylkarna.js, som delas med övriga kalkyler. */
 
 /** Miljoner kronor med en decimal, t.ex. "3,6 Mkr". */
 function fmtMkr(v, dec = 1) {
@@ -69,53 +42,10 @@ function fmtMkr(v, dec = 1) {
 }
 
 /* ============================================================================
-   DEL 1 – FINANSIELLA HJÄLPFUNKTIONER (oförändrade från originalet)
+   DEL 1 – FINANSIELLA HJÄLPFUNKTIONER
+   annuitet, npv, irr, payback och lcoeAvKassaflode ligger i kalkylkarna.js och
+   räknar likadant i alla kalkyler.
    ============================================================================ */
-
-/** Annuitet: kapitalkostnad = Investering × r / (1 − (1 + r)^(−n)). */
-function annuitet(investering, r, n) {
-  if (r === 0) return investering / n;
-  return investering * r / (1 - Math.pow(1 + r, -n));
-}
-
-/** Nettonuvärde: NPV = Σ CF_t / (1 + r)^t, där CF_0 är år 0. */
-function npv(r, cashflows) {
-  let summa = 0;
-  for (let t = 0; t < cashflows.length; t++) {
-    summa += cashflows[t] / Math.pow(1 + r, t);
-  }
-  return summa;
-}
-
-/** Internränta (IRR) med bisektion mellan −90 % och +100 %. NaN om ingen rot. */
-function irr(cashflows) {
-  const f = (r) => npv(r, cashflows);
-  let lo = -0.9, hi = 1.0;
-  let flo = f(lo), fhi = f(hi);
-  if (flo * fhi > 0) return NaN;
-  for (let i = 0; i < 200; i++) {
-    const mid = (lo + hi) / 2;
-    const fmid = f(mid);
-    if (Math.abs(fmid) < 1e-6) return mid;
-    if (flo * fmid < 0) { hi = mid; fhi = fmid; }
-    else { lo = mid; flo = fmid; }
-  }
-  return (lo + hi) / 2;
-}
-
-/** Enkel payback på nominella kassaflöden. null om aldrig återbetald. */
-function payback(cashflows) {
-  let kum = 0;
-  for (let t = 0; t < cashflows.length; t++) {
-    const foreg = kum;
-    kum += cashflows[t];
-    if (kum >= 0 && t > 0) {
-      const andel = foreg < 0 ? (-foreg / (kum - foreg)) : 0;
-      return (t - 1) + andel;
-    }
-  }
-  return null;
-}
 
 /* ============================================================================
    DEL 1.5 – KONSTANTER FRÅN WESTANDER KLIMAT OCH ENERGI (2026) OCH LAGTEXT
@@ -214,7 +144,10 @@ function lasIndata() {
     spotpris:         tal('spotpris'),
     elhandelspaslag:  tal('elhandelspaslag'),
     energiskatt:      tal('energiskatt'),
-    momssats:         tal('momssats') / 100
+    momssats:         tal('momssats') / 100,
+
+    // Nätkostnader och systemkrav (kalkylkarna.js, lasNatIndata). Förvalt läge: ingen.
+    ...lasNatIndata()
   };
 }
 
@@ -271,7 +204,10 @@ function beraknaAllt(d) {
 
   /* ---------- 3.1 Produktion och investerarens grundstorheter ------------- */
   // Produktion per verk år 1 = effekt (kW) × fullasttimmar (Kaufmann & Westander, 2026: 6,6 MW × 3 610 h).
-  const prodVerkkWh_ar1 = d.effekt * 1000 * d.fullasttimmar;
+  // Nätens systemkrav kan ge ett bortfall (nat.bortfall, 0 i läget ingen), se kalkylkarna.js och natkostnader_berakning.js.
+  const natBrutto = NATKOSTNAD.bruttoKWh(d, P_tot);                // kWh/år före bortfall
+  const { nat, natPanel } = natPaverkan(d, P_tot, natBrutto);
+  const prodVerkkWh_ar1 = d.effekt * 1000 * d.fullasttimmar * (1 - nat.bortfall);
   const produktionkWh_ar1 = prodVerkkWh_ar1 * d.antalverk;
   const produktionMWh_ar1 = produktionkWh_ar1 / 1000;
 
@@ -279,8 +215,11 @@ function beraknaAllt(d) {
   const realPris_ar1 = d.elpris * d.viktning;
   const intaktAr1 = produktionkWh_ar1 * realPris_ar1;
 
-  const driftkostnadAr1 = produktionkWh_ar1 * d.rorlig + d.fast * P_tot;
-  const investering = d.specinv * 1000 * P_tot;
+  // Nätens löpande kostnad år 1 ingår i driften och nätens engångskostnad i investeringen (om den inte antas ingå).
+  const driftkostnadAr1 = produktionkWh_ar1 * d.rorlig + d.fast * P_tot + nat.lopandeAr1;
+  const investeringGrund = d.specinv * 1000 * P_tot;
+  const natEngangTillagg = natEngangTillaggAv(d, nat);
+  const investering = investeringGrund + natEngangTillagg;
   const invPerkWh = produktionkWh_ar1 > 0 ? investering / produktionkWh_ar1 : 0;
   const kapitalkostnad = annuitet(investering, r, n);
   const totalkostnad = driftkostnadAr1 + kapitalkostnad;
@@ -296,7 +235,7 @@ function beraknaAllt(d) {
     const prod = produktionkWh_ar1 * Math.pow(1 - d.degradering, t - 1);
     prodkWhAr.push(prod);
     intaktAr.push(prod * spot * d.viktning);
-    driftAr.push(prod * d.rorlig + d.fast * P_tot);
+    driftAr.push(prod * d.rorlig + d.fast * P_tot + nat.lopandeAr(t, prod));
   }
 
   /* ---------- 3.3 Markägare ---------------------------------------------- */
@@ -355,17 +294,12 @@ function beraknaAllt(d) {
   // Överskott år 1 efter ALLA lokala poster och skatt.
   const overskottNetto = intaktAr1 - totalkostnad - arrendeAr1 - fskattAr1 - bygdeAr1 - narboendeAr1;
 
-  // LCOE (oförändrad definition: investering + drift + nedmontering − restvärde,
-  // delat med diskonterad energi; arrende, skatt, bygdemedel och närboende ingår inte).
-  let disKostnad = investering;
-  let disEnergi = 0;
-  for (let t = 1; t <= n; t++) {
-    disKostnad += driftAr[t - 1] / Math.pow(1 + r, t);
-    disEnergi += prodkWhAr[t - 1] / Math.pow(1 + r, t);
-  }
-  disKostnad += nedmonteringTot / Math.pow(1 + r, n);
-  disKostnad -= restvardeTot / Math.pow(1 + r, n);
-  const lcoe = disEnergi > 0 ? disKostnad / disEnergi : 0;
+  // LCOE: gemensam definition (kalkylkarna.js, lcoeAvKassaflode): investering + drift + nedmontering − restvärde,
+  // delat med diskonterad energi. Arrende, skatt, bygdemedel och närboende ingår inte.
+  const { lcoe, disEnergi } = lcoeAvKassaflode(investering, driftAr, prodkWhAr, r, nedmonteringTot, restvardeTot);
+  const { natPerkWhLivs, natAndelLcoe, natLivsKr, natChart, kapitalkostnadGrund } = natSammanfattning({
+    nat, natPanel, natEngangTillagg, investeringGrund, investering, prodkWhAr, r, n, lcoe, disEnergi
+  });
 
   /* ---------- 3.8 Livstidssummor för Tabell 1 ----------------------------- */
   const sum = (arr) => arr.reduce((a, b) => a + b, 0);
@@ -424,8 +358,10 @@ function beraknaAllt(d) {
     // Andelsägare
     elmangd, totalInsats, sjalvkostnadkWh, marknadsprisAr1, besparingAr1,
     alternativkostnad, nettoAr1, aterbetalning, nuvardeAndel,
-    // Diagram
-    driftAr1: driftkostnadAr1
+    // Nätkostnader och systemkrav
+    nat, natPanel, natEngangTillagg, natPerkWhLivs, natAndelLcoe, natChart, natLivsKr,
+    // Diagram: driften utan nät och kapitalkostnaden utan nätens engångsdel, så att nätposten inte dubbelräknas
+    driftAr1: driftkostnadAr1 - nat.lopandeAr1, kapitalChart: kapitalkostnadGrund
   };
 }
 
@@ -598,6 +534,9 @@ function skrivUt(res, d) {
   satt('nar-bostader', fmt(n.antal, 0, ' st'));
   satt('nar-intaktsandel', res.intaktAr1 > 0 ? fmt(n.utbetalt / res.intaktAr1 * 100, 2, ' % av parkens intäkt') : '–');
 
+  /* ---- Nätkostnader i siffror (panel, investerarrader, exempelinfo) ---- */
+  if (typeof skrivUtNat === 'function') skrivUtNat(res, d);
+
   /* ---- Tabell 4–6 och diagram ---- */
   ritaKanslighet(d);
   ritaKontroll(res, d);
@@ -714,8 +653,10 @@ function uppdateraDiagram(res, d) {
   }
 
   /* --- Diagram 2: kostnadsnedbrytning år 1 --- */
-  const kostLabels = ['Kapitalkostnad', 'Driftskostnad', 'Arrende', 'Fastighetsskatt', 'Bygdemedel', 'Närboendeersättning'];
-  const kostData = [res.kapitalkostnad, res.driftAr1, res.arrendeAr1, res.fskattAr1, res.bygdeAr1, res.narboendeAr1];
+  // Nätposten = löpande nätkostnad år 1 + annuiteten på nätens engångsdel. Ett cirkeldiagram kan inte visa en
+  // negativ post, så en nätersättning visas som 0 (värdet finns i panelen Nätkostnader i siffror).
+  const kostLabels = ['Kapitalkostnad', 'Driftskostnad', 'Arrende', 'Fastighetsskatt', 'Bygdemedel', 'Närboendeersättning', 'Nät och systemkrav'];
+  const kostData = [res.kapitalChart, res.driftAr1, res.arrendeAr1, res.fskattAr1, res.bygdeAr1, res.narboendeAr1, Math.max(0, res.natChart)];
   const ctx2 = document.getElementById('diagram-kostnader');
   if (ctx2) {
     if (diagramKostnader) {
@@ -728,7 +669,7 @@ function uppdateraDiagram(res, d) {
           labels: kostLabels,
           datasets: [{
             data: kostData,
-            backgroundColor: ['#1b5e5a', '#2e8b84', '#5b7fa6', '#c77f2e', '#7a5ca8', '#b3261e']
+            backgroundColor: ['#1b5e5a', '#2e8b84', '#5b7fa6', '#c77f2e', '#7a5ca8', '#b3261e', '#6b7b8c']
           }]
         },
         options: {
@@ -760,7 +701,9 @@ const JAMFOR_NYCKELTAL = [
   { etikett: 'IRR (%)',                            hamta: r => r.irrInvest * 100,   dec: 1 },
   { etikett: 'Fastighetsskatt, år 1 (kr)',         hamta: r => r.fskattAr1,         dec: 0 },
   { etikett: 'Närboende utbetalt, hela parken (kr/år)', hamta: r => r.nar.utbetalt, dec: 0 },
-  { etikett: 'Närboende, snitt per bostad (kr/år)', hamta: r => r.nar.snitt,        dec: 0 }
+  { etikett: 'Närboende, snitt per bostad (kr/år)', hamta: r => r.nar.snitt,        dec: 0 },
+  { etikett: 'Nätkostnad, engång (kr/MW)',        hamta: r => r.natPanel.engangPerMW.summa,   dec: 0 },
+  { etikett: 'Nätkostnad, löpande (öre/kWh)',     hamta: r => r.natPanel.lopandeOre.summa,    dec: 2 }
 ];
 
 let senasteResultat = null;

@@ -32,7 +32,7 @@ Kopian [`vindkraftskalkyl_langhult.html`](https://kentlundgren.github.io/Vindkra
 (samma fil finns som [kopia i Kents repo Studier](https://github.com/kentlundgren/Studier/blob/main/2026_host/Policy_i_energi_och_klimat/Yttre_dialog/Intaktsdelning/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf)).
 Kalkylräntan 5,2 % real kommer ur [Energiforsk (2021)](https://energiforsk.se/media/30970/el-fra-n-nya-anla-ggningar-energiforskrapport-2021-714.pdf).
 Varje indatafält är märkt med författare, år och sida (Kaufmann & Westander, 2026, s. N), lagstadgat eller antagande.
-Filerna är `vindkraftskalkyl_langhult.html`, `stil_langhult.css` och `berakningar_langhult.js`. Originalet är oförändrat.
+Filerna är `vindkraftskalkyl_langhult.html`, `stil_langhult.css` och `berakningar_langhult.js`. Finansmatematik, formatering och nätkostnader delas med huvudkalkylen via `kalkylkarna.js`, så att ett ändrat räknesätt slår igenom i båda. Nätkostnaderna finns med i Långhult (grupp Nät och systemkrav), men förvalt läge är Ingen, så siffrorna följer Kaufmann & Westander (2026) tills läget väljs.
 
 ## 🗂️ Lokalt repo
 
@@ -72,6 +72,9 @@ Projektet består av tre huvudfiler i denna mapp, plus en förklaringsruta och e
 | [`natkostnader_hjalp.js`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/natkostnader_hjalp.js) | Förklaringsrutor vid hovring, fokus och tryck. |
 | [`natkostnader_exempel.js`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/natkostnader_exempel.js) | Datafil med exempelfall och regelverk. Läses av både kalkylen och läsarsidan. |
 | [`natkostnader_exempel.html`](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/natkostnader_exempel.html) | Läsarsida: exempelfall, källor, spridning och regelverk. Med [`natkostnader_exempel_sida.js`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/natkostnader_exempel_sida.js) och [`natkostnader_exempel.css`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/natkostnader_exempel.css). |
+| [`kalkylkarna.js`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/kalkylkarna.js) | Gemensam kärna för alla kalkyler: annuitet, NPV, IRR, payback, LCOE, formatering och nätkopplingen. Laddas av både huvudkalkylen och Långhult. |
+| [`natkostnader.css`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/natkostnader.css) | Gemensam formatering för nätkostnadsgruppen och panelen. |
+| [`test_kalkylkarna.js`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/test_kalkylkarna.js) | Test för kärnan, och en kontroll att ingen kalkyl har egna kopior av dess funktioner: `node test_kalkylkarna.js`. |
 | [`test_natkostnader.js`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/test_natkostnader.js) | Test för nätkostnadsmodulen och datafilen: `node test_natkostnader.js`. |
 | [`PRD_natkostnader.md`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/PRD_natkostnader.md) | PRD för nätkostnader (version 1.16, fryst). |
 | [`KALLOR_natkostnader.md`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/KALLOR_natkostnader.md) | Källor och räkneexempel för nätkostnader. |
