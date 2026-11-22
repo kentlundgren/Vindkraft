@@ -148,6 +148,7 @@ sant('alla belagda fall har komplett.lopande', D.NAT_EXEMPEL.filter(f => f.belag
 /* Källan om stamnätsanslutning och märkning av direktanslutna fall. */
 {
   sant('stamnätskällan har länk', !!D.NAT_STAMNATSKALLA && /^https:\/\//.test(D.NAT_STAMNATSKALLA.url));
+  sant('tre källor om stamnätsanslutning med länk', D.NAT_STAMNATSKALLOR.length === 3 && D.NAT_STAMNATSKALLOR.every(k => /^https:\/\//.test(k.url)));
   const direkta = D.NAT_EXEMPEL.filter(f => f.typ === 'stamnät direkt').map(f => f.id).sort().join('');
   sant('direktanslutna fall är C, D och E', direkta === 'CDE');
 }

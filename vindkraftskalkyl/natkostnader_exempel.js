@@ -22,10 +22,10 @@
    km, natavstavstand km, natenergi öre/kWh (negativt = ersättning),
    natutredning kkr, natengangschablon kkr/MW.
 
-   Version 1.3 · 2026-11-22 (källan om stamnätsanslutning, NAT_STAMNATSKALLA, tillagd)
+   Version 1.4 · 2026-11-22 (fler källor om stamnätsanslutning, NAT_STAMNATSKALLOR)
    ============================================================================ */
 
-var NAT_DATA_VERSION = '1.3';
+var NAT_DATA_VERSION = '1.4';
 var NAT_DATA_DATUM = '2026-11-22';
 
 /** Utgångspunkten för analysen: ledaren och inlägget som återger den. Ingår i källistan. */
@@ -34,12 +34,25 @@ var NAT_UTGANGSPUNKT = [
   { text: 'Svensk Vindkraft (2026) LinkedIn-inlägg 19 november som återger ledarens inledning (visar att branschorganisationen lyfter frågan)', url: 'https://www.linkedin.com/posts/svensk-vindkraft_i-senaste-numret-av-v%C3%A5r-tidning-svensk-vindkraft-activity-7529084415403253761-pt5K', hamtad: '2026-11-22' }
 ];
 
-/** Källan om vem som kan ansluta till stamnätet. Ingår i källistan. */
-var NAT_STAMNATSKALLA = {
-  text: 'Svenska kraftnät (2025a) Principer och vägledning för anslutning till Stamnätet, version 2025-07-01 (lägsta lämpliga spänningsnivå, regionnätsföretaget ansöker, gränsen 100 MW och 300 MW gäller ny station)',
-  url: 'https://www.svk.se/49e695/siteassets/aktorsportalen/anslut-till-transmissionsnatet/principer-och-vagledning-for-anslutning-till-stamnatet/principer-och-vagledning-for-anslutning-till-stamnatet.pdf',
-  hamtad: '2026-11-22'
-};
+/** Källor om vem som kan ansluta till stamnätet. Ingår i källistan. */
+var NAT_STAMNATSKALLOR = [
+  {
+    text: 'Svenska kraftnät (2025a) Principer och vägledning för anslutning till Stamnätet, version 2025-07-01 (lägsta lämpliga spänningsnivå, regionnätsföretaget ansöker, gränsen 100 MW och 300 MW gäller ny station)',
+    url: 'https://www.svk.se/49e695/siteassets/aktorsportalen/anslut-till-transmissionsnatet/principer-och-vagledning-for-anslutning-till-stamnatet/principer-och-vagledning-for-anslutning-till-stamnatet.pdf',
+    hamtad: '2026-11-22'
+  },
+  {
+    text: 'Svenska kraftnät (2026f) Effektkrav vid anslutning till elsystemet, preliminära förslag mars 2026 (gränsen 100 MW och 300 MW är ett tekniskt riktmärke i nätplaneringen, och ansökan ska alltid först ske via befintligt distributionssystem; förslaget anges införas 2026-07-01)',
+    url: 'https://www.svk.se/49374e/siteassets/om-oss/rapporter/2026/preliminara-forslag_effektkrav-vid-anslutning_regeringsuppdrag-om-att-se-over-anslutningsprocessen.pdf',
+    hamtad: '2026-11-22'
+  },
+  {
+    text: 'Svenska kraftnät (2026g) Svenska kraftnät avser införa nya verktyg för effektivare anslutning, nyhet 2026-05-04 (grundprincipen lägsta lämpliga spänningsnivå, obligatorisk trepartsdialog)',
+    url: 'https://www.svk.se/press-och-nyheter/nyheter/allmanna-nyheter/2026/svenska-kraftnat-avser-infora-nya-verktyg-for-effektivare-anslutning/',
+    hamtad: '2026-11-22'
+  }
+];
+var NAT_STAMNATSKALLA = NAT_STAMNATSKALLOR[0];
 
 /** Typfall efter parkens totala effekt. Kalkylen föreslår (och väljer, om användaren inte valt själv)
     fallet `litet` upp till `gransMW` och fallet `stort` över den. Gränsen 15 MW är Kents val (2026-11-22)
@@ -345,5 +358,5 @@ var NAT_EXEMPEL = [
 ];
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { NAT_EXEMPEL: NAT_EXEMPEL, NAT_REGELVERK: NAT_REGELVERK, NAT_NORMALFALL: NAT_NORMALFALL, NAT_NORMALFALL_ANGIVELSE: NAT_NORMALFALL_ANGIVELSE, natTomtFalt: natTomtFalt, NAT_UTGANGSPUNKT: NAT_UTGANGSPUNKT, NAT_TYPFALL: NAT_TYPFALL, NAT_STAMNATSKALLA: NAT_STAMNATSKALLA };
+  module.exports = { NAT_EXEMPEL: NAT_EXEMPEL, NAT_REGELVERK: NAT_REGELVERK, NAT_NORMALFALL: NAT_NORMALFALL, NAT_NORMALFALL_ANGIVELSE: NAT_NORMALFALL_ANGIVELSE, natTomtFalt: natTomtFalt, NAT_UTGANGSPUNKT: NAT_UTGANGSPUNKT, NAT_TYPFALL: NAT_TYPFALL, NAT_STAMNATSKALLA: NAT_STAMNATSKALLA, NAT_STAMNATSKALLOR: NAT_STAMNATSKALLOR };
 }

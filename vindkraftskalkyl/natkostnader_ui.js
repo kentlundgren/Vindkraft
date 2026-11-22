@@ -325,6 +325,14 @@
       (inv > 0 ? ' (' + fmt(pe.summa / inv * 100, 1, ' % av investeringsutgiften per MW') + ')' : '') +
       (d.natengangingar === 'ja' ? ', antas ingå i investeringsutgiften.' : ', läggs till investeringsutgiften.'));
 
+    // Det som inte ingår: anslutningskostnader och systemkrav utan belopp.
+    const saknas = ['natavstand', 'natledning', 'natstation', 'natforstark', 'natutredning', 'natengangschablon', 'natsyseng', 'natsyslop', 'natsysbortfall'];
+    const alltTomt = saknas.every(k => t[k]);
+    satt('nat-sam-saknas', alltTomt
+      ? 'Ingår inte: anslutningskostnader och nya systemkrav saknar belopp i källorna och är tomma. Det är två av de tre kostnadsslag som ledaren (Denli, 2026) pekar ut. Totalbilden är därför högre än siffrorna ovan.'
+      : '');
+    const sk = el('nat-sam-saknas'); if (sk) sk.hidden = !alltTomt;
+
     // Öre/kWh per löpande fält, räknat på fältets eget värde (faktor 1).
     const P = d.effekt * d.antalverk;
     const bas = NATKOSTNAD.beraknaNat(d, 1, P, P * 8760 * d.kapfaktor * 1000);

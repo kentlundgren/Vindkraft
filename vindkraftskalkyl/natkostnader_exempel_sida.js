@@ -9,6 +9,7 @@
    skript (regel 19 i kent-bygg-sidor).
    UPPDATERING 2026-11-22: sidan skapades. Version 1.0.
    UPPDATERING 2026-11-22 (senare igen): länk "Visa i kalkylen" vid varje fall. Version 1.2.
+   UPPDATERING 2026-11-22 (senare igen): typfallet märks i Diagram 1 (ram och etikett), övriga fall tonas ned, fler källor om stamnätsanslutning. Version 1.6.
    UPPDATERING 2026-11-22 (senare igen): märkning av direktanslutna fall (C–E), förklaring vid hovring, källan om stamnätsanslutning i källistan. Version 1.5.
    UPPDATERING 2026-11-22 (senare igen): avsnittet Typfall efter parkens storlek (fall B upp till 15 MW, fall A över) ersätter normalfallstexten. Version 1.4.
    UPPDATERING 2026-11-22 (senare igen): växlare ett verk / fem verk (förvalt ett verk), förklaringar vid hovring i Diagram 1, förbehåll för ett ensamt verk, utgångspunkten i källistan. Version 1.3.
@@ -16,7 +17,7 @@
    ============================================================================ */
 'use strict';
 
-const VERSION = '1.5';
+const VERSION = '1.6';
 const VERSIONSDATUM = '2026-11-22';
 
 (function () {
@@ -104,6 +105,10 @@ const VERSIONSDATUM = '2026-11-22';
     return rader;
   }
   function forklaringStapel(f, r) {
+    const typ = NATKOSTNAD.typfallForEffekt(indata().P, NAT_TYPFALL).id;
+    const rubrik = f.id === typ ? 'Typfall för vald storlek (rimligt nätalternativ). ' :
+      (f.typ === 'stamnät direkt' ? 'Inte ett alternativ för vald storlek (direktansluten). ' :
+      (f.belagd && !f.sarfall ? 'Inte typfallet för vald storlek (typfallet är ' + typ + '). ' : ''));
     const e = sv(r.lopandeOre.energi, 2), fast = sv(r.lopandeOre.fastSumma, 2), tot = sv(r.lopandeOre.summa, 2);
     let t;
     if (f.id === 'C' || f.id === 'E') {
@@ -123,7 +128,7 @@ const VERSIONSDATUM = '2026-11-22';
     } else {
       t = 'Löpande nätkostnad ' + tot + ' öre/kWh.';
     }
-    return bryt(t, 42);
+    return bryt(rubrik + t, 42);
   }
 
   function bygg() {
@@ -172,17 +177,31 @@ const VERSIONSDATUM = '2026-11-22';
     else varn.hidden = true;
 
     /* ---- Diagram 1 ---- */
-    const etiketter = rader.map(({ f }) => f.id);
+    const typ = NATKOSTNAD.typfallForEffekt(x.P, NAT_TYPFALL).id;
+    const etikettFor = (f) => {
+      if (f.id === typ) return [f.id, 'typfall'];
+      if (f.typ === 'stamnät direkt') return [f.id, 'direktansluten'];
+      if (f.sarfall) return [f.id, 'särfall'];
+      if (!f.belagd) return [f.id, 'uppfattning'];
+      return [f.id, 'annan storlek'];
+    };
+    const etiketter = rader.map(({ f }) => etikettFor(f));
     const varden = rader.map(({ r }) => Math.round(r.lopandeOre.summa * 100) / 100);
-    const farger = rader.map(({ f }) => !f.belagd ? '#9e9e9e' : (f.sarfall ? '#c77f2e' : '#2e8b84'));
+    const grund = (f) => !f.belagd ? '#9e9e9e' : (f.sarfall ? '#c77f2e' : '#2e8b84');
+    // Typfallet har full färg och tjock ram, övriga tonas ned.
+    const farger = rader.map(({ f }) => f.id === typ ? grund(f) : grund(f) + '66');
+    const ramfarg = rader.map(({ f }) => f.id === typ ? '#0b3d3a' : 'rgba(0,0,0,0)');
+    const ramtjocklek = rader.map(({ f }) => f.id === typ ? 3 : 0);
+    const tt = el('diagram-typfall-text');
+    if (tt) tt.textContent = 'Typfall för ' + sv(x.P, 1) + ' MW: fall ' + typ + ' (stapeln med tjock ram). Fall C–E är direktanslutna och inte ett alternativ för den här storleken, och fallet som hör till en annan storlek är tonat. F är ett särfall och G en uppfattning.';
     const ctx = el('diagram-fall');
     if (typeof Chart !== 'undefined' && ctx) {
       if (diagram) {
-        diagram.data.labels = etiketter; diagram.data.datasets[0].data = varden; diagram.data.datasets[0].backgroundColor = farger; diagram.update();
+        diagram.data.labels = etiketter; diagram.data.datasets[0].data = varden; diagram.data.datasets[0].backgroundColor = farger; diagram.data.datasets[0].borderColor = ramfarg; diagram.data.datasets[0].borderWidth = ramtjocklek; diagram.update();
       } else {
         diagram = new Chart(ctx, {
           type: 'bar',
-          data: { labels: etiketter, datasets: [{ label: 'Löpande nätkostnad (öre/kWh)', data: varden, backgroundColor: farger }] },
+          data: { labels: etiketter, datasets: [{ label: 'Löpande nätkostnad (öre/kWh)', data: varden, backgroundColor: farger, borderColor: ramfarg, borderWidth: ramtjocklek }] },
           options: {
             responsive: true,
             plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => sv(c.parsed.y, 2, ' öre/kWh'), afterLabel: (c) => forklaringStapel(radSenaste[c.dataIndex].f, radSenaste[c.dataIndex].r) } } },
@@ -332,7 +351,7 @@ const VERSIONSDATUM = '2026-11-22';
     NAT_REGELVERK.forEach(r => { if (r.kalla && r.kalla.url) unika[r.kalla.url] = r.kalla; });
     (typeof NAT_UTGANGSPUNKT !== 'undefined' ? NAT_UTGANGSPUNKT : []).forEach(k => { unika[k.url] = k; });
     if (typeof NAT_TYPFALL !== 'undefined' && NAT_TYPFALL.kalla) unika[NAT_TYPFALL.kalla.url] = NAT_TYPFALL.kalla;
-    if (typeof NAT_STAMNATSKALLA !== 'undefined') unika[NAT_STAMNATSKALLA.url] = NAT_STAMNATSKALLA;
+    (typeof NAT_STAMNATSKALLOR !== 'undefined' ? NAT_STAMNATSKALLOR : []).forEach(k => { unika[k.url] = k; });
     Object.keys(unika).map(u => unika[u]).sort((a, b) => a.text.localeCompare(b.text, 'sv')).forEach(k => {
       const li = document.createElement('li');
       li.appendChild(lank(k.url, k.text));

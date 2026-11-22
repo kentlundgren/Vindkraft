@@ -560,3 +560,10 @@ h2:hover > .ankare, h3:hover > .ankare, .ankare:focus { opacity: 1; }
 /* Förslag på typfall efter parkens effekt */
 .nat-forslag { margin: .5rem 0; padding: .5rem .7rem; background: var(--farg-framhavd); border: 1px solid var(--farg-ram); border-radius: 6px; font-size: .82rem; }
 .nat-forslag p { margin: 0 0 .3rem; }
+
+/* Blå notis (gult är reserverat för inmatning) */
+.nat-notis { margin: 1rem 0; padding: .7rem .9rem; background: #e8f1fb; border: 1px solid #b9cde3; border-left: 4px solid #1d5fa6; border-radius: 6px; font-size: .9rem; }
+.nat-notis h3 { margin: 0 0 .4rem; font-size: 1rem; }
+.nat-notis p, .nat-notis ul { margin: .3rem 0; }
+
+.nat-saknas { font-weight: 600; color: #1d3f66; }
