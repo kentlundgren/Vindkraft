@@ -47,6 +47,14 @@
     });
     sel.value = 'H';
 
+    // Tomma fält visar vad som gäller: ingår i investeringsutgiften (ja) eller ej angivet.
+    const ingar = el('natengangingar');
+    const ENGANG = ['natavstand', 'natledning', 'natstation', 'natforstark', 'natengangschablon', 'natsyseng'];
+    function uppdateraPlatshallare() {
+      ENGANG.forEach(k => { const e = el(k); if (e) e.placeholder = (ingar && ingar.value === 'ja') ? 'ingår i investeringsutgiften' : 'ej angivet'; });
+    }
+    if (ingar) { ingar.addEventListener('change', uppdateraPlatshallare); uppdateraPlatshallare(); }
+
     sel.addEventListener('change', () => { fyllExempel(sel.value); });
 
     let foregLage = el('natlage').value;
@@ -113,7 +121,10 @@
     const info = ingen
       ? 'Läget är ingen: nätkostnaderna ingår inte i resultaten, som därför är desamma som utan nätkostnader. Panelen visar vad fältens värden motsvarar i läget bas.'
       : 'Läget är ' + LAGE_TEXT[d.natlage] + ': nätkostnaderna ingår i investeringsutgiften, driftkostnaden och alla nyckeltal.';
-    satt('nat-info', info);
+    const tillagg = d.natengangingar === 'nej'
+      ? ' Engångskostnaderna läggs till investeringsutgiften.'
+      : ' Engångskostnaderna antas ingå i investeringsutgiften (12 000 kkr/MW) och läggs därför inte till. Antagandet är inte belagt i någon källa.';
+    satt('nat-info', info + tillagg);
 
     uppdateraExempelInfo(res, d);
   }

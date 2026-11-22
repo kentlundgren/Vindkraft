@@ -502,3 +502,17 @@ h2:hover > .ankare, h3:hover > .ankare, .ankare:focus { opacity: 1; }
 .hjalp-ruta[hidden] { display: none; }
 
 .versionsrad { font-size: .8rem; color: #5a6a67; margin: .2rem 0 0; }
+
+/* Diskret hörnpar (som på Bjerreds Saltsjöbad): GitHub nedre vänster, teknik nedre höger. */
+.corner {
+  position: fixed; bottom: 14px; z-index: 1000;
+  font-family: "Courier New", Courier, monospace; font-size: .78rem;
+  color: var(--farg-text); background: #fff; border: 1px solid var(--farg-ram);
+  border-radius: 999px; padding: .3rem .7rem;
+  text-decoration: none; cursor: pointer;
+  opacity: .55; transition: opacity .2s ease;
+}
+.corner:hover, .corner:focus-visible { opacity: 1; }
+.corner-left { left: 14px; }
+.corner-right { right: 14px; }
+@media (max-width: 600px) { .corner { bottom: 10px; } .corner-left { left: 10px; } .corner-right { right: 10px; } }

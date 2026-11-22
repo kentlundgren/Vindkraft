@@ -22,8 +22,10 @@
    Beräkningen ligger i natkostnader_berakning.js (ren modul, global NATKOSTNAD)
    och gränssnittet i natkostnader_ui.js. Här kopplas modulen in i investerarens
    investering, drift, produktion, LCOE och diagram. Förvalt läge är "ingen",
-   som ger exakt samma resultat som tidigare. Versionsrad tillagd. Version 1.0. */
-const VERSION = '1.0';
+   som ger exakt samma resultat som tidigare. Versionsrad tillagd. Version 1.0.
+   UPPDATERING 2026-11-22 (senare): fältet natengangingar (ja = engångskostnaderna antas ingå i
+   investeringsutgiften och läggs inte till; förvalt), diskret hörnpar. Version 1.1. */
+const VERSION = '1.1';
 const VERSIONSDATUM = '2026-11-22';
 
 /* ============================================================================
@@ -201,6 +203,7 @@ function lasIndata() {
 
     // Nätkostnader och systemkrav (PRD_natkostnader.md). Tomt fält räknas som 0.
     natlage:          text('natlage') || 'ingen',
+    natengangingar:   text('natengangingar') || 'ja',   // ja = ingår i investeringsutgiften (antagande)
     natexempel:       text('natexempel'),
     natavstand:       tal('natavstand'),               // km
     natledning:       tal('natledning'),               // kkr/km
@@ -256,7 +259,9 @@ function beraknaAllt(d) {
   // Investeringsutgift:  specifik investering(kkr/MW) × 1000 × total effekt(MW)
   // plus nätens engångskostnader (tillägg, 0 i läget ingen).
   const investeringGrund = d.specinv * 1000 * P_tot;
-  const investering = investeringGrund + nat.natEngang;
+  // Förvalt (ja): engångskostnaderna antas ingå i investeringsutgiften och läggs inte till.
+  const natEngangTillagg = (d.natengangingar === 'nej') ? nat.natEngang : 0;
+  const investering = investeringGrund + natEngangTillagg;
 
   // Investeringsutgift per årskWh:  investering / produktion(kWh) år 1
   const invPerkWh = produktionkWh_ar1 > 0 ? investering / produktionkWh_ar1 : 0;
@@ -392,7 +397,7 @@ function beraknaAllt(d) {
 
   /* Nätkostnad per kWh över livslängden: diskonterad engångs- och löpande
      nätkostnad delat med diskonterad energi, samt dess andel av LCOE. */
-  let disNat = nat.natEngang;
+  let disNat = natEngangTillagg;
   for (let t = 1; t <= n; t++) {
     disNat += nat.lopandeAr(t, prodkWhAr[t - 1]) / Math.pow(1 + r, t);
   }
@@ -461,7 +466,7 @@ function beraknaAllt(d) {
     narboendeEnskildAr1, narboendeTotalAr1,
 
     // Nätkostnader och systemkrav
-    nat, natPanel, natPerkWhLivs, natAndelLcoe, natChart,
+    nat, natPanel, natEngangTillagg, natPerkWhLivs, natAndelLcoe, natChart,
 
     // Hjälpvärden till diagram (driftkostnaden utan nät och kapitalkostnaden
     // utan nätens engångsdel, så att nätposten inte dubbelräknas)

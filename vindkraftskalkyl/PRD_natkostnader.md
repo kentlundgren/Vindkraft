@@ -4,8 +4,8 @@
 **Plats:** `vindkraftskalkyl/PRD_natkostnader.md`
 **Skapad:** 2026-11-22
 **Uppdaterad:** 2026-11-22
-**Version:** 1.3
-**Status:** **Fryst 2026-11-22 (version 1.3).** Kent har godkänt exempelfallen, faktorerna 0,5 och 1,5 och att PRD:n fryses efter genomläsning med fräscha ögon. Fas 1 (källor, [KALLOR_natkostnader.md](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/KALLOR_natkostnader.md)) och fas 2 (fältnamn, formler, exempelfall) är genomförda. Ändringar efter frysning görs som ny version. Regionnätens avgifter för 2027, fler nätägare, belägg för engångskostnader och ett normalfall återstår (avsnitt 12). Fas 3 är byggd (se README i mappen). Tabell 6 stämmer med testerna i `test_natkostnader.js`.
+**Version:** 1.4
+**Status:** **Fryst 2026-11-22 (version 1.4).** Kent har godkänt exempelfallen, faktorerna 0,5 och 1,5 och att PRD:n fryses efter genomläsning med fräscha ögon. Fas 1 (källor, [KALLOR_natkostnader.md](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/KALLOR_natkostnader.md)) och fas 2 (fältnamn, formler, exempelfall) är genomförda. Ändringar efter frysning görs som ny version. Regionnätens avgifter för 2027, fler nätägare, belägg för engångskostnader och ett normalfall återstår (avsnitt 12). Fas 3 är byggd (se README i mappen). Tabell 6 stämmer med testerna i `test_natkostnader.js`.
 **Typ:** Tilläggs-PRD till [vindkraftskalkylen](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html) (huvudversionen, GitHub Pages).
 
 > Dokumentet säger *vad* som ska byggas och *varför*, innan kod. Det är inte en SPEC.md. Ställningstagande till SPEC.md står i avsnitt 10.
@@ -81,6 +81,7 @@ Tabell 1. Beslut om modellen (planeringssamtal 2026-11-22) [#](#tabell-1)
 | Årlig förändring av nätavgifter | Fältet finns, förvalt 0 procent per år (real kalkyl, som elpriset). |
 | Förvalda värden per elområde | Nej. Nätägaren påverkar mer än elområdet (Tabell 3 och 5 i källfilen). I stället finns en valfri väljare "exempelfall" som fyller fälten med ett dokumenterat fall (till exempel Vattenfall PT1 eller Svenska kraftnät söder och norr) eller lämnar dem för egna värden. |
 | Systemkravens belopp | Källorna anger inga belopp. Fälten för systemkrav står på 0 och märks "ingen källa med belopp, fyll i vid behov". Spannet låg/hög påverkar bara fält med värde. |
+| Engångskostnaden och investeringsutgiften | Kent antar (2026-11-22) att nätanslutningens engångskostnad redan ingår i den specifika investeringskostnaden (förvalt 12 000 kkr/MW). Skälet är att den belagda delen (utredningsavgiften, 6 200 kr/MW) är liten mot 12 000 kkr/MW. Det är ett antagande, inte belagt i en källa, och kalkylen skriver ut det. Ett fält "Ingår engångskostnaden redan i investeringsutgiften?" (ja förvalt, nej) styr om engångskostnaden läggs till. Panelen visar engångskostnaden i kr/MW oavsett. |
 | Långhult, ver2, ver3 | Inte i första versionen. Tas var för sig efter att huvudversionen är godkänd. |
 | Exempelfallen i separat fil | Alla exempelfall ligger i en enda datafil, `natkostnader_exempel.js`, som både kalkylen och läsarsidan läser. Filen är `.js` och inte `.json`, eftersom kalkylen ska fungera när den öppnas direkt i webbläsaren utan server. |
 | Normalfall | Ett exempelfall kan i datafilen utses till "normalfall" av Kent, med hans angivelse och datum som källa. Tills Kent anger ett finns inget normalfall och sidorna säger det öppet. När läget ändras från ingen till bas, och alla nätfält är orörda, läses normalfallet in automatiskt. Ett normalfall byts genom att datafilen ändras, utan kodändring. |
@@ -124,6 +125,7 @@ Kolumnen "Förvalt värde" anger varifrån värdet kommer. Exakta fältnamn och 
 | Anslutning | andel av förstärkning och nätägarens anslutningsavgift | kkr | exempelfall, antagande |
 | Anslutning | utredning och förprojektering | kkr | exempelfall (Svenska kraftnät: 100 kkr + 1,2 kkr/MW, 2025) |
 | Anslutning | engångskostnad, schablon (när uppdelning saknas) | kkr/MW | 0, utom exempelfall G (Kents uppfattning, ej belagd) |
+| Anslutning | ingår engångskostnaden redan i investeringsutgiften? | ja / nej | ja (Kents antagande, ej belagt) |
 | Nätavgift | fast årsavgift (inklusive kundspecifik avgift) | kr/år | exempelfall (källfilen, Tabell 2 och 4) |
 | Nätavgift | effektavgift eller fast avgift per kW | kr/kW och år | exempelfall |
 | Nätavgift | avståndsberoende effektavgift (gäller regionnät) | kr/kW och km | exempelfall |
@@ -172,6 +174,7 @@ Tabell 4. Fältnamn (id i HTML och `lasIndata()`) [#](#tabell-4)
 | `natforstark` | Andel av förstärkning och nätägarens anslutningsavgift | kkr | number | 0 |
 | `natutredning` | Utredning och förprojektering | kkr | number | 0 |
 | `natengangschablon` | Engångskostnad, schablon (utan uppdelning) | kkr/MW | number | 0 |
+| `natengangingar` | Ingår engångskostnaden redan i investeringsutgiften? | ja / nej | select | ja |
 | `natfast` | Fast årsavgift (inklusive kundspecifik avgift) | kr/år | number | 0 |
 | `nateffekt` | Effektavgift eller fast avgift per kW | kr/kW och år | number | 0 |
 | `natavstavg` | Avståndsberoende avgift | kr/kW och km | number | 0 |
@@ -193,7 +196,7 @@ Alla fält utom väljarna är gula (`#FFF9C4`) indatafält. Ett **tomt fält bet
 3. Produktion med bortfall: `bortfall = min(1, faktor × natsysbortfall / 100)`, och `produktionkWh_ar1 = P_tot × 8760 × kapfaktor × 1000 × (1 − bortfall)`.
 4. Engångsposter i kr: `ledning = natavstand × natledning × 1000`, `station = natstation × 1000`, `forstarkning = natforstark × 1000`, `utredning = natutredning × 1000`, `system = natsyseng × 1000 × P_tot`, `schablon = natengangschablon × 1000 × P_tot`. Summan `natEngang = faktor × (ledning + station + forstarkning + utredning + system + schablon)`.
 5. Löpande poster år 1 i kr: `fast = natfast`, `effekt = nateffekt × P_tot × 1000`, `avstand = natavstavg × natavstavstand × P_tot × 1000`, `system = natsyslop × P_tot`, `energi = natenergi / 100 × produktionkWh_ar1`. Faktorn multiplicerar de fyra första. År t: `natLopande[t] = (faktor × (fast + effekt + avstand + system) + natenergi / 100 × prodkWhAr[t]) × (1 + natforandring / 100)^(t−1)`.
-6. Koppling in i kalkylen: `investering += natEngang`, `driftAr[t] += natLopande[t]`. Resten (annuitet, LCOE, NPV, IRR, payback, andelsägarens självkostnad) följer av de befintliga formlerna.
+6. Koppling in i kalkylen: `investering += natEngang` bara om `natengangingar = nej` (förvalt ja: engångskostnaden ingår redan och läggs inte till), `driftAr[t] += natLopande[t]`. Resten (annuitet, LCOE, NPV, IRR, payback, andelsägarens självkostnad) följer av de befintliga formlerna.
 7. Panelen "Nätkostnader i siffror" räknas med `beraknaNat(d, faktorPanel, …)` där `faktorPanel = faktor` om läget inte är ingen, annars 1 (bas). Då visas storleken även i läget ingen, utan att nyckeltalen NPV, IRR, LCOE och payback ändras.
 8. Huvudnyckeltalen i panelen: engångsposter `post / P_tot` i kr/MW, och summan som procent av `specinv × 1000`. Löpande poster `post / produktionkWh_ar1 × 100` i öre/kWh. Är produktionen 0 visas "–". Löpande summan delas i en fast del (fast årsavgift, effektavgift, avståndsavgift och löpande systemkrav) och en rörlig del (energiavgiften), så att läsaren ser båda.
 9. Sekundära nyckeltal: löpande summa per MW och år, total nätkostnad per kWh över livslängden `(natEngang + Σ natLopande[t] / (1 + r)^t) / disEnergi`, och dess andel av LCOE. Andelen av LCOE visas som "–" i läget ingen.
@@ -249,6 +252,8 @@ Fas 2 är klar när formlerna har granskats mot källfilens enheter (gjort) och 
 - Källor och antaganden-sektionen får de nya källorna i Harvardform med klickbara, verifierade länkar.
 - Jämförelsetabellen (Senaste / Tidigare / Förändring) fungerar som i dag för de nya nyckeltalen.
 - Vid väljaren "exempelfall" finns länken "Se alla exempelfall och källor" till läsarsidan. När ett fall är valt visas en rad med fallets öre/kWh och spannet över alla fall. Läsarens egna värden placeras på samma sätt i spannet.
+- Vid fältet för specifik investeringskostnad står en hint om antagandet att nätanslutningens engångskostnad ingår. Tomma nätfält visar platshållaren "ej angivet", eller "ingår i investeringsutgiften" när fältet för ingår är ja.
+- Hörnparet är diskret (`{ } GitHub` nedre vänster, `</> teknik` nedre höger), som på Bjerreds Saltsjöbad, och GitHub-länken pekar på mappen.
 - Versionsrad: sidan har ingen versionsrad i dag. Den läggs till (`VERSION` och `VERSIONSDATUM` i JS) enligt regel 19 i `kent-bygg-sidor`, och höjs sedan vid varje ändring.
 
 ### läsarsida för exempelfallen [#](#lasarsida)
@@ -342,6 +347,8 @@ Tabell 8. Tester som ska passera [#](#tabell-8)
 | Fall utan belägg | Fall G visas men ingår inte i lägsta, högsta eller median, och är märkt som ej belagt |
 | Normalfall | Utan utsett normalfall säger sidorna det öppet. Ett utsett normalfall visas, och läses in när läget går från ingen till bas med orörda nätfält |
 | Regelverk | Varje fall visar sina regelverk med status, och ett fall som bygger på ett remissutkast är märkt |
+| Engångskostnad ingår (ja) | Med `natengangingar = ja` är `investering` lika med investeringsutgiften utan nät, även när engångsfält har värden. Panelen visar ändå engångskostnaden i kr/MW |
+| Engångskostnad läggs till (nej) | Med `natengangingar = nej` ökar `investering` med `natEngang` |
 | Version | `VERSION` och `VERSIONSDATUM` är satta och uppdaterade i samma ändring, på kalkylen och på läsarsidan |
 
 <a id="10-spec"></a>
@@ -359,7 +366,7 @@ Behövs ett SPEC.md-steg härifrån? **Nej.** Ändringen är begränsad (ett få
 - **Dubbelräkning:** annuiteten på engångskostnaden får inte synas både i "kapitalkostnad" och i nätposten i diagrammet. Åtgärd: testet i tabell 8.
 - **Fall som blir gamla:** tarifferna ändras varje årsskifte. Åtgärd: kontrolldatum per fall, varning efter ett år och en årlig uppdatering efter Svenska kraftnäts beslut i september.
 - **För få fall för att säga "normalt":** underlaget är i huvudsak Vattenfall, Svenska kraftnät och ett lokalnät. Åtgärd: sidan visar spridning, inte normalvärde, tills fler nätägare finns med.
-- **Dubbelräkning mot investeringsutgiften:** det är inte känt om den specifika investeringskostnaden (12 000 kkr/MW) redan innehåller nätanslutning. Engångskostnaden för nätet är ett tillägg. Åtgärd: fältens etikett säger "tillägg till investeringsutgiften", och frågan står i avsnitt 12.
+- **Dubbelräkning mot investeringsutgiften:** det är inte känt om den specifika investeringskostnaden (12 000 kkr/MW) redan innehåller nätanslutning. Engångskostnaden för nätet är ett tillägg. Åtgärd: kalkylen skriver ut antagandet att engångskostnaden ingår, och fältet "Ingår engångskostnaden redan i investeringsutgiften?" styr om den läggs till.
 - **Fyra kopior av kalkylen:** huvudversion, Långhult, ver2 och ver3 kan komma att visa olika resultat. Åtgärd: README anger vilken version som har nätkostnader.
 
 <a id="12-oppna-fragor"></a>
@@ -369,7 +376,7 @@ Behövs ett SPEC.md-steg härifrån? **Nej.** Ändringen är begränsad (ett få
 Modellfrågorna är avgjorda (Tabell 1). Kvar är sådant som bara källor eller Kent kan avgöra, och som inte hindrar att bygget börjar:
 
 1. Vilka belopp gäller för nya systemkrav? Ingen källa anger något. Fälten står på 0 tills det finns belägg eller Kent anger ett antagande.
-2. Ingår nätanslutning redan i den specifika investeringskostnaden (12 000 kkr/MW)? Svaret behövs för att engångskostnaden inte ska räknas två gånger, och styr om fall G ska läsas som ett tillägg.
+2. Engångskostnaden antas ingå i den specifika investeringskostnaden (12 000 kkr/MW). Det är Kents antagande, inte belagt. Kontroll återstår mot hur 12 000 kkr/MW är uppbyggd, till exempel Energimyndighetens kostnadsunderlag.
 3. Vilka belopp gäller för engångskostnaden för anslutning (ledning, station, förstärkning)? Kents uppfattning, ungefär 1 miljon kr per MW, är fall G och är inte belagd. Belägg kan vara en nätägares offert eller publicerad statistik.
 4. Vilket fall anser Kent vara normalt? Kent anger ett exempel på en anslutning som många anser vanlig, och det läggs in som fall med `normalfall`. Tills dess finns inget normalfall.
 5. Har Ei beslutat föreskrifterna om anslutningsavgifter och om krav för kraftproduktionsmoduler? Båda är i källfilen remissutkast.

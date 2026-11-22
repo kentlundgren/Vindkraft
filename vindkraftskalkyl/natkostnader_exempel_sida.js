@@ -8,10 +8,11 @@
    VERSION och VERSIONSDATUM ska höjas vid varje ändring av sidan eller dess
    skript (regel 19 i kent-bygg-sidor).
    UPPDATERING 2026-11-22: sidan skapades. Version 1.0.
+   UPPDATERING 2026-11-22 (senare): avsnittet Det som saknas anger antagandet att engångskostnaden ingår i investeringsutgiften. Version 1.1.
    ============================================================================ */
 'use strict';
 
-const VERSION = '1.0';
+const VERSION = '1.1';
 const VERSIONSDATUM = '2026-11-22';
 
 (function () {

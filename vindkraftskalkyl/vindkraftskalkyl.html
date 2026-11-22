@@ -19,6 +19,10 @@
   i siffror", versionsraden och länken till natkostnader_exempel.html lades till
   (PRD_natkostnader.md). Förvalt läge är "ingen": resultaten är oförändrade.
   Version 1.0.
+
+  UPPDATERING 2026-11-22 (senare): diskret hörnpar (</> teknik), fältet "Ingår
+  engångskostnaden redan i investeringsutgiften?", platshållare "ej angivet" på nätfälten
+  och en hint vid specifik investeringskostnad. Version 1.1.
   ============================================================================
 -->
 <html lang="sv">
@@ -128,6 +132,7 @@
 
         <label>Specifik investeringskostnad (kkr/MW)
           <input type="number" step="10" id="specinv" class="indata" value="12000">
+          <span class="hint">Antagande: nätanslutningens engångskostnad (utredning, ledning, station och anslutningsavgift till nätägaren) antas ingå i detta värde. Se gruppen "Nät och systemkrav".</span>
         </label>
 
         <label>Kalkylränta (0–1)
@@ -179,80 +184,87 @@
         </label>
         <p class="hint nat-lank"><a href="natkostnader_exempel.html">Se alla exempelfall, källor och regelverk</a></p>
 
-        <h4 class="nat-delrubrik">Anslutning (engångskostnad, tillägg till investeringsutgiften)</h4>
+        <h4 class="nat-delrubrik">Anslutning (engångskostnad)</h4>
+
+        <label>Ingår engångskostnaden redan i investeringsutgiften? <span class="hjalp" tabindex="0" data-hjalp="Ja (förvalt): engångskostnaderna antas ingå i den specifika investeringskostnaden (12 000 kkr/MW) och läggs inte till. De visas ändå i panelen Nätkostnader i siffror. Nej: engångskostnaderna läggs till investeringsutgiften. Antagandet är inte belagt i någon källa.">?</span>
+          <select id="natengangingar" class="indata">
+            <option value="ja" selected>Ja, ingår (antagande)</option>
+            <option value="nej">Nej, lägg till</option>
+          </select>
+        </label>
 
         <label>Avstånd till anslutningspunkt (km)
-          <input type="number" step="0.1" id="natavstand" class="indata" value="">
+          <input type="number" step="0.1" id="natavstand" class="indata" value="" placeholder="ej angivet">
           <span class="badge antagande">antagande</span>
         </label>
 
         <label>Ledningskostnad (kkr/km)
-          <input type="number" step="10" id="natledning" class="indata" value="">
+          <input type="number" step="10" id="natledning" class="indata" value="" placeholder="ej angivet">
           <span class="badge antagande">antagande</span>
         </label>
 
         <label>Station och fast del (kkr)
-          <input type="number" step="100" id="natstation" class="indata" value="">
+          <input type="number" step="100" id="natstation" class="indata" value="" placeholder="ej angivet">
           <span class="badge antagande">antagande</span>
         </label>
 
         <label>Andel av förstärkning och nätägarens anslutningsavgift (kkr)
-          <input type="number" step="100" id="natforstark" class="indata" value="">
+          <input type="number" step="100" id="natforstark" class="indata" value="" placeholder="ej angivet">
           <span class="badge antagande">antagande</span>
         </label>
 
         <label>Utredning och förprojektering (kkr) <span class="hjalp" tabindex="0" data-hjalp="Svenska kraftnäts utredningsavgift för anslutning till stamnätet är 100 kkr plus 1,2 kkr per MW (2025). kkr betyder tusen kronor.">?</span>
-          <input type="number" step="1" id="natutredning" class="indata" value="">
+          <input type="number" step="1" id="natutredning" class="indata" value="" placeholder="ej angivet">
           <span class="badge schablon">schablon</span>
         </label>
 
         <label>Engångskostnad, schablon (kkr/MW) <span class="hjalp" tabindex="0" data-hjalp="Används när uppdelning i ledning, station och förstärkning saknas. Ingen publicerad källa anger ett belopp: fyll i från nätägarens offert eller ditt eget antagande.">?</span>
-          <input type="number" step="10" id="natengangschablon" class="indata" value="">
+          <input type="number" step="10" id="natengangschablon" class="indata" value="" placeholder="ej angivet">
           <span class="badge antagande">antagande</span>
         </label>
 
         <h4 class="nat-delrubrik">Nätavgifter (löpande, per år)</h4>
 
         <label>Fast årsavgift, inklusive kundspecifik avgift (kr/år)
-          <input type="number" step="1000" id="natfast" class="indata" value="">
+          <input type="number" step="1000" id="natfast" class="indata" value="" placeholder="ej angivet">
         </label>
 
         <label>Effektavgift eller fast avgift per kW (kr/kW och år) <span class="hjalp" tabindex="0" data-hjalp="Svenska kraftnäts effektavgift (2026) eller fasta avgift per kW (2027), och regionnätets årseffektavgift. Flera avgifter läggs ihop i fältet.">?</span>
-          <input type="number" step="0.1" id="nateffekt" class="indata" value="">
+          <input type="number" step="0.1" id="nateffekt" class="indata" value="" placeholder="ej angivet">
         </label>
 
         <label>Avståndsberoende avgift (kr/kW och km)
-          <input type="number" step="0.01" id="natavstavg" class="indata" value="">
+          <input type="number" step="0.01" id="natavstavg" class="indata" value="" placeholder="ej angivet">
         </label>
 
         <label>Avstånd för avståndsberoende avgift (km) <span class="hjalp" tabindex="0" data-hjalp="Fågelvägsavståndet från anslutningspunkten till närmaste stamnätspunkt som är ansluten till regionnätet (Vattenfalls tariff, avsnitt 5.1).">?</span>
-          <input type="number" step="0.1" id="natavstavstand" class="indata" value="">
+          <input type="number" step="0.1" id="natavstavstand" class="indata" value="" placeholder="ej angivet">
           <span class="badge antagande">antagande</span>
         </label>
 
         <label>Energiavgift (öre/kWh, negativt = ersättning) <span class="hjalp" tabindex="0" data-hjalp="Rörlig del. Negativt värde är en ersättning till producenten för minskade förluster i nätet. Svenska kraftnäts energiavgift är (börspris + 15 kr/MWh) × förlustkoefficient och räknas här om till öre/kWh vid ett givet elpris.">?</span>
-          <input type="number" step="0.01" id="natenergi" class="indata" value="">
+          <input type="number" step="0.01" id="natenergi" class="indata" value="" placeholder="ej angivet">
         </label>
 
         <label>Årlig förändring av nätavgifter (%/år)
-          <input type="number" step="0.1" id="natforandring" class="indata" value="">
+          <input type="number" step="0.1" id="natforandring" class="indata" value="" placeholder="ej angivet">
           <span class="badge antagande">antagande</span>
         </label>
 
         <h4 class="nat-delrubrik">Nya systemkrav</h4>
 
         <label>Systemkrav, engångskostnad (kkr/MW) <span class="hjalp" tabindex="0" data-hjalp="Utrustning och provning för krav på produktionsanläggningar. Ingen källa anger belopp: fyll i vid behov.">?</span>
-          <input type="number" step="10" id="natsyseng" class="indata" value="">
+          <input type="number" step="10" id="natsyseng" class="indata" value="" placeholder="ej angivet">
           <span class="badge antagande">antagande</span>
         </label>
 
         <label>Systemkrav, löpande kostnad (kr/MW och år)
-          <input type="number" step="100" id="natsyslop" class="indata" value="">
+          <input type="number" step="100" id="natsyslop" class="indata" value="" placeholder="ej angivet">
           <span class="badge antagande">antagande</span>
         </label>
 
         <label>Systemkrav, produktionsbortfall (%)
-          <input type="number" step="0.1" id="natsysbortfall" class="indata" value="">
+          <input type="number" step="0.1" id="natsysbortfall" class="indata" value="" placeholder="ej angivet">
           <span class="badge antagande">antagande</span>
         </label>
 
@@ -661,19 +673,15 @@
        lades till fast i nedre vänstra hörnet (samma idé som på sidan för
        Bjerreds Saltsjöbad). Det är en vanlig länk (ingen JavaScript behövs).
        ==================================================================== -->
-  <a id="github-lank" class="github-lank"
-     href="https://github.com/kentlundgren/Vindkraft"
+  <a id="github-lank" class="corner corner-left"
+     href="https://github.com/kentlundgren/Vindkraft/tree/main/vindkraftskalkyl"
      target="_blank" rel="noopener"
-     title="Öppna projektets kod på GitHub">
-    &#123; &#125; GitHub
-  </a>
+     title="Öppna projektets mapp på GitHub">&#123; &#125; GitHub</a>
 
   <!-- Flytande knapp, fast i nedre högra hörnet -->
-  <button id="teknik-knapp" class="teknik-knapp" type="button"
-          aria-haspopup="dialog" aria-controls="teknik-modal"
-          title="Visa den ursprungliga prompten (transparens)">
-    &#9881; Teknik &amp; prompt
-  </button>
+  <button id="teknik-knapp" class="corner corner-right" type="button"
+          aria-haspopup="dialog" aria-controls="teknik-modal" aria-label="Tekniköversikt"
+          title="Teknik och den ursprungliga prompten">&lt;/&gt; teknik</button>
 
   <!-- Modal (dold tills knappen klickas). role="dialog" för tillgänglighet. -->
   <div id="teknik-modal" class="modal-overlay" role="dialog" aria-modal="true"
