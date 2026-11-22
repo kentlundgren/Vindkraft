@@ -3,8 +3,8 @@
 **Namn:** PRD_natkostnader
 **Plats:** `vindkraftskalkyl/PRD_natkostnader.md`
 **Skapad:** 2026-11-22
-**Version:** 0.3
-**Status:** Utkast. Ingen kod är ändrad. Inga belopp är fastställda (se fas 1, avsnitt 8). Fas 1 pågår: ledaren är läst och definierar inte "nya systemkrav" eller anger belopp, så primärkällor återstår.
+**Version:** 0.4
+**Status:** Utkast. Ingen kod är ändrad. Inga belopp är fastställda (se fas 1, avsnitt 8). Fas 1 pågår: ledaren är läst och definierar inte "nya systemkrav" eller anger belopp. Anslutning och systemkrav är genomgångna mot primärkällor i [KALLOR_natkostnader.md](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/KALLOR_natkostnader.md). Nätavgifter återstår.
 **Typ:** Tilläggs-PRD till [vindkraftskalkylen](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html) (huvudversionen, GitHub Pages).
 
 > Dokumentet säger *vad* som ska byggas och *varför*, innan kod. Det är inte en SPEC.md. Ställningstagande till SPEC.md står i avsnitt 10.
