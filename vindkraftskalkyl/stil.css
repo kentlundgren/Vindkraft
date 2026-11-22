@@ -428,3 +428,77 @@ h2 { font-size: 1.25rem; color: var(--farg-primar); border-bottom: 2px solid var
   background: rgba(255, 255, 255, .22);
   outline-color: #fff;
 }
+
+/* ==========================================================================
+   NÄTKOSTNADER OCH SYSTEMKRAV (2026-11-22, PRD_natkostnader.md)
+   Fältgruppen, panelen "Nätkostnader i siffror", förklaringsrutor och
+   versionsraden. Gult används bara på indatafälten.
+   ========================================================================== */
+.badge.schablon { background: #ffe6c7; color: #8a4b00; border: 1px solid #f0c48a; }
+
+.nat-delrubrik {
+  margin: .9rem 0 .2rem;
+  font-size: .85rem;
+  color: var(--farg-primar);
+  border-bottom: 1px solid var(--farg-ram);
+  padding-bottom: .15rem;
+}
+.nat-lank { margin: .1rem 0 .3rem; }
+
+.nat-panel {
+  max-width: 1100px;
+  margin: 1.2rem auto;
+  padding: 1rem 1.2rem;
+  background: var(--farg-panel);
+  border: 1px solid var(--farg-ram);
+  border-radius: 8px;
+  box-shadow: var(--skugga);
+}
+.nat-panel h2 { margin-top: 0; }
+.nat-block { margin-top: .8rem; }
+.nat-block h3 { font-size: 1rem; margin: 0 0 .3rem; color: var(--farg-primar); }
+@media (min-width: 800px) {
+  .nat-panel { display: grid; grid-template-columns: 1fr 1fr; column-gap: 1.6rem; }
+  .nat-panel > h2, .nat-panel > p { grid-column: 1 / -1; }
+}
+
+.ankare {
+  margin-left: .35rem;
+  font-size: .8em;
+  color: #8a9a97;
+  text-decoration: none;
+  opacity: 0;
+}
+h2:hover > .ankare, h3:hover > .ankare, .ankare:focus { opacity: 1; }
+
+/* Förklaringsmarkör (hovring, fokus och tryck) och själva rutan */
+.hjalp {
+  display: inline-block;
+  width: 1.15rem; height: 1.15rem;
+  line-height: 1.15rem;
+  text-align: center;
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--farg-primar);
+  background: #e4f1f0;
+  border: 1px solid var(--farg-primar-ljus);
+  border-radius: 50%;
+  cursor: help;
+  vertical-align: middle;
+}
+.hjalp:focus-visible { outline: 3px solid var(--farg-indata-kant); outline-offset: 2px; }
+.hjalp-ruta {
+  position: absolute;
+  z-index: 1500;
+  padding: .5rem .7rem;
+  font-size: .82rem;
+  line-height: 1.35;
+  color: var(--farg-text);
+  background: #fff;
+  border: 1px solid var(--farg-primar-ljus);
+  border-radius: 6px;
+  box-shadow: 0 3px 10px rgba(0,0,0,.2);
+}
+.hjalp-ruta[hidden] { display: none; }
+
+.versionsrad { font-size: .8rem; color: #5a6a67; margin: .2rem 0 0; }

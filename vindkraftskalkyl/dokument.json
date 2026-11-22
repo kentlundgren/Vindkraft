@@ -1,0 +1,7 @@
+{
+  "titel": "Vindkraftskalkyl, fem perspektiv",
+  "dokument": [
+    {"fil": "vindkraftskalkyl.html", "namn": "Kalkylen", "roll": "huvud"},
+    {"fil": "natkostnader_exempel.html", "namn": "Exempelfall och källor för nätkostnader", "roll": "sida"}
+  ]
+}

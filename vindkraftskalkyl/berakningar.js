@@ -18,6 +18,14 @@
 
 'use strict';
 
+/* UPPDATERING 2026-11-22: nätkostnader och systemkrav (PRD_natkostnader.md).
+   Beräkningen ligger i natkostnader_berakning.js (ren modul, global NATKOSTNAD)
+   och gränssnittet i natkostnader_ui.js. Här kopplas modulen in i investerarens
+   investering, drift, produktion, LCOE och diagram. Förvalt läge är "ingen",
+   som ger exakt samma resultat som tidigare. Versionsrad tillagd. Version 1.0. */
+const VERSION = '1.0';
+const VERSIONSDATUM = '2026-11-22';
+
 /* ============================================================================
    DEL 0 – HJÄLPFUNKTIONER
    ============================================================================ */
@@ -38,6 +46,17 @@ function tal(id) {
 function text(id) {
   const el = document.getElementById(id);
   return el ? el.value : '';
+}
+
+/** Rådata (textvärden) för nätkostnadsfälten. Tomt fält = "ej angivet". */
+function radataNat() {
+  const r = {};
+  if (typeof NATKOSTNAD === 'undefined') return r;
+  NATKOSTNAD.NAT_FALT.forEach(id => {
+    const el = document.getElementById(id);
+    r[id] = el ? el.value.trim() : '';
+  });
+  return r;
 }
 
 /**
@@ -178,7 +197,29 @@ function lasIndata() {
     avstand:          tal('avstand'),                  // m
     verkinom5:        Math.max(0, Math.round(tal('verkinom5'))),
     antalbostader:    Math.max(0, Math.round(tal('antalbostader'))),
-    maxpromille:      tal('maxpromille') / 1000        // ‰ → andel
+    maxpromille:      tal('maxpromille') / 1000,       // ‰ → andel
+
+    // Nätkostnader och systemkrav (PRD_natkostnader.md). Tomt fält räknas som 0.
+    natlage:          text('natlage') || 'ingen',
+    natexempel:       text('natexempel'),
+    natavstand:       tal('natavstand'),               // km
+    natledning:       tal('natledning'),               // kkr/km
+    natstation:       tal('natstation'),               // kkr
+    natforstark:      tal('natforstark'),              // kkr
+    natutredning:     tal('natutredning'),             // kkr
+    natengangschablon: tal('natengangschablon'),       // kkr/MW
+    natfast:          tal('natfast'),                  // kr/år
+    nateffekt:        tal('nateffekt'),                // kr/kW och år
+    natavstavg:       tal('natavstavg'),               // kr/kW och km
+    natavstavstand:   tal('natavstavstand'),           // km
+    natenergi:        tal('natenergi'),                // öre/kWh (negativt = ersättning)
+    natforandring:    tal('natforandring'),            // %/år
+    natsyseng:        tal('natsyseng'),                // kkr/MW
+    natsyslop:        tal('natsyslop'),                // kr/MW och år
+    natsysbortfall:   tal('natsysbortfall'),           // %
+    natfaktorlag:     tal('natfaktorlag'),             // gånger
+    natfaktorhog:     tal('natfaktorhog'),             // gånger
+    natTomma:         (typeof NATKOSTNAD !== 'undefined') ? NATKOSTNAD.tommaFalt(radataNat()) : {}
   };
 }
 
@@ -194,18 +235,28 @@ function beraknaAllt(d) {
 
   /* ---------- 3.1 Investerare: grundstorheter (Kents ursprungslogik) -------- */
 
-  // Produktion år 1 i MWh:  Effekt(MW) × 8760 h × kapacitetsfaktor
-  const produktionMWh_ar1 = P_tot * 8760 * d.kapfaktor;
+  // Nätkostnader och systemkrav (ren modul, se natkostnader_berakning.js).
+  // `nat` gäller i det valda läget (ingen = 0 överallt). `natPanel` används av
+  // panelen "Nätkostnader i siffror" och räknas på läget bas när läget är ingen.
+  const natBrutto = P_tot * 8760 * d.kapfaktor * 1000;           // kWh/år före bortfall
+  const nat = NATKOSTNAD.beraknaNat(d, NATKOSTNAD.faktorForLage(d.natlage, d), P_tot, natBrutto);
+  const natPanel = (d.natlage === 'ingen') ? NATKOSTNAD.beraknaNat(d, 1, P_tot, natBrutto) : nat;
+
+  // Produktion år 1 i MWh:  Effekt(MW) × 8760 h × kapacitetsfaktor × (1 − bortfall från systemkrav)
+  const produktionMWh_ar1 = P_tot * 8760 * d.kapfaktor * (1 - nat.bortfall);
   const produktionkWh_ar1 = produktionMWh_ar1 * 1000;
 
   // Intäkt totalt per år (år 1):  produktion(kWh) × elpris
   const intaktAr1 = produktionkWh_ar1 * d.elpris;
 
   // Årlig driftskostnad (år 1):  rörlig × produktion(kWh) + fast × total effekt
-  const driftkostnadAr1 = produktionkWh_ar1 * d.rorlig + d.fast * P_tot;
+  // Nätens löpande kostnader (år 1) ingår i driftkostnaden när läget inte är ingen.
+  const driftkostnadAr1 = produktionkWh_ar1 * d.rorlig + d.fast * P_tot + nat.lopandeAr1;
 
   // Investeringsutgift:  specifik investering(kkr/MW) × 1000 × total effekt(MW)
-  const investering = d.specinv * 1000 * P_tot;
+  // plus nätens engångskostnader (tillägg, 0 i läget ingen).
+  const investeringGrund = d.specinv * 1000 * P_tot;
+  const investering = investeringGrund + nat.natEngang;
 
   // Investeringsutgift per årskWh:  investering / produktion(kWh) år 1
   const invPerkWh = produktionkWh_ar1 > 0 ? investering / produktionkWh_ar1 : 0;
@@ -238,7 +289,7 @@ function beraknaAllt(d) {
     elprisAr.push(pris);
     prodkWhAr.push(prod);
     intaktAr.push(prod * pris);
-    driftAr.push(prod * d.rorlig + d.fast * P_tot);
+    driftAr.push(prod * d.rorlig + d.fast * P_tot + nat.lopandeAr(t, prod));
   }
 
   /* ---------- 3.3 Markägare: arrende ---------------------------------------
@@ -339,6 +390,18 @@ function beraknaAllt(d) {
   disKostnad -= restvardeTot / Math.pow(1 + r, n);
   const lcoe = disEnergi > 0 ? disKostnad / disEnergi : 0;
 
+  /* Nätkostnad per kWh över livslängden: diskonterad engångs- och löpande
+     nätkostnad delat med diskonterad energi, samt dess andel av LCOE. */
+  let disNat = nat.natEngang;
+  for (let t = 1; t <= n; t++) {
+    disNat += nat.lopandeAr(t, prodkWhAr[t - 1]) / Math.pow(1 + r, t);
+  }
+  const natPerkWhLivs = disEnergi > 0 ? disNat / disEnergi : NaN;
+  const natAndelLcoe = (lcoe > 0 && natPerkWhLivs === natPerkWhLivs) ? natPerkWhLivs / lcoe : NaN;
+  // Diagrammets nätpost: löpande nätkostnad år 1 + annuiteten på engångsdelen.
+  const kapitalkostnadGrund = annuitet(investeringGrund, r, n);
+  const natChart = nat.lopandeAr1 + (annuitet(investering, r, n) - kapitalkostnadGrund);
+
   /* ---------- 3.7 Kommun/samhälle: sammanställning ------------------------- */
   const lokalaIntakterAr1 = arrendeAr1 + kommunAr + narboendeTotalAr1;
   let lokalaIntakterTotal = 0;
@@ -397,8 +460,13 @@ function beraknaAllt(d) {
     femhojder, niohojder, inomZon, distansfaktor,
     narboendeEnskildAr1, narboendeTotalAr1,
 
-    // Hjälpvärden till diagram
-    driftAr1: driftkostnadAr1, arrendeChart: arrendeAr1, kommunChart: kommunAr,
+    // Nätkostnader och systemkrav
+    nat, natPanel, natPerkWhLivs, natAndelLcoe, natChart,
+
+    // Hjälpvärden till diagram (driftkostnaden utan nät och kapitalkostnaden
+    // utan nätens engångsdel, så att nätposten inte dubbelräknas)
+    driftAr1: driftkostnadAr1 - nat.lopandeAr1, kapitalChart: kapitalkostnadGrund,
+    arrendeChart: arrendeAr1, kommunChart: kommunAr,
     narboendeChart: narboendeTotalAr1
   };
 }
@@ -479,6 +547,9 @@ function skrivUt(res, d) {
       fmt(res.narboendeEnskildAr1, 0, ' kr/år') + '.';
   }
 
+  /* ---- Nätkostnader i siffror (panel, investerarrader, exempelinfo) ---- */
+  if (typeof skrivUtNat === 'function') skrivUtNat(res, d);
+
   /* ---- Diagram ---- */
   uppdateraDiagram(res, d);
 }
@@ -529,8 +600,11 @@ function uppdateraDiagram(res, d) {
   }
 
   /* --- Diagram 2: kostnadsnedbrytning år 1 --- */
-  const kostLabels = ['Kapitalkostnad', 'Driftskostnad', 'Arrende', 'Kommunal ersättning', 'Närboendeersättning'];
-  const kostData = [res.kapitalkostnad, res.driftAr1, res.arrendeChart, res.kommunChart, res.narboendeChart];
+  // Nätposten = löpande nätkostnad år 1 + annuiteten på nätens engångsdel. Ett
+  // cirkeldiagram kan inte visa en negativ post, så en nätersättning visas som 0
+  // (värdet finns i panelen Nätkostnader i siffror).
+  const kostLabels = ['Kapitalkostnad', 'Driftskostnad', 'Arrende', 'Kommunal ersättning', 'Närboendeersättning', 'Nät och systemkrav'];
+  const kostData = [res.kapitalChart, res.driftAr1, res.arrendeChart, res.kommunChart, res.narboendeChart, Math.max(0, res.natChart)];
   const ctx2 = document.getElementById('diagram-kostnader');
   if (ctx2) {
     if (diagramKostnader) {
@@ -543,7 +617,7 @@ function uppdateraDiagram(res, d) {
           labels: kostLabels,
           datasets: [{
             data: kostData,
-            backgroundColor: ['#1b5e5a', '#2e8b84', '#e0c93a', '#c77f2e', '#b3261e']
+            backgroundColor: ['#1b5e5a', '#2e8b84', '#e0c93a', '#c77f2e', '#b3261e', '#5b6fb3']
           }]
         },
         options: {
@@ -593,7 +667,9 @@ const JAMFOR_NYCKELTAL = [
   { etikett: 'LCOE (kr/kWh)',              hamta: r => r.lcoe,              dec: 3, suffix: '' },
   { etikett: 'NPV (kr)',                   hamta: r => r.npvInvest,         dec: 0, suffix: '' },
   { etikett: 'IRR (%)',                    hamta: r => r.irrInvest * 100,   dec: 1, suffix: '' },
-  { etikett: 'Närboendeersättning tot/år (kr)', hamta: r => r.narboendeTotalAr1, dec: 0, suffix: '' }
+  { etikett: 'Närboendeersättning tot/år (kr)', hamta: r => r.narboendeTotalAr1, dec: 0, suffix: '' },
+  { etikett: 'Nätkostnad, engång (kr/MW)', hamta: r => r.natPanel.engangPerMW.summa, dec: 0, suffix: '' },
+  { etikett: 'Nätkostnad, löpande (öre/kWh)', hamta: r => r.natPanel.lopandeOre.summa, dec: 2, suffix: '' }
 ];
 
 // Minnesvariabler – lever mellan omräkningarna (därav utanför funktionerna).
@@ -801,6 +877,12 @@ document.addEventListener('DOMContentLoaded', () => {
   kopplaLyssnare();     // reaktiva lyssnare på indatafälten
   kopplaFlikar();       // flikväxling
   kopplaTeknikModal();  // teknik-knapp + modal med originalprompten
+
+  // Versionsrad i sidfoten (konstanterna VERSION och VERSIONSDATUM överst i filen).
+  const vNr = document.getElementById('versionsrad-nr');
+  const vDat = document.getElementById('versionsrad-datum');
+  if (vNr) vNr.textContent = VERSION;
+  if (vDat) vDat.textContent = VERSIONSDATUM;
 
   // Första beräkningen vid sidladdning.
   senasteResultat = omrakna();   // fyller "Senaste"

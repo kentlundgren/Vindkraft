@@ -1,0 +1,72 @@
+/* ==========================================================================
+   natkostnader_exempel.css
+   Formatering för läsarsidan natkostnader_exempel.html. Bygger på stil.css.
+   Gult används bara på indatafälten (klassen "indata").
+   ========================================================================== */
+
+.nat-sida { max-width: 1100px; margin: 1rem auto 3rem; padding: 0 1rem; }
+.nat-sida section { margin: 1.6rem 0; }
+.nat-sida h2 { color: var(--farg-primar); }
+
+.nat-inmatning { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; }
+.nat-inmatning label { display: block; font-size: .9rem; }
+.nat-inmatning input { display: block; margin-top: .2rem; padding: .35rem .5rem; width: 9rem; }
+.nat-inmatning .hint { margin: 0; }
+
+.tabell-rulla { overflow-x: auto; }
+.nat-tabell { border-collapse: collapse; width: 100%; font-size: .88rem; }
+.nat-tabell caption { text-align: left; font-weight: 600; margin-bottom: .4rem; color: var(--farg-text); }
+.nat-tabell th, .nat-tabell td { border: 1px solid var(--farg-ram); padding: .35rem .5rem; vertical-align: top; text-align: left; }
+.nat-tabell th { background: var(--farg-framhavd); }
+.nat-tabell td.tal { text-align: right; white-space: nowrap; }
+.nat-tabell tr.ej-belagd td { background: #f1f1f1; color: #4a4a4a; }
+.nat-tabell tr.sarfall td { background: #fff1e0; }
+
+.markering { display: inline-block; padding: 0 .4rem; margin-left: .3rem; border-radius: 10px; font-size: .72rem; font-weight: 600; }
+.markering.sarfall { background: #ffe6c7; color: #8a4b00; border: 1px solid #f0c48a; }
+.markering.ejbelagd { background: #e4e4e4; color: #333; border: 1px solid #bdbdbd; }
+.markering.utkast { background: #fde2e0; color: #8c1d15; border: 1px solid #f0aaa5; }
+.markering.gammalt { background: #fde2e0; color: #8c1d15; border: 1px solid #f0aaa5; }
+
+.nat-varning { padding: .6rem .8rem; border: 1px solid #f0aaa5; background: #fde2e0; border-radius: 6px; color: #5c1410; }
+
+.nat-sida .diagram-ruta { margin-top: 1rem; }
+
+.nat-sida details { border: 1px solid var(--farg-ram); border-radius: 6px; margin: .5rem 0; background: var(--farg-panel); }
+.nat-sida summary { cursor: pointer; padding: .5rem .8rem; font-weight: 600; }
+.nat-sida details > div { padding: 0 .9rem .8rem; }
+.nat-sida dl.falt { display: grid; grid-template-columns: 1fr auto; gap: .15rem 1rem; max-width: 560px; }
+.nat-sida dl.falt dt { color: #40504d; }
+.nat-sida dl.falt dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Termer med förklaring (hovring, fokus och tryck) */
+.hjalp.hjalp-term {
+  display: inline; width: auto; height: auto; line-height: inherit;
+  font-size: inherit; font-weight: inherit; text-align: inherit;
+  background: none; border: 0; border-bottom: 1px dotted var(--farg-primar);
+  border-radius: 0; color: inherit; cursor: help;
+}
+
+/* Hörnparet: diskret, fast längst ned */
+.corner {
+  position: fixed; bottom: 14px; z-index: 900;
+  font: 600 .78rem Consolas, "Courier New", monospace;
+  color: #40504d; background: rgba(255,255,255,.85);
+  border: 1px solid var(--farg-ram); border-radius: 14px;
+  padding: .25rem .6rem; text-decoration: none; opacity: .55; cursor: pointer;
+}
+.corner:hover, .corner:focus-visible { opacity: 1; color: var(--farg-primar); }
+.corner-left { left: 14px; }
+.corner-right { right: 14px; }
+
+.tech-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 2000; display: flex; align-items: flex-start; justify-content: center; padding: 3vh 1rem; overflow-y: auto; }
+.tech-overlay[hidden] { display: none; }
+.tech-modal { position: relative; background: #fff; border-radius: 10px; max-width: 640px; width: 100%; padding: 1.2rem 1.4rem; max-height: 94vh; overflow-y: auto; }
+.tech-stang { position: absolute; right: .6rem; top: .4rem; border: 0; background: none; font-size: 1.6rem; cursor: pointer; color: #40504d; }
+.tech-modal h2 { margin-top: 0; color: var(--farg-primar); }
+.tech-modal h3 { margin: 1rem 0 .4rem; }
+.tech-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+.tech-card { border: 1px solid var(--farg-ram); border-radius: 8px; padding: .5rem .7rem; background: var(--farg-framhavd); }
+.tech-card h4 { margin: 0 0 .2rem; font-size: .88rem; }
+.tech-card p { margin: 0; font-size: .82rem; }
+@media (max-width: 600px) { .tech-grid { grid-template-columns: 1fr; } }

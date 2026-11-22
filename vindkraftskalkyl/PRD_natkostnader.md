@@ -4,8 +4,8 @@
 **Plats:** `vindkraftskalkyl/PRD_natkostnader.md`
 **Skapad:** 2026-11-22
 **Uppdaterad:** 2026-11-22
-**Version:** 1.1
-**Status:** **Fryst 2026-11-22 (version 1.1).** Kent har godkänt exempelfallen, faktorerna 0,5 och 1,5 och att PRD:n fryses efter genomläsning med fräscha ögon. Fas 1 (källor, [KALLOR_natkostnader.md](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/KALLOR_natkostnader.md)) och fas 2 (fältnamn, formler, exempelfall) är genomförda. Ändringar efter frysning görs som ny version. Regionnätens avgifter för 2027, fler nätägare, belägg för engångskostnader och ett normalfall återstår (avsnitt 12). Ingen kod är ändrad.
+**Version:** 1.3
+**Status:** **Fryst 2026-11-22 (version 1.3).** Kent har godkänt exempelfallen, faktorerna 0,5 och 1,5 och att PRD:n fryses efter genomläsning med fräscha ögon. Fas 1 (källor, [KALLOR_natkostnader.md](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/KALLOR_natkostnader.md)) och fas 2 (fältnamn, formler, exempelfall) är genomförda. Ändringar efter frysning görs som ny version. Regionnätens avgifter för 2027, fler nätägare, belägg för engångskostnader och ett normalfall återstår (avsnitt 12). Fas 3 är byggd (se README i mappen). Tabell 6 stämmer med testerna i `test_natkostnader.js`.
 **Typ:** Tilläggs-PRD till [vindkraftskalkylen](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html) (huvudversionen, GitHub Pages).
 
 > Dokumentet säger *vad* som ska byggas och *varför*, innan kod. Det är inte en SPEC.md. Ställningstagande till SPEC.md står i avsnitt 10.
@@ -184,12 +184,12 @@ Tabell 4. Fältnamn (id i HTML och `lasIndata()`) [#](#tabell-4)
 | `natfaktorlag` | Faktor i läget låg | gånger | number | 0,5 (antagande) |
 | `natfaktorhog` | Faktor i läget hög | gånger | number | 1,5 (antagande) |
 
-Alla fält utom väljarna är gula (`#FFF9C4`) indatafält. Alla belopp står på 0 tills ett exempelfall väljs eller läsaren fyller i egna värden, eftersom ingen källa anger belopp för ledning, station, förstärkning och systemkrav.
+Alla fält utom väljarna är gula (`#FFF9C4`) indatafält. Ett **tomt fält betyder "ej angivet"** och visas som "–" i panelen, medan 0 är en angiven nolla. I beräkningen räknas ett tomt fält som 0. Fälten står tomma tills ett exempelfall väljs eller läsaren fyller i egna värden, eftersom ingen källa anger belopp för ledning, station, förstärkning och systemkrav. Kolumnen "Förvalt" ovan ska läsas så: 0 betyder tomt (ej angivet).
 
 **Beräkningssteg (i `beraknaAllt`)**
 
 1. Hjälpfunktionen `beraknaNat(d, faktor, produktionkWh)` returnerar alla poster i kr (engång) respektive kr per år (löpande) för en given faktor. Den läser bara de nya fälten.
-2. Faktorn för läget är `ingen = 0`, `låg = natfaktorlag`, `bas = 1`, `hög = natfaktorhog`. Faktorn multiplicerar alla poster utom energiavgiften, som följer marknad och förluster och inte skalas.
+2. Faktorn för läget är `ingen = 0`, `låg = natfaktorlag`, `bas = 1`, `hög = natfaktorhog`. Faktorn multiplicerar alla poster utom energiavgiften, som följer marknad och förluster och inte skalas av låg eller hög. Energiavgiften är 0 i läget ingen, så att läget ingen sätter alla nätkostnader till 0.
 3. Produktion med bortfall: `bortfall = min(1, faktor × natsysbortfall / 100)`, och `produktionkWh_ar1 = P_tot × 8760 × kapfaktor × 1000 × (1 − bortfall)`.
 4. Engångsposter i kr: `ledning = natavstand × natledning × 1000`, `station = natstation × 1000`, `forstarkning = natforstark × 1000`, `utredning = natutredning × 1000`, `system = natsyseng × 1000 × P_tot`, `schablon = natengangschablon × 1000 × P_tot`. Summan `natEngang = faktor × (ledning + station + forstarkning + utredning + system + schablon)`.
 5. Löpande poster år 1 i kr: `fast = natfast`, `effekt = nateffekt × P_tot × 1000`, `avstand = natavstavg × natavstavstand × P_tot × 1000`, `system = natsyslop × P_tot`, `energi = natenergi / 100 × produktionkWh_ar1`. Faktorn multiplicerar de fyra första. År t: `natLopande[t] = (faktor × (fast + effekt + avstand + system) + natenergi / 100 × prodkWhAr[t]) × (1 + natforandring / 100)^(t−1)`.
@@ -213,21 +213,28 @@ Tabell 5. Exempelfall (värden ur källfilen, 20 MW som i kalkylens förvalda v�
 | G. Kents ungefärliga uppfattning (ej belagd) | 0 | 0 | 0 | 0 | 5 | 0 | 1 000 | Kent 2026-11-22: ungefär 1 miljon kr per MW i engångskostnad och ungefär 5 öre/kWh i rörlig nätavgift. Ingen källa. Ingår inte i spridningen och ersätts när belägg finns. |
 | H. Eget | 0 | 0 | 0 | 0 | 0 | 0 | 0 | Läsarens egna värden. |
 
-Engångsposterna för ledning, station, förstärkning och systemkrav står på 0 i alla belagda exempelfall (A–F), eftersom ingen publicerad källa anger belopp. Fall G är Kents egen uppfattning och är inte belagd. Hjälptexten säger att beloppen kommer ur nätägarens offert.
+**Så definieras fallen lika.** Varje fall beskriver samma två sorters kostnad: engångskostnad (kr/MW) och löpande kostnad (öre/kWh, delad i en fast och en rörlig del). För varje del anges om uppgiften är belagd i en källa, Kents uppfattning eller saknas. En uppgift som saknas är inte noll: den visas som "–" och räknas som 0 i beräkningen, summorna märks "belagd del" och fallet märks "ej komplett". Engångskostnaden för nätet är det en producent betalar för att ansluta vid uppförandet (ledning, station, förstärkning och avgift, utredning och utrustning för systemkrav), utom parkens interna kabelnät.
+
+- **A–F:** löpande kostnad är belagd (både fast och rörlig del). Engångskostnaden är belagd bara för utredningsavgiften i C–E. Ledning, station och förstärkning saknas i alla sex, vilket inte är samma sak som 0.
+- **G:** Kents uppfattning om hela engångskostnaden för nätet, 1 000 kkr/MW, och om den rörliga delen, 5 öre/kWh. Den fasta löpande delen saknas.
+
+G går därför inte att jämföra rakt av med A–F, varken på engångskostnad (A–F saknar anslutningsdelen) eller på löpande kostnad (G saknar fast del). Hjälptexten säger att beloppen kommer ur nätägarens offert.
 
 Tabell 6. Förväntade resultat för exempelfallen, som test (20 MW, kapacitetsfaktor 0,37, 64 824 000 kWh per år, läge bas) [#](#tabell-6)
 
 <a id="tabell-6"></a>
 
-| Exempelfall | Löpande totalt, kr per år | Löpande totalt, öre per kWh | Engångsposter, kr per MW |
-| --- | --- | --- | --- |
-| A | 505 600 | 0,78 | 0 |
-| B | −498 100 | −0,77 | 0 |
-| C | −2 231 600 | −3,44 | 6 200 |
-| D | 2 171 900 | 3,35 | 6 200 |
-| E | −2 035 200 | −3,14 | 6 200 |
-| F | 4 549 600 | 7,02 | 0 |
-| G | 3 241 200 | 5,00 | 1 000 000 |
+Beloppen är räknade med fältens värden med två decimaler (till exempel −3,87 öre/kWh), så kr per år avviker något från värden räknade med fler decimaler.
+
+| Exempelfall | Fast del, öre per kWh | Rörlig del, öre per kWh | Löpande totalt, kr per år | Löpande totalt, öre per kWh | Engångskostnad, kr per MW (belagd del) | Komplett |
+| --- | --- | --- | --- | --- | --- | --- |
+| A | 3,40 | −2,62 | 505 600 | 0,78 | – | löpande ja, engång nej |
+| B | 3,42 | −4,19 | −498 100 | −0,77 | – | löpande ja, engång nej |
+| C | 0,43 | −3,87 | −2 228 700 | −3,44 | 6 200 (utredning) | löpande ja, engång nej |
+| D | 0,96 | 2,39 | 2 169 300 | 3,35 | 6 200 (utredning) | löpande ja, engång nej |
+| E | 0,90 | −4,04 | −2 034 900 | −3,14 | 6 200 (utredning) | löpande ja, engång nej |
+| F | 5,25 | 1,77 | 4 549 600 | 7,02 | – | löpande ja, engång nej |
+| G | – | 5,00 | 3 241 200 | 5,00 | 1 000 000 (hela, Kents uppfattning) | löpande nej (fast del saknas), engång ja men ej belagd |
 
 Fas 2 är klar när formlerna har granskats mot källfilens enheter (gjort) och Kent har godkänt exempelfallen (gjort) och faktorerna 0,5 och 1,5 (återstår).
 
@@ -327,10 +334,11 @@ Tabell 8. Tester som ska passera [#](#tabell-8)
 | Fält | Nya indatafält är gula, märkta och har förklaring; inga andra element är gula |
 | Exempelfall mot Tabell 6 | Varje exempelfall i datafilen ger de förväntade värdena i Tabell 6 när det räknas med fas 2:s formler |
 | En datakälla | Väljaren i kalkylen och läsarsidan visar samma fall med samma värden, eftersom båda läser `natkostnader_exempel.js` |
-| Läsarsidan | Tabellen är sorterad efter öre/kWh, negativa värden syns åt andra hållet i diagrammet, särfall är märkta och ordet "normal" förekommer inte |
+| Läsarsidan | Tabellen är sorterad efter öre/kWh, negativa värden syns åt andra hållet i diagrammet, särfall är märkta och ordet "normalt" används inte som påstående. Avsnittet Normalfall säger att inget är utsett |
 | Gammalt fall | Ett fall med kontrolldatum äldre än ett år visas med varning |
 | Fast och rörlig del | Löpande summan i panelen är lika med fast del plus rörlig del, och den rörliga delen är energiavgiften i öre/kWh |
 | Schablon | Fältet `natengangschablon` på 1 000 kkr/MW och 20 MW ger 1 000 000 kr/MW och 20 000 kkr i investeringen |
+| Saknad uppgift | Ett tomt fält visas som "–" i panelen och inte som 0. Summor märks "belagd del" när något saknas, och fallet märks "ej komplett" |
 | Fall utan belägg | Fall G visas men ingår inte i lägsta, högsta eller median, och är märkt som ej belagt |
 | Normalfall | Utan utsett normalfall säger sidorna det öppet. Ett utsett normalfall visas, och läses in när läget går från ingen till bas med orörda nätfält |
 | Regelverk | Varje fall visar sina regelverk med status, och ett fall som bygger på ett remissutkast är märkt |
@@ -351,6 +359,7 @@ Behövs ett SPEC.md-steg härifrån? **Nej.** Ändringen är begränsad (ett få
 - **Dubbelräkning:** annuiteten på engångskostnaden får inte synas både i "kapitalkostnad" och i nätposten i diagrammet. Åtgärd: testet i tabell 8.
 - **Fall som blir gamla:** tarifferna ändras varje årsskifte. Åtgärd: kontrolldatum per fall, varning efter ett år och en årlig uppdatering efter Svenska kraftnäts beslut i september.
 - **För få fall för att säga "normalt":** underlaget är i huvudsak Vattenfall, Svenska kraftnät och ett lokalnät. Åtgärd: sidan visar spridning, inte normalvärde, tills fler nätägare finns med.
+- **Dubbelräkning mot investeringsutgiften:** det är inte känt om den specifika investeringskostnaden (12 000 kkr/MW) redan innehåller nätanslutning. Engångskostnaden för nätet är ett tillägg. Åtgärd: fältens etikett säger "tillägg till investeringsutgiften", och frågan står i avsnitt 12.
 - **Fyra kopior av kalkylen:** huvudversion, Långhult, ver2 och ver3 kan komma att visa olika resultat. Åtgärd: README anger vilken version som har nätkostnader.
 
 <a id="12-oppna-fragor"></a>
@@ -360,8 +369,9 @@ Behövs ett SPEC.md-steg härifrån? **Nej.** Ändringen är begränsad (ett få
 Modellfrågorna är avgjorda (Tabell 1). Kvar är sådant som bara källor eller Kent kan avgöra, och som inte hindrar att bygget börjar:
 
 1. Vilka belopp gäller för nya systemkrav? Ingen källa anger något. Fälten står på 0 tills det finns belägg eller Kent anger ett antagande.
-2. Vilka belopp gäller för engångskostnaden för anslutning (ledning, station, förstärkning)? Kents uppfattning, ungefär 1 miljon kr per MW, är fall G och är inte belagd. Belägg kan vara en nätägares offert eller publicerad statistik.
-3. Vilket fall anser Kent vara normalt? Kent anger ett exempel på en anslutning som många anser vanlig, och det läggs in som fall med `normalfall`. Tills dess finns inget normalfall.
-4. Har Ei beslutat föreskrifterna om anslutningsavgifter och om krav för kraftproduktionsmoduler? Båda är i källfilen remissutkast.
-5. Regionnätens avgifter för 2027 och fler nätägare (Ellevio, E.ON) behöver genomgås, så att exempelfallen speglar mer än Vattenfall. Först då kan läsarsidan säga något om vad som är normalt.
-6. Hur ofta behöver exempelfallen och regelverken uppdateras, och vem gör det när tarifferna ändras varje årsskifte?
+2. Ingår nätanslutning redan i den specifika investeringskostnaden (12 000 kkr/MW)? Svaret behövs för att engångskostnaden inte ska räknas två gånger, och styr om fall G ska läsas som ett tillägg.
+3. Vilka belopp gäller för engångskostnaden för anslutning (ledning, station, förstärkning)? Kents uppfattning, ungefär 1 miljon kr per MW, är fall G och är inte belagd. Belägg kan vara en nätägares offert eller publicerad statistik.
+4. Vilket fall anser Kent vara normalt? Kent anger ett exempel på en anslutning som många anser vanlig, och det läggs in som fall med `normalfall`. Tills dess finns inget normalfall.
+5. Har Ei beslutat föreskrifterna om anslutningsavgifter och om krav för kraftproduktionsmoduler? Båda är i källfilen remissutkast.
+6. Regionnätens avgifter för 2027 och fler nätägare (Ellevio, E.ON) behöver genomgås, så att exempelfallen speglar mer än Vattenfall. Först då kan läsarsidan säga något om vad som är normalt.
+7. Hur ofta behöver exempelfallen och regelverken uppdateras, och vem gör det när tarifferna ändras varje årsskifte?

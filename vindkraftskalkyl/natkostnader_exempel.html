@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  Exempelfall och källor för nätkostnader
+  ----------------------------------------------------------------------------
+  Läsarsida till vindkraftskalkylen (PRD_natkostnader.md). Sidan visar de
+  exempelfall och regelverk som nätkostnaderna i kalkylen bygger på. Allt
+  innehåll byggs ur datafilen natkostnader_exempel.js, som även kalkylen läser,
+  så att sidan och kalkylen alltid visar samma fall. Beräkningarna görs med
+  natkostnader_berakning.js, samma modul som kalkylen använder.
+
+  UPPDATERING 2026-11-22: sidan skapades. Version 1.0.
+  ============================================================================
+-->
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exempelfall och källor för nätkostnader</title>
+  <meta name="description" content="De exempelfall, källor och regelverk som nätkostnaderna i vindkraftskalkylen bygger på: engångskostnad i kr per MW och löpande kostnad i öre per kWh.">
+  <link rel="stylesheet" href="stil.css">
+  <link rel="stylesheet" href="natkostnader_exempel.css">
+<link rel="stylesheet" href="brodsmulor.css">
+</head>
+<body>
+<!-- brodsmulor:start (genereras av brodsmulor.py från dokument.json: ändra dokument.json, inte här) -->
+<nav class="brodsmulor" aria-label="Brödsmulor och dokument i samma mapp">
+<ol><li><a href="vindkraftskalkyl.html">Vindkraftskalkyl, fem perspektiv</a></li><li aria-current="page">Exempelfall och källor för nätkostnader</li></ol>
+<p class="syskon">Fler dokument i samma mapp: <a href="vindkraftskalkyl.html">Kalkylen</a><span class="sep">·</span><strong aria-current="page">Exempelfall och källor för nätkostnader</strong></p>
+</nav>
+<!-- brodsmulor:slut -->
+
+  <header class="sidhuvud">
+    <h1 id="titel">Exempelfall och källor för nätkostnader</h1>
+    <p class="ingress">
+      Här redovisas de fall som nätkostnaderna i
+      <a href="vindkraftskalkyl.html">vindkraftskalkylen</a> bygger på, så att det går att se
+      vad som ligger under och över, och vilka regelverk fallen vilar på.
+      Engångskostnader visas i kr per MW och löpande kostnader i öre per kWh.
+    </p>
+  </header>
+
+  <main class="nat-sida">
+
+    <section aria-labelledby="inledning-rubrik">
+      <h2 id="inledning-rubrik">Så ska sidan läsas <a class="ankare" href="#inledning-rubrik" aria-label="Länk till den här rubriken">#</a></h2>
+      <p>
+        Siffrorna är hämtade ur källorna som anges vid varje fall. De är inte kvalitetssäkrade och
+        är räkneexempel, inte en prognos för ett visst projekt. Kontrollera mot nätägarens gällande
+        tariff innan något återges. Tarifferna ändras varje årsskifte.
+      </p>
+      <p>
+        Fallen räknas för den effekt och kapacitetsfaktor som anges här, eftersom en fast årsavgift
+        i kr per år ger olika öre per kWh beroende på hur mycket parken producerar.
+      </p>
+      <div class="nat-inmatning">
+        <label>Total effekt (MW)
+          <input type="number" id="p-effekt" class="indata" value="20" step="1" min="1">
+        </label>
+        <label>Kapacitetsfaktor (0–1)
+          <input type="number" id="p-kapfaktor" class="indata" value="0.37" step="0.01" min="0.05" max="0.7">
+        </label>
+        <p class="hint">Förvalt är kalkylens: 5 verk à 4 MW = 20 MW och 0,37.</p>
+      </div>
+    </section>
+
+    <section aria-labelledby="sammanstallning-rubrik">
+      <h2 id="sammanstallning-rubrik">Sammanställning <a class="ankare" href="#sammanstallning-rubrik" aria-label="Länk till den här rubriken">#</a></h2>
+      <p id="varning-gamla" class="nat-varning" hidden></p>
+      <div class="tabell-rulla">
+        <table class="nat-tabell" id="tabell-fall">
+          <caption id="Tabell1">Tabell 1. Exempelfall, sorterade efter löpande nätkostnad (lägst först)</caption>
+          <thead id="tabell-fall-huvud"></thead>
+          <tbody id="tabell-fall-kropp"></tbody>
+        </table>
+      </div>
+      <p class="hint">Fast del är fast årsavgift, effektavgift, avståndsavgift och löpande systemkrav. Rörlig del är energiavgiften och kan vara negativ (en ersättning). "–" betyder att uppgiften saknas, vilket inte är samma sak som 0.</p>
+
+      <div class="diagram-ruta">
+        <h3 id="Diagram1">Diagram 1. Löpande nätkostnad per fall, öre per kWh</h3>
+        <canvas id="diagram-fall" height="120"></canvas>
+      </div>
+    </section>
+
+    <section aria-labelledby="spridning-rubrik">
+      <h2 id="spridning-rubrik">Spridning <a class="ankare" href="#spridning-rubrik" aria-label="Länk till den här rubriken">#</a></h2>
+      <p id="spridning-text"></p>
+      <div class="tabell-rulla">
+        <table class="nat-tabell">
+          <caption id="Tabell2">Tabell 2. Var varje fall ligger i förhållande till medianen</caption>
+          <thead><tr><th scope="col">Fall</th><th scope="col">Löpande, öre per kWh</th><th scope="col">Läge</th></tr></thead>
+          <tbody id="tabell-lage-kropp"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="normalfall-rubrik">
+      <h2 id="normalfall-rubrik">Normalfall <a class="ankare" href="#normalfall-rubrik" aria-label="Länk till den här rubriken">#</a></h2>
+      <p id="normalfall-text"></p>
+    </section>
+
+    <section aria-labelledby="saknas-rubrik">
+      <h2 id="saknas-rubrik">Det som saknas <a class="ankare" href="#saknas-rubrik" aria-label="Länk till den här rubriken">#</a></h2>
+      <ul>
+        <li><strong>Engångskostnader för anslutning:</strong> ledning, station, förstärkning och nätägarens anslutningsavgift saknar belagda belopp. Ingen publicerad källa jag har läst anger dem för en vindpark. I fallen A–F står de som "–", vilket betyder att uppgiften saknas, inte att kostnaden är noll.</li>
+        <li><strong>Nya systemkrav:</strong> källorna anger inga belopp. Ei bedömer att kostnaderna sammantaget minskar med de föreslagna reglerna men att det är svårt att kvantifiera.</li>
+        <li><strong>Fall G:</strong> är en uppfattning, inte en källa, och saknar fast löpande del.</li>
+        <li><strong>Fler nätägare och 2027:</strong> Ellevio, E.ON och regionnätens avgifter för 2027 är inte genomgångna.</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="regelverk">
+      <h2 id="regelverk">Regelverk <a class="ankare" href="#regelverk" aria-label="Länk till den här rubriken">#</a></h2>
+      <p>Regelverken ändras. Ett fall som bygger på ett <span class="hjalp hjalp-term" tabindex="0" data-hjalp="Ett förslag som skickats ut för synpunkter. Det är inte beslutat och kan ändras eller utebli.">remissutkast</span> är märkt.</p>
+      <div class="tabell-rulla">
+        <table class="nat-tabell" id="tabell-regelverk">
+          <caption id="Tabell3">Tabell 3. Regelverk som exempelfallen bygger på</caption>
+          <thead><tr><th scope="col">Regelverk</th><th scope="col">Vad det styr</th><th scope="col">Status och datum</th><th scope="col">Källa</th><th scope="col">Fall</th></tr></thead>
+          <tbody id="tabell-regelverk-kropp"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="fall-rubrik">
+      <h2 id="fall-rubrik">Varje fall i detalj <a class="ankare" href="#fall-rubrik" aria-label="Länk till den här rubriken">#</a></h2>
+      <div id="fall-detalj"></div>
+    </section>
+
+    <section aria-labelledby="kallor-rubrik">
+      <h2 id="kallor-rubrik">Källor <a class="ankare" href="#kallor-rubrik" aria-label="Länk till den här rubriken">#</a></h2>
+      <ul id="kallor-lista"></ul>
+    </section>
+
+  </main>
+
+  <footer class="sidfot">
+    <p>Byggt med enbart HTML, CSS och JavaScript. Diagram via Chart.js (CDN). Data i natkostnader_exempel.js.</p>
+    <p class="versionsrad">Version <span id="versionsrad-nr">–</span> · <span id="versionsrad-datum">–</span> · Kent Lundgren · Data version <span id="data-version">–</span></p>
+  </footer>
+
+  <!-- Hörnparet: GitHub nedre vänster, teknik nedre höger -->
+  <a class="corner corner-left" href="https://github.com/kentlundgren/Vindkraft/tree/main/vindkraftskalkyl" target="_blank" rel="noopener">{ } GitHub</a>
+  <button type="button" class="corner corner-right" id="techBtn" aria-label="Tekniköversikt" aria-haspopup="dialog" aria-controls="techModal">&lt;/&gt; teknik</button>
+
+  <div class="tech-overlay" id="techModal" role="dialog" aria-modal="true" aria-labelledby="tech-rubrik" hidden>
+    <div class="tech-modal">
+      <button type="button" class="tech-stang" id="techStang" aria-label="Stäng">&times;</button>
+      <h2 id="tech-rubrik">Hur den här sidan är byggd</h2>
+      <p>Sidan visar exempelfallen bakom nätkostnaderna i vindkraftskalkylen.</p>
+
+      <h3>Tekniken</h3>
+      <div class="tech-grid">
+        <div class="tech-card"><h4>En datakälla</h4><p>Alla fall och regelverk ligger i <code>natkostnader_exempel.js</code>. Både kalkylen och den här sidan läser filen, så de kan inte visa olika fall.</p></div>
+        <div class="tech-card"><h4>Samma beräkning som kalkylen</h4><p>Öre per kWh och kr per MW räknas med <code>natkostnader_berakning.js</code>, samma modul som kalkylen använder. Modulen rör inte sidans innehåll och går att köra i Node.</p></div>
+        <div class="tech-card"><h4>Ingen server och ingen data skickas</h4><p>Allt körs i webbläsaren. Inget lagras och inget skickas någonstans.</p></div>
+        <div class="tech-card"><h4>Test</h4><p><code>test_natkostnader.js</code> räknar om varje fall och jämför med de förväntade värdena i PRD:n (Tabell 6), och kontrollerar att datafilen är komplett.</p></div>
+      </div>
+
+      <h3>Metoden</h3>
+      <div class="tech-grid">
+        <div class="tech-card"><h4>Planerad i en PRD först</h4><p>Upplägget beskrivs i <code>PRD_natkostnader.md</code>: källor först, sedan formler och fall, sedan bygget.</p></div>
+        <div class="tech-card"><h4>Källor lästa i originaltext</h4><p>Fallens värden är hämtade ur de prislistor och föreskrifter som länkas vid varje fall. Det som är en tolkning eller ett antagande står under fallet.</p></div>
+        <div class="tech-card"><h4>Uppfattning skiljs från källa</h4><p>Fall G är en uppfattning och är märkt ej belagd. Det ingår inte i spridningen.</p></div>
+        <div class="tech-card"><h4>Kontroll</h4><p>Siffrorna är hämtade ur källorna, inte kvalitetssäkrade. Kontrollera mot källan innan något återges.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="natkostnader_exempel.js"></script>
+  <script src="natkostnader_berakning.js"></script>
+  <script src="natkostnader_hjalp.js"></script>
+  <script src="natkostnader_exempel_sida.js"></script>
+</body>
+</html>
