@@ -111,5 +111,23 @@ sant('fall G är markerat som ej belagt', byid.G.belagd === false);
 sant('inget normalfall är utsett än', D.NAT_NORMALFALL === null);
 sant('alla belagda fall har komplett.lopande', D.NAT_EXEMPEL.filter(f => f.belagd).every(f => f.komplett.lopande));
 
+
+/* Ett verk (4 MW) mot fem verk (20 MW): fast årsavgift per anslutning ger fler öre/kWh för ett verk. */
+{
+  const P1 = 4, b1 = P1 * 8760 * 0.37 * 1000;
+  const o = (id, PP, bb) => N.beraknaNat(indata(byid[id]), 1, PP, bb).lopandeOre.summa;
+  lika('fall A, fem verk', o('A', P, brutto), 0.78, 0.01);
+  lika('fall A, ett verk', o('A', P1, b1), 8.49, 0.01);
+  lika('fall B, fem verk', o('B', P, brutto), -0.77, 0.01);
+  lika('fall B, ett verk', o('B', P1, b1), 3.43, 0.01);
+  lika('fall E, fem verk', o('E', P, brutto), -3.14, 0.01);
+  lika('fall E, ett verk', o('E', P1, b1), -2.25, 0.01);
+  ['C', 'D', 'F', 'G'].forEach(id => lika('fall ' + id + ' oförändrat med antal verk', o(id, P1, b1), o(id, P, brutto), 1e-9));
+  // Fast årsavgift i kronor är densamma för ett verk och fem verk.
+  lika('fall A: fast årsavgift i kr, ett verk', N.beraknaNat(indata(byid.A), 1, P1, b1).lopande.fast, 1250000, 1e-6);
+  lika('fall A: fast årsavgift i kr, fem verk', N.beraknaNat(indata(byid.A), 1, P, brutto).lopande.fast, 1250000, 1e-6);
+  sant('utgångspunkten finns med länk', D.NAT_UTGANGSPUNKT.length === 2 && D.NAT_UTGANGSPUNKT.every(k => k.url));
+}
+
 console.log((fel === 0 ? 'ALLA TESTER OK' : 'TESTFEL') + ': ' + ok + ' godkända, ' + fel + ' fel');
 process.exit(fel === 0 ? 0 : 1);

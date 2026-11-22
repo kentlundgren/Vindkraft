@@ -27,6 +27,10 @@
   UPPDATERING 2026-11-22 (senare igen): gruppen Nät och systemkrav kan fällas in, en
   sammanfattning och en delbar länk (#Natkostnad_Bas_Exempel_B) finns alltid synliga,
   öre/kWh visas vid varje löpande fält och rubrikerna har förklaringar. Version 1.2.
+
+  UPPDATERING 2026-11-22 (senare igen): förvalt är ett verk om 4 MW (som den ursprungliga kalkylen),
+  växlare mellan ett och fem verk i gruppen Nät och systemkrav, löpande nätkostnad i kronor per
+  verk och för parken, och ledaren i Svensk Vindkraft som utgångspunkt i källistan. Version 1.3.
   ============================================================================
 -->
 <html lang="sv">
@@ -121,7 +125,7 @@
         </label>
 
         <label>Antal verk
-          <input type="number" step="1" id="antalverk" class="indata" value="5">
+          <input type="number" step="1" id="antalverk" class="indata" value="1">
         </label>
 
         <label>Verkshöjd (m)
@@ -173,6 +177,12 @@
            räknas som 0. Alla belopp är tillägg till investeringsutgiften. -->
       <fieldset class="indata-grupp" id="nat-grupp">
         <legend>Nät och systemkrav</legend>
+
+        <div class="nat-verkvaxel" role="group" aria-labelledby="nat-verk-etikett">
+          <span id="nat-verk-etikett">Antal verk <span class="hjalp" tabindex="0" data-hjalp="Växlar fältet Antal verk mellan ett och fem verk om 4 MW. Fasta årsavgifter är per anslutning och inte per verk, så öre per kWh blir högre för ett verk än för en park.">?</span></span>
+          <button type="button" class="nat-verkknapp" id="nat-verk-1" data-verk="1" aria-pressed="true">Ett verk, 4 MW</button>
+          <button type="button" class="nat-verkknapp" id="nat-verk-5" data-verk="5" aria-pressed="false">Fem verk, 20 MW</button>
+        </div>
 
         <label>Nätkostnader <span class="hjalp" tabindex="0" data-hjalp="Ingen: nätkostnader ingår inte i resultaten (förvalt, samma resultat som tidigare). Bas: fältens värden. Låg och hög: alla poster utom energiavgiften multipliceras med faktorerna längst ned i gruppen.">?</span>
           <select id="natlage" class="indata">
@@ -457,6 +467,28 @@
       </dl>
     </div>
 
+    <div class="nat-block">
+      <h3 id="nat-kronor-rubrik">Löpande kostnader i kronor <a class="ankare" href="#nat-kronor-rubrik" aria-label="Länk till den här rubriken">#</a></h3>
+      <p class="hint" id="nat-kronor-info">–</p>
+      <div class="tabell-rulla">
+        <table class="nat-tabell" id="nat-kronor-tabell">
+          <caption id="NatTabell1">Tabell 1. Löpande nätkostnad i kronor, år 1 och över livslängden</caption>
+          <thead><tr><th scope="col">Post</th><th scope="col" class="kol-verk">Per verk</th><th scope="col" class="kol-park" id="nat-kol-park">Hela parken</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Produktion år 1 (kWh)</th><td class="tal kol-verk" id="nat-k-prod-verk">–</td><td class="tal kol-park" id="nat-k-prod-park">–</td></tr>
+            <tr><th scope="row">Fast årsavgift (kr/år)</th><td class="tal kol-verk" id="nat-k-fast-verk">–</td><td class="tal kol-park" id="nat-k-fast-park">–</td></tr>
+            <tr><th scope="row">Effektavgift (kr/år)</th><td class="tal kol-verk" id="nat-k-effekt-verk">–</td><td class="tal kol-park" id="nat-k-effekt-park">–</td></tr>
+            <tr><th scope="row">Avståndsberoende avgift (kr/år)</th><td class="tal kol-verk" id="nat-k-avstand-verk">–</td><td class="tal kol-park" id="nat-k-avstand-park">–</td></tr>
+            <tr><th scope="row">Systemkrav, löpande (kr/år)</th><td class="tal kol-verk" id="nat-k-system-verk">–</td><td class="tal kol-park" id="nat-k-system-park">–</td></tr>
+            <tr class="framhavd"><th scope="row">Fast del, summa (kr/år)</th><td class="tal kol-verk" id="nat-k-fastsumma-verk">–</td><td class="tal kol-park" id="nat-k-fastsumma-park">–</td></tr>
+            <tr class="framhavd"><th scope="row">Rörlig del: energiavgift × produktion (kr/år)</th><td class="tal kol-verk" id="nat-k-energi-verk">–</td><td class="tal kol-park" id="nat-k-energi-park">–</td></tr>
+            <tr class="framhavd"><th scope="row">Summa löpande nätkostnad, år 1 (kr/år)</th><td class="tal kol-verk" id="nat-k-summa-verk">–</td><td class="tal kol-park" id="nat-k-summa-park">–</td></tr>
+            <tr><th scope="row">Nuvärde över livslängden (kr)</th><td class="tal kol-verk" id="nat-k-livs-verk">–</td><td class="tal kol-park" id="nat-k-livs-park">–</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     <p class="hint" id="nat-exempel-info"></p>
     <p class="hint">Tomma poster är ej angivna och räknas som 0. Ett minustecken betyder en ersättning till producenten. Sekundärt: löpande kostnad per MW och år <span id="nat-l-permwar">–</span>, total nätkostnad per kWh över livslängden <span id="nat-s-livs">–</span> och dess andel av LCOE <span id="nat-s-andel">–</span>.</p>
   </section>
@@ -654,6 +686,11 @@
         (hämtad 3 juli 2026). Allmänt underlag om produktion och kapacitetsfaktorer.
       </li>
       <li id="kallor-nat">
+        Utgångspunkten för analysen av nätkostnader är ledaren
+        Denli, S. (2026) <a href="https://svenskvindkraft.com/vindkraftens-ekonomi-handlar-om-mer-an-elpriset/" target="_blank" rel="noopener">Vindkraftens ekonomi handlar om mer än elpriset</a>,
+        <em>Svensk Vindkraft</em>, publicerad 2026-11-16 (hämtad 2026-11-22), som Svensk Vindkraft återgav i ett
+        <a href="https://www.linkedin.com/posts/svensk-vindkraft_i-senaste-numret-av-v%C3%A5r-tidning-svensk-vindkraft-activity-7529084415403253761-pt5K" target="_blank" rel="noopener">LinkedIn-inlägg</a>
+        2026-11-19. Ledaren pekar ut nätavgifter, anslutningskostnader och nya systemkrav som svåra att förutse. Den anger inga belopp.
         Nätkostnader och systemkrav bygger på exempelfall och regelverk som redovisas
         på sidan <a href="natkostnader_exempel.html">Exempelfall och källor för nätkostnader</a>.
         Huvudkällor (hämtade 2026-11-22):

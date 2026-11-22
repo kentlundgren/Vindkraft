@@ -543,3 +543,16 @@ h2:hover > .ankare, h3:hover > .ankare, .ankare:focus { opacity: 1; }
 
 /* Attributet hidden ska alltid dölja, även för klasser som sätter display. */
 [hidden] { display: none !important; }
+
+/* Växlare ett verk / fem verk och tabellen över löpande nätkostnad i kronor */
+.nat-verkvaxel { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin: .2rem 0 .6rem; font-size: .85rem; }
+.nat-verkknapp { padding: .3rem .8rem; cursor: pointer; border: 1px solid var(--farg-primar-ljus); background: #fff; color: var(--farg-primar); border-radius: 999px; font-size: .85rem; }
+.nat-verkknapp[aria-pressed="true"] { background: var(--farg-primar); color: #fff; border-color: var(--farg-primar); }
+.nat-verkknapp:focus-visible { outline: 2px solid var(--farg-primar); outline-offset: 2px; }
+.tabell-rulla { overflow-x: auto; }
+.nat-tabell { border-collapse: collapse; width: 100%; font-size: .88rem; }
+.nat-tabell caption { text-align: left; font-weight: 600; margin-bottom: .4rem; }
+.nat-tabell th, .nat-tabell td { border: 1px solid var(--farg-ram); padding: .35rem .5rem; text-align: left; }
+.nat-tabell thead th, .nat-tabell tbody th { background: var(--farg-framhavd); font-weight: 600; }
+.nat-tabell td.tal { text-align: right; white-space: nowrap; }
+.nat-tabell tr.framhavd th, .nat-tabell tr.framhavd td { font-weight: 700; }

@@ -9,11 +9,12 @@
    skript (regel 19 i kent-bygg-sidor).
    UPPDATERING 2026-11-22: sidan skapades. Version 1.0.
    UPPDATERING 2026-11-22 (senare igen): länk "Visa i kalkylen" vid varje fall. Version 1.2.
+   UPPDATERING 2026-11-22 (senare igen): växlare ett verk / fem verk (förvalt ett verk), förklaringar vid hovring i Diagram 1, förbehåll för ett ensamt verk, utgångspunkten i källistan. Version 1.3.
    UPPDATERING 2026-11-22 (senare): avsnittet Det som saknas anger antagandet att engångskostnaden ingår i investeringsutgiften. Version 1.1.
    ============================================================================ */
 'use strict';
 
-const VERSION = '1.2';
+const VERSION = '1.3';
 const VERSIONSDATUM = '2026-11-22';
 
 (function () {
@@ -56,11 +57,20 @@ const VERSIONSDATUM = '2026-11-22';
   }
 
   let diagram = null;
+  let radSenaste = [];
 
   function indata() {
-    const P = Math.max(1, parseFloat(el('p-effekt').value) || 20);
+    const P = Math.max(1, parseFloat(el('p-effekt').value) || 4);
     const kf = Math.min(0.7, Math.max(0.05, parseFloat(el('p-kapfaktor').value) || 0.37));
     return { P, kf, brutto: P * 8760 * kf * 1000 };
+  }
+
+  function markeraKnappar(P) {
+    document.querySelectorAll('.nat-verkknapp').forEach(k => {
+      k.setAttribute('aria-pressed', String(parseFloat(k.getAttribute('data-mw')) === P));
+    });
+    const not = el('ensamt-verk-not');
+    if (not) not.hidden = !(P <= 4);
   }
 
   function raknaFall(f, x) {
@@ -81,11 +91,46 @@ const VERSIONSDATUM = '2026-11-22';
     return dagar > 365;
   }
 
+  /* Kort förklaring vid hovring på en stapel i Diagram 1. Siffrorna räknas om
+     för vald effekt, så texten gäller det som visas just nu. */
+  function bryt(text, bredd) {
+    const ord = text.split(' '); const rader = []; let rad = '';
+    ord.forEach(o => {
+      if ((rad + ' ' + o).trim().length > bredd) { rader.push(rad.trim()); rad = o; } else { rad += ' ' + o; }
+    });
+    if (rad.trim()) rader.push(rad.trim());
+    return rader;
+  }
+  function forklaringStapel(f, r) {
+    const e = sv(r.lopandeOre.energi, 2), fast = sv(r.lopandeOre.fastSumma, 2), tot = sv(r.lopandeOre.summa, 2);
+    let t;
+    if (f.id === 'C' || f.id === 'E') {
+      t = 'Negativ nätkostnad (en ersättning): i södra Sverige minskar inmatningen stamnätets förluster, så Svenska kraftnäts energiavgift blir en kredit (' + e + ' öre/kWh). Den är större än den fasta delen (' + fast + ' öre/kWh), så producenten får netto ' + sv(-r.lopandeOre.summa, 2) + ' öre/kWh.';
+    } else if (f.id === 'A' || f.id === 'B') {
+      const naraNoll = Math.abs(r.lopandeOre.summa) < 1;
+      t = 'Energiersättningen (' + e + ' öre/kWh) och de fasta avgifterna (' + fast + ' öre/kWh) ' +
+        (naraNoll ? 'tar nästan ut varandra, så nätkostnaden blir nära noll (' + tot + ').'
+                  : 'tar inte ut varandra: ' + (r.lopandeOre.summa > 0 ? 'de fasta avgifterna väger tyngre' : 'ersättningen väger tyngre') + ' (' + tot + ' öre/kWh).') +
+        ' Den fasta årsavgiften (' + sv(f.falt.natfast / 1000, 0) + ' kkr/år) är per anslutning och slås ut på produktionen: fler verk ger lägre öre per kWh, ett verk ger högre.';
+    } else if (f.id === 'D') {
+      t = 'Positiv nätkostnad: i norr ökar inmatningen stamnätets förluster (positiv förlustkoefficient), så producenten betalar energiavgiften (' + e + ' öre/kWh) utöver effektavgiften. Ingen fast årsavgift, så parkens storlek påverkar inte öre per kWh.';
+    } else if (f.id === 'F') {
+      t = 'Hög nätkostnad: ett lokalnät som en vindkraftutvecklare äger, med hög effektavgift (170 kr/kW) och positiv överföringsavgift (' + e + ' öre/kWh). Särfall, inte representativt.';
+    } else if (f.id === 'G') {
+      t = 'Kents uppfattning, ej belagd: ungefär 5 öre/kWh i rörlig nätavgift. Fast löpande del saknas, så fallet är inte jämförbart rakt av.';
+    } else {
+      t = 'Löpande nätkostnad ' + tot + ' öre/kWh.';
+    }
+    return bryt(t, 42);
+  }
+
   function bygg() {
     const x = indata();
+    markeraKnappar(x.P);
     const fall = NAT_EXEMPEL.filter(f => !f.eget);
     const rader = fall.map(f => ({ f, r: raknaFall(f, x) }));
     rader.sort((a, b) => a.r.lopandeOre.summa - b.r.lopandeOre.summa);
+    radSenaste = rader;
 
     /* ---- Tabell 1 ---- */
     const huvud = el('tabell-fall-huvud'); huvud.textContent = '';
@@ -137,7 +182,7 @@ const VERSIONSDATUM = '2026-11-22';
           data: { labels: etiketter, datasets: [{ label: 'Löpande nätkostnad (öre/kWh)', data: varden, backgroundColor: farger }] },
           options: {
             responsive: true,
-            plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => sv(c.parsed.y, 2, ' öre/kWh') } } },
+            plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => sv(c.parsed.y, 2, ' öre/kWh'), afterLabel: (c) => forklaringStapel(radSenaste[c.dataIndex].f, radSenaste[c.dataIndex].r) } } },
             scales: { y: { title: { display: true, text: 'öre per kWh' } } }
           }
         });
@@ -272,6 +317,7 @@ const VERSIONSDATUM = '2026-11-22';
     const unika = {};
     NAT_EXEMPEL.forEach(f => f.kalla.forEach(k => { if (k.url) unika[k.url] = k; }));
     NAT_REGELVERK.forEach(r => { if (r.kalla && r.kalla.url) unika[r.kalla.url] = r.kalla; });
+    (typeof NAT_UTGANGSPUNKT !== 'undefined' ? NAT_UTGANGSPUNKT : []).forEach(k => { unika[k.url] = k; });
     Object.keys(unika).map(u => unika[u]).sort((a, b) => a.text.localeCompare(b.text, 'sv')).forEach(k => {
       const li = document.createElement('li');
       li.appendChild(lank(k.url, k.text));
@@ -296,6 +342,10 @@ const VERSIONSDATUM = '2026-11-22';
     byggStatisk();
     bygg();
     ['p-effekt', 'p-kapfaktor'].forEach(id => el(id).addEventListener('input', bygg));
+    document.querySelectorAll('.nat-verkknapp').forEach(k => k.addEventListener('click', () => {
+      el('p-effekt').value = k.getAttribute('data-mw');
+      bygg();
+    }));
     kopplaModal();
     if (typeof window.kopplaHjalp === 'function') window.kopplaHjalp();
     // Fungerar även om en term skapades efter första anropet: koppla om efter bygg.

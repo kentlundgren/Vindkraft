@@ -82,14 +82,30 @@
      Läge skrivs utan å, ä, ö: Ingen, Lag, Bas, Hog. */
   const LAGE_TILL_HASH = { ingen: 'Ingen', lag: 'Lag', bas: 'Bas', hog: 'Hog' };
   const HASH_TILL_LAGE = { Ingen: 'ingen', Lag: 'lag', Bas: 'bas', Hog: 'hog' };
-  const HASH_MONSTER = /^#Natkostnad_(Ingen|Lag|Bas|Hog)(?:_Exempel_([A-H]))?(?:_Engang_(Ja|Nej))?$/;
+  const HASH_MONSTER = /^#Natkostnad_(Ingen|Lag|Bas|Hog)(?:_Exempel_([A-H]))?(?:_Engang_(Ja|Nej))?(?:_Verk_(1|5))?$/;
+
+  function antalVerk() {
+    const v = Math.round(parseFloat(el('antalverk').value));
+    return Number.isFinite(v) ? v : 1;
+  }
+
+  /* Växlaren ett verk / fem verk visar vilket val som gäller. Ett annat antal
+     verk (skrivet för hand) markerar ingen knapp. */
+  function markeraVerkknappar() {
+    const v = antalVerk();
+    document.querySelectorAll('.nat-verkknapp').forEach(k => {
+      k.setAttribute('aria-pressed', String(parseInt(k.getAttribute('data-verk'), 10) === v));
+    });
+  }
 
   function byggHash() {
     const lage = el('natlage').value, ex = el('natexempel').value, ing = el('natengangingar').value;
-    if (lage === 'ingen' && (ex === 'H' || !ex) && ing === 'ja') return '';
+    const verk = antalVerk();
+    if (lage === 'ingen' && (ex === 'H' || !ex) && ing === 'ja' && verk !== 5) return '';
     let h = '#Natkostnad_' + LAGE_TILL_HASH[lage];
     if (ex && ex !== 'H') h += '_Exempel_' + ex;
     if (ing === 'nej') h += '_Engang_Nej';
+    if (verk === 5) h += '_Verk_5';
     return h;
   }
 
@@ -101,6 +117,9 @@
     el('natexempel').value = ex;
     fyllExempel(ex);
     el('natengangingar').value = (m[3] === 'Nej') ? 'nej' : 'ja';
+    // Utan _Verk_ i länken gäller förvalet, ett verk.
+    el('antalverk').value = (m[4] === '5') ? '5' : '1';
+    markeraVerkknappar();
     const platshallare = el('natengangingar');
     platshallare.dispatchEvent(new Event('change'));
     return true;
@@ -119,6 +138,14 @@
 
   function kopplaLank() {
     ['natlage', 'natexempel', 'natengangingar'].forEach(id => el(id).addEventListener('change', uppdateraLank));
+    el('antalverk').addEventListener('input', () => { markeraVerkknappar(); uppdateraLank(); });
+    document.querySelectorAll('.nat-verkknapp').forEach(k => k.addEventListener('click', () => {
+      el('antalverk').value = k.getAttribute('data-verk');
+      markeraVerkknappar();
+      // Låt kalkylens vanliga lyssnare räkna om, och uppdatera länken.
+      el('antalverk').dispatchEvent(new Event('input', { bubbles: true }));
+    }));
+    markeraVerkknappar();
     const knapp = el('nat-kopiera');
     if (knapp) knapp.addEventListener('click', () => {
       const falt = el('nat-valdlank-falt');
@@ -195,8 +222,40 @@
       : ' Engångskostnaderna antas ingå i investeringsutgiften (12 000 kkr/MW) och läggs därför inte till. Antagandet är inte belagt i någon källa.';
     satt('nat-info', info + tillagg);
 
+    uppdateraKronor(res, d);
     uppdateraExempelInfo(res, d);
     uppdateraSammanfattning(res, d);
+  }
+
+  /* Tabell 1 (panelen): löpande nätkostnad i kronor, per verk och för parken.
+     Kolumnen per verk är parkens belopp delat med antalet verk. En fast årsavgift
+     gäller anslutningen, så uppdelningen per verk är en fördelning. Med ett verk
+     är kolumnerna lika, och då visas bara en. */
+  function uppdateraKronor(res, d) {
+    const np = res.natPanel, lo = np.lopande;
+    const t = d.natTomma || {};
+    const n = Math.max(1, d.antalverk);
+    const ett = n === 1;
+    const kr = (x) => (Number.isFinite(x) ? fmt(x, 0) : '–');
+    const rad = (id, parkVarde, ejAngiven) => {
+      satt('nat-k-' + id + '-park', ejAngiven ? '–' : kr(parkVarde));
+      satt('nat-k-' + id + '-verk', ejAngiven ? '–' : kr(parkVarde / n));
+    };
+    rad('prod', np.produktionAr1, false);
+    rad('fast', lo.fast, t.natfast);
+    rad('effekt', lo.effekt, t.nateffekt);
+    rad('avstand', lo.avstand, t.natavstavg && t.natavstavstand ? true : (t.natavstavg || t.natavstavstand));
+    rad('system', lo.system, t.natsyslop);
+    rad('fastsumma', lo.fastSumma, false);
+    rad('energi', lo.energi, t.natenergi);
+    rad('summa', lo.summa, false);
+    rad('livs', res.natLivsKr, false);
+    document.querySelectorAll('#nat-kronor-tabell .kol-verk').forEach(c => { c.hidden = ett; });
+    satt('nat-kol-park', ett ? 'Ett verk (hela parken)' : 'Hela parken (' + n + ' verk)');
+    const vilket = d.natlage === 'ingen' ? 'läget bas (som om nätkostnaderna togs med)' : 'läget ' + LAGE_TEXT[d.natlage];
+    satt('nat-kronor-info', 'Räknat på ' + vilket + ', ' + n + (ett ? ' verk' : ' verk') + ' om ' + fmt(d.effekt, 1) + ' MW. ' +
+      (ett ? '' : 'Per verk är parkens belopp delat med antalet verk: en fast årsavgift gäller anslutningen och inte det enskilda verket. ') +
+      'Fast del är oberoende av produktionen. Rörlig del är energiavgiften gånger produktionen och är negativ när den är en ersättning. Nuvärdet räknas med kalkylräntan över livslängden.');
   }
 
   /* Sammanfattning som alltid syns, öre/kWh vid varje löpande fält och
@@ -277,6 +336,9 @@
       txt += 'Fallet är inte belagt i en källa och ingår inte i spridningen (' + fmt(mn, 2) + ' till ' + fmt(mx, 2, ' öre/kWh') + '). ';
     }
     if (f.sarfall) txt += 'Fallet är ett särfall och inte representativt. ';
+    if (d.antalverk === 1 && f.falt.natfast !== null && f.falt.natfast !== undefined) {
+      txt += 'Obs: fallet har en fast årsavgift per anslutning. För ett enskilt verk skulle nätägaren troligen anvisa en lägre spänningsnivå med en annan fast avgift, så öre per kWh är här ett räkneexempel och inte en belagd kostnad för ett ensamt verk. ';
+    }
     rad.appendChild(document.createTextNode(txt));
 
     const regl = (f.regelverk || []).map(id => NAT_REGELVERK.find(r => r.id === id)).filter(Boolean);

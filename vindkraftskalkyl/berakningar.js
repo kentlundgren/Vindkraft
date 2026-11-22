@@ -26,8 +26,10 @@
    UPPDATERING 2026-11-22 (senare): fältet natengangingar (ja = engångskostnaderna antas ingå i
    investeringsutgiften och läggs inte till; förvalt), diskret hörnpar. Version 1.1.
    UPPDATERING 2026-11-22 (senare igen): infällbar nätgrupp, sammanfattning, delbar länk, öre/kWh vid
-   fälten (natkostnader_ui.js). Version 1.2. */
-const VERSION = '1.2';
+   fälten (natkostnader_ui.js). Version 1.2.
+   UPPDATERING 2026-11-22 (senare igen): förvalt antal verk är 1 (4 MW), växlare mellan ett och fem verk,
+   löpande nätkostnad i kronor per verk och för parken (tabell i panelen) och nuvärde över livslängden. Version 1.3. */
+const VERSION = '1.3';
 const VERSIONSDATUM = '2026-11-22';
 
 /* ============================================================================
@@ -403,6 +405,11 @@ function beraknaAllt(d) {
   for (let t = 1; t <= n; t++) {
     disNat += nat.lopandeAr(t, prodkWhAr[t - 1]) / Math.pow(1 + r, t);
   }
+  // Panelens löpande nätkostnad i kronor över livslängden (nuvärde), även i läget ingen.
+  let natLivsKr = 0;
+  for (let t = 1; t <= n; t++) {
+    natLivsKr += natPanel.lopandeAr(t, prodkWhAr[t - 1]) / Math.pow(1 + r, t);
+  }
   const natPerkWhLivs = disEnergi > 0 ? disNat / disEnergi : NaN;
   const natAndelLcoe = (lcoe > 0 && natPerkWhLivs === natPerkWhLivs) ? natPerkWhLivs / lcoe : NaN;
   // Diagrammets nätpost: löpande nätkostnad år 1 + annuiteten på engångsdelen.
@@ -468,7 +475,7 @@ function beraknaAllt(d) {
     narboendeEnskildAr1, narboendeTotalAr1,
 
     // Nätkostnader och systemkrav
-    nat, natPanel, natEngangTillagg, natPerkWhLivs, natAndelLcoe, natChart,
+    nat, natPanel, natEngangTillagg, natPerkWhLivs, natAndelLcoe, natChart, natLivsKr,
 
     // Hjälpvärden till diagram (driftkostnaden utan nät och kapitalkostnaden
     // utan nätens engångsdel, så att nätposten inte dubbelräknas)

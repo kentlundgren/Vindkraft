@@ -22,11 +22,17 @@
    km, natavstavstand km, natenergi öre/kWh (negativt = ersättning),
    natutredning kkr, natengangschablon kkr/MW.
 
-   Version 1.0 · 2026-11-22
+   Version 1.1 · 2026-11-22 (utgångspunkten NAT_UTGANGSPUNKT tillagd)
    ============================================================================ */
 
-var NAT_DATA_VERSION = '1.0';
+var NAT_DATA_VERSION = '1.1';
 var NAT_DATA_DATUM = '2026-11-22';
+
+/** Utgångspunkten för analysen: ledaren och inlägget som återger den. Ingår i källistan. */
+var NAT_UTGANGSPUNKT = [
+  { text: 'Denli, S. (2026) Vindkraftens ekonomi handlar om mer än elpriset, ledare i Svensk Vindkraft, 16 november (ledaren pekar ut nätavgifter, anslutningskostnader och nya systemkrav som svåra att förutse, utan belopp)', url: 'https://svenskvindkraft.com/vindkraftens-ekonomi-handlar-om-mer-an-elpriset/', hamtad: '2026-11-22' },
+  { text: 'Svensk Vindkraft (2026) LinkedIn-inlägg 19 november som återger ledarens inledning (visar att branschorganisationen lyfter frågan)', url: 'https://www.linkedin.com/posts/svensk-vindkraft_i-senaste-numret-av-v%C3%A5r-tidning-svensk-vindkraft-activity-7529084415403253761-pt5K', hamtad: '2026-11-22' }
+];
 
 /** Id på det fall Kent har utsett till normalfall, eller null. */
 var NAT_NORMALFALL = null;
@@ -314,5 +320,5 @@ var NAT_EXEMPEL = [
 ];
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { NAT_EXEMPEL: NAT_EXEMPEL, NAT_REGELVERK: NAT_REGELVERK, NAT_NORMALFALL: NAT_NORMALFALL, NAT_NORMALFALL_ANGIVELSE: NAT_NORMALFALL_ANGIVELSE, natTomtFalt: natTomtFalt };
+  module.exports = { NAT_EXEMPEL: NAT_EXEMPEL, NAT_REGELVERK: NAT_REGELVERK, NAT_NORMALFALL: NAT_NORMALFALL, NAT_NORMALFALL_ANGIVELSE: NAT_NORMALFALL_ANGIVELSE, natTomtFalt: natTomtFalt, NAT_UTGANGSPUNKT: NAT_UTGANGSPUNKT };
 }

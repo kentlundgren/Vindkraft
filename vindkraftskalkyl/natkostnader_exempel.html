@@ -11,6 +11,8 @@
 
   UPPDATERING 2026-11-22: sidan skapades. Version 1.0.
   UPPDATERING 2026-11-22 (senare): antagandet om engångskostnaden i Det som saknas. Version 1.1.
+  UPPDATERING 2026-11-22 (senare igen): länk "Visa i kalkylen" vid varje fall. Version 1.2.
+  UPPDATERING 2026-11-22 (senare igen): utgångspunkten (ledaren), växlare ett verk / fem verk, förvalt ett verk, förklaringar vid hovring i Diagram 1, avsnittet Kan producenten tjäna på nätavgiften. Version 1.3.
   ============================================================================
 -->
 <html lang="sv">
@@ -43,6 +45,24 @@
 
   <main class="nat-sida">
 
+    <section aria-labelledby="utgangspunkt-rubrik">
+      <h2 id="utgangspunkt-rubrik">Utgångspunkt <a class="ankare" href="#utgangspunkt-rubrik" aria-label="Länk till den här rubriken">#</a></h2>
+      <p>
+        Analysen utgår från ledaren
+        <a href="https://svenskvindkraft.com/vindkraftens-ekonomi-handlar-om-mer-an-elpriset/" target="_blank" rel="noopener">Vindkraftens ekonomi handlar om mer än elpriset</a>
+        av Sevdie Denli, styrelseledamot i Svensk Vindkraftförening, publicerad i tidningen <em>Svensk Vindkraft</em> 2026-11-16
+        (Denli, 2026). Svensk Vindkraft återgav ledarens inledning i ett
+        <a href="https://www.linkedin.com/posts/svensk-vindkraft_i-senaste-numret-av-v%C3%A5r-tidning-svensk-vindkraft-activity-7529084415403253761-pt5K" target="_blank" rel="noopener">LinkedIn-inlägg</a>
+        2026-11-19 (Svensk Vindkraft, 2026). Ledaren menar att nätavgifter, anslutningskostnader och nya systemkrav
+        kan få stor betydelse för investeringar som ska bära sig i flera decennier, och att osäkerheten ökar när kostnaderna är svåra att förutse.
+      </p>
+      <p>
+        Ledaren anger inga belopp och definierar inte "nya systemkrav". Det här är därför ett försök att
+        hitta beloppen i nätägarnas och Svenska kraftnäts egna prislistor och att visa hur stora de blir för ett verk och för en park.
+        Det som inte går att belägga, till exempel anslutningskostnader och systemkrav, står som saknat och inte som noll.
+      </p>
+    </section>
+
     <section aria-labelledby="inledning-rubrik">
       <h2 id="inledning-rubrik">Så ska sidan läsas <a class="ankare" href="#inledning-rubrik" aria-label="Länk till den här rubriken">#</a></h2>
       <p>
@@ -56,12 +76,17 @@
       </p>
       <div class="nat-inmatning">
         <label>Total effekt (MW)
-          <input type="number" id="p-effekt" class="indata" value="20" step="1" min="1">
+          <input type="number" id="p-effekt" class="indata" value="4" step="1" min="1">
         </label>
+        <div class="nat-verkvaxel" role="group" aria-label="Välj ett verk eller en park">
+          <button type="button" class="nat-verkknapp" id="sida-verk-1" data-mw="4" aria-pressed="true">Ett verk, 4 MW</button>
+          <button type="button" class="nat-verkknapp" id="sida-verk-5" data-mw="20" aria-pressed="false">Fem verk, 20 MW</button>
+        </div>
         <label>Kapacitetsfaktor (0–1)
           <input type="number" id="p-kapfaktor" class="indata" value="0.37" step="0.01" min="0.05" max="0.7">
         </label>
-        <p class="hint">Förvalt är kalkylens: 5 verk à 4 MW = 20 MW och 0,37.</p>
+        <p class="hint">Förvalt är kalkylens: ett verk om 4 MW och kapacitetsfaktor 0,37. Växla till fem verk om 4 MW (20 MW) och se vad som ändras. En fast årsavgift per anslutning ger fler öre per kWh för ett verk än för en park, medan avgifter per kW och per kWh inte ändras.</p>
+        <p class="hint nat-varning" id="ensamt-verk-not" hidden>Obs: fall A, B och E har en fast årsavgift per anslutning. För ett enskilt 4 MW-verk skulle nätägaren troligen anvisa en lägre spänningsnivå med en annan fast avgift, så öre per kWh för ett verk är ett räkneexempel och inte en belagd kostnad för ett ensamt verk.</p>
       </div>
     </section>
 
@@ -79,6 +104,7 @@
 
       <div class="diagram-ruta">
         <h3 id="Diagram1">Diagram 1. Löpande nätkostnad per fall, öre per kWh</h3>
+        <p class="hint">Hovra eller tryck på en stapel för en kort förklaring av varför fallet ligger där det gör. Växla mellan ett verk och fem verk ovan och se hur staplarna med fast årsavgift (A, B och E) flyttar sig.</p>
         <canvas id="diagram-fall" height="120"></canvas>
       </div>
     </section>
@@ -98,6 +124,20 @@
     <section aria-labelledby="normalfall-rubrik">
       <h2 id="normalfall-rubrik">Normalfall <a class="ankare" href="#normalfall-rubrik" aria-label="Länk till den här rubriken">#</a></h2>
       <p id="normalfall-text"></p>
+    </section>
+
+    <section aria-labelledby="tjana-rubrik">
+      <h2 id="tjana-rubrik">Kan producenten tjäna på nätavgiften? <a class="ankare" href="#tjana-rubrik" aria-label="Länk till den här rubriken">#</a></h2>
+      <p>
+        I fall C och E blir den löpande nätkostnaden negativ, alltså en nettoersättning till producenten. Det kan se konstigt ut mot
+        ledarens oro över nätkostnaderna (Denli, 2026). Tre förbehåll hör ihop med det:
+      </p>
+      <ol>
+        <li><strong>Det är en delmängd av kostnaderna.</strong> Siffrorna gäller bara löpande nätavgifter. Anslutningskostnader (ledning, station, förstärkning) och nya systemkrav saknar belopp i källorna och ingår inte. Det är just de posterna, och osäkerheten om dem, som ledaren pekar på.</li>
+        <li><strong>Energiavgiften följer stamnätets förluster.</strong> Svenska kraftnäts energiavgift räknas med en förlustkoefficient (se fall C). Inmatning i södra Sverige minskar stamnätets förluster, så koefficienten är negativ och producenten får en ersättning. Inmatning i norr ökar förlusterna, så koefficienten är positiv och producenten betalar (fall D). Vattenfalls regionnät har en motsvarande energiersättning (fall A och B).</li>
+        <li><strong>Resultatet beror på antaganden och regelverk i rörelse.</strong> Ersättningen i C och E räknas med elpriset 0,60 kr/kWh, kalkylens förvalda för elområde 4, och ändras med elpriset. Svenska kraftnäts reducering av energiavgiften med flaskhalsinkomster är inte inräknad. Fall E gäller 2027 års nya avgiftsmodell, och Eis föreskrifter är remissutkast. Att reglerna ändras är en del av den osäkerhet ledaren beskriver.</li>
+      </ol>
+      <p>Slutsatsen är att nätavgifterna i sig, i de belagda fallen, kan vara små eller negativa i söder, men att totalbilden för en producent också beror på det som saknas här.</p>
     </section>
 
     <section aria-labelledby="saknas-rubrik">
