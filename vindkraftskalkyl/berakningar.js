@@ -34,8 +34,10 @@
    UPPDATERING 2026-11-22 (senare igen): raden Ingår inte i sammanfattningen (natkostnader_ui.js). Version 1.6.
    UPPDATERING 2026-11-22 (senare igen): utredningsavgiften räknas på parkens effekt (fast del, kkr/MW och tak), Ei:s föreskrift EIFS 2026:10 beslutad, ny version av Svenska kraftnäts vägledning. Version 1.7.
    UPPDATERING 2026-11-22 (senare igen): panelen Nätkostnader i siffror är hopfälld, med de två summorna synliga (natkostnader_ui.js). Version 1.8.
-   UPPDATERING 2026-11-22 (senare igen): rutan Välj nätfall efter parkens storlek och trappan över parkeffekt och nätfall (natkostnader_ui.js). Version 1.9. */
-const VERSION = '1.9';
+   UPPDATERING 2026-11-22 (senare igen): rutan Välj nätfall efter parkens storlek och trappan över parkeffekt och nätfall (natkostnader_ui.js). Version 1.9.
+   UPPDATERING 2026-11-22 (senare igen): delningsraden med adressen till natkostnader/ och miniatyr av delningsbilden. Version 1.10.
+   UPPDATERING 2026-11-22 (senare igen): fältet med länken till valet är borttaget (knappen Kopiera länk finns kvar) och delningsraden är hopfälld. Version 1.11. */
+const VERSION = '1.11';
 const VERSIONSDATUM = '2026-11-22';
 
 /* ============================================================================

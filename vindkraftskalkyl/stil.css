@@ -577,3 +577,12 @@ h2:hover > .ankare, h3:hover > .ankare, .ankare:focus { opacity: 1; }
 .nat-auto input { width: auto; margin-right: .3rem; }
 .nat-storlek { margin: .3rem 0 .5rem 1.1rem; padding: 0; font-size: .8rem; }
 .nat-tabell tr.nu td, .nat-tabell tr.nu th { background: #e8f1fb; font-weight: 700; }
+
+/* Delningsraden med adress och miniatyr av delningsbilden */
+.nat-dela { margin: .6rem 0; padding: .6rem .7rem; border: 1px solid var(--farg-ram); border-radius: 6px; background: var(--farg-framhavd); }
+.nat-dela label { display: block; font-size: .8rem; }
+.nat-dela-bild { display: block; width: 100%; max-width: 360px; height: auto; border: 1px solid var(--farg-ram); border-radius: 4px; margin-top: .3rem; }
+
+/* Hopfälld delningsrad */
+details.nat-dela > summary { cursor: pointer; font-weight: 600; font-size: .85rem; color: var(--farg-primar); }
+details.nat-dela[open] > summary { margin-bottom: .4rem; }

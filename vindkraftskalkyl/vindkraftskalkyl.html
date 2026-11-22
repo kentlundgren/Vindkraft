@@ -48,6 +48,12 @@
 
   UPPDATERING 2026-11-22 (senare igen): rutan Välj nätfall efter parkens storlek (förvalt ikryssad) så att fallet byts när antal
   verk ändras, och en trappa som visar vilken parkeffekt som passar fall B och A. Version 1.9.
+
+  UPPDATERING 2026-11-22 (senare igen): delningsraden Dela med nätkostnadsbilden i gruppen Nät och systemkrav, med adressen
+  till natkostnader/ (egen förhandsbild), en kopieringsknapp och en miniatyr av bilden. Version 1.10.
+
+  UPPDATERING 2026-11-22 (senare igen): fältet med länken till valet är borttaget (adressen finns i webbläsarens adressfält, och
+  knappen Kopiera länk finns kvar), och delningsraden är hopfälld. Version 1.11.
   ============================================================================
 -->
 <html lang="sv">
@@ -235,12 +241,20 @@
         </div>
 
         <div class="nat-valdlank">
-          <label>Länk till det här valet (läge, exempelfall och om engångskostnaden ingår)
-            <input type="text" id="nat-valdlank-falt" class="natlank" readonly value="">
-          </label>
-          <button type="button" id="nat-kopiera" class="nat-kopiera">Kopiera länk</button>
+          <button type="button" id="nat-kopiera" class="nat-kopiera">Kopiera länk till det här valet</button>
+          <p class="hint">Länken återger läge, exempelfall, antal verk och om engångskostnaden ingår. Samma adress finns i webbläsarens adressfält.</p>
           <p class="hint" id="nat-lank-varning" hidden>Värden som du har ändrat för hand följer inte med i länken. Länken återger valt läge och exempelfall.</p>
         </div>
+
+        <details class="nat-dela" id="nat-dela">
+          <summary>Dela med nätkostnadsbilden</summary>
+          <label>Delningsadress med egen förhandsbild <span class="hjalp" tabindex="0" data-hjalp="Den här adressen ger en egen förhandsbild på LinkedIn, X och Facebook (bilden nedan) och skickar den som öppnar länken vidare till den här kalkylen med nätkostnaderna på. Länken till valet ovan (med ankare) ger kalkylens vanliga bild, eftersom delningstjänsterna ignorerar ankaret.">?</span>
+            <input type="text" id="nat-dela-falt" class="natlank" readonly value="https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/natkostnader/">
+          </label>
+          <button type="button" id="nat-dela-kopiera" class="nat-kopiera">Kopiera delningslänk</button>
+          <p class="hint">Förhandsbilden som visas när adressen delas (<a href="natkostnader/og-bild.jpg" target="_blank" rel="noopener">öppna bilden</a>):</p>
+          <img class="nat-dela-bild" src="natkostnader/og-bild.jpg" width="1200" height="630" loading="lazy" alt="Fem vindkraftverk på en kulle, en kraftledningsmast och ett ställverk med mynt märkta öre. Rubrik: Vad kostar nätet för vindkraft? Nätkostnaderna är nu med i kalkylen.">
+        </details>
 
         <details id="nat-detaljer" class="nat-detaljer">
           <summary>Visa och ändra alla nätfält</summary>

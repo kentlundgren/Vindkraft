@@ -200,13 +200,27 @@
     return true;
   }
 
+  let senasteLank = '';
+
+  /* Kopierar text till urklipp, med reservväg när webbläsaren saknar clipboard-API. */
+  function kopiera(text, klart) {
+    const reserv = () => {
+      const t = document.createElement('textarea');
+      t.value = text; t.setAttribute('readonly', ''); t.style.position = 'fixed'; t.style.opacity = '0';
+      document.body.appendChild(t); t.select();
+      try { document.execCommand('copy'); } catch (e) { /* inget att göra */ }
+      document.body.removeChild(t); klart();
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(klart, reserv);
+    else reserv();
+  }
+
   function uppdateraLank() {
     const h = byggHash();
     try {
       history.replaceState(null, '', location.pathname + location.search + h);
     } catch (e) { /* t.ex. vissa lokala miljöer: länken visas ändå nedan */ }
-    const falt = el('nat-valdlank-falt');
-    if (falt) falt.value = location.origin === 'null' || location.protocol === 'file:'
+    senasteLank = location.origin === 'null' || location.protocol === 'file:'
       ? location.href.split('#')[0] + h
       : location.origin + location.pathname + location.search + h;
   }
@@ -223,11 +237,11 @@
     markeraVerkknappar();
     const knapp = el('nat-kopiera');
     if (knapp) knapp.addEventListener('click', () => {
-      const falt = el('nat-valdlank-falt');
-      const klart = () => { knapp.textContent = 'Kopierad'; setTimeout(() => { knapp.textContent = 'Kopiera länk'; }, 1800); };
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(falt.value).then(klart, () => { falt.select(); document.execCommand('copy'); klart(); });
-      } else { falt.select(); document.execCommand('copy'); klart(); }
+      kopiera(senasteLank, () => { knapp.textContent = 'Kopierad'; setTimeout(() => { knapp.textContent = 'Kopiera länk till det här valet'; }, 1800); });
+    });
+    const dk = el('nat-dela-kopiera');
+    if (dk) dk.addEventListener('click', () => {
+      kopiera(el('nat-dela-falt').value, () => { dk.textContent = 'Kopierad'; setTimeout(() => { dk.textContent = 'Kopiera delningslänk'; }, 1800); });
     });
     window.addEventListener('hashchange', () => {
       if (tillampaHash()) {
