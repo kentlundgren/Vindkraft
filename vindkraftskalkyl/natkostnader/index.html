@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  Delningssida för nätkostnaderna i vindkraftskalkylen
+  ----------------------------------------------------------------------------
+  Adress att dela: https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/natkostnader/
+
+  Varför en egen sida: en delningsförhandsvisning (Open Graph) läses ur sidans
+  <head> av LinkedIn, X och Facebook. De kör inget JavaScript och bortser från
+  ankaret (#...) i adressen, så en adress som slutar med #Natkostnad_Bas_...
+  får alltid samma bild som kalkylen själv. Den här sidan har därför en egen
+  adress och en egen bild (og-bild.jpg i samma mapp), och skickar läsaren vidare
+  till kalkylen med nätkostnaderna på, ett typfall för fem verk:
+  ../vindkraftskalkyl.html#Natkostnad_Bas_Typfall_Verk_5
+
+  Ingen canonical-tagg sätts, eftersom den skulle få förhandsvisningen att hämta
+  kalkylens bild i stället för den här.
+
+  Sidan är en vidarebefordran och har därför inte hörnparet, brödsmulor eller
+  versionsrad som en innehållssida.
+
+  UPPDATERING 2026-11-22: sidan skapades. Version 1.0.
+  ============================================================================
+-->
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vad kostar nätet för vindkraft? Nätkostnader i kalkylen</title>
+  <meta name="description" content="Nätkostnaderna är nu med i vindkraftskalkylen: löpande nätavgifter i öre per kWh och kronor per år, för ett verk eller en park. Exempel ur Vattenfalls och Svenska kraftnäts tariffer.">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="sv_SE">
+  <meta property="og:title" content="Vad kostar nätet för vindkraft? Nätkostnaderna är nu med i kalkylen">
+  <meta property="og:description" content="Räkna på nätavgifterna för ett verk eller en park: öre per kWh och kronor per år. Exempel ur Vattenfalls och Svenska kraftnäts tariffer. Anslutningskostnader och nya systemkrav saknar belopp i källorna och ingår inte.">
+  <meta property="og:url" content="https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/natkostnader/">
+  <meta property="og:image" content="https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/natkostnader/og-bild.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Fem vindkraftverk på en kulle, en kraftledningsmast och ett ställverk med mynt märkta öre. Rubrik: Vad kostar nätet för vindkraft? Nätkostnaderna är nu med i kalkylen.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Vad kostar nätet för vindkraft? Nätkostnaderna är nu med i kalkylen">
+  <meta name="twitter:description" content="Räkna på nätavgifterna för ett verk eller en park: öre per kWh och kronor per år.">
+  <meta name="twitter:image" content="https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/natkostnader/og-bild.jpg">
+
+  <style>
+    :root { --bakgrund: #ffffff; --text: #14365d; --lank: #1d5fa6; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) { --bakgrund: #0f1b2a; --text: #e3ecf6; --lank: #8ab9ea; }
+    }
+    :root[data-theme="dark"] { --bakgrund: #0f1b2a; --text: #e3ecf6; --lank: #8ab9ea; }
+    body { margin: 0; padding: 2rem 16px; background: var(--bakgrund); color: var(--text); font-family: "Segoe UI", system-ui, sans-serif; line-height: 1.5; }
+    main { max-width: 36rem; margin: 0 auto; }
+    a { color: var(--lank); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Vad kostar nätet för vindkraft?</h1>
+    <p>Du skickas vidare till <a id="mal" href="../vindkraftskalkyl.html#Natkostnad_Bas_Typfall_Verk_5">vindkraftskalkylen med nätkostnaderna på</a>, ett typfall för fem verk om 4 MW. Fungerar inte vidarebefordran, öppna länken ovan.</p>
+  </main>
+  <script>
+    // Vidarebefordran. Förhandsvisningsrobotar kör inte JavaScript och stannar därför här.
+    (function () {
+      var mal = document.getElementById('mal').getAttribute('href');
+      try { location.replace(mal); } catch (e) { location.href = mal; }
+    })();
+  </script>
+</body>
+</html>

@@ -65,6 +65,8 @@ Projektet består av tre huvudfiler i denna mapp, plus en förklaringsruta och e
 | `berakningar.js` | All beräknings- och interaktionslogik. |
 | [`narboende_info.js`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/narboende_info.js) | Förklaringsruta för "närboende" (hovring, fokus, tryck) med länk till information om lag (2026:1113). |
 | [`og-bild.jpg`](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/og-bild.jpg) | Delningsbild, 1200×630 px, för länkförhandsvisning på LinkedIn, X och Facebook. |
+| [`natkostnader/index.html`](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/natkostnader/) | Delningssida för nätkostnaderna: egen adress och egen bild för länkförhandsvisning, som skickar läsaren vidare till kalkylen med nätkostnaderna på (`#Natkostnad_Bas_Typfall_Verk_5`). |
+| [`natkostnader/og-bild.jpg`](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/natkostnader/og-bild.jpg) | Delningsbild för nätkostnaderna, 1200×630 px. |
 | [`natkostnader_berakning.js`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/natkostnader_berakning.js) | Ren beräkningsmodul för nätkostnader och systemkrav (engång i kr/MW, löpande i öre/kWh). Går att köra i Node. |
 | [`natkostnader_ui.js`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/natkostnader_ui.js) | Gränssnitt: exempelfallsväljare, panelen "Nätkostnader i siffror". |
 | [`natkostnader_hjalp.js`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/natkostnader_hjalp.js) | Förklaringsrutor vid hovring, fokus och tryck. |
