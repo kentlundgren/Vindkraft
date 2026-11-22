@@ -3,8 +3,8 @@
 **Namn:** PRD_natkostnader
 **Plats:** `vindkraftskalkyl/PRD_natkostnader.md`
 **Skapad:** 2026-11-22
-**Version:** 0.8
-**Status:** Utkast. Ingen kod är ändrad. Inga belopp är fastställda (se fas 1, avsnitt 8). Fas 1 pågår: ledaren är läst och definierar inte "nya systemkrav" eller anger belopp. Anslutning, systemkrav och löpande nätavgifter för producenter är genomgångna mot publicerade källor i [KALLOR_natkostnader.md](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/KALLOR_natkostnader.md). Svenska kraftnäts egna prislistor för 2026 och 2027 är också genomgångna. Regionnätens avgifter för 2027 och fler nätägare återstår.
+**Version:** 0.9
+**Status:** Utkast. Exempelfallen A–G är godkända av Kent (2026-11-22). Faktorerna för låg och hög återstår att godkänna. Ingen kod är ändrad. Inga belopp är fastställda (se fas 1, avsnitt 8). Fas 1 pågår: ledaren är läst och definierar inte "nya systemkrav" eller anger belopp. Anslutning, systemkrav och löpande nätavgifter för producenter är genomgångna mot publicerade källor i [KALLOR_natkostnader.md](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/KALLOR_natkostnader.md). Svenska kraftnäts egna prislistor för 2026 och 2027 är också genomgångna. Regionnätens avgifter för 2027 och fler nätägare återstår.
 **Typ:** Tilläggs-PRD till [vindkraftskalkylen](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html) (huvudversionen, GitHub Pages).
 
 > Dokumentet säger *vad* som ska byggas och *varför*, innan kod. Det är inte en SPEC.md. Ställningstagande till SPEC.md står i avsnitt 10.
@@ -81,6 +81,8 @@ Tabell 1. Beslut om modellen (planeringssamtal 2026-11-22) [#](#tabell-1)
 | Förvalda värden per elområde | Nej. Nätägaren påverkar mer än elområdet (Tabell 3 och 5 i källfilen). I stället finns en valfri väljare "exempelfall" som fyller fälten med ett dokumenterat fall (till exempel Vattenfall PT1 eller Svenska kraftnät söder och norr) eller lämnar dem för egna värden. |
 | Systemkravens belopp | Källorna anger inga belopp. Fälten för systemkrav står på 0 och märks "ingen källa med belopp, fyll i vid behov". Spannet låg/hög påverkar bara fält med värde. |
 | Långhult, ver2, ver3 | Inte i första versionen. Tas var för sig efter att huvudversionen är godkänd. |
+| Exempelfallen i separat fil | Alla exempelfall ligger i en enda datafil, `natkostnader_exempel.js`, som både kalkylen och läsarsidan läser. Filen är `.js` och inte `.json`, eftersom kalkylen ska fungera när den öppnas direkt i webbläsaren utan server. |
+| Läsarsida | En egen HTML-sida, `natkostnader_exempel.html`, visar alla fall med värden, källor och antaganden, sorterade efter löpande kostnad i öre/kWh. Sidan ska visa spridningen i fallen och inte påstå vad som är "normalt" så länge underlaget är så smalt (se avsnittet läsarsida). |
 
 <a id="4-perspektiv"></a>
 
@@ -232,7 +234,34 @@ Fas 2 är klar när formlerna ovan har granskats mot källfilens enheter (klart 
 - Kostnadsdiagrammet (år 1) får en egen post "Nät och systemkrav" = löpande nätkostnad år 1 + annuiteten på engångsdelen. Hur diagrammet delar upp kapitalkostnaden kontrolleras i fas 2, så att annuiteten på engångsdelen inte dubbelräknas.
 - Källor och antaganden-sektionen får de nya källorna i Harvardform med klickbara, verifierade länkar.
 - Jämförelsetabellen (Senaste / Tidigare / Förändring) fungerar som i dag för de nya nyckeltalen.
+- Vid väljaren "exempelfall" finns länken "Se alla exempelfall och källor" till läsarsidan. När ett fall är valt visas en rad med fallets öre/kWh och spannet över alla fall. Läsarens egna värden placeras på samma sätt i spannet.
 - Versionsrad: sidan har ingen versionsrad i dag. Den läggs till (`VERSION` och `VERSIONSDATUM` i JS) enligt regel 19 i `kent-bygg-sidor`, och höjs sedan vid varje ändring.
+
+### läsarsida för exempelfallen [#](#lasarsida)
+
+<a id="lasarsida"></a>
+
+Syftet är att läsaren lätt ska kunna se vilka fall nätkostnaderna bygger på, vad som ligger under och över, och att Kent och Claude vid en framtida genomgång ska se om ett fall ligger utanför det vanliga.
+
+**Datafilen `natkostnader_exempel.js`** definierar `NAT_EXEMPEL`, en lista där varje fall har:
+
+- bokstav och namn, nättyp (regionnät, stamnät direkt, lokalnät) och tariffår,
+- alla fältvärden i Tabell 7 (`natfast`, `nateffekt`, `natavstavg`, `natavstavstand`, `natenergi`, `natutredning`),
+- källa i Harvardform med klickbar länk och hämtdatum, och sidhänvisning där det går,
+- antaganden (till exempel avståndet 20 km) och vad som inte är medräknat (till exempel Svenska kraftnäts reducering av energiavgiften),
+- datum då fallet senast kontrollerades, och en markering `sarfall` för fall som inte är representativa (lokalnät som en vindkraftutvecklare äger).
+
+**Sidan `natkostnader_exempel.html`** ska ha:
+
+1. En tabell över fallen, sorterad från lägsta till högsta löpande kostnad i öre/kWh, med värden, källa, antaganden och "senast kontrollerad". Tabellen och diagrammet har nummer, namn och eget `#`-ankare.
+2. Ett diagram över löpande nätkostnad per fall i öre/kWh. Negativa värden (ersättningar) syns som staplar åt andra hållet.
+3. Ett avsnitt "spridning": lägsta, högsta och medianen av de representativa fallen. Fall märks som "under" eller "över" medianen, och särfall märks som särfall. Texten använder inte ordet "normal" förrän fler nätägare finns med (Ellevio, E.ON).
+4. Ett avsnitt "det som saknas": engångsposterna (ledning, station, förstärkning, systemkrav) har inga belagda fall. Det står uttryckligen, så att läsaren ser vad som är okänt.
+5. En varning för fall vars kontrolldatum är äldre än ett år, och en notis om att tarifferna ändras varje årsskifte.
+6. Förklaringar vid hovring, fokus och tryck för förkortningar och namn (PT1, PT2, kr/kW,km, förlustkoefficient, kundspecifik avgift).
+7. Hörnparet `{ } GitHub` och `</> teknik` med modal ("Tekniken" och "Metoden"), kopierat från `Presentationer/Nr1/`, versionsrad (`VERSION` och `VERSIONSDATUM`, början på 1.0) och en länk tillbaka till kalkylen. Sidan och kalkylen delar mapp, så brödsmulor och "Fler dokument i samma mapp" sätts upp med `dokument.json` enligt regel 17 i `kent-bygg-sidor`. Huvuddokument är kalkylen.
+
+**Underhåll:** datafilen uppdateras varje årsskifte, efter att Svenska kraftnäts styrelse fattat sitt beslut om nästa års avgifter (i september). Ett test räknar om varje fall med formlerna i fas 2 och jämför med Tabell 8, så att ett värde inte kan ändras utan att det syns. Provet kan köras i webbläsaren eller med Node.
 
 <a id="7-kallor"></a>
 
@@ -255,8 +284,8 @@ Tabell 4. Faser med resultat och kontroll [#](#tabell-4)
 | 0 | Den här PRD:n | Kent har godkänt, och en genomläsning med fräscha ögon är gjord |
 | 1 | Källinsamling: verifierade källor och en tabell med värde, enhet, år, sida och källa per fält | Alla fält i tabell 3 har värde med källa eller är märkta antaganden |
 | 2 | Formler, fältnamn och exempelfall fastställs i detalj (avsnittet fas 2) | Formlerna är överens med fas 1:s enheter och Kent har godkänt exempelfallen och faktorerna |
-| 3 | Bygg i huvudkalkylen: indata, exempelfall, beräkning, panelen Nätkostnader i siffror, diagram, hjälptexter, källor, README, version | Acceptanskriterierna i avsnitt 9 uppfylls |
-| 4 | Test: nollfall, handräkning, känslighet | Tabell 5 avprickad |
+| 3 | Bygg i huvudkalkylen: indata, beräkning, panelen Nätkostnader i siffror, diagram, hjälptexter, källor, README, version. Bygg även datafilen `natkostnader_exempel.js` och läsarsidan `natkostnader_exempel.html`. | Acceptanskriterierna i avsnitt 9 uppfylls |
+| 4 | Test: nollfall, handräkning, känslighet, exempelfallens testvärden | Tabell 5 avprickad |
 | 5 | Senare steg, var för sig: Långhult-kopian, ver2, ver3 | Eget beslut per version |
 
 <a id="9-acceptanskriterier"></a>
@@ -283,7 +312,11 @@ Tabell 5. Tester som ska passera [#](#tabell-5)
 | Nätkostnad per kWh | Diskonterad nätkostnad delat med diskonterad energi stämmer med handräkning |
 | Diagram | Posterna summerar till `totalkostnad` plus övriga lokala poster, utan dubbelräkning |
 | Fält | Nya indatafält är gula, märkta och har förklaring; inga andra element är gula |
-| Version | `VERSION` och `VERSIONSDATUM` är satta och uppdaterade i samma ändring |
+| Exempelfall mot Tabell 8 | Varje exempelfall i datafilen ger de förväntade värdena i Tabell 8 när det räknas med fas 2:s formler |
+| En datakälla | Väljaren i kalkylen och läsarsidan visar samma fall med samma värden, eftersom båda läser `natkostnader_exempel.js` |
+| Läsarsidan | Tabellen är sorterad efter öre/kWh, negativa värden syns åt andra hållet i diagrammet, särfall är märkta och ordet "normal" förekommer inte |
+| Gammalt fall | Ett fall med kontrolldatum äldre än ett år visas med varning |
+| Version | `VERSION` och `VERSIONSDATUM` är satta och uppdaterade i samma ändring, på kalkylen och på läsarsidan |
 
 <a id="10-spec"></a>
 
@@ -298,6 +331,8 @@ Behövs ett SPEC.md-steg härifrån? **Nej.** Ändringen är begränsad (ett få
 - **Falsk precision:** nätkostnader varierar mycket mellan projekt. Schabloner kan se mer exakta ut än de är. Åtgärd: tydlig märkning och en uppmaning att kontrollera mot nätägaren.
 - **Regler som ändras:** nätkoder och tariffer revideras. Åtgärd: årtal och hämtdatum vid varje källa.
 - **Dubbelräkning:** annuiteten på engångskostnaden får inte synas både i "kapitalkostnad" och i nätposten i diagrammet. Åtgärd: testet i tabell 5.
+- **Fall som blir gamla:** tarifferna ändras varje årsskifte. Åtgärd: kontrolldatum per fall, varning efter ett år och en årlig uppdatering efter Svenska kraftnäts beslut i september.
+- **För få fall för att säga "normalt":** underlaget är i huvudsak Vattenfall, Svenska kraftnät och ett lokalnät. Åtgärd: sidan visar spridning, inte normalvärde, tills fler nätägare finns med.
 - **Fyra kopior av kalkylen:** huvudversion, Långhult, ver2 och ver3 kan komma att visa olika resultat. Åtgärd: README anger vilken version som har nätkostnader.
 
 <a id="12-oppna-fragor"></a>
@@ -307,8 +342,8 @@ Behövs ett SPEC.md-steg härifrån? **Nej.** Ändringen är begränsad (ett få
 Modellfrågorna är avgjorda (Tabell 1). Kvar är sådant som bara källor eller Kent kan avgöra:
 
 1. Vilka belopp gäller för nya systemkrav? Ingen källa anger något. Fälten står på 0 tills det finns belägg eller Kent anger ett antagande.
-2. Godkänner Kent exempelfallen A–G i Tabell 7 och faktorerna 0,5 (låg) och 1,5 (hög)? Faktorerna är antaganden.
+2. Godkänner Kent faktorerna 0,5 (låg) och 1,5 (hög)? De är antaganden. Exempelfallen A–G är godkända.
 3. Vill Kent ange ett illustrativt antagande för ledning, station och förstärkning (kkr), tydligt märkt som antagande, så att engångsposten i kr/MW inte står på 0 i exempelfallen? Ingen publicerad källa anger belopp.
 4. Har Ei beslutat föreskrifterna om anslutningsavgifter och om krav för kraftproduktionsmoduler? Båda är i källfilen remissutkast.
-5. Regionnätens avgifter för 2027 och fler nätägare (Ellevio, E.ON) behöver genomgås, så att exempelfallen speglar mer än Vattenfall.
+5. Regionnätens avgifter för 2027 och fler nätägare (Ellevio, E.ON) behöver genomgås, så att exempelfallen speglar mer än Vattenfall. Först då kan läsarsidan säga något om vad som är normalt.
 6. Hur ofta behöver exempelfallen uppdateras, och vem gör det när tarifferna ändras varje årsskifte?
