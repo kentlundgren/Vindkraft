@@ -65,6 +65,8 @@
 
   UPPDATERING 2026-11-22 (senare igen): gemensam kärna kalkylkarna.js för finansmatematik och nätkopplingen, delad med fallet Långhult, och nätformateringen i natkostnader.css. Resultaten är oförändrade. Version 1.15.
 
+  UPPDATERING 2026-11-23 (senare igen 13): Sammanställningen kandidater.md är en egen källpost (Lundgren, 2026) och Vindbrukskollen har en hänvisning på V (se Länsstyrelserna (2026)). Version 1.30.
+
   UPPDATERING 2026-11-23 (senare igen 12): blänkare under Kapacitetsfaktor med riktvärdet 37 % (3 241 fullasttimmar, spann cirka 34–38 %) ur projektkandidater/kandidater.md, och Länsstyrelserna (2026) i källistan. Version 1.29.
 
   UPPDATERING 2026-11-23 (senare igen 11): tabellerna är numrerade i läsordning utan dubbletter (nättabellen heter Nättabell 1, närboende per zon Tabell 1 och bostäder till Tabell 2). Version 1.28.
@@ -172,7 +174,7 @@
         <label>Kapacitetsfaktor (0–1)
           <input type="number" step="0.01" id="kapfaktor" class="indata" value="0.37">
           <span class="hint" id="kf-timmar">–</span>
-          <span class="hint" id="kf-riktvarde">–</span>
+          <span class="hint" id="kf-riktvarde" data-berakning-ar="2026">–</span>
         </label>
 
         <label>Verkshöjd (m)
@@ -901,10 +903,15 @@
         <a href="https://www.energimyndigheten.se/fornybart/vindkraft/" target="_blank" rel="noopener">https://www.energimyndigheten.se/fornybart/vindkraft/</a>
         (hämtad 3 juli 2026). Allmänt underlag om produktion och kapacitetsfaktorer.
       </li>
+      <li id="ref-lundgren-kandidater">
+        Lundgren, K. (2026) <em>Kandidater för nya vindkraftskalkyler, ur Vindbrukskollen.</em> Tillgänglig:
+        <a href="https://github.com/kentlundgren/Vindkraft/blob/main/projektkandidater/kandidater.md" target="_blank" rel="noopener">https://github.com/kentlundgren/Vindkraft/blob/main/projektkandidater/kandidater.md</a>
+        (hämtad 23 november 2026). <em>(Sammanställning av aktuella vindkraftsprojekt ur Vindbrukskollen (<a href="#ref-lst-vbk">Länsstyrelserna, 2026</a>), med kapacitetsfaktor per projekt och riktvärdet 37 % för nya projekt. Underlag för blänkaren under Kapacitetsfaktor.)</em>
+      </li>
       <li id="ref-lst-vbk">
         Länsstyrelserna (2026) <em>Vindbrukskollen.</em> Karttjänst för vindkraft i Sverige, utgiven av Länsstyrelserna i samarbete med Energimyndigheten. Tillgänglig:
         <a href="https://ext-webbgis.lansstyrelsen.se/vbk/" target="_blank" rel="noopener">https://ext-webbgis.lansstyrelsen.se/vbk/</a>
-        (hämtad 23 november 2026). <em>(Underlag för riktvärdet 37 % för kapacitetsfaktorn i nya projekt: beräknad årsproduktion och effekt för projekt under handläggning, beviljade och överklagade. Data är öppna enligt <a href="https://www.lansstyrelsen.se/nationellt-innehall/om-oss/vara-tjanster/oppna-data.html" target="_blank" rel="noopener">Länsstyrelsen</a>. Beräkningen står i <a href="https://github.com/kentlundgren/Vindkraft/blob/main/projektkandidater/kandidater.md" target="_blank" rel="noopener">kandidater.md</a>.)</em>
+        (hämtad 23 november 2026). <em>(Underlag för riktvärdet 37 % för kapacitetsfaktorn i nya projekt: beräknad årsproduktion och effekt för projekt under handläggning, beviljade och överklagade. Data är öppna enligt <a href="https://www.lansstyrelsen.se/nationellt-innehall/om-oss/vara-tjanster/oppna-data.html" target="_blank" rel="noopener">Länsstyrelsen</a>.)</em>
       </li>
       <li>
         Regeringen (2026) <em>Proposition 2025/26:239 Vindkraft i kommuner.</em>
@@ -937,6 +944,9 @@
         Vattenfall Eldistribution (2026) <em>Tillämpningsbestämmelser och nättariffer för regionnätet</em>, 2026-01-01. Tillgänglig:
         <a href="https://www.vattenfalleldistribution.se/globalassets/2.-foretag/abonnemang-och-avgifter/avtal-och-elnatsavgift/tillampningsbestammelser-och-nattariffer-for-vattenfall-eldistributions-regionnat-2026-01-01.pdf" target="_blank" rel="noopener">https://www.vattenfalleldistribution.se/globalassets/2.-foretag/abonnemang-och-avgifter/avtal-och-elnatsavgift/tillampningsbestammelser-och-nattariffer-for-vattenfall-eldistributions-regionnat-2026-01-01.pdf</a>
         (hämtad 22 november 2026). <em>(Tariff för inmatning i regionnätet, underlag för nätfallen A, B, I och J.)</em>
+      </li>
+      <li id="ref-vindbrukskollen">
+        Vindbrukskollen: se <a href="#ref-lst-vbk">Länsstyrelserna (2026)</a>.
       </li>
       <li>
         <em>Vindkraftutredning för Norrbottens kust- och skärgårdsområde</em> (u.å.), s. 32–33. Tillgänglig:

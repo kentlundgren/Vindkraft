@@ -15,6 +15,7 @@
   domen och är märkta som antagande eller saknas.
 
   UPPDATERING 2026-11-23: sidan skapades. Version delas med huvudkalkylen (berakningar.js).
+  UPPDATERING 2026-11-23 (senare igen 13): Sammanställningen kandidater.md är en egen källpost (Lundgren, 2026b) och Vindbrukskollen har en hänvisning på V (se Länsstyrelserna (2026)). Version 1.30. Bloggen är Lundgren (2026a).
   UPPDATERING 2026-11-23 (senare igen 12): blänkare under Kapacitetsfaktor med riktvärdet 37 % (3 241 fullasttimmar, spann cirka 34–38 %) ur projektkandidater/kandidater.md, och Länsstyrelserna (2026) i källistan. Version 1.29.
   UPPDATERING 2026-11-23 (senare igen 11): tabellerna är numrerade i läsordning utan dubbletter (nättabellen heter Nättabell 1, närboende per zon Tabell 1 och bostäder till Tabell 2). Version 1.28.
   UPPDATERING 2026-11-23 (senare igen 10): källförteckningen är alfabetisk och osiffrad (Harvard) och varje källa en egen post. Version 1.27.
@@ -110,7 +111,7 @@
           <input type="number" step="0.0001" id="kapfaktor" class="indata" value="0.2618">
           <span class="badge pm">härledd ur domen</span>
           <span class="hint">22 704 MWh/år (efter 10 % säkerhetsmarginal) / (3 verk × 3,3 MW × 8 760 h) = 0,2618. Västanby AB anger idag cirka 39 000 MWh/år för 10 MW (cirka 0,45), och orsaken till skillnaden är inte verifierad. <span id="kf-timmar">–</span></span>
-          <span class="hint" id="kf-riktvarde">–</span>
+          <span class="hint" id="kf-riktvarde" data-berakning-ar="2026b">–</span>
         </label>
 
         <label>Verkshöjd (m)
@@ -537,7 +538,7 @@
       <!-- ---- Grupp: Närboende (NU20 / prop. 2025/26:239) ---- -->
       <fieldset class="indata-grupp">
         <legend><span class="nb-info" tabindex="0">Närboende</span> (vindkraftsersättning, SFS 2026:1113)</legend>
-        <p class="hint" style="margin:0 0 .6rem"><strong>Lagen gäller troligen inte Önnerup.</strong> Intäktsdelningslagen (SFS 2026:1113, 2 §) gäller anläggningar med tillstånd enligt 9 eller 11 kap. miljöbalken. Tillstånd krävs för minst två verk över 150 m eller minst sju verk över 120 m, och mindre anläggningar är anmälningspliktiga och omfattas inte (<a href="#ref-lundgren">Lundgren, 2026</a>, som beskriver Önnerup som ett gränsfall). Zonerna visar därför vad lagens modell hade gett om bolaget betalade ersättning frivilligt. <strong>Uppgiften saknas:</strong> hur många bostäder som ligger inom fem, sex, sju, åtta och nio verkshöjder (750–1 350 m från ett verk) finns inte i domen. Förvalet är 0 bostäder i varje zon, eftersom lagen troligen inte ger någon ersättning för så små verk och uppgiften om bostäder saknas. Skriv in ett antal för att se vad lagens modell hade gett, och hur många bostäder som får plats under taket. Håll pekaren över ? vid en zon för att se vad en bostad där får per år. <a href="#Tabell1">Tabell 1</a> är tabellen över ersättning per zon och ligger i resultatfliken Närboende längre ned på sidan.</p>
+        <p class="hint" style="margin:0 0 .6rem"><strong>Lagen gäller troligen inte Önnerup.</strong> Intäktsdelningslagen (SFS 2026:1113, 2 §) gäller anläggningar med tillstånd enligt 9 eller 11 kap. miljöbalken. Tillstånd krävs för minst två verk över 150 m eller minst sju verk över 120 m, och mindre anläggningar är anmälningspliktiga och omfattas inte (<a href="#ref-lundgren">Lundgren, 2026a</a>, som beskriver Önnerup som ett gränsfall). Zonerna visar därför vad lagens modell hade gett om bolaget betalade ersättning frivilligt. <strong>Uppgiften saknas:</strong> hur många bostäder som ligger inom fem, sex, sju, åtta och nio verkshöjder (750–1 350 m från ett verk) finns inte i domen. Förvalet är 0 bostäder i varje zon, eftersom lagen troligen inte ger någon ersättning för så små verk och uppgiften om bostäder saknas. Skriv in ett antal för att se vad lagens modell hade gett, och hur många bostäder som får plats under taket. Håll pekaren över ? vid en zon för att se vad en bostad där får per år. <a href="#Tabell1">Tabell 1</a> är tabellen över ersättning per zon och ligger i resultatfliken Närboende längre ned på sidan.</p>
 
         <label>Bostäder i zon 1 (inom 5 verkshöjder) <span class="hjalp" tabindex="0" id="zon-hjalp-1" data-hjalp="Fyll i antal bostäder för att se.">?</span>
           <input type="number" step="1" id="bost1" class="indata" value="0">
@@ -826,15 +827,20 @@
         (hämtad 3 juli 2026). Allmänt underlag om produktion och kapacitetsfaktorer.
       </li>
       <li id="ref-lundgren">
-        Lundgren, K. (2026) <em>Besked före beslut: att förbättra intäktsdelningen från vindkraft till närboende</em>, Controller utan gränser, 2026-11-11
+        Lundgren, K. (2026a) <em>Besked före beslut: att förbättra intäktsdelningen från vindkraft till närboende</em>, Controller utan gränser, 2026-11-11
         (<a href="https://controllerutangranser.wordpress.com/2026/11/11/besked-fore-beslut-att-forbattra-intaktsdelningen-fran-vindkraft-till-narboende/" target="_blank" rel="noopener">controllerutangranser.wordpress.com</a>).
         Anger att intäktsdelningslagen gäller anläggningar med tillstånd enligt 9 eller 11 kap. miljöbalken och inte anmälningspliktiga, att Önnerups tre verk om högst 150 m därför faller utanför lagen,
         och att stödet till kommuner och bygdemedlen inte regleras av lagen. Hämtad 2026-11-23.
       </li>
+      <li id="ref-lundgren-kandidater">
+        Lundgren, K. (2026b) <em>Kandidater för nya vindkraftskalkyler, ur Vindbrukskollen.</em> Tillgänglig:
+        <a href="https://github.com/kentlundgren/Vindkraft/blob/main/projektkandidater/kandidater.md" target="_blank" rel="noopener">https://github.com/kentlundgren/Vindkraft/blob/main/projektkandidater/kandidater.md</a>
+        (hämtad 23 november 2026). <em>(Sammanställning av aktuella vindkraftsprojekt ur Vindbrukskollen (<a href="#ref-lst-vbk">Länsstyrelserna, 2026</a>), med kapacitetsfaktor per projekt och riktvärdet 37 % för nya projekt. Underlag för blänkaren under Kapacitetsfaktor.)</em>
+      </li>
       <li id="ref-lst-vbk">
         Länsstyrelserna (2026) <em>Vindbrukskollen.</em> Karttjänst för vindkraft i Sverige, utgiven av Länsstyrelserna i samarbete med Energimyndigheten. Tillgänglig:
         <a href="https://ext-webbgis.lansstyrelsen.se/vbk/" target="_blank" rel="noopener">https://ext-webbgis.lansstyrelsen.se/vbk/</a>
-        (hämtad 23 november 2026). <em>(Underlag för riktvärdet 37 % för kapacitetsfaktorn i nya projekt: beräknad årsproduktion och effekt för projekt under handläggning, beviljade och överklagade. Data är öppna enligt <a href="https://www.lansstyrelsen.se/nationellt-innehall/om-oss/vara-tjanster/oppna-data.html" target="_blank" rel="noopener">Länsstyrelsen</a>. Beräkningen står i <a href="https://github.com/kentlundgren/Vindkraft/blob/main/projektkandidater/kandidater.md" target="_blank" rel="noopener">kandidater.md</a>.)</em>
+        (hämtad 23 november 2026). <em>(Underlag för riktvärdet 37 % för kapacitetsfaktorn i nya projekt: beräknad årsproduktion och effekt för projekt under handläggning, beviljade och överklagade. Data är öppna enligt <a href="https://www.lansstyrelsen.se/nationellt-innehall/om-oss/vara-tjanster/oppna-data.html" target="_blank" rel="noopener">Länsstyrelsen</a>.)</em>
       </li>
       <li id="ref-mod">
         Mark- och miljööverdomstolen (2022) <em>Dom 2022-01-27, mål nr P 14634-20, Bygglov för tre vindkraftverk m.m. på fastigheterna A och B i Lomma kommun</em>
@@ -873,6 +879,9 @@
         Vattenfall Eldistribution (2026) <em>Tillämpningsbestämmelser och nättariffer för regionnätet</em>, 2026-01-01. Tillgänglig:
         <a href="https://www.vattenfalleldistribution.se/globalassets/2.-foretag/abonnemang-och-avgifter/avtal-och-elnatsavgift/tillampningsbestammelser-och-nattariffer-for-vattenfall-eldistributions-regionnat-2026-01-01.pdf" target="_blank" rel="noopener">https://www.vattenfalleldistribution.se/globalassets/2.-foretag/abonnemang-och-avgifter/avtal-och-elnatsavgift/tillampningsbestammelser-och-nattariffer-for-vattenfall-eldistributions-regionnat-2026-01-01.pdf</a>
         (hämtad 22 november 2026). <em>(Tariff för inmatning i regionnätet, underlag för nätfallen A, B, I och J.)</em>
+      </li>
+      <li id="ref-vindbrukskollen">
+        Vindbrukskollen: se <a href="#ref-lst-vbk">Länsstyrelserna (2026)</a>.
       </li>
       <li>
         <em>Vindkraftutredning för Norrbottens kust- och skärgårdsområde</em> (u.å.), s. 32–33. Tillgänglig:

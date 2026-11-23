@@ -348,6 +348,9 @@ fs.readdirSync('.').filter(f => /^vindkraftskalkyl.*\.html$/.test(f)).forEach(f 
     const html = fs.readFileSync(f, 'utf8');
     sant(f + ' har blänkaren om riktvärdet (kf-riktvarde) under kapacitetsfaktorn', html.indexOf('id="kf-riktvarde"') > html.indexOf('id="kapfaktor"') && html.indexOf('id="kf-riktvarde"') < html.indexOf('id="verkshojd"'));
     sant(f + ' har källan Länsstyrelserna (2026) Vindbrukskollen i källförteckningen', /Länsstyrelserna \(2026\) <em>Vindbrukskollen/.test(html));
+    const ar = (html.match(/id="kf-riktvarde" data-berakning-ar="([^"]+)"/) || [])[1];
+    sant(f + ': blänkarens år och bokstav (' + ar + ') finns som källpost Lundgren, K. för sammanställningen', !!ar && new RegExp('Lundgren, K\\. \\(' + ar + '\\) <em>Kandidater för nya vindkraftskalkyler').test(html));
+    sant(f + ' har en hänvisning på V: Vindbrukskollen, se Länsstyrelserna (2026)', /Vindbrukskollen: se <a href="#ref-lst-vbk">Länsstyrelserna \(2026\)<\/a>/.test(html));
   });
 }
 
@@ -358,7 +361,13 @@ fs.readdirSync('.').filter(f => /^vindkraftskalkyl.*\.html$/.test(f)).forEach(f 
   if (!sek) return;
   sant(f + ': källförteckningen är inte en numrerad lista (<ol>)', !/<ol[\s>]/.test(sek[0]));
   const poster = (sek[0].match(/<li[^>]*>[\s\S]*?<\/li>/g) || []).map(p => p.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim());
-  const nycklar = poster.map(t => { const m = t.match(/^(.+?) \((?:(\d{4})([a-z]?)|u\.å\.)/); return m ? { namn: m[1], ar: m[2] ? +m[2] : 9999, bokst: m[3] || '' } : null; });
+  const nycklar = poster.map(t => {
+    const kors = t.match(/^(.+?): se (.+?)\.?$/);                      // hänvisningspost, till exempel "Vindbrukskollen: se Länsstyrelserna (2026)."
+    if (kors) return { namn: kors[1], ar: 0, bokst: '', se: kors[2] };
+    const m = t.match(/^(.+?) \((?:(\d{4})([a-z]?)|u\.å\.)/);
+    return m ? { namn: m[1], ar: m[2] ? +m[2] : 9999, bokst: m[3] || '' } : null;
+  });
+  nycklar.filter(n => n && n.se).forEach(n => sant(f + ': hänvisningen "' + n.namn + ': se ' + n.se + '" pekar på en källpost som finns', poster.some(p => !/: se /.test(p) && p.startsWith(n.se))));
   sant(f + ': varje källpost börjar med författare eller titel och år (inga sammansatta stycken)', poster.length > 0 && nycklar.every(Boolean));
   const kol = new Intl.Collator('sv');
   let ordnad = true, forst = '';

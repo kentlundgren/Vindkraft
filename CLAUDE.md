@@ -6,7 +6,7 @@
 **Live (Vercel-app, Functions):** https://vindkraft-ver2.vercel.app
 **Live (Vercel-app, Next.js App Router):** https://vindkraft-ver3.vercel.app
 **Senast uppdaterad:** 2026-11-23
-**Version:** 1.16
+**Version:** 1.17
 
 ---
 
@@ -61,9 +61,10 @@ En analys som gäller flera projekt, som kandidatlistan ur Vindbrukskollen, hör
 2. Sidan läggs i `kalkyler` i `dokument.json`, och `python kalkylmeny.py` körs. Brödsmulorna sätts upp med `brodsmulor.py`.
 3. Delningsbild `og-bild-<fall>.jpg` (1200×630 px, under 300 kB) och taggarna för LinkedIn, X och Facebook.
 4. Mappen `<fall>/` med `README.md` för fallets underlag och verktyg.
-5. Tabellerna är numrerade 1, 2, 3 … i läsordning utan luckor och dubbletter, och nättabellen i panelen heter Nättabell 1. Ett nytt avsnitt med tabeller placeras sist, eller så numreras alla om i läsordning. Källornas egna tabellnummer ändras aldrig. Testet kontrollerar numrering, `id` och länkar.
-6. Källförteckningen är alfabetisk och osiffrad (`<ul class="kallforteckning">`, varje källa en egen post, en ny källa på sin alfabetiska plats). Testet kontrollerar det i varje kalkylsida.
-7. `node test_kalkylkarna.js` och `node test_natkostnader.js` ger inga fel, och sidan är provad lokalt.
+5. Tjänster och databaser som är kända under ett eget namn (till exempel Vindbrukskollen, utgiven av Länsstyrelserna) har en hänvisningspost på namnets plats i källförteckningen ("Vindbrukskollen: se Länsstyrelserna (2026)."), och blänkaren om riktvärdet hänvisar med `Lundgren (år och bokstav)` till sammanställningen `kandidater.md`, som är en egen källpost. Testet kontrollerar att hänvisningen pekar på en post som finns.
+6. Tabellerna är numrerade 1, 2, 3 … i läsordning utan luckor och dubbletter, och nättabellen i panelen heter Nättabell 1. Ett nytt avsnitt med tabeller placeras sist, eller så numreras alla om i läsordning. Källornas egna tabellnummer ändras aldrig. Testet kontrollerar numrering, `id` och länkar.
+7. Källförteckningen är alfabetisk och osiffrad (`<ul class="kallforteckning">`, varje källa en egen post, en ny källa på sin alfabetiska plats). Testet kontrollerar det i varje kalkylsida.
+8. `node test_kalkylkarna.js` och `node test_natkostnader.js` ger inga fel, och sidan är provad lokalt.
 
 ---
 
@@ -149,6 +150,7 @@ den globala filen `AI\Claude\CLAUDE.md` på Kents lokala maskin.
 
 ## Uppdateringslogg
 
+- 2026-11-23 (v1.17): Hänvisningspost för Vindbrukskollen i källförteckningarna och sammanställningen kandidater.md som egen källpost.
 - 2026-11-23 (v1.16): Blänkare om riktvärdet för kapacitetsfaktorn i kalkylerna, och `projektkandidater/riktvarden.json` som testet jämför mot.
 - 2026-11-23 (v1.15): Mappen `projektkandidater/` och regeln om analyser över många projekt, och att jag redovisar var nya filer hamnar och vilka alternativ som fanns.
 - 2026-11-23 (v1.14): Tabellerna i kalkylsidorna numreras i läsordning utan dubbletter (nättabellen är Nättabell 1), kontrollerat av testet, och ingår i checklistan för ny kalkyl.
@@ -170,4 +172,4 @@ den globala filen `AI\Claude\CLAUDE.md` på Kents lokala maskin.
 
 ---
 
-_CLAUDE.md v1.16, 2026-11-23_
+_CLAUDE.md v1.17, 2026-11-23_

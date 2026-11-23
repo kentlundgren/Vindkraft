@@ -25,12 +25,12 @@
    webbläsaren och exporteras som module.exports i Node, där test_kalkylkarna.js
    kör dem.
 
-   Version 1.14 (2026-11-23): riktvärde för kapacitetsfaktorn (37 %, KAPACITETSFAKTOR_RIKTVARDE) som blänkare under fältet Kapacitetsfaktor. Version 1.13: raden 50 öre/kWh i tabellen över taket är markerad och har en förklaring vid hovring. Version 1.12: storleksordningen på närboendeersättningen i öre per kWh (narboendeStorleksordning, skrivNarboendeStorleksordning). Version 1.11: raderna om nätkostnad i sammanställningen (JAMFOR_NAT) räknas på valt läge och har kort text direkt och förklaring vid hovring, bland annat om negativ nätkostnad. Version 1.10: visaVersionsrad för versionsraden i sidfoten. Version 1.9: totala effekten visas under Effekt per verk (visaTotalEffekt) och fälten i första gruppen har fast ordning (INDATAORDNING_ANLAGGNING). Version 1.8: realiserat pris räknas ut och uppdateras (realpristext). Version 1.7: uträkningsmarkering och förklaringar i sammanställningen, och arrendeförklaring. Version 1.6: raderna JAMFOR_OVERSKOTT för sammanställningen. Version 1.5: tabell över extra bostäder under taket, förklaring per zon och länkar till dolda flikar. Version 1.4: fastighetsskatt som första åren + därefter (fskatt2) och uppgift om när närboendetaket nås. Version 1.3: kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
+   Version 1.15 (2026-11-23): blänkaren om riktvärdet hänvisar med Lundgren (år och bokstav) i stället för en etikett. Version 1.14: riktvärde för kapacitetsfaktorn (37 %, KAPACITETSFAKTOR_RIKTVARDE) som blänkare under fältet Kapacitetsfaktor. Version 1.13: raden 50 öre/kWh i tabellen över taket är markerad och har en förklaring vid hovring. Version 1.12: storleksordningen på närboendeersättningen i öre per kWh (narboendeStorleksordning, skrivNarboendeStorleksordning). Version 1.11: raderna om nätkostnad i sammanställningen (JAMFOR_NAT) räknas på valt läge och har kort text direkt och förklaring vid hovring, bland annat om negativ nätkostnad. Version 1.10: visaVersionsrad för versionsraden i sidfoten. Version 1.9: totala effekten visas under Effekt per verk (visaTotalEffekt) och fälten i första gruppen har fast ordning (INDATAORDNING_ANLAGGNING). Version 1.8: realiserat pris räknas ut och uppdateras (realpristext). Version 1.7: uträkningsmarkering och förklaringar i sammanställningen, och arrendeförklaring. Version 1.6: raderna JAMFOR_OVERSKOTT för sammanställningen. Version 1.5: tabell över extra bostäder under taket, förklaring per zon och länkar till dolda flikar. Version 1.4: fastighetsskatt som första åren + därefter (fskatt2) och uppgift om när närboendetaket nås. Version 1.3: kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
    berakningar.js och berakningar_langhult.js.
    ============================================================================ */
 'use strict';
 
-const KARNA_VERSION = '1.14';
+const KARNA_VERSION = '1.15';
 
 /**
  * Indatagrupperna i alla vindkraftskalkyler: rubrikerna och deras ordning är fastställda här, så att kalkylerna ser
@@ -245,9 +245,10 @@ function visaKapacitetsRiktvarde(kapfaktor) {
   e.appendChild(document.createTextNode('Riktvärde för nya projekt: ' + R.procent + ' % = ' + fmt(R.fullasttimmar, 0) + ' fullasttimmar per år (spann cirka ' +
     Math.round(R.lag) + '–' + Math.round(R.hog) + ' %), räknat på beräknad produktion i ' + R.antal + ' projekt i '));
   e.appendChild(lank(R.kalla, 'Vindbrukskollen (Länsstyrelserna, 2026)'));
-  e.appendChild(document.createTextNode(' ('));
-  e.appendChild(lank(R.berakning, 'beräkningen'));
-  e.appendChild(document.createTextNode('). ' + jamforMedRiktvarde(kapfaktor)));
+  e.appendChild(document.createTextNode(', sammanställda i '));
+  // Bokstaven (2026, 2026b, 2026c) skiljer sig mellan sidorna eftersom Lundgren har olika många poster i sidans källförteckning.
+  e.appendChild(lank(R.berakning, 'Lundgren (' + (e.getAttribute('data-berakning-ar') || '2026') + ')'));
+  e.appendChild(document.createTextNode('. ' + jamforMedRiktvarde(kapfaktor)));
 }
 
 /**
