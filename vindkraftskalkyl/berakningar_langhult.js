@@ -31,13 +31,14 @@
 'use strict';
 
 /* Versionsraden längst ned på sidan. Höj VERSION och uppdatera VERSIONSDATUM i samma ändring som innehållet ändras.
+   UPPDATERING 2026-11-23 (senare igen 5): avsnittet Storleksordning (Tabell 8 och 9). Version 1.6.
    UPPDATERING 2026-11-23 (senare igen 4): länken till beräkningen av bostäder pekar på mappen langhult/. Version 1.5.
    UPPDATERING 2026-11-23 (senare igen 3): valbara alternativ för bostäder per zon (BOSTADSALTERNATIV). Version 1.4.
    UPPDATERING 2026-11-23 (senare igen 2): raderna om nätkostnad i Tabell 3 räknas på valt läge och förklarar negativ nätkostnad direkt och vid hovring. Version 1.3.
    UPPDATERING 2026-11-23 (senare igen): växel för parkens storlek (20 verk eller bara Lunnarsbo, 12 verk). Version 1.2.
    UPPDATERING 2026-11-23 (senare): nya nätfall I och J (Vattenfall 130 kV) i väljaren. Version 1.1.
    UPPDATERING 2026-11-23: versionsrad i sidfoten. Version 1.0 (Långhult har egen versionsnumrering, skild från huvudkalkylens). */
-const VERSION = '1.5';
+const VERSION = '1.6';
 const VERSIONSDATUM = '2026-11-23';
 
 /* ============================================================================
@@ -390,6 +391,7 @@ function ritaTabell2(res, d) {
   // Tabellen och sammanfattningen delas med övriga kalkyler (kalkylkarna.js).
   ritaNarboendeZonTabell('t2-kropp', res.nar, d.verkshojd);
   skrivNarboendeSummering('t2', res.nar, d.antalverk);
+  skrivNarboendeStorleksordning(res);
 }
 
 function skrivUt(res, d) {

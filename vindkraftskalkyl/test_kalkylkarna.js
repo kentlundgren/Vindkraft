@@ -249,7 +249,7 @@ const KALKYLER = [
 const FORBJUDNA = ['annuitet', 'npv', 'irr', 'payback', 'fmt', 'tal', 'text', 'radataNat', 'lcoeAvKassaflode', 'lasNatIndata', 'natPaverkan', 'natSammanfattning',
   'beraknaNarboende', 'beraknaNarboendeZoner', 'beraknaNarboendeSchablon', 'lasNarboendeIndata', 'zonEtikett', 'realiseratPris',
   'fastighetsskattPerVerk', 'lasKommunIndata', 'kommunPoster', 'kommunSaknasText', 'arrendeForklaring', 'visaArrendeForklaring', 'jamforRadExtras',
-  'realpristext', 'visaRealiseratPris', 'totalEffektText', 'visaTotalEffekt', 'natLopandeForklaring', 'natLopandeNot', 'natEngangForklaring'];
+  'realpristext', 'visaRealiseratPris', 'totalEffektText', 'visaTotalEffekt', 'natLopandeForklaring', 'natLopandeNot', 'natEngangForklaring', 'narboendeStorleksordning', 'skrivNarboendeStorleksordning', 'takOrePerKWh'];
 KALKYLER.forEach(k => {
   const js = fs.readFileSync(k.js, 'utf8');
   const html = fs.readFileSync(k.html, 'utf8');
@@ -294,6 +294,25 @@ KALKYLER.forEach(k => {
   sant(k.html + ' laddar natkostnader.css', html.indexOf('natkostnader.css') > -1);
   sant(k.html + ' har rullgardinen Kalkyler', html.indexOf('class="kalkylmeny"') > -1);
 });
+
+/* ---------- Storleksordning: närboendeersättningen i öre per kWh ---------- */
+{
+  lika('takOrePerKWh: 2 % av 50 öre/kWh är 1 öre/kWh', K.takOrePerKWh(50, 2), 1, 1e-9);
+  lika('takOrePerKWh: 2 % av 37,5 öre/kWh är 0,75 öre/kWh', K.takOrePerKWh(37.5, 2), 0.75, 1e-9);
+  const intakt = 178694802, prod = 476520;   // kr och MWh, Långhult 20 verk, 0,375 kr/kWh
+  const r = { intaktAr1: intakt, overskott: 22080209, produktionMWh_ar1: prod, realPris_ar1: 0.375,
+    nar: { cap: intakt * 0.02, fore: 5000000, utbetalt: intakt * 0.02, snitt: 17869, antal: 200, taketNas: true } };
+  const so = K.narboendeStorleksordning(r);
+  lika('storleksordning: realiserat pris 37,5 öre/kWh', so.realOre, 37.5, 1e-9);
+  lika('storleksordning: taket 0,75 öre/kWh', so.takOre, 0.75, 0.001);
+  lika('storleksordning: taket är 2,0 % av intäkten', so.takProcent, 2, 1e-9);
+  lika('storleksordning: utbetald andel av intäkten 2,0 %', so.andelIntakt, 2, 1e-9);
+  sant('storleksordning: taket nås och utbetalt är lägre än före tak i öre/kWh', so.taketNas && so.utbetaltOre < so.foreOre);
+  sant('storleksordning: utan produktion eller närboende ges null', K.narboendeStorleksordning({ nar: null }) === null && K.narboendeStorleksordning({ nar: r.nar, produktionMWh_ar1: 0, intaktAr1: 1 }) === null);
+  const lhHtml2 = fs.readFileSync('vindkraftskalkyl_langhult.html', 'utf8');
+  sant('Långhult har avsnittet Storleksordning med Tabell 8 och 9', ['Storleksordning', 'Tabell8', 'Tabell9', 'so-pris-kropp'].every(id => lhHtml2.indexOf('id="' + id + '"') > -1));
+  sant('Långhult anropar skrivNarboendeStorleksordning', /skrivNarboendeStorleksordning\(res\)/.test(fs.readFileSync('berakningar_langhult.js', 'utf8')));
+}
 
 /* ---------- Långhult: alternativ för bostäder per zon och växeln för parkens storlek ---------- */
 {

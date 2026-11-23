@@ -19,6 +19,7 @@
   UPPDATERING 2026-11-23 (senare): indatagrupperna har samma rubriker och ordning som övriga kalkyler (INDATAGRUPPER i kalkylkarna.js), och Närboende ligger sist.
   UPPDATERING 2026-11-23 (senare igen): fastighetsskatt, bygdemedel och kommunstöd räknas i kalkylkarna.js (kommunPoster) och delas med övriga kalkyler. Långhults värden och resultat är oförändrade.
   UPPDATERING 2026-11-23 (senare igen 13): länken till beräkningen av bostäder pekar på nya platsen (mappen langhult/). Version 1.5.
+  UPPDATERING 2026-11-23 (senare igen 14): nytt avsnitt Storleksordning (#Storleksordning) med Tabell 8 och 9: närboendeersättningen i öre per kWh, taket 2 % vid olika realiserade priser och andel av överskottet. Version 1.6.
   UPPDATERING 2026-11-23 (senare igen 12): valbara alternativ för bostäder per zon (förval, eller räknat ur ljudutredningen för alla 20 verk eller bara Lunnarsbo). Version 1.4.
   UPPDATERING 2026-11-23 (senare igen 11): förklaring av negativ nätkostnad i Tabell 3 (direkt och vid hovring), nätraderna där räknas på valt läge, och hänvisning till Lundgren (2026) om ersättning till närboende. Version 1.3.
   UPPDATERING 2026-11-23 (senare igen 10): växel för parkens storlek (hela parken 20 verk och 132 MW, eller bara Lunnarsbo 12 verk och 79,2 MW), och typfallet över 40 MW är fall I (Vattenfall PL1). Version 1.2.
@@ -712,6 +713,52 @@
       Det går inte att kontrollera utan bostädernas verkliga avstånd. Zonfördelningen här är en gissning,
       och ändras den ändras både summan före tak och hur mycket varje zon får.
       Jämför med <a href="#Tabell6">Tabell 6</a>. Hur ersättningen ändras med elpriset visas i <a href="#Tabell4">Tabell 4</a> och <a href="#Tabell5">Tabell 5</a>.
+    </p>
+  </section>
+
+  <!-- ========================================================================
+       STORLEKSORDNING: NÄRBOENDEERSÄTTNINGEN I ÖRE PER kWh (Tabell 8 och 9)
+       ==================================================================== -->
+  <section aria-labelledby="Storleksordning">
+    <h2 id="Storleksordning">Storleksordning: vad ersättningen till närboende kostar per kWh<a class="ankare" href="#Storleksordning" aria-label="Länk till rubriken">#</a></h2>
+    <p class="hint">
+      Ersättningen får sammanlagt vara högst 2 % av parkens intäkter
+      (<a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=15" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, s. 15</a>;
+      <a href="#ref-lag">14 § intäktsdelningslagen (2026:1113)</a>). Intäkten räknas på det realiserade priset (spotpris × prisfaktor). Taket i öre per kWh är därför 2 % av det realiserade priset:
+      vid 50 öre/kWh blir det 1 öre/kWh, vid 37,5 öre/kWh (50 öre × prisfaktor 0,75, som i Kaufmann &amp; Westander, 2026) blir det 0,75 öre/kWh.
+      Taket är en övre gräns och inte ett fast belopp: vad som faktiskt betalas beror på hur många bostäder som ligger inom nio verkshöjder och hur nära verken de ligger.
+    </p>
+    <div class="tabell-ruta">
+      <table class="data-tabell" id="Tabell8">
+        <caption id="Tabell8-rubrik">Tabell 8. Närboendeersättningen i öre per kWh, år 1, med sidans indata<a class="ankare" href="#Tabell8" aria-label="Länk till tabellen">#</a></caption>
+        <thead>
+          <tr><th scope="col">Mått</th><th scope="col" class="tal">Värde</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Realiserat pris (spotpris × prisfaktor)</td><td class="tal" id="so-real">–</td></tr>
+          <tr><td id="so-tak-etikett">Taket</td><td class="tal" id="so-tak">–</td></tr>
+          <tr><td>Ersättning före tak (summa över zonerna, <a href="#Tabell2">Tabell 2</a>)</td><td class="tal" id="so-fore">–</td></tr>
+          <tr class="rak-summa"><td>Utbetald ersättning (det lägsta av de två)</td><td class="tal" id="so-utbet">–</td></tr>
+          <tr><td>Utbetald som andel av intäkten</td><td class="tal" id="so-andel">–</td></tr>
+          <tr><td>Utbetald som andel av överskottet före lokala poster</td><td class="tal" id="so-overskott">–</td></tr>
+          <tr><td>Genomsnitt per bostad</td><td class="tal" id="so-snitt">–</td></tr>
+          <tr><td>Nås taket?</td><td class="tal" id="so-nas" style="white-space:normal">–</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="tabell-ruta">
+      <table class="data-tabell" id="Tabell9">
+        <caption id="Tabell9-rubrik">Tabell 9. Taket (högst 2 % av intäkten) i öre per kWh vid olika realiserade priser<a class="ankare" href="#Tabell9" aria-label="Länk till tabellen">#</a></caption>
+        <thead>
+          <tr><th scope="col">Realiserat pris</th><th scope="col" class="tal">Taket i öre per kWh</th></tr>
+        </thead>
+        <tbody id="so-pris-kropp"></tbody>
+      </table>
+    </div>
+    <p class="notering">
+      Samma belopp kan ses på två sätt. Per kWh är det en kostnad för projektet, ett par tiondels öre till cirka ett öre. Per bostad är det många tusen kronor om året, eftersom ersättningen delas på få hushåll
+      (<a href="#Tabell2">Tabell 2</a>). Om det är för litet eller för stort är en värdering. Sidan visar storleksordningen och vad det betyder för projektets överskott.
+      Hur många bostäder som ligger nära verken är osäkert, och alternativen finns i gruppen Närboende i Indata.
     </p>
   </section>
 
