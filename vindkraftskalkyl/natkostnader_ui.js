@@ -142,6 +142,15 @@
       el('natlage').dispatchEvent(new Event('change', { bubbles: true }));
     });
 
+    // Ett startläge som inte är ingen (satt i HTML-filen) fyller fälten med typfallet för parkens storlek direkt.
+    // Länken skrivs inte här: kopplaLank gör det vid sidstart och lämnar då ett annat ankare i adressen ifred.
+    if (el('natlage').value !== 'ingen' && allaNatFaltTomma() && sel.value === 'H' && autoPa()) {
+      const t0 = typfallNu();
+      sel.value = t0.id;
+      fyllExempel(t0.id);
+      start = { lage: el('natlage').value, ex: t0.id, ing: el('natengangingar').value, verk: antalVerk() };
+    }
+
     kopplaLank();
     if (typeof window.kopplaHjalp === 'function') window.kopplaHjalp();
   }
@@ -168,10 +177,14 @@
     });
   }
 
+  /* Sidans eget startläge (satt i HTML-filen, till exempel Bas i Önnerup) ger en tom länk, så att adressen inte ändras vid sidstart. */
+  let start = null;
+
   function byggHash() {
     const lage = el('natlage').value, ex = el('natexempel').value, ing = el('natengangingar').value;
     const verk = antalVerk();
     if (lage === 'ingen' && (ex === 'H' || !ex) && ing === 'ja' && verk !== 5) return '';
+    if (start && lage === start.lage && ex === start.ex && ing === start.ing && verk === start.verk) return '';
     let h = '#Natkostnad_' + LAGE_TILL_HASH[lage];
     if (lage !== 'ingen' && autoPa() && ex === typfallNu().id) h += '_Typfall';
     else if (ex && ex !== 'H') h += '_Exempel_' + ex;
@@ -315,7 +328,7 @@
       : 'Läget är ' + LAGE_TEXT[d.natlage] + ': nätkostnaderna ingår i investeringsutgiften, driftkostnaden och alla nyckeltal.';
     const tillagg = d.natengangingar === 'nej'
       ? ' Engångskostnaderna läggs till investeringsutgiften.'
-      : ' Engångskostnaderna antas ingå i investeringsutgiften (12 000 kkr/MW) och läggs därför inte till. Antagandet är inte belagt i någon källa.';
+      : ' Engångskostnaderna antas ingå i investeringsutgiften (' + fmt(d.specinv, 0, ' kkr/MW') + ') och läggs därför inte till. Antagandet är inte belagt i någon källa.';
     satt('nat-info', info + tillagg);
 
     uppdateraKronor(res, d);

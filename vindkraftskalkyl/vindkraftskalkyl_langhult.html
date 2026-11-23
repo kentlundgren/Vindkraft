@@ -19,6 +19,7 @@
   UPPDATERING 2026-11-23 (senare): indatagrupperna har samma rubriker och ordning som övriga kalkyler (INDATAGRUPPER i kalkylkarna.js), och Närboende ligger sist.
   UPPDATERING 2026-11-23 (senare igen): fastighetsskatt, bygdemedel och kommunstöd räknas i kalkylkarna.js (kommunPoster) och delas med övriga kalkyler. Långhults värden och resultat är oförändrade.
   UPPDATERING 2026-11-23 (senare igen 13): länken till beräkningen av bostäder pekar på nya platsen (mappen langhult/). Version 1.5.
+  UPPDATERING 2026-11-24: elområdet står som text vid Spotpris (SE3, Kaufmann & Westander 2026, s. 17–18) i stället för som fält: inget i Långhult-kalkylen beror på det. Version 1.15.
   UPPDATERING 2026-11-23 (senare igen 22): Karta 1: delområdena Långhult (norr, 8 verk) och Lunnarsbo (söder, 12 verk) i texten och bildtexterna, uppgifterna visas vid hovring, fokus och tryck, och man byter bild genom att svepa (touch, mus och styrplatta) eller med pilknapparna. Version 1.14.
   UPPDATERING 2026-11-23 (senare igen 21): nytt avsnitt "Var ligger parken?" (#Lage) med Karta 1, två kartor som man växlar mellan (översikt och närbild, skärmdumpar ur Vindbrukskollen). Version 1.13.
   UPPDATERING 2026-11-23 (senare igen 20): startsidan index.html finns och brödsmulorna börjar med "Vindkraftens ekonomi: start". Version 1.12.
@@ -221,7 +222,7 @@
           <abbr class="fk" tabindex="0" data-f="Spotpris: elens börspris för varje timme. Här ett medelvärde för hela livslängden.">?</abbr>
           <input type="number" step="0.01" id="elpris" class="indata" value="0.5">
           <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=12" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, s. 12, 16</a>
-          <span class="hint">Kaufmann &amp; Westander (2026, s. 12, 16) utgår från 50 öre/kWh och visar 30–70 öre.</span>
+          <span class="hint">Kaufmann &amp; Westander (2026, s. 12, 16) utgår från 50 öre/kWh och visar 30–70 öre. Verken ligger enligt samma källa (s. 17–18) i elområde 3 (SE3). Elområdet är ingen indata här: det ändrar ingen beräkning, eftersom fastighetsskatten är hämtad ur källan och spotpriset anges direkt.</span>
         </label>
 
         <label>Prisfaktor (realiserat pris / spotpris, 0–1)

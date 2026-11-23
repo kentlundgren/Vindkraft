@@ -431,6 +431,25 @@ fs.readdirSync('.').filter(f => /^(vindkraftskalkyl.*|index)\.html$/.test(f)).fo
   sant('mapparna langhult och onnerup har README', fs.existsSync('langhult/README.md') && fs.existsSync('onnerup/README.md'));
 }
 
+/* ---------- Önnerup: förvalen ---------- */
+{
+  const on = fs.readFileSync('vindkraftskalkyl_Onnerup.html', 'utf8');
+  const v = (id) => { const m = new RegExp('id="' + id + '"[^>]*value="([^"]+)"').exec(on); return m ? m[1] : null; };
+  sant('Önnerup: kapacitetsfaktor 0,37, 10 000 kkr/MW och real kalkylränta 0,052', v('kapfaktor') === '0.37' && v('specinv') === '10000' && v('kalkylranta') === '0.052');
+  sant('Önnerup: elområde SE4 är valt', /<option value="SE4" selected>/.test(on));
+  sant('Önnerup: nätläget Bas är förvalt', /<option value="bas" selected>/.test(on) && !/<option value="ingen" selected>/.test(on));
+  const sch = K.fastighetsskattSchablon(3300, 'SE4', 0.37 * 8760);
+  lika('Önnerup: fastighetsskatt år 1 är schablonen för 0,37', parseFloat(v('fskatt1')), sch.fskatt1, 1);
+  lika('Önnerup: fastighetsskatt därefter är schablonen för 0,37', parseFloat(v('fskatt2')), sch.fskatt2, 1);
+  sant('Önnerup: Energiforsk (2021) och Energimyndigheten (2016) finns som källor och länkarna till dem pekar rätt', /<li id="ref-energiforsk">/.test(on) && /<li id="ref-er2016">/.test(on) && /href="#ref-energiforsk"/.test(on) && /href="#ref-er2016"/.test(on));
+  // Nätkostnaden i läge Bas för tre verk om 3,3 MW med fall B: 96 828 kr per år, 0,30 öre/kWh (nettot av 1,44 Mkr avgifter och 1,34 Mkr energiersättning).
+  const fb = D.NAT_EXEMPEL.find(f => f.id === 'B').falt; const dB = {};
+  N.NAT_FALT.forEach(id => { const x = fb[id]; dB[id] = (x === null || x === undefined) ? 0 : x; });
+  const rB = N.beraknaNat(dB, 1, 9.9, N.bruttoKWh({ kapfaktor: 0.37 }, 9.9));
+  lika('Önnerup: nätkostnad i läge Bas, fall B, 9,9 MW och 0,37 är 96 828 kr/år', rB.lopande.summa, 96828, 1);
+  lika('Önnerup: det är 0,30 öre/kWh', rB.lopandeOre.summa, 0.30, 0.005);
+}
+
 /* ---------- Långhult: Karta 1 (Var ligger parken?) ---------- */
 {
   const lh = fs.readFileSync('vindkraftskalkyl_langhult.html', 'utf8');

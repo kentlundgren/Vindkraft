@@ -23,6 +23,7 @@
   UPPDATERING 2026-11-23 (senare igen 9): förklaring av negativ nätkostnad i Tabell 3. Version 1.26.
   UPPDATERING 2026-11-23 (senare igen 8): typfallet över 40 MW är fall I. Version 1.25.
   UPPDATERING 2026-11-23 (senare igen 7): nya nätfall I och J i väljaren. Version 1.24.
+  UPPDATERING 2026-11-24: förvalen i Önnerup är mer realistiska: kapacitetsfaktor 0,37, specifik investeringskostnad 10 000 kkr/MW, real kalkylränta 5,2 % (Energiforsk 2021, med texten och källorna från Långhult) och nätkostnader i läge Bas (fall B, 0,30 öre/kWh nettot). Fastighetsskatten är räknad om för 3 241 fullasttimmar. Elområdet SE4 var redan förvalt. Startläget Bas kan nu sättas i HTML-filen (natkostnader_ui.js). Version 1.33.
   UPPDATERING 2026-11-23 (senare igen 6): totala effekten visas under Effekt per verk, fälten i Anläggning & investering står i samma ordning som i övriga kalkyler (INDATAORDNING_ANLAGGNING i kalkylkarna.js), och läget ingen visar 0 kr i nätkostnadsrutorna. Version 1.23.
   ============================================================================
 -->
@@ -109,9 +110,9 @@
         <p class="hint total-effekt-rad" id="total-effekt">Total effekt = <strong id="total-effekt-visning">–</strong></p>
 
         <label>Kapacitetsfaktor (0–1)
-          <input type="number" step="0.0001" id="kapfaktor" class="indata" value="0.2618">
-          <span class="badge pm">härledd ur domen</span>
-          <span class="hint">22 704 MWh/år (efter 10 % säkerhetsmarginal) / (3 verk × 3,3 MW × 8 760 h) = 0,2618. Västanby AB anger idag cirka 39 000 MWh/år för 10 MW (cirka 0,45), och orsaken till skillnaden är inte verifierad. <span id="kf-timmar">–</span></span>
+          <input type="number" step="0.01" id="kapfaktor" class="indata" value="0.37">
+          <span class="badge antagande">antagande</span>
+          <span class="hint">0,37 är riktvärdet för nya projekt (se nedan) och ger för tre verk om 3,3 MW cirka 32 100 MWh/år. Domen anger 22 704 MWh/år efter 10 % säkerhetsmarginal, vilket med samma effekt motsvarar 0,2618 (22 704 MWh / (3 verk × 3,3 MW × 8 760 h)). Västanby AB anger idag cirka 39 000 MWh/år för 10 MW (cirka 0,45). Skillnaderna mellan de tre uppgifterna är inte förklarade. <span id="kf-timmar">–</span></span>
           <span class="hint" id="kf-riktvarde" data-berakning-ar="2026b">–</span>
         </label>
 
@@ -132,7 +133,7 @@
             <option value="SE3">SE3 (mellersta)</option>
             <option value="SE4" selected>SE4 (södra)</option>
           </select>
-          <span class="hint">Byte fyller i ett schablonpris för området (kan ändras).</span>
+          <span class="hint">SE4 gäller Önnerup (södra Sverige). Elområdet styr två saker: ett byte fyller i ett schablonpris för området i fältet Spotpris (kan ändras), och knappen Räkna schablon för fastighetsskatt använder området. Inget annat i kalkylen beror på det.</span>
         </label>
 
         <label>Spotpris (kr/kWh)
@@ -157,12 +158,16 @@
         </label>
 
         <label>Specifik investeringskostnad (kkr/MW)
-          <input type="number" step="10" id="specinv" class="indata" value="12000">
-          <span class="hint">Antagande: nätanslutningens engångskostnad (utredning, ledning, station och anslutningsavgift till nätägaren) antas ingå i detta värde. Se gruppen "Nät och systemkrav".</span>
+          <input type="number" step="10" id="specinv" class="indata" value="10000">
+          <span class="badge antagande">antagande</span>
+          <span class="hint">Lägre än huvudkalkylens 12 000 kkr/MW eftersom verken enligt en uppgift är begagnade (uppgiften är inte verifierad). Energiforsk (<a href="#ref-energiforsk">2021</a>) anger 9,8–13,2 Mkr/MW för nya anläggningar, medel 10,9. Nätanslutningens engångskostnad (utredning, ledning, station och anslutningsavgift till nätägaren) antas ingå i detta värde. Se gruppen "Nät och systemkrav".</span>
         </label>
 
-        <label>Kalkylränta (0–1)
-          <input type="number" step="0.0001" id="kalkylranta" class="indata" value="0.1215">
+        <label>Kalkylränta, real (0–1)
+          <abbr class="fk" tabindex="0" data-f="Kalkylränta: avkastningskravet som framtida betalningar diskonteras med. Real = utan inflation. Kalkylen räknar med oförändrade priser och kostnader, vilket passar en realränta.">?</abbr>
+          <input type="number" step="0.0001" id="kalkylranta" class="indata" value="0.052">
+          <span class="badge antagande">antagande</span>
+          <span class="hint">5,2 % är medelvärdet för landbaserad vindkraft i <a href="#ref-energiforsk">Energiforsk (2021)</a>, s. 18 (spann 2,6–7,5 %, realränta, tolv projekt under byggnation 2020). Energimyndigheten (<a href="#ref-er2016">2016</a>) använde 6,8 % (5–8 %). Räntelägets utveckling efter 2020 är inte med. Önnerups egen ränta är okänd. Samma värde och källa som i <a href="vindkraftskalkyl_langhult.html">Långhult-kalkylen</a>.</span>
         </label>
       </fieldset>
 
@@ -190,17 +195,17 @@
       </fieldset>
 
       <!-- ---- Grupp: Nät och systemkrav (PRD_natkostnader.md) ----
-           Förvalt läge är "ingen": resultaten är då identiska med kalkylen före
-           nätkostnaderna lades till. Ett tomt fält betyder "ej angivet" och
+           Förvalt läge i Önnerup är "bas". (I huvudkalkylen är det "ingen", och då är resultaten identiska med kalkylen före
+           nätkostnaderna lades till.) Ett tomt fält betyder "ej angivet" och
            räknas som 0. Alla belopp är tillägg till investeringsutgiften. -->
       <fieldset class="indata-grupp" id="nat-grupp">
         <legend>Nät och systemkrav</legend>
 
-        <label>Nätkostnader <span class="hjalp" tabindex="0" data-hjalp="Ingen: nätkostnader ingår inte i resultaten (förvalt, samma resultat som tidigare). Bas: fältens värden. Låg och hög: alla poster utom energiavgiften multipliceras med faktorerna längst ned i gruppen.">?</span>
+        <label>Nätkostnader <span class="hjalp" tabindex="0" data-hjalp="Ingen: nätkostnader ingår inte i resultaten. Bas (förvalt i Önnerup): fältens värden, här fall B. Nettot är litet eftersom de fasta avgifterna nästan helt vägs upp av en energiersättning som bara gäller om inmatningen minskar nätets förluster. Bas: fältens värden. Låg och hög: alla poster utom energiavgiften multipliceras med faktorerna längst ned i gruppen.">?</span>
           <select id="natlage" class="indata">
-            <option value="ingen" selected>Ingen (förvalt)</option>
+            <option value="ingen">Ingen</option>
             <option value="lag">Låg</option>
-            <option value="bas">Bas</option>
+            <option value="bas" selected>Bas (förvalt)</option>
             <option value="hog">Hög</option>
           </select>
         </label>
@@ -216,7 +221,7 @@
           <button type="button" class="nat-kopiera" id="nat-forslag-knapp" hidden>Använd förslaget</button>
         </div>
 
-        <label>Ingår engångskostnaden redan i investeringsutgiften? <span class="hjalp" tabindex="0" data-hjalp="Ja (förvalt): engångskostnaderna antas ingå i den specifika investeringskostnaden (12 000 kkr/MW) och läggs inte till. De visas ändå i panelen Nätkostnader i siffror. Nej: engångskostnaderna läggs till investeringsutgiften. Antagandet är inte belagt i någon källa.">?</span>
+        <label>Ingår engångskostnaden redan i investeringsutgiften? <span class="hjalp" tabindex="0" data-hjalp="Ja (förvalt): engångskostnaderna antas ingå i den specifika investeringskostnaden och läggs inte till. De visas ändå i panelen Nätkostnader i siffror. Nej: engångskostnaderna läggs till investeringsutgiften. Antagandet är inte belagt i någon källa.">?</span>
           <select id="natengangingar" class="indata">
             <option value="ja" selected>Ja, ingår (antagande)</option>
             <option value="nej">Nej, lägg till</option>
@@ -440,7 +445,7 @@
       <fieldset class="indata-grupp">
         <legend>Kommun &amp; samhälle</legend>
 
-        <p class="hint" style="margin:0 0 .6rem">Fastighetsskatt och bygdemedel är kostnader för projektet. Kommunstödet betalas av staten och dras inte från projektets resultat. Fastighetsskatten är en schablon för tre verk om 3,3 MW i elområde 4 med 2 293 fullasttimmar (se "Schablon för fastighetsskatt: så räknas den", och knappen räknar om den om du ändrar verket). Bygdemedel står på 0 tills du fyller i det, och sidan visar då att det saknas.</p>
+        <p class="hint" style="margin:0 0 .6rem">Fastighetsskatt och bygdemedel är kostnader för projektet. Kommunstödet betalas av staten och dras inte från projektets resultat. Fastighetsskatten är en schablon för tre verk om 3,3 MW i elområde 4 med 3 241 fullasttimmar (kapacitetsfaktorn 0,37; se "Schablon för fastighetsskatt: så räknas den", och knappen räknar om den om du ändrar verket). Bygdemedel står på 0 tills du fyller i det, och sidan visar då att det saknas.</p>
         <details class="nat-detaljer">
           <summary>Schablon för fastighetsskatt: så räknas den</summary>
           <p class="hint">Fastighetsskatten är 0,5 % av taxeringsvärdet. Taxeringsvärdet för ett vindkraftverk är riktvärdet 8 600 kr/kW × effekten, varav 73,5 % avser verket (avrundat nedåt till hela miljoner) och 1,5 % marken. Verket justeras med en elprisfaktor per elområde (SE1 −0,160, SE2 −0,192, SE3 +0,190, SE4 +0,348) och en fullasttidsfaktor (ingen justering mellan 2 400 och 2 800 timmar, +0,35 vid 3 601–3 800 timmar, −0,04 vid 2 200–2 399 timmar), och marken justeras med elprisfaktorn.
@@ -453,7 +458,7 @@
 
         <label>Fastighetsskatt per verk, första åren (kr/år)
           <abbr class="fk" tabindex="0" data-f="Fastighetsskatt: 0,5 % av taxeringsvärdet. Beloppet beror på verkets storlek och elområde. För ett nytt verk på 6,6 MW i elområde 3 blir det 334 398 kr per år enligt räkneexemplet i Kaufmann &amp; Westander (2026, s. 17–18).">?</abbr>
-          <input type="number" step="100" id="fskatt1" class="indata" value="132277">
+          <input type="number" step="100" id="fskatt1" class="indata" value="163281">
           <span class="badge antagande">schablon, elområde 4</span>
         </label>
 
@@ -465,7 +470,7 @@
 
         <label>Fastighetsskatt per verk, åren därefter (kr/år)
           <abbr class="fk" tabindex="0" data-f="Skatten sjunker över tid eftersom taxeringsvärdet skrivs ned med verkets ålder. Kaufmann &amp; Westander (2026, s. 18) ger för ett verk på 6,6 MW i elområde 3 334 398 kr per år de första fyra åren och i genomsnitt cirka 204 049 kr per år därefter, alltså cirka 61 % av det första beloppet.">?</abbr>
-          <input type="number" step="1000" id="fskatt2" class="indata" value="80715">
+          <input type="number" step="1000" id="fskatt2" class="indata" value="99634">
           <span class="badge antagande">schablon, elområde 4</span>
         </label>
 
@@ -810,10 +815,20 @@
         <a href="https://data.riksdagen.se/dokument/sfs-2026-1281.html" target="_blank" rel="noopener">https://data.riksdagen.se/dokument/sfs-2026-1281.html</a>
         (hämtad 22 november 2026). <em>(Regler om anslutning till elnätet från 2027. Regelverk för nätkostnaderna.)</em>
       </li>
+      <li id="ref-energiforsk">
+        Energiforsk (2021) <em>El från nya anläggningar 2021.</em> Rapport 2021:714. Tillgänglig:
+        <a href="https://energiforsk.se/media/30970/el-fra-n-nya-anla-ggningar-energiforskrapport-2021-714.pdf" target="_blank" rel="noopener">https://energiforsk.se/media/30970/el-fra-n-nya-anla-ggningar-energiforskrapport-2021-714.pdf</a>
+        (hämtad 5 november 2026). <em>(Källa till kalkylräntan 5,2 % real, s. 18, Tabell 5: lågt 2,6, medel 5,2, högt 7,5 % för landbaserad vindkraft. Texten anger "cirka 5 %" som genomsnitt för tolv projekt från sju bolag under byggnation 2020. Energiforsk anger där också investeringskostnad 9,8–13,2 Mkr/MW, medel 10,9, att jämföra med kalkylens 10 Mkr/MW.)</em>
+      </li>
       <li>
         Energimarknadsinspektionen (2026) <em>EIFS 2026:10, föreskrifter och allmänna råd om anslutningsavgifter för elektriska anläggningar</em>, beslutad 2026-08-03, gäller från 2027-01-01. Tillgänglig:
         <a href="https://ei.se/download/18.85fb75b19ed45a9d5148405/1786425499922/EIFS-2026-10-om-anslutningsavgifter-f%C3%B6r-elektriska-anl%C3%A4ggningar.pdf" target="_blank" rel="noopener">https://ei.se/download/18.85fb75b19ed45a9d5148405/1786425499922/EIFS-2026-10-om-anslutningsavgifter-f%C3%B6r-elektriska-anl%C3%A4ggningar.pdf</a>
         (hämtad 22 november 2026). <em>(Hur anslutningsavgiften bestäms. Anger inga belopp.)</em>
+      </li>
+      <li id="ref-er2016">
+        Energimyndigheten (2016) <em>Produktionskostnader för vindkraft i Sverige.</em> ER 2016:17. Tillgänglig:
+        <a href="https://www.energimyndigheten.se/contentassets/9f658fbcc1d24014bbe6fbeb70f80cba/er-2016_17-produktionskostnader-for-vindkraft-i-sverige.pdf" target="_blank" rel="noopener">https://www.energimyndigheten.se/contentassets/9f658fbcc1d24014bbe6fbeb70f80cba/er-2016_17-produktionskostnader-for-vindkraft-i-sverige.pdf</a>
+        (hämtad 5 november 2026). <em>(Jämförelse: referensfallet använder 6,8 % (5 % vid låga och 8 % vid höga kostnader), medelvärdet av avkastningskrav i intervjuer med aktörer, s. 33. Äldre än Energiforsk.)</em>
       </li>
       <li>
         Energimyndigheten (2024) <em>Kostnaden för att bygga vindkraft fortsätter att öka.</em>
@@ -952,8 +967,8 @@
         <p>Den här sidan är huvudkalkylen med förvalda värden för Önnerup. Beräkningen ligger i <code>berakningar.js</code> (samma fil som huvudkalkylen) och i den gemensamma kärnan <code>kalkylkarna.js</code>, som också Långhult-kalkylen använder: annuitet, NPV, IRR, payback, LCOE, närboendeersättning och realiserat pris. Ändras ett räknesätt där slår det igenom i alla kalkyler.</p>
         <p>Allt räknas i webbläsaren. Ingen data skickas någonstans. Diagrammen ritas med Chart.js via CDN.</p>
         <h3>Metoden</h3>
-        <p>Förvalen bygger på Mark- och miljööverdomstolens dom P 14634-20: tre verk, totalhöjd 150 m, årsproduktion 22 704 MWh efter 10 % säkerhetsmarginal. Kapacitetsfaktorn 0,2618 är härledd ur den produktionen och en antagen effekt på 3,3 MW per verk. Västanby AB anger idag en annan produktion, och orsaken är inte verifierad.</p>
-        <p>Närboendeersättningen räknas enligt SFS 2026:1113, 11–14 §§ (fem zoner, de två närmaste verken, tak 2 %), men lagen gäller troligen inte så små verk. Antalet bostäder per zon saknas, och förvalet är 0 bostäder. Fastighetsskatten är en schablon (Skatteverket SKV A 2024:11 och Kaufmann & Westander, 2026), och bygdemedel saknar belopp och står på 0 med varning. Nätkostnader finns med men är avstängda (läge Ingen). Siffrorna är hämtade ur källorna, inte kvalitetssäkrade, och ska kontrolleras mot källan.</p>
+        <p>Förvalen bygger på Mark- och miljööverdomstolens dom P 14634-20: tre verk, totalhöjd 150 m, årsproduktion 22 704 MWh efter 10 % säkerhetsmarginal. Kapacitetsfaktorn 0,37 är riktvärdet för nya projekt (Vindbrukskollen, 22 projekt) och är ett antagande. Med domens produktion och en antagen effekt på 3,3 MW per verk hade den blivit 0,2618, och Västanby AB anger idag en annan produktion än domen. Orsaken till skillnaderna är inte verifierad. Investeringskostnaden 10 000 kkr/MW och den reala kalkylräntan 5,2 % (Energiforsk, 2021) är antaganden.</p>
+        <p>Närboendeersättningen räknas enligt SFS 2026:1113, 11–14 §§ (fem zoner, de två närmaste verken, tak 2 %), men lagen gäller troligen inte så små verk. Antalet bostäder per zon saknas, och förvalet är 0 bostäder. Fastighetsskatten är en schablon (Skatteverket SKV A 2024:11 och Kaufmann & Westander, 2026), och bygdemedel saknar belopp och står på 0 med varning. Nätkostnaderna är med i läge Bas, fall B (Vattenfalls regionnät, 20–6 kV): fast avgift 680 000 kr, effektavgift och avståndsavgift ger cirka 4,5 öre/kWh, och en energiersättning på 4,19 öre/kWh drar ner nettot till cirka 0,3 öre/kWh. Ersättningen gäller bara om inmatningen minskar nätets förluster, och nätägaren i Önnerup är inte kontrollerad. Siffrorna är hämtade ur källorna, inte kvalitetssäkrade, och ska kontrolleras mot källan.</p>
       </div>
     </div>
   </div>

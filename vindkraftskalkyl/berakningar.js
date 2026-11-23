@@ -57,9 +57,10 @@
    UPPDATERING 2026-11-23 (senare igen 12): blänkare under Kapacitetsfaktor med riktvärdet 37 % (3 241 fullasttimmar). Version 1.29.
    UPPDATERING 2026-11-23 (senare igen 13): källpost för sammanställningen (Lundgren) och hänvisning på V. Version 1.30.
    UPPDATERING 2026-11-23 (senare igen 14): startsidan index.html finns och brödsmulorna börjar med "Vindkraftens ekonomi: start". Version 1.31.
-   UPPDATERING 2026-11-23 (senare igen 15): knapparna Ett verk och Fem verk uppdaterar nu också Kalkylsammanställningen (natkostnader_ui.js skickar change efter input). Version 1.32. */
-const VERSION = '1.32';
-const VERSIONSDATUM = '2026-11-23';
+   UPPDATERING 2026-11-23 (senare igen 15): knapparna Ett verk och Fem verk uppdaterar nu också Kalkylsammanställningen (natkostnader_ui.js skickar change efter input). Version 1.32.
+   UPPDATERING 2026-11-24: Önnerup har nya förval (kapacitetsfaktor 0,37, 10 000 kkr/MW, real kalkylränta 5,2 %, nätläge Bas), som bara står i Önnerups HTML. Texten om engångskostnaden i panelen nämner inte längre ett fast tal. Version 1.33. */
+const VERSION = '1.33';
+const VERSIONSDATUM = '2026-11-24';
 
 /* ============================================================================
    DEL 0 – HJÄLPFUNKTIONER

@@ -31,6 +31,7 @@
 'use strict';
 
 /* Versionsraden längst ned på sidan. Höj VERSION och uppdatera VERSIONSDATUM i samma ändring som innehållet ändras.
+   UPPDATERING 2026-11-24: elområdet står som text vid Spotpris (SE3, Kaufmann & Westander 2026, s. 17–18) i stället för som fält: inget i Långhult-kalkylen beror på det. Version 1.15.
    UPPDATERING 2026-11-23 (senare igen 13): Karta 1: delområdena Långhult (norr, 8 verk) och Lunnarsbo (söder, 12 verk) i texten och bildtexterna, uppgifterna visas vid hovring, fokus och tryck, och man byter bild genom att svepa (touch, mus och styrplatta) eller med pilknapparna. Version 1.14.
    UPPDATERING 2026-11-23 (senare igen 12): nytt avsnitt "Var ligger parken?" (#Lage) med Karta 1, två kartor som man växlar mellan (översikt och närbild, skärmdumpar ur Vindbrukskollen). Version 1.13.
    UPPDATERING 2026-11-23 (senare igen 11): startsidan index.html finns och brödsmulorna börjar med "Vindkraftens ekonomi: start". Version 1.12.
@@ -46,8 +47,8 @@
    UPPDATERING 2026-11-23 (senare igen): växel för parkens storlek (20 verk eller bara Lunnarsbo, 12 verk). Version 1.2.
    UPPDATERING 2026-11-23 (senare): nya nätfall I och J (Vattenfall 130 kV) i väljaren. Version 1.1.
    UPPDATERING 2026-11-23: versionsrad i sidfoten. Version 1.0 (Långhult har egen versionsnumrering, skild från huvudkalkylens). */
-const VERSION = '1.14';
-const VERSIONSDATUM = '2026-11-23';
+const VERSION = '1.15';
+const VERSIONSDATUM = '2026-11-24';
 
 /* ============================================================================
    DEL 0 – HJÄLPFUNKTIONER
