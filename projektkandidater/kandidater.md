@@ -14,6 +14,21 @@ Hämtad 2026-11-23 ur [Vindbrukskollen](https://ext-webbgis.lansstyrelsen.se/vbk
 
 Fullasttimmar för uppförda projekt med angiven produktion (393 områden): median 2 778, nedre kvartil 2 513, övre kvartil 3 145 timmar per år. En kandidat med fullasttimmar långt utanför det spannet bör granskas: produktionen är den sökandes beräkning.
 
+## Kapacitetsfaktor i kandidaterna
+
+Kapacitetsfaktor är beräknad årsproduktion delad med vad verken skulle ge vid full effekt hela året (summa GWh per år / (summa MW × 8 760 timmar)). Medelvärdet väger alla projekt lika. Det effektviktade medelvärdet väger efter installerad effekt och styrs därför av de stora projekten.
+
+| Grupp | Projekt | Medel | Median | Effektviktat medel | Lägsta | Högsta | Median i fullasttimmar |
+|---|---|---|---|---|---|---|---|
+| Alla kandidater | 27 | 37,3 % | 38,1 % | 34,8 % | 11,4 % | 49,5 % | 3 333 |
+| Kandidater i SE3 och SE4 | 9 | 36,4 % | 33,9 % | 37,1 % | 25,7 % | 48,7 % | 2 969 |
+| **Kandidater utan de som avviker ◀ riktvärde 37 %** | **22** | **36,4 %** | **37,1 %** | **36,9 %** | **25,7 %** | **43,4 %** | **3 250** |
+| Uppförda projekt (referens) | 393 | 32,3 % | 31,7 % | 33,7 % | 15,9 % | 58,8 % | 2 778 |
+
+**Riktvärde för kapacitetsfaktorn i nya projekt: 37 %.** Det är medelvärdet av medianen och det effektviktade medelvärdet för kandidaterna utan de som avviker från de uppförda projektens spann. Medianen och det viktade medelvärdet ligger nära varandra, så värdet påverkas varken av enstaka avvikare eller av projektens storlek. Det är kandidaternas beräknade produktion, inte en uppmätt kapacitetsfaktor. Medianerna och de viktade medelvärdena i de tre kandidatgrupperna ligger mellan 33,9 och 38,1 %, och för SE3 och SE4 är medianen 33,9 %. För ett enskilt projekt gäller projektets egen siffra.
+
+Både kandidaternas och de uppförda projektens produktion är beräknad årsproduktion (`CALPROD`) som den sökande har registrerat, inte uppmätt produktion. Jämförelsen visar om kandidaternas siffror är rimliga i förhållande till de uppförda projektens.
+
 ## Kandidater
 
 | Projekt | Kommun | Elområde | Verk | MW | Höjd (m) | GWh/år | Fullasttimmar | Status | Utövare |

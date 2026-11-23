@@ -62,6 +62,28 @@ class ValjKandidater(unittest.TestCase):
         self.assertEqual(h.valj_kandidater(om, 5, 30, '2024-01-01'), [])
 
 
+class Kapacitetsstatistik(unittest.TestCase):
+    def test_medel_median_och_viktat(self):
+        # Två projekt: 10 MW med 3 000 timmar (30 GWh) och 90 MW med 4 000 timmar (360 GWh).
+        a = h.sla_ihop({'Handlaggs': [verk('A', 1, mw=10.0, gwh=30.0)]})[0]
+        b = h.sla_ihop({'Handlaggs': [verk('B', 1, mw=90.0, gwh=360.0)]})[0]
+        s = h.kapacitetsstatistik([a, b])
+        self.assertEqual(s['antal'], 2)
+        self.assertAlmostEqual(s['medel'], (3000 + 4000) / 2 / 8760)
+        self.assertAlmostEqual(s['median'], 3500 / 8760)
+        self.assertAlmostEqual(s['viktat'], 390 * 1000 / (100 * 8760))     # väger efter effekt: 3 900 timmar
+        self.assertAlmostEqual(s['min'], 3000 / 8760)
+        self.assertAlmostEqual(s['max'], 4000 / 8760)
+
+    def test_tom_lista(self):
+        self.assertIsNone(h.kapacitetsstatistik([]))
+
+    def test_riktvarde_ar_medelvardet_av_median_och_viktat_i_hela_procent(self):
+        self.assertEqual(h.riktvarde({'median': 0.371, 'viktat': 0.369}), 37)
+        self.assertEqual(h.riktvarde({'median': 0.30, 'viktat': 0.35}), 32)   # 32,5 avrundas till jämnt tal av Python
+        self.assertIsNone(h.riktvarde(None))
+
+
 class Avvikande(unittest.TestCase):
     def test_ligger_utanfor_spannet(self):
         ref = {'q1': 2500, 'q3': 3100, 'median': 2800, 'antal': 100}

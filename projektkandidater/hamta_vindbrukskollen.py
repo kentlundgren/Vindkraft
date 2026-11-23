@@ -196,7 +196,24 @@ def skriv_csv(kandidater, sokvag):
             w.writerow(rad)
 
 
-def skriv_md(kandidater, referens, ofullstandiga, antal_aktuella, sokvag, args, hamtad):
+def kapacitetsstatistik(poster):
+    """Medel, median, effektviktat medel, minsta och största kapacitetsfaktor över projekt med känd kapacitetsfaktor.
+    Medelvärdet väger alla projekt lika, det effektviktade medelvärdet väger efter installerad effekt (summa GWh / (summa MW * 8760))."""
+    kf = [o['kapacitetsfaktor'] for o in poster if o['kapacitetsfaktor']]
+    if not kf:
+        return None
+    mw = sum(o['mw'] for o in poster if o['kapacitetsfaktor'])
+    gwh = sum(o['gwh_ar'] for o in poster if o['kapacitetsfaktor'])
+    return {'antal': len(kf), 'medel': statistics.fmean(kf), 'median': statistics.median(kf), 'viktat': gwh * 1000 / (mw * TIMMAR_PER_AR),
+            'min': min(kf), 'max': max(kf), 'mw': mw}
+
+
+def riktvarde(s):
+    """Riktvärde för kapacitetsfaktorn i hela procent: medelvärdet av medianen och det effektviktade medelvärdet."""
+    return None if not s else round((s['median'] + s['viktat']) / 2 * 100)
+
+
+def skriv_md(kandidater, referens, ofullstandiga, antal_aktuella, sokvag, args, hamtad, uppforda_ref=None):
     rader = []
     rader.append('# Kandidater för nya vindkraftskalkyler, ur Vindbrukskollen\n')
     rader.append('Hämtad %s ur [Vindbrukskollen](https://ext-webbgis.lansstyrelsen.se/vbk/) (Länsstyrelserna, i samarbete med Energimyndigheten). ' % hamtad[:10] +
@@ -212,6 +229,37 @@ def skriv_md(kandidater, referens, ofullstandiga, antal_aktuella, sokvag, args, 
         rader.append('Fullasttimmar för uppförda projekt med angiven produktion (%d områden): median %s, nedre kvartil %s, övre kvartil %s timmar per år. ' % (
             referens['antal'], f(referens['median']), f(referens['q1']), f(referens['q3'])) +
             'En kandidat med fullasttimmar långt utanför det spannet bör granskas: produktionen är den sökandes beräkning.\n')
+    grupper = [('Alla kandidater', kandidater),
+               ('Kandidater i SE3 och SE4', [o for o in kandidater if o['elomrade'] in ('SE3', 'SE4')]),
+               ('Kandidater utan de som avviker', [o for o in kandidater if not avvikande(o['fullasttimmar'], referens)]),
+               ('Uppförda projekt (referens)', uppforda_ref or [])]
+    rader.append('## Kapacitetsfaktor i kandidaterna\n')
+    rader.append('Kapacitetsfaktor är beräknad årsproduktion delad med vad verken skulle ge vid full effekt hela året (summa GWh per år / (summa MW × 8 760 timmar)). ' +
+                 'Medelvärdet väger alla projekt lika. Det effektviktade medelvärdet väger efter installerad effekt och styrs därför av de stora projekten.\n')
+    rader.append('| Grupp | Projekt | Medel | Median | Effektviktat medel | Lägsta | Högsta | Median i fullasttimmar |')
+    rader.append('|---|---|---|---|---|---|---|---|')
+    rik = riktvarde(kapacitetsstatistik(grupper[2][1]))
+    for namn, poster in grupper:
+        s = kapacitetsstatistik(poster)
+        if s:
+            procent = [f(s[k] * 100, 1) + ' %' for k in ('medel', 'median', 'viktat', 'min', 'max')]
+            rad = '| %s | %d | %s | %s |' % (namn, s['antal'], ' | '.join(procent), f(s['median'] * TIMMAR_PER_AR))
+            if poster is grupper[2][1] and rik:
+                rad = '| **%s ◀ riktvärde %d %%** | **%d** | %s | **%s** |' % (namn, rik, s['antal'], ' | '.join('**%s**' % p for p in procent), f(s['median'] * TIMMAR_PER_AR))
+            rader.append(rad)
+    rader.append('')
+    if rik:
+        stat = [kapacitetsstatistik(p) for _, p in grupper[:3]]
+        varden = [x * 100 for s_ in stat if s_ for x in (s_['median'], s_['viktat'])]
+        syd = stat[1]
+        rader.append(
+            '**Riktvärde för kapacitetsfaktorn i nya projekt: {rik} %.** Det är medelvärdet av medianen och det effektviktade medelvärdet för kandidaterna utan de som avviker från de uppförda projektens spann. '
+            'Medianen och det viktade medelvärdet ligger nära varandra, så värdet påverkas varken av enstaka avvikare eller av projektens storlek. '
+            'Det är kandidaternas beräknade produktion, inte en uppmätt kapacitetsfaktor. '
+            'Medianerna och de viktade medelvärdena i de tre kandidatgrupperna ligger mellan {lag} och {hog} %, och för SE3 och SE4 är medianen {syd}. '
+            'För ett enskilt projekt gäller projektets egen siffra.\n'.format(
+                rik=rik, lag=f(min(varden), 1), hog=f(max(varden), 1), syd=(f(syd['median'] * 100, 1) + ' %') if syd else '–'))
+    rader.append('Både kandidaternas och de uppförda projektens produktion är beräknad årsproduktion (`CALPROD`) som den sökande har registrerat, inte uppmätt produktion. Jämförelsen visar om kandidaternas siffror är rimliga i förhållande till de uppförda projektens.\n')
     rader.append('## Kandidater\n')
     vis = [('projekt', 'Projekt'), ('kommun', 'Kommun'), ('elomrade', 'Elområde'), ('verk', 'Verk'), ('mw', 'MW'), ('totalhojd_max', 'Höjd (m)'),
            ('gwh_ar', 'GWh/år'), ('fullasttimmar', 'Fullasttimmar'), ('status', 'Status'), ('utovare', 'Utövare')]
@@ -273,7 +321,8 @@ def main():
         referens = {'antal': len(tim), 'median': statistics.median(tim), 'q1': k[0], 'q3': k[2]}
     ofullstandiga = utan_effekt(omraden, args.min_verk, args.senast)
     skriv_csv(kandidater, os.path.join(HAR, 'kandidater.csv'))
-    skriv_md(kandidater, referens, ofullstandiga, len(omraden), os.path.join(HAR, 'kandidater.md'), args, hamtad)
+    uppforda_ref = [o for o in uppforda if o['fullasttimmar'] and o['mw'] and o['mw'] >= 5 and 800 < o['fullasttimmar'] < 6000]
+    skriv_md(kandidater, referens, ofullstandiga, len(omraden), os.path.join(HAR, 'kandidater.md'), args, hamtad, uppforda_ref)
     print('hämtat', hamtad, '| områden i prövning/beviljade:', len(omraden), '| kandidater:', len(kandidater), '| utan effekt:', len(ofullstandiga))
     lh = [o for o in omraden if 'nghult' in o['projekt'] or 'unnarsbo' in o['projekt']]
     for o in lh:
