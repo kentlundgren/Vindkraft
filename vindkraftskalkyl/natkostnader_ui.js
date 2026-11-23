@@ -71,7 +71,7 @@
     });
     txt.appendChild(ul);
     const p2 = document.createElement('p');
-    p2.appendChild(document.createTextNode('Riktmärkena bygger på en vägledande figur över överföringsförmåga per spänningsnivå och är inte belagda i Vattenfalls tariff. Nätägaren avgör nivån. Fall A och B är Vattenfalls regionnät, och Ellevio och E.ON är inte genomgångna. ' +
+    p2.appendChild(document.createTextNode('Riktmärkena bygger på en vägledande figur över överföringsförmåga per spänningsnivå och är inte belagda i Vattenfalls tariff. Nätägaren avgör nivån. Fall A, B, I och J är Vattenfalls regionnät, och Ellevio och E.ON är inte genomgångna. ' +
       (t.stamnat ? 'Över cirka ' + NAT_TYPFALL.stamnatMW + ' MW är direktanslutning till stamnätet (fall C–E) ändå inte given: gränsen 100 MW (220 kV) och 300 MW (400 kV) gäller när Svenska kraftnät bygger en ny station, och anslutning sker i första hand via regionnätet. ' : '')));
     const a = document.createElement('a'); a.href = 'natkostnader_exempel.html#normalfall-rubrik'; a.textContent = 'Läs varför';
     p2.appendChild(a); p2.appendChild(document.createTextNode('. '));
@@ -152,7 +152,7 @@
      Läge skrivs utan å, ä, ö: Ingen, Lag, Bas, Hog. */
   const LAGE_TILL_HASH = { ingen: 'Ingen', lag: 'Lag', bas: 'Bas', hog: 'Hog' };
   const HASH_TILL_LAGE = { Ingen: 'ingen', Lag: 'lag', Bas: 'bas', Hog: 'hog' };
-  const HASH_MONSTER = /^#Natkostnad_(Ingen|Lag|Bas|Hog)(?:_Exempel_([A-H])|_(Typfall))?(?:_Engang_(Ja|Nej))?(?:_Verk_(1|5))?$/;
+  const HASH_MONSTER = /^#Natkostnad_(Ingen|Lag|Bas|Hog)(?:_Exempel_([A-J])|_(Typfall))?(?:_Engang_(Ja|Nej))?(?:_Verk_(1|5))?$/;
 
   function antalVerk() {
     const v = Math.round(parseFloat(el('antalverk').value));

@@ -119,8 +119,11 @@
     return t;
   }
 
-  /** Typfall efter total effekt (MW): `litet` upp till gransMW, annars `stort`. `stamnat` är sant över stamnatMW. */
+  /** Typfall efter total effekt (MW): ur `trappa` när den finns, annars `litet` upp till gransMW och `stort` över. `stamnat` är sant över stamnatMW. */
   function typfallForEffekt(P, t) {
+    // Trappan (t.trappa) är den fullständiga uppdelningen efter parkeffekt. Utan trappa gäller litet/stort vid gransMW.
+    const st = (t.trappa || []).find(s => P > s.franMW && P <= s.tillMW);
+    if (st) return { id: st.id, stamnat: P > t.stamnatMW };
     return { id: P > t.gransMW ? t.stort : t.litet, stamnat: P > t.stamnatMW };
   }
 

@@ -181,3 +181,10 @@ label.oanvand { opacity: .5; }
 
 /* Totala effekten under Effekt per verk: en diskret beräknad rad i samma stil som övriga hjälptexter (klassen hint). */
 .total-effekt-rad { margin: 0 0 .9rem; }
+
+/* Växeln för parkens storlek i Långhult (samma utseende som växlaren ett verk / fem verk i huvudkalkylen). */
+.park-variant { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin: 0 0 1rem; font-size: .85rem; }
+.park-variant .hint { flex-basis: 100%; margin: .2rem 0 0; }
+.park-knapp { padding: .3rem .8rem; cursor: pointer; border: 1px solid var(--farg-primar-ljus); background: #fff; color: var(--farg-primar); border-radius: 999px; font-size: .85rem; }
+.park-knapp[aria-pressed="true"] { background: var(--farg-primar); color: #fff; border-color: var(--farg-primar); }
+.park-knapp:focus-visible { outline: 2px solid var(--farg-primar); outline-offset: 2px; }

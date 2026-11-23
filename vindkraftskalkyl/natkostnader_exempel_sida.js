@@ -19,8 +19,8 @@
    ============================================================================ */
 'use strict';
 
-const VERSION = '1.8';
-const VERSIONSDATUM = '2026-11-22';
+const VERSION = '1.10';
+const VERSIONSDATUM = '2026-11-23';
 
 (function () {
   const el = (id) => document.getElementById(id);
@@ -115,7 +115,7 @@ const VERSIONSDATUM = '2026-11-22';
     let t;
     if (f.id === 'C' || f.id === 'E') {
       t = 'Negativ nätkostnad (en ersättning): i södra Sverige minskar inmatningen stamnätets förluster, så Svenska kraftnäts energiavgift blir en kredit (' + e + ' öre/kWh). Den är större än den fasta delen (' + fast + ' öre/kWh), så producenten får netto ' + sv(-r.lopandeOre.summa, 2) + ' öre/kWh. Gäller en direktansluten anläggning, normalt stor, och är inte ett alternativ för 4 eller 20 MW. Engångskostnaden för egen anslutning saknas.';
-    } else if (f.id === 'A' || f.id === 'B') {
+    } else if (f.id === 'A' || f.id === 'B' || f.id === 'I' || f.id === 'J') {
       const naraNoll = Math.abs(r.lopandeOre.summa) < 1;
       t = 'Energiersättningen (' + e + ' öre/kWh) och de fasta avgifterna (' + fast + ' öre/kWh) ' +
         (naraNoll ? 'tar nästan ut varandra, så nätkostnaden blir nära noll (' + tot + ').'

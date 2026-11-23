@@ -122,6 +122,16 @@ sant('alla belagda fall har komplett.lopande', D.NAT_EXEMPEL.filter(f => f.belag
   lika('fall B, ett verk', o('B', P1, b1), 3.43, 0.01);
   lika('fall E, fem verk', o('E', P, brutto), -3.14, 0.01);
   lika('fall E, ett verk', o('E', P1, b1), -2.25, 0.01);
+  // Vattenfalls 130 kV-nivåer (bilaga 2, tariff för inmatning), räknade för Långhult (132 MW, kapacitetsfaktor 0,4121).
+  {
+    const PL = 132, bl = PL * 8760 * 0.4121 * 1000;
+    lika('fall I (PL1) löpande kr/år, 132 MW', N.beraknaNat(indata(byid.I), 1, PL, bl).lopande.summa, 50000 + 6.1 * PL * 1000 + 1.23 * 20 * PL * 1000 - 0.0228 * bl, 1);
+    lika('fall J (PT0) löpande kr/år, 132 MW', N.beraknaNat(indata(byid.J), 1, PL, bl).lopande.summa, 3750000 + 21.1 * PL * 1000 - 0.015 * bl, 1);
+    sant('fall I och J är regionnät och belagda', byid.I.typ === 'regionnät' && byid.J.typ === 'regionnät' && byid.I.belagd && byid.J.belagd);
+    sant('typfall: över 40 MW ger I (79 MW och 132 MW), 20 MW ger A, 4 MW ger B', [79.2, 132, 41, 100].every(x => N.typfallForEffekt(x, D.NAT_TYPFALL).id === 'I') && N.typfallForEffekt(20, D.NAT_TYPFALL).id === 'A' && N.typfallForEffekt(4, D.NAT_TYPFALL).id === 'B');
+    sant('fall J väljs aldrig automatiskt', D.NAT_TYPFALL.trappa.every(st => st.id !== 'J'));
+    sant('typfall 132 MW är stamnätsnotis, 79,2 MW är inte det', N.typfallForEffekt(132, D.NAT_TYPFALL).stamnat === true && N.typfallForEffekt(79.2, D.NAT_TYPFALL).stamnat === false);
+  }
   ['C', 'D', 'F', 'G'].forEach(id => lika('fall ' + id + ' oförändrat med antal verk', o(id, P1, b1), o(id, P, brutto), 1e-9));
   // Fast årsavgift i kronor är densamma för ett verk och fem verk.
   lika('fall A: fast årsavgift i kr, ett verk', N.beraknaNat(indata(byid.A), 1, P1, b1).lopande.fast, 1250000, 1e-6);

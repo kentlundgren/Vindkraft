@@ -23,11 +23,13 @@
    natutredning kkr (fast del), natutredningpermw kkr/MW, natutredningtak kkr (högst),
    natengangschablon kkr/MW. Utredningsavgiften = natutredning + natutredningpermw × MW, högst natutredningtak.
 
+   Version 1.8 · 2026-11-23 (typfall över 40 MW är fall I; J väljs för hand)
+   Version 1.7 · 2026-11-23 (fall I och J: Vattenfalls 130 kV-nivåer PL1 och PT0 i bilaga 2)
    Version 1.6 · 2026-11-22 (NAT_TYPFALL.trappa: vilken parkeffekt som passar vilket nätfall)
    ============================================================================ */
 
-var NAT_DATA_VERSION = '1.6';
-var NAT_DATA_DATUM = '2026-11-22';
+var NAT_DATA_VERSION = '1.8';
+var NAT_DATA_DATUM = '2026-11-23';
 
 /** Utgångspunkten för analysen: ledaren och inlägget som återger den. Ingår i källistan. */
 var NAT_UTGANGSPUNKT = [
@@ -63,12 +65,12 @@ var NAT_TYPFALL = {
   litet: 'B',
   stort: 'A',
   /** Vilken parkeffekt som passar vilket nätfall (riktmärke ur figur 2.6:1: ungefär 10 MW vid 10 kV, 15 MW vid 20 kV,
-      40 MW vid 40 kV, 100 MW vid 70 kV, 300 MW vid 130 kV). Fall A och B är de enda regionnätsfallen i kalkylen. */
+      40 MW vid 40 kV, 100 MW vid 70 kV, 300 MW vid 130 kV). Fall A, B, I och J är regionnätsfallen i kalkylen. Fall J väljs aldrig automatiskt. */
   trappa: [
     { franMW: 0, tillMW: 15, id: 'B', effekt: 'Upp till cirka 15 MW', kV: '20–6 kV', text: 'Fall B, Vattenfall 20–6 kV. Figuren anger ungefär 10 MW vid 10 kV och 15 MW vid 20 kV.' },
     { franMW: 15, tillMW: 40, id: 'A', effekt: 'Cirka 15 till 40 MW', kV: '50–30 kV', text: 'Fall A, Vattenfall 50–30 kV. Figuren anger ungefär 40 MW vid 40 kV.' },
-    { franMW: 40, tillMW: 100, id: 'A', effekt: 'Cirka 40 till 100 MW', kV: '70 kV', text: 'Figuren pekar på 70 kV, som varken fall A eller B täcker. Kalkylen använder fall A som närmaste underlag, med förbehåll.' },
-    { franMW: 100, tillMW: 1e9, id: 'A', effekt: 'Över cirka 100 MW', kV: '130 kV och högre', text: 'Figuren pekar på 130 kV och högre. Fall A används som närmaste underlag, med förbehåll. Direktanslutning till stamnätet (fall C–E) är ändå inte given.' }
+    { franMW: 40, tillMW: 100, id: 'I', effekt: 'Cirka 40 till 100 MW', kV: '70 kV', text: 'Fall I, Vattenfall PL1 (ledning 130–70 kV). Figuren pekar på 70 kV, som varken fall A eller B täcker, och PL1 är den tariffnivå som omfattar 70 kV. Förbehåll: nätägaren och anslutningspunkten är inte fastställda.' },
+    { franMW: 100, tillMW: 1e9, id: 'I', effekt: 'Över cirka 100 MW', kV: '130 kV och högre', text: 'Fall I, Vattenfall PL1 (ledning 130–70 kV): anslutning till en befintlig 130 kV-ledning. Fall J (PT0, 130 kV i en station från stamnät) är ett alternativ som väljs för hand, och blir aktuellt bara om Vattenfall anger anslutningspunkten i en sådan station. Direktanslutning till stamnätet (fall C–E) är ändå inte given. Förbehåll: nätägaren och anslutningspunkten är inte fastställda.' }
   ],
   kalla: {
     text: 'Vindkraftutredning för Norrbottens kust- och skärgårdsområde, avsnitt 2.6 Elnät och befintlig kraftproduktion, s. 32–33, figur 2.6:1 Sannolik överföringsförmåga av effekt vid olika systemspänning (figuren anger Energimyndigheten 2007 som källa; utredningens utgivningsår är inte kontrollerat)',
@@ -252,6 +254,50 @@ var NAT_EXEMPEL = [
     ejMedraknat: ['Anslutningskostnad (ledning, station, förstärkning) saknar belägg.', 'Systemkrav saknar belopp.'],
     regelverk: ['vf-regionnat-2026', 'svk-prislista-2026', 'ellag-4kap', 'ei-fs-anslutningsavgifter'].concat(NAT_REGELVERK_SYSTEMKRAV),
     kontrollerad: '2026-11-22'
+  },
+  {
+    id: 'I',
+    namn: 'Vattenfall regionnät PL1 (ledning 130–70 kV) med Svenska kraftnät, södra Sverige',
+    typ: 'regionnät',
+    ar: 2026,
+    falt: natFall({ natfast: 50000, nateffekt: 6.1, natavstavg: 1.23, natavstavstand: 20, natenergi: -2.28 }),
+    belagd: true, sarfall: false,
+    komplett: { lopande: true, engang: false },
+    kalla: [
+      { text: 'Vattenfall Eldistribution (2026), bilaga 2, tariff för inmatning PL1: fast avgift 50 tkr, årseffektavgift 0 kr/kW, avståndsberoende 1,23 kr/kW och km, energiersättning −0,78 öre/kWh', url: 'https://www.vattenfalleldistribution.se/globalassets/2.-foretag/abonnemang-och-avgifter/avtal-och-elnatsavgift/tillampningsbestammelser-och-nattariffer-for-vattenfall-eldistributions-regionnat-2026-01-01.pdf', hamtad: '2026-11-23' },
+      { text: 'Svenska kraftnäts avgifter via Vattenfalls bilaga 2, södra Sverige: 6,1 kr/kW och −1,5 öre/kWh', url: 'https://www.vattenfalleldistribution.se/globalassets/2.-foretag/abonnemang-och-avgifter/avtal-och-elnatsavgift/tillampningsbestammelser-och-nattariffer-for-vattenfall-eldistributions-regionnat-2026-01-01.pdf', hamtad: '2026-11-23' }
+    ],
+    antaganden: [
+      'Avståndet 20 km till närmaste stamnätspunkt är ett antagande.',
+      'Svenska kraftnäts avgifter antas läggas ovanpå Vattenfalls (som i fall A).',
+      'Effektavgift = 0 + 6,1 = 6,1 kr/kW. Energi = −0,78 + (−1,5) = −2,28 öre/kWh (energiersättning, gäller om inmatningen minskar förlusterna).',
+      'PL1 avser anslutningspunkter till ledningar i spänningsintervallet 130–70 kV (avsnitt 5.1). Fallet förutsätter att parken ansluts till en befintlig 130 kV-ledning. Vattenfall bestämmer anslutningspunkt och spänning (6.1.1).'
+    ],
+    ejMedraknat: ['Anslutningskostnad (ledning, station, förstärkning) saknar belopp: den bestäms av en förstudie och blir en kundspecifik anslutningsavgift (Vattenfall, avsnitt 6.2).', 'Systemkrav saknar belopp.'],
+    regelverk: ['vf-regionnat-2026', 'svk-prislista-2026', 'ellag-4kap', 'ei-fs-anslutningsavgifter'].concat(NAT_REGELVERK_SYSTEMKRAV),
+    kontrollerad: '2026-11-23'
+  },
+  {
+    id: 'J',
+    namn: 'Vattenfall regionnät PT0 (130 kV i station från stamnät) med Svenska kraftnät, södra Sverige',
+    typ: 'regionnät',
+    ar: 2026,
+    falt: natFall({ natfast: 3750000, nateffekt: 21.1, natavstavg: 0, natavstavstand: 20, natenergi: -1.5 }),
+    belagd: true, sarfall: false,
+    komplett: { lopande: true, engang: false },
+    kalla: [
+      { text: 'Vattenfall Eldistribution (2026), bilaga 2, tariff för inmatning PT0: fast avgift 3 750 tkr, årseffektavgift 15 kr/kW, avståndsberoende 0,0 kr/kW och km, energiersättning 0,0 öre/kWh', url: 'https://www.vattenfalleldistribution.se/globalassets/2.-foretag/abonnemang-och-avgifter/avtal-och-elnatsavgift/tillampningsbestammelser-och-nattariffer-for-vattenfall-eldistributions-regionnat-2026-01-01.pdf', hamtad: '2026-11-23' },
+      { text: 'Svenska kraftnäts avgifter via Vattenfalls bilaga 2, södra Sverige: 6,1 kr/kW och −1,5 öre/kWh', url: 'https://www.vattenfalleldistribution.se/globalassets/2.-foretag/abonnemang-och-avgifter/avtal-och-elnatsavgift/tillampningsbestammelser-och-nattariffer-for-vattenfall-eldistributions-regionnat-2026-01-01.pdf', hamtad: '2026-11-23' }
+    ],
+    antaganden: [
+      'Svenska kraftnäts avgifter antas läggas ovanpå Vattenfalls (som i fall A).',
+      'Effektavgift = 15 + 6,1 = 21,1 kr/kW. Energi = 0,0 + (−1,5) = −1,5 öre/kWh.',
+      'PT0 avser anslutningspunkter vid 130 kV i stationer med nedtransformering från stamnät (avsnitt 5.1), alltså en anslutning i Vattenfalls station vid stamnätet. Avståndsavgiften är 0, så avståndet spelar ingen roll.',
+      'Jämfört med fall I är J dyrare vid korta avstånd till stamnätspunkten (hög fast avgift och effektavgift) men billigare vid långa. Brytpunkten är cirka 58 km för 132 MW och cirka 73 km för 79 MW med de antaganden som anges här.'
+    ],
+    ejMedraknat: ['Anslutningskostnad (ledning, station, förstärkning) saknar belopp: den bestäms av en förstudie och blir en kundspecifik anslutningsavgift (Vattenfall, avsnitt 6.2).', 'Systemkrav saknar belopp.'],
+    regelverk: ['vf-regionnat-2026', 'svk-prislista-2026', 'ellag-4kap', 'ei-fs-anslutningsavgifter'].concat(NAT_REGELVERK_SYSTEMKRAV),
+    kontrollerad: '2026-11-23'
   },
   {
     id: 'C',

@@ -18,6 +18,8 @@
   UPPDATERING 2026-11-23: närboendeersättningen räknas i kalkylkarna.js (delas med huvudkalkylen), kapacitetsfaktor 0,4121 (= 3 610 h / 8 760) i stället för fullasttimmar, och viktning heter prisfaktor.
   UPPDATERING 2026-11-23 (senare): indatagrupperna har samma rubriker och ordning som övriga kalkyler (INDATAGRUPPER i kalkylkarna.js), och Närboende ligger sist.
   UPPDATERING 2026-11-23 (senare igen): fastighetsskatt, bygdemedel och kommunstöd räknas i kalkylkarna.js (kommunPoster) och delas med övriga kalkyler. Långhults värden och resultat är oförändrade.
+  UPPDATERING 2026-11-23 (senare igen 10): växel för parkens storlek (hela parken 20 verk och 132 MW, eller bara Lunnarsbo 12 verk och 79,2 MW), och typfallet över 40 MW är fall I (Vattenfall PL1). Version 1.2.
+  UPPDATERING 2026-11-23 (senare igen 9): nya nätfall I (Vattenfall PL1, ledning 130–70 kV) och J (Vattenfall PT0, 130 kV i station) i väljaren. Version 1.1.
   UPPDATERING 2026-11-23 (senare igen 8): versionsrad längst ned (Version 1.0 · 2026-11-23), egen numrering för Långhult (VERSION och VERSIONSDATUM i berakningar_langhult.js).
   UPPDATERING 2026-11-23 (senare igen 7): totala effekten (20 × 6,6 = 132 MW) visas under Effekt per verk, fälten i Anläggning & investering står i samma ordning som i övriga kalkyler (INDATAORDNING_ANLAGGNING i kalkylkarna.js), och läget ingen visar 0 kr i nätkostnadsrutorna.
   UPPDATERING 2026-11-23 (senare igen 6): delningsbild (og-bild-langhult.jpg) och taggar för LinkedIn, X och Facebook.
@@ -106,6 +108,13 @@
        ==================================================================== -->
   <section class="indata-panel" aria-labelledby="Indata">
     <h2 id="Indata">Indata<a class="ankare" href="#Indata" aria-label="Länk till rubriken">#</a></h2>
+
+    <div class="park-variant" id="park-variant" role="group" aria-labelledby="park-variant-etikett">
+      <strong id="park-variant-etikett">Parkens storlek</strong>
+      <button type="button" class="park-knapp" data-verk="20" aria-pressed="true">Hela parken: 20 verk, 132 MW</button>
+      <button type="button" class="park-knapp" data-verk="12" aria-pressed="false">Bara Lunnarsbo: 12 verk, 79,2 MW</button>
+      <p class="hint">Projektet har två delområden: Långhult i norr (upp till 8 verk, alla i Jönköpings kommun) och Lunnarsbo i söder (upp till 12 verk, 5 i Jönköping och 7 i Gislaved), enligt <a href="https://fredolsenrenewables.com/all-projects/laanghult" target="_blank" rel="noopener">Fred. Olsen Renewables</a>. Knapparna sätter bara antal verk (6,6 MW per verk). Antalet bostäder per avståndszon (gruppen Närboende) gäller hela parken och ändras inte, så närboendeersättningen för bara Lunnarsbo är inte anpassad till de bostäder som ligger nära just de verken. Kommunstödet till Jönköping räknas på verken utöver de 7 i Gislaved.</p>
+    </div>
 
     <div class="indata-grupper">
 
@@ -215,7 +224,7 @@
       <!-- ---- Nät och systemkrav (delad modul, se kalkylkarna.js och natkostnader_*.js) ---- -->
       <fieldset class="indata-grupp" id="nat-grupp">
         <legend>Nät och systemkrav</legend>
-        <p class="hint" style="margin:0 0 .6rem"><span class="badge antagande">antagande</span> Kaufmann &amp; Westander (2026) anger inga nätkostnader. Fälten här är exempel ur Vattenfalls och Svenska kraftnäts tariffer, och <strong>förvalt läge är Ingen</strong>, så att Långhults siffror följer Kaufmann &amp; Westander (2026) tills du väljer ett läge. Nätägaren och anslutningsspänningen för Långhult är inte fastställda i källorna. Parkens 132 MW ligger över gränsen där fall A (50–30 kV) och B (20–6 kV) räcker, så förslaget är närmaste underlag, med förbehåll, och anslutningskostnaden (ledning, station) saknas.</p>
+        <p class="hint" style="margin:0 0 .6rem"><span class="badge antagande">antagande</span> Kaufmann &amp; Westander (2026) anger inga nätkostnader. Fälten här är exempel ur Vattenfalls och Svenska kraftnäts tariffer, och <strong>förvalt läge är Ingen</strong>, så att Långhults siffror följer Kaufmann &amp; Westander (2026) tills du väljer ett läge. Nätägaren och anslutningsspänningen för Långhult är inte fastställda i källorna. Parkens 132 MW (79 MW om bara Lunnarsbo byggs) ligger över gränsen där fall A (50–30 kV) och B (20–6 kV) räcker. Förslaget är därför fall I (Vattenfall PL1, ledning 130–70 kV), med förbehåll: nätägaren och anslutningspunkten är inte fastställda, och anslutningskostnaden (ledning, station) saknas.</p>
 
         <label>Nätkostnader <span class="hjalp" tabindex="0" data-hjalp="Ingen: nätkostnader ingår inte i resultaten (förvalt, samma resultat som tidigare). Bas: fältens värden. Låg och hög: alla poster utom energiavgiften multipliceras med faktorerna längst ned i gruppen.">?</span>
           <select id="natlage" class="indata">

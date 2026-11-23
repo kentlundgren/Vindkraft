@@ -48,8 +48,10 @@
    UPPDATERING 2026-11-23 (senare igen 3): sammanställningen visar överskottet före lokala poster, vad som dras av (arrende, fastighetsskatt, bygdemedel, närboendeersättning) och överskottet efter, och har ankaret #kalkylsammanstallning. Version 1.20.
    UPPDATERING 2026-11-23 (senare igen 4): raderna i sammanställningen är markerade som en uträkning (start, avdrag, summa) med förklaringsruta, och arrendet förklaras i fliken Markägare. Version 1.21.
    UPPDATERING 2026-11-23 (senare igen 5): det realiserade priset (spotpris × prisfaktor) räknas ut och uppdateras i texten vid prisfaktorn. Version 1.22.
-   UPPDATERING 2026-11-23 (senare igen 6): totala effekten (antal verk × effekt per verk) visas under Effekt per verk, fälten i Anläggning & investering står i samma ordning i alla kalkyler, och läget ingen visar 0 kr i nätkostnadsrutorna. Version 1.23. */
-const VERSION = '1.23';
+   UPPDATERING 2026-11-23 (senare igen 6): totala effekten (antal verk × effekt per verk) visas under Effekt per verk, fälten i Anläggning & investering står i samma ordning i alla kalkyler, och läget ingen visar 0 kr i nätkostnadsrutorna. Version 1.23.
+   UPPDATERING 2026-11-23 (senare igen 7): två nya nätfall i väljaren, I (Vattenfall PL1, ledning 130–70 kV) och J (Vattenfall PT0, 130 kV i station från stamnät), ur Vattenfalls tariff för inmatning 2026. Version 1.24.
+   UPPDATERING 2026-11-23 (senare igen 8): typfallet över 40 MW är fall I (Vattenfall PL1, ledning 130–70 kV). Version 1.25. */
+const VERSION = '1.25';
 const VERSIONSDATUM = '2026-11-23';
 
 /* ============================================================================

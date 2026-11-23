@@ -31,8 +31,10 @@
 'use strict';
 
 /* Versionsraden längst ned på sidan. Höj VERSION och uppdatera VERSIONSDATUM i samma ändring som innehållet ändras.
+   UPPDATERING 2026-11-23 (senare igen): växel för parkens storlek (20 verk eller bara Lunnarsbo, 12 verk). Version 1.2.
+   UPPDATERING 2026-11-23 (senare): nya nätfall I och J (Vattenfall 130 kV) i väljaren. Version 1.1.
    UPPDATERING 2026-11-23: versionsrad i sidfoten. Version 1.0 (Långhult har egen versionsnumrering, skild från huvudkalkylens). */
-const VERSION = '1.0';
+const VERSION = '1.2';
 const VERSIONSDATUM = '2026-11-23';
 
 /* ============================================================================
@@ -680,6 +682,25 @@ function omrakna() {
   return res;
 }
 
+/* Växeln för parkens storlek: knapparna sätter antal verk (20 eller 12) och räknar om. Ett annat antal, skrivet för hand, markerar ingen knapp. */
+function kopplaParkvariant() {
+  const knappar = document.querySelectorAll('.park-knapp');
+  const inp = document.getElementById('antalverk');
+  if (!knappar.length || !inp) return;
+  const markera = () => {
+    const v = Math.round(parseFloat(inp.value));
+    knappar.forEach(k => k.setAttribute('aria-pressed', String(parseInt(k.getAttribute('data-verk'), 10) === v)));
+  };
+  knappar.forEach(k => k.addEventListener('click', () => {
+    inp.value = k.getAttribute('data-verk');
+    markera();
+    inp.dispatchEvent(new Event('input', { bubbles: true }));
+    inp.dispatchEvent(new Event('change', { bubbles: true }));
+  }));
+  inp.addEventListener('input', markera);
+  markera();
+}
+
 function kopplaLyssnare() {
   document.querySelectorAll('.indata').forEach(el => {
     el.addEventListener('input', () => { omrakna(); });
@@ -760,6 +781,7 @@ document.addEventListener('DOMContentLoaded', () => {
   kopplaAnkareTillFlikar();
   kopplaTeknikModal();
   kopplaForklaringar();
+  kopplaParkvariant();
   visaVersionsrad(VERSION, VERSIONSDATUM);
 
   senasteResultat = omrakna();
