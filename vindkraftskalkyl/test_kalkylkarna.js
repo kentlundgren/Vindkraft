@@ -439,6 +439,12 @@ fs.readdirSync('.').filter(f => /^(vindkraftskalkyl.*|index)\.html$/.test(f)).fo
   sant('Karta 1 har två bilder med alt-text', bilder.length === 2 && bilder.every(m => m[2].length > 40));
   bilder.forEach(m => sant('kartbilden ' + m[1] + ' finns och är under 200 kB', fs.existsSync(m[1]) && fs.statSync(m[1]).size < 200 * 1024));
   sant('Karta 1 har två flikar och två paneler, och källraden länkar till Länsstyrelserna (2026)', (lh.match(/role="tab" id="karta-flik-/g) || []).length === 2 && (lh.match(/role="tabpanel" id="karta-panel-/g) || []).length === 2 && /Skärmdumpar ur Vindbrukskollen \(<a href="#ref-lst-vbk">/.test(lh));
+  sant('Karta 1 har pilknappar, räknare och i-knapp', ['karta-fore', 'karta-nasta', 'karta-raknare', 'karta-i'].every(id => lh.indexOf('id="' + id + '"') > -1));
+  const info = (lh.match(/<div class="karta-info" id="karta-info">([\s\S]*?)<\/div>/) || [])[1] || '';
+  sant('rutan vid hovring har uppgifterna om delområdena och länkar till Fred. Olsen Renewables',
+    info.replace(/\s+/g, ' ').indexOf('Projektet har två delområden: Långhult i norr (upp till 8 verk, alla i Jönköpings kommun) och Lunnarsbo i söder (upp till 12 verk, 5 i Jönköping och 7 i Gislaved), enligt <a href="https://fredolsenrenewables.com/all-projects/laanghult"') > -1);
+  sant('närbildens bildtext och alt-text namnger delområdena Långhult (8 verk) och Lunnarsbo (12 verk)', /delområdet Långhult \(8 verk\)/.test(lh) && /delområdet Lunnarsbo \(12 verk\)/.test(lh) && /alt="Närbild[^"]*delområdet Långhult i norr[^"]*delområdet Lunnarsbo i söder/.test(lh));
+  sant('Fred. Olsen Renewables (u.å.) finns som källpost (#ref-fo) och bildtexten länkar dit', /<li id="ref-fo">/.test(lh) && /href="#ref-fo">Fred\. Olsen Renewables \(u\.å\.\)/.test(lh));
   sant('Lage står före Lasguide i Långhult-sidan', lh.indexOf('id="Lage"') > -1 && lh.indexOf('id="Lage"') < lh.indexOf('id="Lasguide"'));
 }
 

@@ -429,7 +429,34 @@ h2 { font-size: 1.25rem; color: var(--farg-primar); border-bottom: 2px solid var
 
 /* Karta 1: två bilder man växlar mellan med flikar */
 .karta { margin: .4rem 0 .8rem; }
-.karta-flikar { display: flex; gap: .3rem; margin-bottom: .5rem; }
+.karta-flikrad { display: flex; align-items: center; justify-content: space-between; gap: .6rem; margin-bottom: .5rem; flex-wrap: wrap; }
+.karta-flikar { display: flex; gap: .3rem; }
+.karta-raknare { font-size: .85rem; color: #3b4846; }
+.karta-ram { position: relative; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab; }
+.karta-ram [role="tabpanel"]:not([hidden]) { animation: karta-in .25s ease; }
+@keyframes karta-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .karta-ram [role="tabpanel"]:not([hidden]) { animation: none; } }
+.karta-pil {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 2.4rem; height: 2.4rem; border-radius: 50%; border: 0; cursor: pointer;
+  background: rgba(16,40,38,.7); color: #fff; font-size: 1.6rem; line-height: 1; padding: 0 0 .15rem;
+}
+.karta-pil-fore { left: .5rem; }
+.karta-pil-nasta { right: .5rem; }
+.karta-pil:disabled { opacity: .25; cursor: default; }
+.karta-pil:focus-visible, .karta-i:focus-visible { outline: 3px solid #fff; outline-offset: 2px; box-shadow: 0 0 0 5px var(--farg-primar); }
+.karta-i {
+  position: absolute; top: .5rem; right: .5rem; width: 2rem; height: 2rem; border-radius: 50%;
+  border: 0; cursor: pointer; background: rgba(16,40,38,.7); color: #fff; font: italic 700 1.1rem Georgia, serif;
+}
+.karta-info {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: .7rem .9rem; font-size: .9rem; line-height: 1.4;
+  background: rgba(16,40,38,.94); color: #fff; border-radius: 0 0 6px 6px; cursor: auto;
+  visibility: hidden; opacity: 0; transition: opacity .15s;
+}
+.karta-info a { color: #bfe9e4; }
+.karta-ram:hover .karta-info, .karta-ram:focus-within .karta-info, .karta-info.oppen { visibility: visible; opacity: 1; }
+.karta-bildtext { margin: .4rem 0 0; font-size: .9rem; }
 .karta-flikar button {
   font: inherit; padding: .35rem .9rem; cursor: pointer;
   background: var(--farg-panel); color: var(--farg-primar);

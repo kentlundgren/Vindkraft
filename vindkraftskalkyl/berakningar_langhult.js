@@ -31,6 +31,7 @@
 'use strict';
 
 /* Versionsraden längst ned på sidan. Höj VERSION och uppdatera VERSIONSDATUM i samma ändring som innehållet ändras.
+   UPPDATERING 2026-11-23 (senare igen 13): Karta 1: delområdena Långhult (norr, 8 verk) och Lunnarsbo (söder, 12 verk) i texten och bildtexterna, uppgifterna visas vid hovring, fokus och tryck, och man byter bild genom att svepa (touch, mus och styrplatta) eller med pilknapparna. Version 1.14.
    UPPDATERING 2026-11-23 (senare igen 12): nytt avsnitt "Var ligger parken?" (#Lage) med Karta 1, två kartor som man växlar mellan (översikt och närbild, skärmdumpar ur Vindbrukskollen). Version 1.13.
    UPPDATERING 2026-11-23 (senare igen 11): startsidan index.html finns och brödsmulorna börjar med "Vindkraftens ekonomi: start". Version 1.12.
    UPPDATERING 2026-11-23 (senare igen 10): källpost för sammanställningen och hänvisning på V. Version 1.11.
@@ -45,7 +46,7 @@
    UPPDATERING 2026-11-23 (senare igen): växel för parkens storlek (20 verk eller bara Lunnarsbo, 12 verk). Version 1.2.
    UPPDATERING 2026-11-23 (senare): nya nätfall I och J (Vattenfall 130 kV) i väljaren. Version 1.1.
    UPPDATERING 2026-11-23: versionsrad i sidfoten. Version 1.0 (Långhult har egen versionsnumrering, skild från huvudkalkylens). */
-const VERSION = '1.13';
+const VERSION = '1.14';
 const VERSIONSDATUM = '2026-11-23';
 
 /* ============================================================================
@@ -726,8 +727,9 @@ function kopplaBostadsalternativ() {
   markera();
 }
 
-/* Växeln för parkens storlek: knapparna sätter antal verk (20 eller 12) och räknar om. Ett annat antal, skrivet för hand, markerar ingen knapp. */
-/* Karta 1: flikarna Översikt och Närbild. Klick eller pil vänster/höger byter bild, och bara en bild visas åt gången. */
+/* Karta 1: bildbyte mellan Översikt och Närbild. Bara en bild visas åt gången. Man byter med flikarna, pilknapparna, tangentbordets
+   pilar, ett svep (touch eller mus) eller ett sidledes svep på styrplattan. Rutan med uppgifter om delområdena visas vid hovring,
+   fokus eller tryck på i-knappen. Det finns inga fler än två bilder och ingen rundgång. */
 function kopplaKartflikar() {
   const flikar = Array.from(document.querySelectorAll('.karta-flikar [role="tab"]'));
   if (flikar.length === 0) return;
@@ -737,9 +739,57 @@ function kopplaKartflikar() {
       f.setAttribute('aria-selected', aktiv ? 'true' : 'false');
       f.tabIndex = aktiv ? 0 : -1;
       document.getElementById(f.getAttribute('aria-controls')).hidden = !aktiv;
+      document.getElementById(f.dataset.text).hidden = !aktiv;
     });
+    const nr = flikar.indexOf(flik);
+    document.getElementById('karta-raknare').textContent = 'Bild ' + (nr + 1) + ' av ' + flikar.length;
+    document.getElementById('karta-fore').disabled = nr === 0;
+    document.getElementById('karta-nasta').disabled = nr === flikar.length - 1;
     if (fokus) flik.focus();
   };
+  const gaTill = (steg) => {
+    const nr = flikar.findIndex(f => f.getAttribute('aria-selected') === 'true') + steg;
+    if (nr >= 0 && nr < flikar.length) valj(flikar[nr], false);
+  };
+  valj(flikar[0], false);
+  document.getElementById('karta-fore').addEventListener('click', () => gaTill(-1));
+  document.getElementById('karta-nasta').addEventListener('click', () => gaTill(1));
+
+  // Svep: touch och mus (drag i sidled minst 50 px, mer sidledes än lodrätt). Ett svep ska inte öppna bilden i fullstorlek.
+  const ram = document.querySelector('.karta-ram');
+  let startX = null, startY = null, svepte = false;
+  ram.addEventListener('pointerdown', (e) => {
+    svepte = false;
+    if (e.target.closest('.karta-pil, .karta-i, .karta-info')) return;
+    startX = e.clientX; startY = e.clientY;
+  });
+  ram.addEventListener('pointerup', (e) => {
+    if (startX === null) return;
+    const dx = e.clientX - startX, dy = e.clientY - startY;
+    startX = null;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > 1.5 * Math.abs(dy)) { svepte = true; setTimeout(() => { svepte = false; }, 100); gaTill(dx < 0 ? 1 : -1); }   // på touch kommer inget klick efter ett svep, så flaggan nollas av en timer
+  });
+  ram.addEventListener('pointercancel', () => { startX = null; });
+  ram.addEventListener('click', (e) => { if (svepte) { e.preventDefault(); e.stopPropagation(); svepte = false; } }, true);
+  // Styrplatta: två fingrar i sidled. Nedtid så att svepets utrullning inte byter bild flera gånger.
+  let sistaHjul = 0;
+  ram.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+    e.preventDefault();
+    const nu = Date.now();
+    if (nu - sistaHjul < 600 || Math.abs(e.deltaX) < 20) return;
+    sistaHjul = nu;
+    gaTill(e.deltaX > 0 ? 1 : -1);
+  }, { passive: false });
+
+  // Uppgifter om delområdena: hovring och fokus visar rutan med CSS, i-knappen gör det på touch och med tangentbord.
+  const iKnapp = document.getElementById('karta-i'), info = document.getElementById('karta-info');
+  const stang = () => { info.classList.remove('oppen'); iKnapp.setAttribute('aria-expanded', 'false'); };
+  iKnapp.addEventListener('click', () => {
+    const oppen = info.classList.toggle('oppen');
+    iKnapp.setAttribute('aria-expanded', oppen ? 'true' : 'false');
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') stang(); });
   flikar.forEach((f, i) => {
     f.addEventListener('click', () => valj(f, false));
     f.addEventListener('keydown', (e) => {
@@ -749,6 +799,7 @@ function kopplaKartflikar() {
   });
 }
 
+/* Växeln för parkens storlek: knapparna sätter antal verk (20 eller 12) och räknar om. Ett annat antal, skrivet för hand, markerar ingen knapp. */
 function kopplaParkvariant() {
   const knappar = document.querySelectorAll('#park-variant .park-knapp');
   const inp = document.getElementById('antalverk');

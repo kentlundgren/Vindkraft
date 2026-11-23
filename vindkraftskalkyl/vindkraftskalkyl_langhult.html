@@ -19,6 +19,7 @@
   UPPDATERING 2026-11-23 (senare): indatagrupperna har samma rubriker och ordning som övriga kalkyler (INDATAGRUPPER i kalkylkarna.js), och Närboende ligger sist.
   UPPDATERING 2026-11-23 (senare igen): fastighetsskatt, bygdemedel och kommunstöd räknas i kalkylkarna.js (kommunPoster) och delas med övriga kalkyler. Långhults värden och resultat är oförändrade.
   UPPDATERING 2026-11-23 (senare igen 13): länken till beräkningen av bostäder pekar på nya platsen (mappen langhult/). Version 1.5.
+  UPPDATERING 2026-11-23 (senare igen 22): Karta 1: delområdena Långhult (norr, 8 verk) och Lunnarsbo (söder, 12 verk) i texten och bildtexterna, uppgifterna visas vid hovring, fokus och tryck, och man byter bild genom att svepa (touch, mus och styrplatta) eller med pilknapparna. Version 1.14.
   UPPDATERING 2026-11-23 (senare igen 21): nytt avsnitt "Var ligger parken?" (#Lage) med Karta 1, två kartor som man växlar mellan (översikt och närbild, skärmdumpar ur Vindbrukskollen). Version 1.13.
   UPPDATERING 2026-11-23 (senare igen 20): startsidan index.html finns och brödsmulorna börjar med "Vindkraftens ekonomi: start". Version 1.12.
   UPPDATERING 2026-11-23 (senare igen 19): Sammanställningen kandidater.md är en egen källpost (Lundgren, 2026c) och Vindbrukskollen har en hänvisning på V (se Länsstyrelserna (2026)). Version 1.11.
@@ -96,27 +97,42 @@
   <section aria-labelledby="Lage">
     <h2 id="Lage">Var ligger parken?<a class="ankare" href="#Lage" aria-label="Länk till rubriken">#</a></h2>
     <p>
-      Vindpark Långhult ligger i Jönköpings och Gislaveds kommuner och består av två skilda områden.
-      Välj <strong>Översikt</strong> för läget i landskapet och <strong>Närbild</strong> för de två områdena.
+      Vindpark Långhult (så heter hela projektet, 20 verk, i Vindbrukskollen) ligger i Jönköpings och Gislaveds kommuner och har två delområden:
+      delområdet Långhult i norr och delområdet Lunnarsbo i söder. Välj <strong>Översikt</strong> för läget i landskapet och
+      <strong>Närbild</strong> för de två delområdena, eller svep åt sidan. Håll pekaren över kartan, eller tryck på i-knappen, för uppgifter om delområdena.
     </p>
     <h3 id="Karta1">Karta 1. Vindpark Långhult, översikt och närbild<a class="ankare" href="#Karta1" aria-label="Länk till kartan">#</a></h3>
     <figure class="karta">
-      <div class="karta-flikar" role="tablist" aria-label="Välj karta">
-        <button type="button" role="tab" id="karta-flik-oversikt" aria-controls="karta-panel-oversikt" aria-selected="true">Översikt</button>
-        <button type="button" role="tab" id="karta-flik-narbild" aria-controls="karta-panel-narbild" aria-selected="false" tabindex="-1">Närbild</button>
+      <div class="karta-flikrad">
+        <div class="karta-flikar" role="tablist" aria-label="Välj karta">
+          <button type="button" role="tab" id="karta-flik-oversikt" aria-controls="karta-panel-oversikt" aria-selected="true" data-text="karta-text-oversikt">Översikt</button>
+          <button type="button" role="tab" id="karta-flik-narbild" aria-controls="karta-panel-narbild" aria-selected="false" tabindex="-1" data-text="karta-text-narbild">Närbild</button>
+        </div>
+        <span class="karta-raknare" id="karta-raknare" aria-live="polite">Bild 1 av 2</span>
       </div>
-      <div role="tabpanel" id="karta-panel-oversikt" aria-labelledby="karta-flik-oversikt">
-        <a href="langhult/Langhult_karta_Vindbrukskollen_.jpg" target="_blank" rel="noopener">
-          <img src="langhult/Langhult_karta_Vindbrukskollen_.jpg" width="842" height="774" alt="Karta över delar av Västergötland och Småland med Vättern i mitten. En gul ruta med texten Långhult och två pilar pekar på två orange områden sydväst om Jönköping, nära Taberg och Stengårdshult. Svarta vindkraftsymboler visar befintliga verk i närheten.">
-        </a>
+      <div class="karta-ram">
+        <div role="tabpanel" id="karta-panel-oversikt" aria-labelledby="karta-flik-oversikt">
+          <a href="langhult/Langhult_karta_Vindbrukskollen_.jpg" target="_blank" rel="noopener" draggable="false">
+            <img src="langhult/Langhult_karta_Vindbrukskollen_.jpg" width="842" height="774" draggable="false" alt="Karta över delar av Västergötland och Småland med Vättern i mitten. En gul ruta med texten Långhult och två pilar pekar på två orange områden sydväst om Jönköping, nära Taberg och Stengårdshult. Svarta vindkraftsymboler visar befintliga verk i närheten.">
+          </a>
+        </div>
+        <div role="tabpanel" id="karta-panel-narbild" aria-labelledby="karta-flik-narbild" hidden>
+          <a href="langhult/Langhult_karta_Vindbrukskollen_narbild_.jpg" target="_blank" rel="noopener" draggable="false">
+            <img src="langhult/Langhult_karta_Vindbrukskollen_narbild_.jpg" width="1000" height="729" draggable="false" alt="Närbild ur Vindbrukskollen. Sökresultatet Långhult TIO71 under Tillståndsansökan inlämnad är markerat, och två pilar pekar på de två gröna områdena: delområdet Långhult i norr, vid Röksberg och Bengtsbryna, och delområdet Lunnarsbo i söder, vid Hökhult och Östra Kullshestra.">
+          </a>
+        </div>
+        <button type="button" class="karta-pil karta-pil-fore" id="karta-fore" aria-label="Föregående karta">‹</button>
+        <button type="button" class="karta-pil karta-pil-nasta" id="karta-nasta" aria-label="Nästa karta">›</button>
+        <button type="button" class="karta-i" id="karta-i" aria-expanded="false" aria-controls="karta-info" aria-label="Om delområdena">i</button>
+        <div class="karta-info" id="karta-info">
+          Projektet har två delområden: Långhult i norr (upp till 8 verk, alla i Jönköpings kommun) och Lunnarsbo i söder (upp till 12 verk, 5 i Jönköping och 7 i Gislaved), enligt <a href="https://fredolsenrenewables.com/all-projects/laanghult" target="_blank" rel="noopener">Fred. Olsen Renewables</a>.
+        </div>
       </div>
-      <div role="tabpanel" id="karta-panel-narbild" aria-labelledby="karta-flik-narbild" hidden>
-        <a href="langhult/Langhult_karta_Vindbrukskollen_narbild_.jpg" target="_blank" rel="noopener">
-          <img src="langhult/Langhult_karta_Vindbrukskollen_narbild_.jpg" width="1000" height="729" alt="Närbild ur Vindbrukskollen. Sökresultatet Långhult TIO71 under Tillståndsansökan inlämnad är markerat, och två pilar pekar på de två gröna områdena: ett i norr vid Röksberg och Bengtsbryna och ett i söder vid Hökhult och Östra Kullshestra.">
-        </a>
-      </div>
+      <p class="karta-bildtext" id="karta-text-oversikt">Översikten visar var Långhult ligger, sydväst om Jönköping.</p>
+      <p class="karta-bildtext" id="karta-text-narbild" hidden>Närbilden visar de två delområdena: det norra är delområdet Långhult (8 verk) och det södra är delområdet Lunnarsbo (12 verk).</p>
       <figcaption>
         Skärmdumpar ur Vindbrukskollen (<a href="#ref-lst-vbk">Länsstyrelserna, 2026</a>). Rutan och pilarna har jag ritat.
+        Delområdenas namn och antal verk är hämtade ur <a href="#ref-fo">Fred. Olsen Renewables (u.å.)</a>.
         Klicka på bilden för fullstorlek.
       </figcaption>
     </figure>
@@ -1092,7 +1108,7 @@
       <li id="ref-fo">
         Fred. Olsen Renewables (u.å.) <em>Långhult.</em>
         Tillgänglig: <a href="https://fredolsenrenewables.com/all-projects/laanghult" target="_blank" rel="noopener">https://fredolsenrenewables.com/all-projects/laanghult</a>
-        (hämtad 5 november 2026). <em>(Bolagets projektsida: högst 20 verk, högst 270 m totalhöjd, tillståndsansökan inlämnad i juni 2025. Bekräftar antal verk och höjd i Kaufmann &amp; Westander (2026).)</em>
+        (hämtad 23 november 2026). <em>(Bolagets projektsida: högst 20 verk, högst 270 m totalhöjd, tillståndsansökan inlämnad i juni 2025, med delområdena Långhult i norr (upp till 8 verk) och Lunnarsbo i söder (upp till 12 verk). Bekräftar antal verk och höjd i Kaufmann &amp; Westander (2026).)</em>
       </li>
       <li id="ref-pm">
         Kaufmann, W. &amp; Westander, H. (2026) <em>Intäktsdelning och ersättningar: Vindpark Långhult.</em>
