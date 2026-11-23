@@ -6,7 +6,7 @@
 **Live (Vercel-app, Functions):** https://vindkraft-ver2.vercel.app
 **Live (Vercel-app, Next.js App Router):** https://vindkraft-ver3.vercel.app
 **Senast uppdaterad:** 2026-11-23
-**Version:** 1.15
+**Version:** 1.16
 
 ---
 
@@ -38,6 +38,7 @@ Kalkylerna i `vindkraftskalkyl/` (huvudkalkylen, Långhult och Önnerup) **delar
 - **Nätraderna i jämförelsetabellen** (`JAMFOR_NAT` i `kalkylkarna.js`) räknas på valt läge: läget ingen ger 0 i rutor, tabeller och nyckeltal, och det hypotetiska värdet visas bara som märkt "om läget vore bas". Raden "Nätkostnad, löpande" har en kort text direkt och en utförlig förklaring vid hovring (`natLopandeForklaring`), som visar de faktiska talen och att en negativ nätkostnad är en ersättning (kredit) som bara gäller om inmatningen minskar förlusterna.
 - **Typfallet** väljs ur trappan `NAT_TYPFALL.trappa` (över 40 MW är det fall I, Vattenfall PL1). Fall J (PT0, 130 kV i station från stamnät) väljs aldrig automatiskt.
 - **Långhult har två egna val:** växeln för parkens storlek (hela parken, 20 verk och 132 MW, eller bara Lunnarsbo, 12 verk och 79,2 MW) och alternativen för bostäder per zon (`BOSTADSALTERNATIV`, räknade av `langhult/bostader_ur_ljudutredning.py`). Växeln ändrar bara antal verk, inte bostäderna.
+- **Riktvärde för kapacitetsfaktorn** (37 %, 3 241 fullasttimmar) visas som en blänkare under fältet Kapacitetsfaktor i alla kalkyler (`KAPACITETSFAKTOR_RIKTVARDE` och `visaKapacitetsRiktvarde` i `kalkylkarna.js`, elementet `kf-riktvarde`). Värdena ska vara desamma som i `projektkandidater/riktvarden.json`, som skriptet `hamta_vindbrukskollen.py` skriver, och testet kontrollerar det. Det är ett riktvärde för nya projekts beräknade produktion, inte något som ändrar förvalen. Skriv inte "normalt" eller "gäller" om det.
 - Kör `node test_kalkylkarna.js` och `node test_natkostnader.js` före leverans. Det första testet fångar om en kalkyl återinför en egen kopia av en kärnfunktion.
 - Vercel-apparna (`vindkraftskalkyl_Vercel*`) har egna kopior och ingår inte än.
 
@@ -148,6 +149,7 @@ den globala filen `AI\Claude\CLAUDE.md` på Kents lokala maskin.
 
 ## Uppdateringslogg
 
+- 2026-11-23 (v1.16): Blänkare om riktvärdet för kapacitetsfaktorn i kalkylerna, och `projektkandidater/riktvarden.json` som testet jämför mot.
 - 2026-11-23 (v1.15): Mappen `projektkandidater/` och regeln om analyser över många projekt, och att jag redovisar var nya filer hamnar och vilka alternativ som fanns.
 - 2026-11-23 (v1.14): Tabellerna i kalkylsidorna numreras i läsordning utan dubbletter (nättabellen är Nättabell 1), kontrollerat av testet, och ingår i checklistan för ny kalkyl.
 - 2026-11-23 (v1.13): Källförteckningen i kalkylsidorna är alfabetisk och osiffrad, kontrollerad av testet, och ingår i checklistan för ny kalkyl.
@@ -168,4 +170,4 @@ den globala filen `AI\Claude\CLAUDE.md` på Kents lokala maskin.
 
 ---
 
-_CLAUDE.md v1.15, 2026-11-23_
+_CLAUDE.md v1.16, 2026-11-23_

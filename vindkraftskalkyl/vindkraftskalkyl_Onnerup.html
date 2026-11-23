@@ -15,6 +15,7 @@
   domen och är märkta som antagande eller saknas.
 
   UPPDATERING 2026-11-23: sidan skapades. Version delas med huvudkalkylen (berakningar.js).
+  UPPDATERING 2026-11-23 (senare igen 12): blänkare under Kapacitetsfaktor med riktvärdet 37 % (3 241 fullasttimmar, spann cirka 34–38 %) ur projektkandidater/kandidater.md, och Länsstyrelserna (2026) i källistan. Version 1.29.
   UPPDATERING 2026-11-23 (senare igen 11): tabellerna är numrerade i läsordning utan dubbletter (nättabellen heter Nättabell 1, närboende per zon Tabell 1 och bostäder till Tabell 2). Version 1.28.
   UPPDATERING 2026-11-23 (senare igen 10): källförteckningen är alfabetisk och osiffrad (Harvard) och varje källa en egen post. Version 1.27.
   UPPDATERING 2026-11-23 (senare igen 9): förklaring av negativ nätkostnad i Tabell 3. Version 1.26.
@@ -109,6 +110,7 @@
           <input type="number" step="0.0001" id="kapfaktor" class="indata" value="0.2618">
           <span class="badge pm">härledd ur domen</span>
           <span class="hint">22 704 MWh/år (efter 10 % säkerhetsmarginal) / (3 verk × 3,3 MW × 8 760 h) = 0,2618. Västanby AB anger idag cirka 39 000 MWh/år för 10 MW (cirka 0,45), och orsaken till skillnaden är inte verifierad. <span id="kf-timmar">–</span></span>
+          <span class="hint" id="kf-riktvarde">–</span>
         </label>
 
         <label>Verkshöjd (m)
@@ -828,6 +830,11 @@
         (<a href="https://controllerutangranser.wordpress.com/2026/11/11/besked-fore-beslut-att-forbattra-intaktsdelningen-fran-vindkraft-till-narboende/" target="_blank" rel="noopener">controllerutangranser.wordpress.com</a>).
         Anger att intäktsdelningslagen gäller anläggningar med tillstånd enligt 9 eller 11 kap. miljöbalken och inte anmälningspliktiga, att Önnerups tre verk om högst 150 m därför faller utanför lagen,
         och att stödet till kommuner och bygdemedlen inte regleras av lagen. Hämtad 2026-11-23.
+      </li>
+      <li id="ref-lst-vbk">
+        Länsstyrelserna (2026) <em>Vindbrukskollen.</em> Karttjänst för vindkraft i Sverige, utgiven av Länsstyrelserna i samarbete med Energimyndigheten. Tillgänglig:
+        <a href="https://ext-webbgis.lansstyrelsen.se/vbk/" target="_blank" rel="noopener">https://ext-webbgis.lansstyrelsen.se/vbk/</a>
+        (hämtad 23 november 2026). <em>(Underlag för riktvärdet 37 % för kapacitetsfaktorn i nya projekt: beräknad årsproduktion och effekt för projekt under handläggning, beviljade och överklagade. Data är öppna enligt <a href="https://www.lansstyrelsen.se/nationellt-innehall/om-oss/vara-tjanster/oppna-data.html" target="_blank" rel="noopener">Länsstyrelsen</a>. Beräkningen står i <a href="https://github.com/kentlundgren/Vindkraft/blob/main/projektkandidater/kandidater.md" target="_blank" rel="noopener">kandidater.md</a>.)</em>
       </li>
       <li id="ref-mod">
         Mark- och miljööverdomstolen (2022) <em>Dom 2022-01-27, mål nr P 14634-20, Bygglov för tre vindkraftverk m.m. på fastigheterna A och B i Lomma kommun</em>

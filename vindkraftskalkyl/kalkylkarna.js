@@ -25,12 +25,12 @@
    webbläsaren och exporteras som module.exports i Node, där test_kalkylkarna.js
    kör dem.
 
-   Version 1.13 (2026-11-23): raden 50 öre/kWh i tabellen över taket är markerad och har en förklaring vid hovring. Version 1.12: storleksordningen på närboendeersättningen i öre per kWh (narboendeStorleksordning, skrivNarboendeStorleksordning). Version 1.11: raderna om nätkostnad i sammanställningen (JAMFOR_NAT) räknas på valt läge och har kort text direkt och förklaring vid hovring, bland annat om negativ nätkostnad. Version 1.10: visaVersionsrad för versionsraden i sidfoten. Version 1.9: totala effekten visas under Effekt per verk (visaTotalEffekt) och fälten i första gruppen har fast ordning (INDATAORDNING_ANLAGGNING). Version 1.8: realiserat pris räknas ut och uppdateras (realpristext). Version 1.7: uträkningsmarkering och förklaringar i sammanställningen, och arrendeförklaring. Version 1.6: raderna JAMFOR_OVERSKOTT för sammanställningen. Version 1.5: tabell över extra bostäder under taket, förklaring per zon och länkar till dolda flikar. Version 1.4: fastighetsskatt som första åren + därefter (fskatt2) och uppgift om när närboendetaket nås. Version 1.3: kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
+   Version 1.14 (2026-11-23): riktvärde för kapacitetsfaktorn (37 %, KAPACITETSFAKTOR_RIKTVARDE) som blänkare under fältet Kapacitetsfaktor. Version 1.13: raden 50 öre/kWh i tabellen över taket är markerad och har en förklaring vid hovring. Version 1.12: storleksordningen på närboendeersättningen i öre per kWh (narboendeStorleksordning, skrivNarboendeStorleksordning). Version 1.11: raderna om nätkostnad i sammanställningen (JAMFOR_NAT) räknas på valt läge och har kort text direkt och förklaring vid hovring, bland annat om negativ nätkostnad. Version 1.10: visaVersionsrad för versionsraden i sidfoten. Version 1.9: totala effekten visas under Effekt per verk (visaTotalEffekt) och fälten i första gruppen har fast ordning (INDATAORDNING_ANLAGGNING). Version 1.8: realiserat pris räknas ut och uppdateras (realpristext). Version 1.7: uträkningsmarkering och förklaringar i sammanställningen, och arrendeförklaring. Version 1.6: raderna JAMFOR_OVERSKOTT för sammanställningen. Version 1.5: tabell över extra bostäder under taket, förklaring per zon och länkar till dolda flikar. Version 1.4: fastighetsskatt som första åren + därefter (fskatt2) och uppgift om när närboendetaket nås. Version 1.3: kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
    berakningar.js och berakningar_langhult.js.
    ============================================================================ */
 'use strict';
 
-const KARNA_VERSION = '1.13';
+const KARNA_VERSION = '1.14';
 
 /**
  * Indatagrupperna i alla vindkraftskalkyler: rubrikerna och deras ordning är fastställda här, så att kalkylerna ser
@@ -215,12 +215,49 @@ function visaTotalEffekt(effekt, antalverk) {
 }
 
 /**
+ * Riktvärde för kapacitetsfaktorn i nya projekt: medelvärdet av medianen och det effektviktade medelvärdet för kandidaterna utan avvikare
+ * i projektkandidater/kandidater.md (beräknad produktion i Vindbrukskollen). Värdena ska vara desamma som i projektkandidater/riktvarden.json,
+ * som skriptet hamta_vindbrukskollen.py skriver. test_kalkylkarna.js kontrollerar det, och en ny körning av skriptet kräver att värdena här uppdateras.
+ * Förvalen i kalkylerna ändras inte av riktvärdet: det visas bara som en orientering under fältet Kapacitetsfaktor.
+ */
+const KAPACITETSFAKTOR_RIKTVARDE = {
+  procent: 37, fullasttimmar: 3241, lag: 33.9, hog: 38.1, antal: 22, hamtad: '2026-11-23',
+  kalla: 'https://ext-webbgis.lansstyrelsen.se/vbk/',
+  berakning: 'https://github.com/kentlundgren/Vindkraft/blob/main/projektkandidater/kandidater.md'
+};
+
+/** Kort jämförelse mellan kalkylens kapacitetsfaktor och riktvärdet, till exempel "Här: 41,2 %, 4,2 procentenheter över riktvärdet." */
+function jamforMedRiktvarde(kapfaktor) {
+  if (!Number.isFinite(kapfaktor) || kapfaktor <= 0) return '';
+  const pp = kapfaktor * 100 - KAPACITETSFAKTOR_RIKTVARDE.procent;
+  const eget = fmt(kapfaktor * 100, 1);
+  if (Math.abs(pp) < 0.05) return 'Här: ' + eget + ' %, i nivå med riktvärdet.';
+  return 'Här: ' + eget + ' %, ' + fmt(Math.abs(pp), 1) + ' procentenheter ' + (pp > 0 ? 'över' : 'under') + ' riktvärdet.';
+}
+
+/** Skriver blänkaren om riktvärdet i elementet kf-riktvarde, om det finns. */
+function visaKapacitetsRiktvarde(kapfaktor) {
+  const e = document.getElementById('kf-riktvarde');
+  if (!e) return;
+  const R = KAPACITETSFAKTOR_RIKTVARDE;
+  const lank = (url, text) => { const a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = text; return a; };
+  e.textContent = '';
+  e.appendChild(document.createTextNode('Riktvärde för nya projekt: ' + R.procent + ' % = ' + fmt(R.fullasttimmar, 0) + ' fullasttimmar per år (spann cirka ' +
+    Math.round(R.lag) + '–' + Math.round(R.hog) + ' %), räknat på beräknad produktion i ' + R.antal + ' projekt i '));
+  e.appendChild(lank(R.kalla, 'Vindbrukskollen (Länsstyrelserna, 2026)'));
+  e.appendChild(document.createTextNode(' ('));
+  e.appendChild(lank(R.berakning, 'beräkningen'));
+  e.appendChild(document.createTextNode('). ' + jamforMedRiktvarde(kapfaktor)));
+}
+
+/**
  * Visar fullasttimmar (kapacitetsfaktor × 8 760 h) i elementet kf-timmar, om det finns. Kapacitetsfaktorn är det
  * som anges och räknas med. Timmarna är bara en omräkning, till exempel för jämförelse med en källa.
  */
 function visaFullasttimmar(kapfaktor) {
   const e = document.getElementById('kf-timmar');
   if (e) e.textContent = '= ' + fmt(kapfaktor * 8760, 0, ' fullasttimmar per år (kapacitetsfaktor × 8 760 h)');
+  visaKapacitetsRiktvarde(kapfaktor);
 }
 
 /**
@@ -946,7 +983,7 @@ function kommunSaknasText(poster) {
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
-    KARNA_VERSION, INDATAGRUPPER, INDATAORDNING_ANLAGGNING, totalEffektText, visaVersionsrad, narboendeStorleksordning, takOrePerKWh, TAK_PRISER_ORE, TAK_MARKERAD_ORE, TAK_MARKERAD_FORKLARING, skrivNarboendeStorleksordning, JAMFOR_NAT, natLopandeForklaring, natLopandeNot, natEngangForklaring, JAMFOR_OVERSKOTT, arrendeForklaring, realpristext, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode,
+    KARNA_VERSION, INDATAGRUPPER, INDATAORDNING_ANLAGGNING, KAPACITETSFAKTOR_RIKTVARDE, jamforMedRiktvarde, visaKapacitetsRiktvarde, totalEffektText, visaVersionsrad, narboendeStorleksordning, takOrePerKWh, TAK_PRISER_ORE, TAK_MARKERAD_ORE, TAK_MARKERAD_FORKLARING, skrivNarboendeStorleksordning, JAMFOR_NAT, natLopandeForklaring, natLopandeNot, natEngangForklaring, JAMFOR_OVERSKOTT, arrendeForklaring, realpristext, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode,
     natPaverkan, natEngangTillaggAv, natSammanfattning,
     lasKommunIndata, fastighetsskattPerVerk, kommunPoster, kommunSaknasText, narboendeTakniva, narboendeExtra, zonHjalpText,
     FSKATT_SCHABLON, fullastJustering, fastighetsskattSchablon,

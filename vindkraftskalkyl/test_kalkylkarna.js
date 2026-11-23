@@ -331,6 +331,26 @@ fs.readdirSync('.').filter(f => /^vindkraftskalkyl.*\.html$/.test(f)).forEach(f 
   sant(f + ': varje länk till en tabell har samma nummer i adress och text, och tabellen finns', lank.every(m => m[1] === m[2] && nr.indexOf(+m[1]) > -1));
 });
 
+/* ---------- Riktvärdet för kapacitetsfaktorn: samma värden som projektkandidater/riktvarden.json, och blänkare i varje kalkyl ---------- */
+{
+  const json = JSON.parse(fs.readFileSync('../projektkandidater/riktvarden.json', 'utf8'));
+  const R = K.KAPACITETSFAKTOR_RIKTVARDE;
+  sant('riktvärdet i kalkylkärnan är samma som i riktvarden.json (procent, fullasttimmar, spann, antal, hämtdatum)',
+    R.procent === json.kapacitetsfaktor_procent && R.fullasttimmar === json.fullasttimmar && R.lag === json.spann_procent[0] && R.hog === json.spann_procent[1] &&
+    R.antal === json.antal_projekt && R.hamtad === json.hamtad);
+  sant('riktvärdet 37 % motsvarar 3 241 fullasttimmar', Math.round(R.procent / 100 * 8760) === R.fullasttimmar);
+  const norm = (t) => t.replace(/\s/g, ' ');
+  sant('jämförelse: 0,37 är i nivå med riktvärdet', /i nivå med riktvärdet/.test(norm(K.jamforMedRiktvarde(0.37))));
+  sant('jämförelse: 0,4121 är 4,2 procentenheter över', /Här: 41,2 %, 4,2 procentenheter över riktvärdet\./.test(norm(K.jamforMedRiktvarde(0.4121))));
+  sant('jämförelse: 0,2618 är 10,8 procentenheter under', /Här: 26,2 %, 10,8 procentenheter under riktvärdet\./.test(norm(K.jamforMedRiktvarde(0.2618))));
+  sant('jämförelse: ogiltigt värde ger tom text', K.jamforMedRiktvarde(NaN) === '' && K.jamforMedRiktvarde(0) === '');
+  fs.readdirSync('.').filter(f => /^vindkraftskalkyl.*\.html$/.test(f)).forEach(f => {
+    const html = fs.readFileSync(f, 'utf8');
+    sant(f + ' har blänkaren om riktvärdet (kf-riktvarde) under kapacitetsfaktorn', html.indexOf('id="kf-riktvarde"') > html.indexOf('id="kapfaktor"') && html.indexOf('id="kf-riktvarde"') < html.indexOf('id="verkshojd"'));
+    sant(f + ' har källan Länsstyrelserna (2026) Vindbrukskollen i källförteckningen', /Länsstyrelserna \(2026\) <em>Vindbrukskollen/.test(html));
+  });
+}
+
 /* ---------- Källförteckningen: alfabetisk och osiffrad (Harvard, kent-referens-skill punkt 8 och 18) ---------- */
 fs.readdirSync('.').filter(f => /^vindkraftskalkyl.*\.html$/.test(f)).forEach(f => {
   const html = fs.readFileSync(f, 'utf8');

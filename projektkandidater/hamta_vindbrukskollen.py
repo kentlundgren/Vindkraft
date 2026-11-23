@@ -213,6 +213,36 @@ def riktvarde(s):
     return None if not s else round((s['median'] + s['viktat']) / 2 * 100)
 
 
+def kandidatgrupper(kandidater, referens, uppforda_ref=None):
+    """Grupperna som kapacitetsfaktorn redovisas för. Den tredje (utan de som avviker) ligger till grund för riktvärdet."""
+    return [('Alla kandidater', kandidater),
+            ('Kandidater i SE3 och SE4', [o for o in kandidater if o['elomrade'] in ('SE3', 'SE4')]),
+            ('Kandidater utan de som avviker', [o for o in kandidater if not avvikande(o['fullasttimmar'], referens)]),
+            ('Uppförda projekt (referens)', uppforda_ref or [])]
+
+
+def riktvarden_data(kandidater, referens, hamtad, uppforda_ref=None):
+    """Riktvärdet för kapacitetsfaktorn som en liten maskinläsbar post. Kalkylsidorna (kalkylkarna.js, KAPACITETSFAKTOR_RIKTVARDE) ska ha samma värden, och testet kontrollerar det."""
+    grupper = kandidatgrupper(kandidater, referens, uppforda_ref)
+    rik_grupp = kapacitetsstatistik(grupper[2][1])
+    procent = riktvarde(rik_grupp)
+    if not procent:
+        return None
+    varden = [x * 100 for _, p in grupper[:3] for s_ in [kapacitetsstatistik(p)] if s_ for x in (s_['median'], s_['viktat'])]
+    return {
+        'kapacitetsfaktor_procent': procent,
+        'fullasttimmar': round(procent / 100 * TIMMAR_PER_AR),
+        'spann_procent': [round(min(varden), 1), round(max(varden), 1)],
+        'antal_projekt': rik_grupp['antal'],
+        'median_procent': round(rik_grupp['median'] * 100, 1),
+        'effektviktat_procent': round(rik_grupp['viktat'] * 100, 1),
+        'metod': 'Medelvärdet av medianen och det effektviktade medelvärdet av kapacitetsfaktorn för kandidaterna utan de som avviker från de uppförda projektens spann. Beräknad produktion (CALPROD), inte uppmätt.',
+        'hamtad': hamtad[:10],
+        'kalla': 'Länsstyrelserna (2026) Vindbrukskollen',
+        'url': 'https://ext-webbgis.lansstyrelsen.se/vbk/',
+    }
+
+
 def skriv_md(kandidater, referens, ofullstandiga, antal_aktuella, sokvag, args, hamtad, uppforda_ref=None):
     rader = []
     rader.append('# Kandidater för nya vindkraftskalkyler, ur Vindbrukskollen\n')
@@ -229,10 +259,7 @@ def skriv_md(kandidater, referens, ofullstandiga, antal_aktuella, sokvag, args, 
         rader.append('Fullasttimmar för uppförda projekt med angiven produktion (%d områden): median %s, nedre kvartil %s, övre kvartil %s timmar per år. ' % (
             referens['antal'], f(referens['median']), f(referens['q1']), f(referens['q3'])) +
             'En kandidat med fullasttimmar långt utanför det spannet bör granskas: produktionen är den sökandes beräkning.\n')
-    grupper = [('Alla kandidater', kandidater),
-               ('Kandidater i SE3 och SE4', [o for o in kandidater if o['elomrade'] in ('SE3', 'SE4')]),
-               ('Kandidater utan de som avviker', [o for o in kandidater if not avvikande(o['fullasttimmar'], referens)]),
-               ('Uppförda projekt (referens)', uppforda_ref or [])]
+    grupper = kandidatgrupper(kandidater, referens, uppforda_ref)
     rader.append('## Kapacitetsfaktor i kandidaterna\n')
     rader.append('Kapacitetsfaktor är beräknad årsproduktion delad med vad verken skulle ge vid full effekt hela året (summa GWh per år / (summa MW × 8 760 timmar)). ' +
                  'Medelvärdet väger alla projekt lika. Det effektviktade medelvärdet väger efter installerad effekt och styrs därför av de stora projekten.\n')
@@ -320,8 +347,13 @@ def main():
         k = statistics.quantiles(tim, n=4)
         referens = {'antal': len(tim), 'median': statistics.median(tim), 'q1': k[0], 'q3': k[2]}
     ofullstandiga = utan_effekt(omraden, args.min_verk, args.senast)
-    skriv_csv(kandidater, os.path.join(HAR, 'kandidater.csv'))
     uppforda_ref = [o for o in uppforda if o['fullasttimmar'] and o['mw'] and o['mw'] >= 5 and 800 < o['fullasttimmar'] < 6000]
+    rik = riktvarden_data(kandidater, referens, hamtad, uppforda_ref)
+    if rik:
+        with open(os.path.join(HAR, 'riktvarden.json'), 'w', encoding='utf-8') as fil:
+            json.dump(rik, fil, ensure_ascii=False, indent=2)
+            fil.write('\n')
+    skriv_csv(kandidater, os.path.join(HAR, 'kandidater.csv'))
     skriv_md(kandidater, referens, ofullstandiga, len(omraden), os.path.join(HAR, 'kandidater.md'), args, hamtad, uppforda_ref)
     print('hämtat', hamtad, '| områden i prövning/beviljade:', len(omraden), '| kandidater:', len(kandidater), '| utan effekt:', len(ofullstandiga))
     lh = [o for o in omraden if 'nghult' in o['projekt'] or 'unnarsbo' in o['projekt']]

@@ -11,6 +11,7 @@ Analysen ligger här och inte i `vindkraftskalkyl/`, eftersom den gäller många
 | [`hamta_vindbrukskollen.py`](https://github.com/kentlundgren/Vindkraft/blob/main/projektkandidater/hamta_vindbrukskollen.py) | Hämtar vindkraftverk ur Vindbrukskollen, slår ihop dem till projekteringsområden, väljer kandidater och skriver `kandidater.csv` och `kandidater.md`. Bara Pythons standardbibliotek. |
 | [`test_kandidater.py`](https://github.com/kentlundgren/Vindkraft/blob/main/projektkandidater/test_kandidater.py) | Test av sammanslagning och urval, utan nätverk: `python -m unittest test_kandidater`. |
 | [`kandidater.csv`](https://github.com/kentlundgren/Vindkraft/blob/main/projektkandidater/kandidater.csv) och [`kandidater.md`](https://github.com/kentlundgren/Vindkraft/blob/main/projektkandidater/kandidater.md) | Resultatet, med hämtdatum. Skrivs om vid varje körning. |
+| [`riktvarden.json`](https://github.com/kentlundgren/Vindkraft/blob/main/projektkandidater/riktvarden.json) | Riktvärdet för kapacitetsfaktorn (37 %, 3 241 fullasttimmar, spann 33,9–38,1 %) som en maskinläsbar post. Skrivs av skriptet. Kalkylernas `KAPACITETSFAKTOR_RIKTVARDE` i `kalkylkarna.js` ska ha samma värden, och `test_kalkylkarna.js` kontrollerar det. |
 | `data_raw/` | Rådata från tjänsten (cache). Ingår inte i git och skapas av skriptet. |
 
 ## Köra
@@ -20,6 +21,10 @@ python hamta_vindbrukskollen.py                  # använder cachen om den finns
 python hamta_vindbrukskollen.py --uppdatera      # hämtar om från tjänsten
 python hamta_vindbrukskollen.py --min-verk 8 --min-mw 40 --topp 50
 ```
+
+## När skriptet körs om
+
+Kör `python hamta_vindbrukskollen.py --uppdatera`. Ändras `riktvarden.json` faller testet i `vindkraftskalkyl/` tills `KAPACITETSFAKTOR_RIKTVARDE` i `kalkylkarna.js` har uppdaterats till samma värden. Därefter höjs versionen på de tre kalkylsidorna.
 
 ## Källa och villkor
 

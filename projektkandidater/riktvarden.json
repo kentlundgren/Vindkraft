@@ -1,0 +1,15 @@
+{
+  "kapacitetsfaktor_procent": 37,
+  "fullasttimmar": 3241,
+  "spann_procent": [
+    33.9,
+    38.1
+  ],
+  "antal_projekt": 22,
+  "median_procent": 37.1,
+  "effektviktat_procent": 36.9,
+  "metod": "Medelvärdet av medianen och det effektviktade medelvärdet av kapacitetsfaktorn för kandidaterna utan de som avviker från de uppförda projektens spann. Beräknad produktion (CALPROD), inte uppmätt.",
+  "hamtad": "2026-11-23",
+  "kalla": "Länsstyrelserna (2026) Vindbrukskollen",
+  "url": "https://ext-webbgis.lansstyrelsen.se/vbk/"
+}

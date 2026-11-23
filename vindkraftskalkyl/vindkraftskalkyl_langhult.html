@@ -19,6 +19,7 @@
   UPPDATERING 2026-11-23 (senare): indatagrupperna har samma rubriker och ordning som övriga kalkyler (INDATAGRUPPER i kalkylkarna.js), och Närboende ligger sist.
   UPPDATERING 2026-11-23 (senare igen): fastighetsskatt, bygdemedel och kommunstöd räknas i kalkylkarna.js (kommunPoster) och delas med övriga kalkyler. Långhults värden och resultat är oförändrade.
   UPPDATERING 2026-11-23 (senare igen 13): länken till beräkningen av bostäder pekar på nya platsen (mappen langhult/). Version 1.5.
+  UPPDATERING 2026-11-23 (senare igen 18): blänkare under Kapacitetsfaktor med riktvärdet 37 % (3 241 fullasttimmar, spann cirka 34–38 %) ur projektkandidater/kandidater.md, och Länsstyrelserna (2026) i källistan. Version 1.10.
   UPPDATERING 2026-11-23 (senare igen 17): tabellerna är numrerade i läsordning (1–9) utan dubbletter: avsnittet Storleksordning (Tabell 8 och 9) ligger sist före Källor, och nättabellen i Indata heter Nättabell 1. Version 1.9.
   UPPDATERING 2026-11-23 (senare igen 16): källförteckningen är alfabetisk och osiffrad (Harvard), varje källa en egen post, och Lundgren (2026a, 2026b) skiljs åt. Version 1.8.
   UPPDATERING 2026-11-23 (senare igen 15): raden 50 öre/kWh i Tabell 9 är markerad (2 % av 50 öre är 1 öre/kWh) med förklaring vid hovring, och BO (2026) finns i källistan. Version 1.7.
@@ -146,6 +147,7 @@
           <input type="number" step="0.0001" id="kapfaktor" class="indata" value="0.4121">
           <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=11" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, s. 11, 16</a>
           <span class="hint">Kaufmann &amp; Westander (2026) anger 3 610 fullasttimmar, alltså 3 610 / 8 760 = 0,4121. <span id="kf-timmar">–</span> 6,6 MW × 3 610 h = cirka 23,8 GWh per verk och år.</span>
+          <span class="hint" id="kf-riktvarde">–</span>
         </label>
 
         <label>Verkshöjd (m)
@@ -1077,6 +1079,11 @@
         Lundgren, K. (2026b) <em>Besked före beslut</em> (html-presentation av rapporten). Tillgänglig:
         <a href="https://kentlundgren.github.io/Studier/2026_host/Policy_i_energi_och_klimat/essa-upg2/webb/" target="_blank" rel="noopener">https://kentlundgren.github.io/Studier/2026_host/Policy_i_energi_och_klimat/essa-upg2/webb/</a>
         (hämtad 23 november 2026). <em>(Webbversionen av samma rapport, med extra innehåll på webben.)</em>
+      </li>
+      <li id="ref-lst-vbk">
+        Länsstyrelserna (2026) <em>Vindbrukskollen.</em> Karttjänst för vindkraft i Sverige, utgiven av Länsstyrelserna i samarbete med Energimyndigheten. Tillgänglig:
+        <a href="https://ext-webbgis.lansstyrelsen.se/vbk/" target="_blank" rel="noopener">https://ext-webbgis.lansstyrelsen.se/vbk/</a>
+        (hämtad 23 november 2026). <em>(Underlag för riktvärdet 37 % för kapacitetsfaktorn i nya projekt: beräknad årsproduktion och effekt för projekt under handläggning, beviljade och överklagade. Data är öppna enligt <a href="https://www.lansstyrelsen.se/nationellt-innehall/om-oss/vara-tjanster/oppna-data.html" target="_blank" rel="noopener">Länsstyrelsen</a>. Beräkningen står i <a href="https://github.com/kentlundgren/Vindkraft/blob/main/projektkandidater/kandidater.md" target="_blank" rel="noopener">kandidater.md</a>.)</em>
       </li>
       <li id="ref-prop">
         Regeringen (2026) <em>Proposition 2025/26:239 Vindkraft i kommuner.</em>

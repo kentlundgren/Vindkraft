@@ -84,6 +84,22 @@ class Kapacitetsstatistik(unittest.TestCase):
         self.assertIsNone(h.riktvarde(None))
 
 
+class Riktvarden(unittest.TestCase):
+    def test_riktvarden_data_ger_procent_timmar_och_spann(self):
+        ref = {'q1': 2500, 'q3': 3100, 'median': 2800, 'antal': 100}
+        poster = h.sla_ihop({'Handlaggs': [verk('A', 1, mw=6.0, gwh=21.0)] + [verk('B', 1, mw=6.0, gwh=19.0)] + [verk('C', 1, mw=6.0, gwh=22.0)]})
+        d = h.riktvarden_data(poster, ref, '2026-11-23T10:00:00')
+        self.assertEqual(d['kapacitetsfaktor_procent'], round(d['kapacitetsfaktor_procent']))
+        self.assertEqual(d['fullasttimmar'], round(d['kapacitetsfaktor_procent'] / 100 * 8760))
+        self.assertLessEqual(d['spann_procent'][0], d['kapacitetsfaktor_procent'] + 1)
+        self.assertGreaterEqual(d['spann_procent'][1], d['kapacitetsfaktor_procent'] - 1)
+        self.assertEqual(d['hamtad'], '2026-11-23')
+        self.assertEqual(d['antal_projekt'], 3)
+
+    def test_inga_kandidater_ger_inget_riktvarde(self):
+        self.assertIsNone(h.riktvarden_data([], {'q1': 1, 'q3': 2, 'median': 1.5, 'antal': 10}, '2026-11-23'))
+
+
 class Avvikande(unittest.TestCase):
     def test_ligger_utanfor_spannet(self):
         ref = {'q1': 2500, 'q3': 3100, 'median': 2800, 'antal': 100}
