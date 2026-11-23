@@ -237,7 +237,9 @@
       el('antalverk').value = k.getAttribute('data-verk');
       markeraVerkknappar();
       // Låt kalkylens vanliga lyssnare räkna om, och uppdatera länken.
+      // change behövs också: det är den som flyttar Senaste till Tidigare och ritar om Kalkylsammanställningen.
       el('antalverk').dispatchEvent(new Event('input', { bubbles: true }));
+      el('antalverk').dispatchEvent(new Event('change', { bubbles: true }));
     }));
     markeraVerkknappar();
     const knapp = el('nat-kopiera');
