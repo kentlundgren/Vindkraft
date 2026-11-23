@@ -311,6 +311,9 @@ KALKYLER.forEach(k => {
   sant('storleksordning: utan produktion eller närboende ges null', K.narboendeStorleksordning({ nar: null }) === null && K.narboendeStorleksordning({ nar: r.nar, produktionMWh_ar1: 0, intaktAr1: 1 }) === null);
   const lhHtml2 = fs.readFileSync('vindkraftskalkyl_langhult.html', 'utf8');
   sant('Långhult har avsnittet Storleksordning med Tabell 8 och 9', ['Storleksordning', 'Tabell8', 'Tabell9', 'so-pris-kropp'].every(id => lhHtml2.indexOf('id="' + id + '"') > -1));
+  sant('tabellen över taket markerar raden 50 öre/kWh, och 2 % av den är 1 öre/kWh', K.TAK_PRISER_ORE.indexOf(K.TAK_MARKERAD_ORE) > -1 && K.TAK_MARKERAD_ORE === 50 && K.takOrePerKWh(K.TAK_MARKERAD_ORE, 2) === 1 && /1 öre\/kWh/.test(K.TAK_MARKERAD_FORKLARING));
+  sant('hjälpen visar förklaring för hela rader (data-hjalp-rad)', /data-hjalp-rad/.test(fs.readFileSync('natkostnader_hjalp.js', 'utf8')));
+  sant('Långhult har källan BO (2026) med adress utan spårningsparametrar', /id="ref-bo"[\s\S]*?https:\/\/x\.com\/bengtxyz\/status\/2124776225822363881"/.test(lhHtml2));
   sant('Långhult anropar skrivNarboendeStorleksordning', /skrivNarboendeStorleksordning\(res\)/.test(fs.readFileSync('berakningar_langhult.js', 'utf8')));
 }
 

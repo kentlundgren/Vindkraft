@@ -25,12 +25,12 @@
    webbläsaren och exporteras som module.exports i Node, där test_kalkylkarna.js
    kör dem.
 
-   Version 1.12 (2026-11-23): storleksordningen på närboendeersättningen i öre per kWh (narboendeStorleksordning, skrivNarboendeStorleksordning). Version 1.11: raderna om nätkostnad i sammanställningen (JAMFOR_NAT) räknas på valt läge och har kort text direkt och förklaring vid hovring, bland annat om negativ nätkostnad. Version 1.10: visaVersionsrad för versionsraden i sidfoten. Version 1.9: totala effekten visas under Effekt per verk (visaTotalEffekt) och fälten i första gruppen har fast ordning (INDATAORDNING_ANLAGGNING). Version 1.8: realiserat pris räknas ut och uppdateras (realpristext). Version 1.7: uträkningsmarkering och förklaringar i sammanställningen, och arrendeförklaring. Version 1.6: raderna JAMFOR_OVERSKOTT för sammanställningen. Version 1.5: tabell över extra bostäder under taket, förklaring per zon och länkar till dolda flikar. Version 1.4: fastighetsskatt som första åren + därefter (fskatt2) och uppgift om när närboendetaket nås. Version 1.3: kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
+   Version 1.13 (2026-11-23): raden 50 öre/kWh i tabellen över taket är markerad och har en förklaring vid hovring. Version 1.12: storleksordningen på närboendeersättningen i öre per kWh (narboendeStorleksordning, skrivNarboendeStorleksordning). Version 1.11: raderna om nätkostnad i sammanställningen (JAMFOR_NAT) räknas på valt läge och har kort text direkt och förklaring vid hovring, bland annat om negativ nätkostnad. Version 1.10: visaVersionsrad för versionsraden i sidfoten. Version 1.9: totala effekten visas under Effekt per verk (visaTotalEffekt) och fälten i första gruppen har fast ordning (INDATAORDNING_ANLAGGNING). Version 1.8: realiserat pris räknas ut och uppdateras (realpristext). Version 1.7: uträkningsmarkering och förklaringar i sammanställningen, och arrendeförklaring. Version 1.6: raderna JAMFOR_OVERSKOTT för sammanställningen. Version 1.5: tabell över extra bostäder under taket, förklaring per zon och länkar till dolda flikar. Version 1.4: fastighetsskatt som första åren + därefter (fskatt2) och uppgift om när närboendetaket nås. Version 1.3: kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
    berakningar.js och berakningar_langhult.js.
    ============================================================================ */
 'use strict';
 
-const KARNA_VERSION = '1.12';
+const KARNA_VERSION = '1.13';
 
 /**
  * Indatagrupperna i alla vindkraftskalkyler: rubrikerna och deras ordning är fastställda här, så att kalkylerna ser
@@ -155,6 +155,12 @@ function takOrePerKWh(realOre, takProcent) {
 /** Realiserade priser (öre/kWh) som visas i tabellen över taket vid olika priser. */
 const TAK_PRISER_ORE = [30, 40, 50, 60, 75, 100];
 
+/** Raden som markeras i tabellen över taket (2 % av 50 öre/kWh är 1 öre/kWh) och förklaringen vid hovring. */
+const TAK_MARKERAD_ORE = 50;
+const TAK_MARKERAD_FORKLARING = 'Det poängrika: 2 % av 50 öre/kWh är 1 öre/kWh. Taket följer det realiserade priset, så ett lägre pris ger ett lägre tak (vid 37,5 öre/kWh blir det 0,75 öre/kWh). ' +
+  'Ungefär 1 öre/kWh är den storleksordning som BO (2026) uppskattar i en tråd på X, med ett capture price (realiserat pris) på 50 öre/kWh, och frågar om det räcker. ' +
+  'Ersättningen är högst så mycket, och betalas fullt ut bara om tillräckligt många bostäder ligger nära verken (Tabell 8).';
+
 /** Skriver sektionen Storleksordning (Tabell 8 och 9), om sidan har den. */
 function skrivNarboendeStorleksordning(r) {
   const s = narboendeStorleksordning(r);
@@ -179,6 +185,15 @@ function skrivNarboendeStorleksordning(r) {
       [fmt(p, 0, ' öre/kWh'), fmt(takOrePerKWh(p, s.takProcent), 2, ' öre/kWh')].forEach((t, i) => {
         const td = document.createElement('td'); td.textContent = t; if (i) td.className = 'tal'; tr.appendChild(td);
       });
+      if (p === TAK_MARKERAD_ORE) {
+        tr.className = 'rak-markerad';
+        tr.tabIndex = 0;
+        tr.setAttribute('data-hjalp-rad', TAK_MARKERAD_FORKLARING);
+        const q = document.createElement('span');
+        q.className = 'hjalp'; q.tabIndex = 0; q.textContent = '?'; q.setAttribute('data-hjalp', TAK_MARKERAD_FORKLARING);
+        tr.cells[0].appendChild(document.createTextNode(' '));
+        tr.cells[0].appendChild(q);
+      }
       kropp.appendChild(tr);
     });
   }
@@ -931,7 +946,7 @@ function kommunSaknasText(poster) {
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
-    KARNA_VERSION, INDATAGRUPPER, INDATAORDNING_ANLAGGNING, totalEffektText, visaVersionsrad, narboendeStorleksordning, takOrePerKWh, TAK_PRISER_ORE, skrivNarboendeStorleksordning, JAMFOR_NAT, natLopandeForklaring, natLopandeNot, natEngangForklaring, JAMFOR_OVERSKOTT, arrendeForklaring, realpristext, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode,
+    KARNA_VERSION, INDATAGRUPPER, INDATAORDNING_ANLAGGNING, totalEffektText, visaVersionsrad, narboendeStorleksordning, takOrePerKWh, TAK_PRISER_ORE, TAK_MARKERAD_ORE, TAK_MARKERAD_FORKLARING, skrivNarboendeStorleksordning, JAMFOR_NAT, natLopandeForklaring, natLopandeNot, natEngangForklaring, JAMFOR_OVERSKOTT, arrendeForklaring, realpristext, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode,
     natPaverkan, natEngangTillaggAv, natSammanfattning,
     lasKommunIndata, fastighetsskattPerVerk, kommunPoster, kommunSaknasText, narboendeTakniva, narboendeExtra, zonHjalpText,
     FSKATT_SCHABLON, fullastJustering, fastighetsskattSchablon,

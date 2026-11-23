@@ -191,3 +191,8 @@ label.oanvand { opacity: .5; }
 
 /* Kort förklaring direkt under radens namn i jämförelsetabellen. */
 .rad-not { display: block; font-weight: 400; margin: .15rem 0 0; }
+
+/* Markerad rad i en tabell (grönt, inte gult: gult är reserverat för inmatningsfält). */
+.data-tabell tr.rak-markerad td { background: #e3f3e8; font-weight: 700; }
+.data-tabell tr.rak-markerad td:first-child { border-left: 4px solid var(--farg-primar); }
+.data-tabell tr.rak-markerad:focus-visible { outline: 2px solid var(--farg-primar); outline-offset: -2px; }

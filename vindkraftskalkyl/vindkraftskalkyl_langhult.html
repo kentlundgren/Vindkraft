@@ -19,6 +19,7 @@
   UPPDATERING 2026-11-23 (senare): indatagrupperna har samma rubriker och ordning som övriga kalkyler (INDATAGRUPPER i kalkylkarna.js), och Närboende ligger sist.
   UPPDATERING 2026-11-23 (senare igen): fastighetsskatt, bygdemedel och kommunstöd räknas i kalkylkarna.js (kommunPoster) och delas med övriga kalkyler. Långhults värden och resultat är oförändrade.
   UPPDATERING 2026-11-23 (senare igen 13): länken till beräkningen av bostäder pekar på nya platsen (mappen langhult/). Version 1.5.
+  UPPDATERING 2026-11-23 (senare igen 15): raden 50 öre/kWh i Tabell 9 är markerad (2 % av 50 öre är 1 öre/kWh) med förklaring vid hovring, och BO (2026) finns i källistan. Version 1.7.
   UPPDATERING 2026-11-23 (senare igen 14): nytt avsnitt Storleksordning (#Storleksordning) med Tabell 8 och 9: närboendeersättningen i öre per kWh, taket 2 % vid olika realiserade priser och andel av överskottet. Version 1.6.
   UPPDATERING 2026-11-23 (senare igen 12): valbara alternativ för bostäder per zon (förval, eller räknat ur ljudutredningen för alla 20 verk eller bara Lunnarsbo). Version 1.4.
   UPPDATERING 2026-11-23 (senare igen 11): förklaring av negativ nätkostnad i Tabell 3 (direkt och vid hovring), nätraderna där räknas på valt läge, och hänvisning till Lundgren (2026) om ersättning till närboende. Version 1.3.
@@ -755,6 +756,7 @@
         <tbody id="so-pris-kropp"></tbody>
       </table>
     </div>
+    <p class="hint" id="so-markerad-not">Den markerade raden är poängen: <strong>2 % av 50 öre/kWh är 1 öre/kWh</strong>. Det är ungefär den storleksordning som <a href="#ref-bo">BO (2026)</a> uppskattar och frågar om i en tråd på X. Håll pekaren över raden (eller tryck på den) för en förklaring.</p>
     <p class="notering">
       Samma belopp kan ses på två sätt. Per kWh är det en kostnad för projektet, ett par tiondels öre till cirka ett öre. Per bostad är det många tusen kronor om året, eftersom ersättningen delas på få hushåll
       (<a href="#Tabell2">Tabell 2</a>). Om det är för litet eller för stort är en värdering. Sidan visar storleksordningen och vad det betyder för projektets överskott.
@@ -1071,6 +1073,11 @@
         Akustikkonsulten i Sverige AB (2025) <em>Ljudimmissionsberäkning av ljud från vindkraft, vindpark Långhult.</em> Dokument 10-23221 A03, 2025-05-26, beställd av Fred. Olsen Renewables. Tillgänglig:
         <a href="https://fredolsenrenewables.com/media/gr1hts51/ljudberaekning.pdf" target="_blank" rel="noopener">https://fredolsenrenewables.com/media/gr1hts51/ljudberaekning.pdf</a>
         (hämtad 23 november 2026). <em>(Anger verkens koordinater (20 verk, SG 6.6-170) och koordinater för ljudkänsliga punkter (bostäder) i SWEREF 99 TM. Ur dem räknas alternativen för bostäder per zon. Dokumentet anger 74 punkter, tabellen visar 72, och 69 har läsbara koordinater i textutdraget.)</em>
+      </li>
+      <li id="ref-bo">
+        BO (2026) <em>Inlägg på X</em>, 23 november. Tillgänglig:
+        <a href="https://x.com/bengtxyz/status/2124776225822363881" target="_blank" rel="noopener">https://x.com/bengtxyz/status/2124776225822363881</a>
+        (hämtad 23 november 2026). <em>(Skribenten frågar om intäktsdelningen motsvarar ungefär 1 öre/kWh, som skribenten uppskattar i ett tidigare inlägg i samma tråd (21 mars, enligt den citerade texten vid ett capture price på 50 öre/kWh), och om kalkylen ger en annan siffra. Utgångspunkt för avsnittet Storleksordning och den markerade raden i Tabell 9. Skribenten anges med initialer.)</em>
       </li>
       <li id="ref-lag">
         Lagen.nu (2026) <em>Lag (2026:1113) om intäktsdelning från vindkraftsanläggningar.</em>

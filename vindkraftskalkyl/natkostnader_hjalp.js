@@ -1,7 +1,7 @@
 /* ============================================================================
    natkostnader_hjalp.js
    Förklaringsrutor vid hovring, fokus och tryck för element med klassen
-   `hjalp` och attributet `data-hjalp`. Används av kalkylen och läsarsidan.
+   `hjalp` och attributet `data-hjalp`, och för hela tabellrader med attributet `data-hjalp-rad`. Används av kalkylen och läsarsidan.
    Händelserna delegeras från dokumentet, så element som skapas senare (till
    exempel när läsarsidan byggs om) fungerar också.
    ============================================================================ */
@@ -19,11 +19,11 @@
     document.body.appendChild(ruta);
 
     let aktiv = null;
-    const hitta = (t) => (t && t.closest) ? t.closest('.hjalp[data-hjalp]') : null;
+    const hitta = (t) => (t && t.closest) ? t.closest('.hjalp[data-hjalp], [data-hjalp-rad]') : null;
 
     function visa(e) {
       aktiv = e;
-      ruta.textContent = e.getAttribute('data-hjalp');
+      ruta.textContent = e.getAttribute('data-hjalp') || e.getAttribute('data-hjalp-rad');
       ruta.hidden = false;
       const r = e.getBoundingClientRect();
       const bredd = Math.min(320, window.innerWidth - 24);
