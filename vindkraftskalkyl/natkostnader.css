@@ -169,3 +169,12 @@ details.nat-dela[open] > summary { margin-bottom: .4rem; }
 .nat-topp .resultatlista { grid-template-columns: 1fr; }
 .nat-topp .resultatlista dd { white-space: normal; text-align: right; }
 .nat-t-del { display: block; font-size: .8rem; font-weight: 400; color: #40504d; }
+
+/* Sammanställningens uträkning: överskott före lokala poster, avdragen och överskott efter */
+.jamforelse-tabell tr.rak-start td { font-weight: 700; border-top: 2px solid var(--farg-ram); }
+.jamforelse-tabell tr.rak-avdrag td:first-child { padding-left: 1.8rem; border-left: 4px solid var(--farg-primar-ljus); }
+.jamforelse-tabell tr.rak-avdrag td { color: #2f3e3b; }
+.jamforelse-tabell tr.rak-summa td { font-weight: 700; border-top: 2px solid var(--farg-primar); border-bottom: 2px solid var(--farg-primar); background: var(--farg-framhavd); }
+.jamforelse-tabell tr.rak-summa td:first-child { border-left: 4px solid var(--farg-primar); }
+/* Fält som inte används med vald modell */
+label.oanvand { opacity: .5; }

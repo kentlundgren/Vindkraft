@@ -25,12 +25,12 @@
    webbläsaren och exporteras som module.exports i Node, där test_kalkylkarna.js
    kör dem.
 
-   Version 1.5 (2026-11-23): tabell över extra bostäder under taket, förklaring per zon och länkar till dolda flikar. Version 1.4: fastighetsskatt som första åren + därefter (fskatt2) och uppgift om när närboendetaket nås. Version 1.3: kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
+   Version 1.7 (2026-11-23): uträkningsmarkering och förklaringar i sammanställningen, och arrendeförklaring. Version 1.6: raderna JAMFOR_OVERSKOTT för sammanställningen. Version 1.5: tabell över extra bostäder under taket, förklaring per zon och länkar till dolda flikar. Version 1.4: fastighetsskatt som första åren + därefter (fskatt2) och uppgift om när närboendetaket nås. Version 1.3: kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
    berakningar.js och berakningar_langhult.js.
    ============================================================================ */
 'use strict';
 
-const KARNA_VERSION = '1.5';
+const KARNA_VERSION = '1.7';
 
 /**
  * Indatagrupperna i alla vindkraftskalkyler: rubrikerna och deras ordning är fastställda här, så att kalkylerna ser
@@ -92,6 +92,83 @@ function fmt(v, dec = 0, suffix = '') {
 function visaFullasttimmar(kapfaktor) {
   const e = document.getElementById('kf-timmar');
   if (e) e.textContent = '= ' + fmt(kapfaktor * 8760, 0, ' fullasttimmar per år (kapacitetsfaktor × 8 760 h)');
+}
+
+/**
+ * Förklaring av hur arrendet räknas, med resultatets egna tal. Modellen är antingen procent av bruttointäkten eller kr per MW och år.
+ * Resultatobjektet ska ha arrendeInfo { modell, procent, krmw }, arrendeAr1, intaktAr1, produktionMWh_ar1, realPris_ar1, antalverk och P_tot.
+ */
+function arrendeForklaring(r) {
+  const a = r.arrendeInfo;
+  if (!a) return '';
+  if (a.modell === 'procent') {
+    const perVerk = r.arrendeAr1 / Math.max(1, r.antalverk);
+    return 'Arrendet är ' + fmt(a.procent * 100, 1) + ' % av bruttointäkten. Bruttointäkten år 1 är ' + fmt(r.intaktAr1, 0) + ' kr (' +
+      fmt(r.produktionMWh_ar1, 0) + ' MWh × ' + fmt(r.realPris_ar1, 3) + ' kr/kWh), och ' + fmt(a.procent * 100, 1) + ' % av den är ' +
+      fmt(r.arrendeAr1, 0) + ' kr per år' +
+      (r.antalverk > 1 ? ', alltså ' + fmt(perVerk, 0) + ' kr per verk × ' + r.antalverk + ' verk' : '') +
+      '. Arrendet följer intäkten: dubbelt så många verk ger dubbelt så stor intäkt och dubbelt så stort arrende.';
+  }
+  return 'Arrendet är ' + fmt(a.krmw, 0) + ' kr per MW och år × ' + fmt(r.P_tot, 1) + ' MW = ' + fmt(r.arrendeAr1, 0) + ' kr per år. Det beror på effekten och inte på intäkten.';
+}
+
+/** Skriver arrendeförklaringen i elementet mark-arrende-forklaring och tonar ned det arrendefält som inte används. */
+function visaArrendeForklaring(r) {
+  const e = document.getElementById('mark-arrende-forklaring');
+  if (e) e.textContent = arrendeForklaring(r);
+  const modell = r.arrendeInfo ? r.arrendeInfo.modell : '';
+  [['arrendeprocent', 'procent'], ['arrendekrmw', 'krmw']].forEach(([id, m]) => {
+    const f = document.getElementById(id), lab = f && f.closest ? f.closest('label') : null;
+    if (lab) lab.classList.toggle('oanvand', modell !== '' && modell !== m);
+  });
+}
+
+/**
+ * Raderna i sammanställningen (jämförelsetabellen) som visar hur överskottet räknas fram, i samma ordning i alla kalkyler:
+ * överskott före lokala poster (intäkt − drift − kapitalkostnad), därefter det som dras av (arrende, fastighetsskatt, bygdemedel och
+ * ersättning till närboende), och till sist överskott efter lokala poster. NPV och IRR räknas efter de lokala posterna, och LCOE före dem.
+ * Resultatobjektet ska ha overskott, intaktAr1, driftkostnadAr1, kapitalkostnad, arrendeAr1, fskattAr1, bygdeAr1, antalverk, nar,
+ * narboendeAr1 (eller narboendeTotalAr1) och overskottNetto. `klass` markerar raden som en del av uträkningen (start, avdrag, summa)
+ * och `forklara` ger texten i förklaringsrutan vid raden.
+ */
+const JAMFOR_OVERSKOTT = [
+  { etikett: 'Överskott/år före lokala poster (kr)', klass: 'rak-start', dec: 0, hamta: r => r.overskott,
+    forklara: r => 'Intäkt ' + fmt(r.intaktAr1, 0) + ' − drift ' + fmt(r.driftkostnadAr1, 0) + ' − kapitalkostnad ' + fmt(r.kapitalkostnad, 0) + ' kr per år. Därefter dras de lokala posterna av.' },
+  { etikett: 'Dras av: arrende (kr/år)', klass: 'rak-avdrag', dec: 0, hamta: r => 0 - r.arrendeAr1,
+    forklara: r => arrendeForklaring(r) },
+  { etikett: 'Dras av: fastighetsskatt (kr/år)', klass: 'rak-avdrag', dec: 0, hamta: r => 0 - r.fskattAr1,
+    forklara: r => r.fskattAr1 > 0
+      ? 'Fastighetsskatt per verk år 1 × antal verk: ' + fmt(r.fskattAr1 / Math.max(1, r.antalverk), 0) + ' × ' + r.antalverk + ' = ' + fmt(r.fskattAr1, 0) + ' kr per år. Skatten går till staten.'
+      : 'Fastighetsskatt saknar belopp (0 kr). Fyll i den i gruppen Kommun & samhälle.' },
+  { etikett: 'Dras av: bygdemedel (kr/år)', klass: 'rak-avdrag', dec: 0, hamta: r => 0 - r.bygdeAr1,
+    forklara: r => r.bygdeAr1 > 0
+      ? 'Bygdemedel för hela parken: ' + fmt(r.bygdeAr1, 0) + ' kr per år. Frivilligt, och inte reglerat av intäktsdelningslagen.'
+      : 'Bygdemedel saknar belopp (0 kr). Fyll i det i gruppen Kommun & samhälle.' },
+  { etikett: 'Dras av: närboendeersättning (kr/år)', klass: 'rak-avdrag', dec: 0,
+    hamta: r => 0 - (r.narboendeAr1 !== undefined ? r.narboendeAr1 : r.narboendeTotalAr1),
+    forklara: r => r.nar && r.nar.metod === 'zoner'
+      ? 'Ersättningen per zon summerar till ' + fmt(r.nar.fore, 0) + ' kr före tak. Taket är 2 % av intäkten, ' + fmt(r.nar.cap, 0) + ' kr, och utbetalt blir ' + fmt(r.nar.utbetalt, 0) + ' kr per år. Se tabellen över närboende i fliken Närboende.'
+      : 'Ersättning till närboende enligt vald metod.' },
+  { etikett: 'Överskott/år efter lokala poster (kr)', klass: 'rak-summa', dec: 0, hamta: r => r.overskottNetto,
+    forklara: r => 'Överskott före lokala poster − arrende − fastighetsskatt − bygdemedel − närboendeersättning = ' + fmt(r.overskottNetto, 0) + ' kr per år.' }
+];
+
+/**
+ * Markerar en rad i sammanställningen som en del av uträkningen (klassen) och lägger en förklaringsruta vid radens namn.
+ * @param {HTMLElement} tr      raden
+ * @param {HTMLElement} tdNamn  cellen med radens namn
+ * @param {object} nt           radens definition (klass, forklara)
+ * @param {object} res          senaste resultatet, eller null
+ */
+function jamforRadExtras(tr, tdNamn, nt, res) {
+  if (nt.klass) tr.className = nt.klass;
+  if (nt.forklara && res) {
+    const s = document.createElement('span');
+    s.className = 'hjalp'; s.tabIndex = 0; s.textContent = '?';
+    s.setAttribute('data-hjalp', nt.forklara(res));
+    tdNamn.appendChild(document.createTextNode(' '));
+    tdNamn.appendChild(s);
+  }
 }
 
 /* ============================================================================
@@ -687,7 +764,7 @@ function kommunSaknasText(poster) {
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
-    KARNA_VERSION, INDATAGRUPPER, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode,
+    KARNA_VERSION, INDATAGRUPPER, JAMFOR_OVERSKOTT, arrendeForklaring, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode,
     natPaverkan, natEngangTillaggAv, natSammanfattning,
     lasKommunIndata, fastighetsskattPerVerk, kommunPoster, kommunSaknasText, narboendeTakniva, narboendeExtra, zonHjalpText,
     FSKATT_SCHABLON, fullastJustering, fastighetsskattSchablon,

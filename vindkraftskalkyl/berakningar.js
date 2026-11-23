@@ -44,8 +44,10 @@
    UPPDATERING 2026-11-23: närboendeersättning enligt lagen (zoner, SFS 2026:1113) via kalkylkarna.js, prisfaktor (realiserat pris = spotpris × prisfaktor, förvalt 1) och visning av fullasttimmar. Version 1.16.
    UPPDATERING 2026-11-23 (senare): fastighetsskatt, bygdemedel och kommunstöd via kalkylkarna.js (kommunPoster). Kommunstödet är statligt och dras inte från projektets resultat. Den gamla schablonposten Kommunal ersättning är borttagen. Version 1.17.
    UPPDATERING 2026-11-23 (senare igen): fastighetsskatt med fskatt2, förvalet en bostad per zon, taknivå för närboende och överskott före och efter lokala poster. Version 1.18.
-   UPPDATERING 2026-11-23 (senare igen 2): förklaring per zon, Tabell 3 med extra bostäder under taket och länkar till dolda flikar (kalkylkarna.js). Version 1.19. */
-const VERSION = '1.19';
+   UPPDATERING 2026-11-23 (senare igen 2): förklaring per zon, Tabell 3 med extra bostäder under taket och länkar till dolda flikar (kalkylkarna.js). Version 1.19.
+   UPPDATERING 2026-11-23 (senare igen 3): sammanställningen visar överskottet före lokala poster, vad som dras av (arrende, fastighetsskatt, bygdemedel, närboendeersättning) och överskottet efter, och har ankaret #kalkylsammanstallning. Version 1.20.
+   UPPDATERING 2026-11-23 (senare igen 4): raderna i sammanställningen är markerade som en uträkning (start, avdrag, summa) med förklaringsruta, och arrendet förklaras i fliken Markägare. Version 1.21. */
+const VERSION = '1.21';
 const VERSIONSDATUM = '2026-11-22';
 
 /* ============================================================================
@@ -301,6 +303,7 @@ function beraknaAllt(d) {
 
     // Markägare
     arrendeAr1, arrendeTotal, arrendeNuvarde,
+    arrendeInfo: { modell: d.arrendemodell, procent: d.arrendeprocent, krmw: d.arrendekrmw }, antalverk: d.antalverk, P_tot,
 
     // Kommun/samhälle
     lokalaIntakterAr1, lokalaIntakterTotal, fskattAr1, bygdeAr1, kommunPoster: kp, co2Ton, samhallsnytta,
@@ -364,6 +367,7 @@ function skrivUt(res, d) {
   satt('mark-arrende-ar', fmt(res.arrendeAr1, 0, ' kr/år'));
   satt('mark-arrende-total', fmt(res.arrendeTotal, 0, ' kr'));
   satt('mark-arrende-nuvarde', fmt(res.arrendeNuvarde, 0, ' kr'));
+  visaArrendeForklaring(res);
 
   /* ---- Kommun/samhälle ---- */
   satt('kom-lokala-ar', fmt(res.lokalaIntakterAr1, 0, ' kr/år'));
@@ -517,12 +521,10 @@ const JAMFOR_NYCKELTAL = [
   { etikett: 'Investeringsutgift (kr)',    hamta: r => r.investering,       dec: 0, suffix: '' },
   { etikett: 'Årlig kapitalkostnad (kr)',  hamta: r => r.kapitalkostnad,    dec: 0, suffix: '' },
   { etikett: 'Kostnad per kWh (kr)',       hamta: r => r.kostnadPerkWh,     dec: 3, suffix: '' },
-  { etikett: 'Överskott/år före lokala poster (kr)', hamta: r => r.overskott,   dec: 0, suffix: '' },
-  { etikett: 'Överskott/år efter lokala poster (kr)', hamta: r => r.overskottNetto, dec: 0, suffix: '' },
+  ...JAMFOR_OVERSKOTT.map(x => Object.assign({ suffix: '' }, x)),     // överskott före, avdragen och överskott efter (kalkylkarna.js)
   { etikett: 'LCOE (kr/kWh)',              hamta: r => r.lcoe,              dec: 3, suffix: '' },
   { etikett: 'NPV (kr)',                   hamta: r => r.npvInvest,         dec: 0, suffix: '' },
   { etikett: 'IRR (%)',                    hamta: r => r.irrInvest * 100,   dec: 1, suffix: '' },
-  { etikett: 'Närboendeersättning tot/år (kr)', hamta: r => r.narboendeTotalAr1, dec: 0, suffix: '' },
   { etikett: 'Nätkostnad, engång (kr/MW)', hamta: r => r.natPanel.engangPerMW.summa, dec: 0, suffix: '' },
   { etikett: 'Nätkostnad, löpande (öre/kWh)', hamta: r => r.natPanel.lopandeOre.summa, dec: 2, suffix: '' }
 ];
@@ -550,6 +552,7 @@ function ritaJamforelse() {
     // Kolumn 1: nyckeltalets namn
     const tdNamn = document.createElement('td');
     tdNamn.textContent = nt.etikett;
+    jamforRadExtras(tr, tdNamn, nt, senasteResultat);
     tr.appendChild(tdNamn);
 
     // Kolumn 2: Senaste resultatet

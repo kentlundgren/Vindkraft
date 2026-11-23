@@ -216,11 +216,15 @@
     else reserv();
   }
 
-  function uppdateraLank() {
+  function uppdateraLank(vid) {
     const h = byggHash();
-    try {
-      history.replaceState(null, '', location.pathname + location.search + h);
-    } catch (e) { /* t.ex. vissa lokala miljöer: länken visas ändå nedan */ }
+    // Vid sidstart lämnas en adress med ett annat ankare (till exempel #kalkylsammanstallning) ifred, så att länken fungerar.
+    const annatAnkare = location.hash.length > 1 && !HASH_MONSTER.test(location.hash);
+    if (!(vid === 'start' && annatAnkare)) {
+      try {
+        history.replaceState(null, '', location.pathname + location.search + h);
+      } catch (e) { /* t.ex. vissa lokala miljöer: länken visas ändå nedan */ }
+    }
     senasteLank = location.origin === 'null' || location.protocol === 'file:'
       ? location.href.split('#')[0] + h
       : location.origin + location.pathname + location.search + h;
@@ -254,7 +258,7 @@
       // Räkna om efter att berakningar.js har initierat och visa gruppen.
       window.addEventListener('load', () => { el('nat-grupp').scrollIntoView(); });
     }
-    uppdateraLank();
+    uppdateraLank('start');
   }
 
   /* ---------- Panelen "Nätkostnader i siffror" ---------- */

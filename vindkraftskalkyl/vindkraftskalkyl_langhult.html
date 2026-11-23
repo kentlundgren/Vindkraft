@@ -18,6 +18,8 @@
   UPPDATERING 2026-11-23: närboendeersättningen räknas i kalkylkarna.js (delas med huvudkalkylen), kapacitetsfaktor 0,4121 (= 3 610 h / 8 760) i stället för fullasttimmar, och viktning heter prisfaktor.
   UPPDATERING 2026-11-23 (senare): indatagrupperna har samma rubriker och ordning som övriga kalkyler (INDATAGRUPPER i kalkylkarna.js), och Närboende ligger sist.
   UPPDATERING 2026-11-23 (senare igen): fastighetsskatt, bygdemedel och kommunstöd räknas i kalkylkarna.js (kommunPoster) och delas med övriga kalkyler. Långhults värden och resultat är oförändrade.
+  UPPDATERING 2026-11-23 (senare igen 4): raderna i sammanställningen är markerade som en uträkning med förklaringsruta vid varje rad, och arrendet förklaras i fliken Markägare.
+  UPPDATERING 2026-11-23 (senare igen 3): sammanställningen visar överskottet före lokala poster, raderna Dras av och överskottet efter, med förklaring, och går att länka till med #kalkylsammanstallning.
   UPPDATERING 2026-11-23 (senare igen 2): förklaring per zon vid hovring, Tabell 7 över hur många bostäder till som får full ersättning innan taket nås, länkar som öppnar rätt resultatflik och ljusare länkar i sidhuvudet.
   UPPDATERING 2026-11-23 (senare igen): fastighetsskatten anges som första åren plus åren därefter (fskatt2 = 204 049 kr, jämnat ut ur Kaufmann & Westander 2026), uppgift om hur många bostäder som kan få ersättning innan taket nås, och tydligare rubriker på överskottsraderna. Resultaten är oförändrade (högst 0,01 %).
   ============================================================================
@@ -674,11 +676,17 @@
   <!-- ========================================================================
        TABELL 3: JÄMFÖRELSE MOT FÖREGÅENDE ÄNDRING
        ==================================================================== -->
-  <section class="jamforelse" aria-labelledby="Jamforelse">
+  <section class="jamforelse" id="kalkylsammanstallning" aria-labelledby="Jamforelse">
     <h2 id="Jamforelse">Jämförelse mot föregående ändring<a class="ankare" href="#Jamforelse" aria-label="Länk till rubriken">#</a></h2>
     <p class="hint">
       När du ändrar ett fält och lämnar det flyttas det tidigare "Senaste"-värdet till "Tidigare",
       det nya värdet hamnar i "Senaste" och skillnaden visas i "Förändring". Vid första beräkningen visas "–".
+    </p>
+    <p class="hint">
+       <strong>Så räknas överskottet:</strong> <em>Överskott före lokala poster</em> är intäkten minus drift och kapitalkostnad. Därefter dras
+       arrende, fastighetsskatt, bygdemedel och ersättning till närboende av (raderna "Dras av"), och det som blir kvar är
+       <em>Överskott efter lokala poster</em>. Närboendeersättningen dras alltså efter det första överskottet. NPV och IRR räknas efter de lokala
+       posterna, medan LCOE räknas före dem.
     </p>
     <div class="tabell-ruta">
       <table class="jamforelse-tabell" id="Tabell3">
@@ -748,6 +756,7 @@
         <div><dt>Total arrendeintäkt (hela livslängden)</dt><dd id="mark-arrende-total">–</dd></div>
         <div class="framhavd"><dt>Nuvärde av arrendet</dt><dd id="mark-arrende-nuvarde">–</dd></div>
       </dl>
+      <p class="hint" id="mark-arrende-forklaring"></p>
     </div>
 
     <!-- ---- Kommun, bygd och samhälle ---- -->

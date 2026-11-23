@@ -284,6 +284,7 @@ function beraknaAllt(d) {
     lcoe, paybackInvest, npvInvest, irrInvest, cf, livs,
     // Markägare
     arrendeAr1, arrendeTotal, arrendeNuvarde,
+    arrendeInfo: { modell: d.arrendemodell, procent: d.arrendeprocent, krmw: d.arrendekrmw }, antalverk: d.antalverk, P_tot,
     // Skatt och bygd
     fskattAr1, bygdeAr1, kommunPoster: kp,
     // Kommun
@@ -416,6 +417,7 @@ function skrivUt(res, d) {
   satt('mark-arrende-ar', fmt(res.arrendeAr1, 0, ' kr/år'));
   satt('mark-arrende-total', fmt(res.arrendeTotal, 0, ' kr'));
   satt('mark-arrende-nuvarde', fmt(res.arrendeNuvarde, 0, ' kr'));
+  visaArrendeForklaring(res);
 
   /* ---- Kommun, bygd och samhälle ---- */
   satt('kom-lokala-ar', fmt(res.lokalaAr1, 0, ' kr/år'));
@@ -609,12 +611,10 @@ function uppdateraDiagram(res, d) {
 const JAMFOR_NYCKELTAL = [
   { etikett: 'Intäkt, hela parken (kr/år)',        hamta: r => r.intaktAr1,         dec: 0 },
   { etikett: 'Investeringsutgift (kr)',            hamta: r => r.investering,       dec: 0 },
-  { etikett: 'Överskott efter allt, år 1 (kr)',    hamta: r => r.overskottNetto,    dec: 0 },
+  ...JAMFOR_OVERSKOTT,                                  // överskott före, avdragen och överskott efter (kalkylkarna.js)
   { etikett: 'LCOE (kr/kWh)',                      hamta: r => r.lcoe,              dec: 3 },
   { etikett: 'NPV (kr)',                           hamta: r => r.npvInvest,         dec: 0 },
   { etikett: 'IRR (%)',                            hamta: r => r.irrInvest * 100,   dec: 1 },
-  { etikett: 'Fastighetsskatt, år 1 (kr)',         hamta: r => r.fskattAr1,         dec: 0 },
-  { etikett: 'Närboende utbetalt, hela parken (kr/år)', hamta: r => r.nar.utbetalt, dec: 0 },
   { etikett: 'Närboende, snitt per bostad (kr/år)', hamta: r => r.nar.snitt,        dec: 0 },
   { etikett: 'Nätkostnad, engång (kr/MW)',        hamta: r => r.natPanel.engangPerMW.summa,   dec: 0 },
   { etikett: 'Nätkostnad, löpande (öre/kWh)',     hamta: r => r.natPanel.lopandeOre.summa,    dec: 2 }
@@ -635,6 +635,7 @@ function ritaJamforelse() {
 
     const tdNamn = document.createElement('td');
     tdNamn.textContent = nt.etikett;
+    jamforRadExtras(tr, tdNamn, nt, senasteResultat);
     tr.appendChild(tdNamn);
 
     const tdSenaste = document.createElement('td');

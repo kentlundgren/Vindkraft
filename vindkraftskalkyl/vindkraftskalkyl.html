@@ -65,6 +65,10 @@
 
   UPPDATERING 2026-11-22 (senare igen): gemensam kärna kalkylkarna.js för finansmatematik och nätkopplingen, delad med fallet Långhult, och nätformateringen i natkostnader.css. Resultaten är oförändrade. Version 1.15.
 
+  UPPDATERING 2026-11-23 (senare igen 4): raderna i sammanställningen är markerade som en uträkning (start, avdrag, summa) med förklaringsruta vid varje rad, och arrendet förklaras i fliken Markägare med hjälp av resultatets tal. Version 1.21.
+
+  UPPDATERING 2026-11-23 (senare igen 3): sammanställningen visar överskottet före lokala poster, raderna Dras av (arrende, fastighetsskatt, bygdemedel, närboendeersättning) och överskottet efter, med förklaring, och går att länka till med #kalkylsammanstallning. Version 1.20.
+
   UPPDATERING 2026-11-23 (senare igen 2): förklaring per zon vid hovring, Tabell 3 över hur många bostäder till som får full ersättning innan taket nås, länkar som öppnar rätt resultatflik och ljusare länkar i sidhuvudet. Version 1.19.
 
   UPPDATERING 2026-11-23 (senare igen): fastighetsskatt som första åren plus åren därefter (fskatt2) med schablon per MW och elområde i hjälptexten, förvalet en bostad i varje zon, uppgift om hur många bostäder som kan få ersättning innan taket nås, och överskottet visas både före och efter lokala poster (närboendeersättningen dras efter det första). Version 1.18.
@@ -467,6 +471,8 @@
       <fieldset class="indata-grupp">
         <legend>Markägare (arrende)</legend>
 
+        <p class="hint" style="margin:0 0 .6rem">Det arrendefält som inte hör till vald modell är nedtonat och påverkar inget. Så räknas arrendet står i fliken Markägare.</p>
+
         <label>Arrendemodell
           <select id="arrendemodell" class="indata">
             <option value="procent" selected>% av bruttointäkt</option>
@@ -650,12 +656,18 @@
        Uppdateras vid "change"-händelse (när fältet lämnas), inte medan man
        skriver. Detaljerad minneslogik finns i berakningar.js.
        ==================================================================== -->
-  <section class="jamforelse" aria-labelledby="jamforelse-rubrik">
-    <h2 id="jamforelse-rubrik">Jämförelse mot föregående ändring</h2>
+  <section class="jamforelse" id="kalkylsammanstallning" aria-labelledby="jamforelse-rubrik">
+    <h2 id="jamforelse-rubrik">Jämförelse mot föregående ändring<a class="ankare" href="#kalkylsammanstallning" aria-label="Länk till sammanställningen">#</a></h2>
     <p class="hint">
       När du ändrar ett fält och lämnar det flyttas det tidigare "Senaste"-värdet
       till "Tidigare", det nya värdet hamnar i "Senaste" och skillnaden visas i
       "Förändring". Vid första beräkningen visas "–".
+    </p>
+    <p class="hint">
+       <strong>Så räknas överskottet:</strong> <em>Överskott före lokala poster</em> är intäkten minus drift och kapitalkostnad. Därefter dras
+       arrende, fastighetsskatt, bygdemedel och ersättning till närboende av (raderna "Dras av"), och det som blir kvar är
+       <em>Överskott efter lokala poster</em>. Närboendeersättningen dras alltså efter det första överskottet. NPV och IRR räknas efter de lokala
+       posterna, medan LCOE räknas före dem.
     </p>
     <table class="jamforelse-tabell">
       <thead>
@@ -722,6 +734,7 @@
         <div><dt>Total arrendeintäkt (hela livslängden)</dt><dd id="mark-arrende-total">–</dd></div>
         <div class="framhavd"><dt>Nuvärde av arrendet</dt><dd id="mark-arrende-nuvarde">–</dd></div>
       </dl>
+      <p class="hint" id="mark-arrende-forklaring"></p>
     </div>
 
     <!-- ---- Flik: Kommun/samhälle ---- -->

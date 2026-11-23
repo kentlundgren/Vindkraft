@@ -192,6 +192,30 @@ sant('extra: taket nås redan, inga extra bostäder', exTak.taketNasRedan && exT
 const zt = K.zonHjalpText(K.beraknaNarboendeZoner(1e6, 20e6, { bost: [1, 1, 1, 1, 1], verkperbostad: 2, tak: 0.02, antalverk: 20 }), 0, 150);
 sant('zonförklaring nämner beloppet 5 000 kr och 2,5 ‰', /5 000 kr/.test(zt.replace(/\s/g, ' ')) && /2,5 ‰/.test(zt));
 
+/* ---------- Sammanställningens rader för överskottet ---------- */
+const rJ = { overskott: 1000, arrendeAr1: 100, fskattAr1: 50, bygdeAr1: 25, narboendeAr1: 200, overskottNetto: 625 };
+const vJ = K.JAMFOR_OVERSKOTT.map(x => x.hamta(rJ));
+lika('sammanställning: före lokala poster', vJ[0], 1000);
+lika('sammanställning: avdragen är negativa', vJ[1] + vJ[2] + vJ[3] + vJ[4], -375);
+lika('sammanställning: före + avdrag = efter', vJ[0] + vJ[1] + vJ[2] + vJ[3] + vJ[4], vJ[5]);
+sant('sammanställning: ett avdrag som är noll visas som 0, inte −0', Object.is(K.JAMFOR_OVERSKOTT[2].hamta({ fskattAr1: 0 }), 0));
+lika('sammanställning: närboende via narboendeTotalAr1 (huvudkalkylen)', K.JAMFOR_OVERSKOTT[4].hamta({ narboendeTotalAr1: 70 }), -70);
+
+// Uträkningsmarkering och förklaringar i sammanställningen
+sant('sammanställning: första raden är start, sista är summa', K.JAMFOR_OVERSKOTT[0].klass === 'rak-start' && K.JAMFOR_OVERSKOTT[5].klass === 'rak-summa');
+sant('sammanställning: de fyra mittersta är avdrag', K.JAMFOR_OVERSKOTT.slice(1, 5).every(x => x.klass === 'rak-avdrag'));
+sant('sammanställning: varje rad har en förklaring', K.JAMFOR_OVERSKOTT.every(x => typeof x.forklara === 'function'));
+// Arrende: 3,5 % av en bruttointäkt på 7 778 880 kr = 272 261 kr, och fem verk ger fem gånger så mycket (1 361 304 kr).
+const rA1 = { arrendeInfo: { modell: 'procent', procent: 0.035, krmw: 40000 }, arrendeAr1: 0.035 * 7778880, intaktAr1: 7778880, produktionMWh_ar1: 12965, realPris_ar1: 0.6, antalverk: 1, P_tot: 4 };
+const rA5 = { arrendeInfo: { modell: 'procent', procent: 0.035, krmw: 40000 }, arrendeAr1: 0.035 * 38894400, intaktAr1: 38894400, produktionMWh_ar1: 64825, realPris_ar1: 0.6, antalverk: 5, P_tot: 20 };
+lika('arrende ett verk', rA1.arrendeAr1, 272260.8, 0.01);
+lika('arrende fem verk', rA5.arrendeAr1, 1361304, 0.01);
+lika('arrende fem verk = 5 × ett verk', rA5.arrendeAr1, 5 * rA1.arrendeAr1, 1e-6);
+const tA = K.arrendeForklaring(rA5).replace(/\s/g, ' ');
+sant('arrendeförklaring: procent, intäkt och per verk', /3,5 %/.test(tA) && /38 894 400/.test(tA) && /272 261 kr per verk × 5 verk/.test(tA));
+const tK = K.arrendeForklaring({ arrendeInfo: { modell: 'krmw', procent: 0.035, krmw: 40000 }, arrendeAr1: 160000, P_tot: 4 }).replace(/\s/g, ' ');
+sant('arrendeförklaring: kr per MW', /40 000 kr per MW och år × 4,0 MW = 160 000 kr/.test(tK));
+
 /* ---------- Alla kalkyler använder kärnan ---------- */
 const KALKYLER = [
   { html: 'vindkraftskalkyl.html', js: 'berakningar.js' },
@@ -200,7 +224,7 @@ const KALKYLER = [
 ];
 const FORBJUDNA = ['annuitet', 'npv', 'irr', 'payback', 'fmt', 'tal', 'text', 'radataNat', 'lcoeAvKassaflode', 'lasNatIndata', 'natPaverkan', 'natSammanfattning',
   'beraknaNarboende', 'beraknaNarboendeZoner', 'beraknaNarboendeSchablon', 'lasNarboendeIndata', 'zonEtikett', 'realiseratPris',
-  'fastighetsskattPerVerk', 'lasKommunIndata', 'kommunPoster', 'kommunSaknasText'];
+  'fastighetsskattPerVerk', 'lasKommunIndata', 'kommunPoster', 'kommunSaknasText', 'arrendeForklaring', 'visaArrendeForklaring', 'jamforRadExtras'];
 KALKYLER.forEach(k => {
   const js = fs.readFileSync(k.js, 'utf8');
   const html = fs.readFileSync(k.html, 'utf8');
@@ -212,6 +236,10 @@ KALKYLER.forEach(k => {
   sant(k.js + ' anropar beraknaNarboende', /beraknaNarboende\(/.test(js));
   sant(k.js + ' anropar realiseratPris', /realiseratPris\(/.test(js));
   sant(k.js + ' anropar kommunPoster', /kommunPoster\(/.test(js));
+  sant(k.js + ' använder JAMFOR_OVERSKOTT i sammanställningen', /JAMFOR_OVERSKOTT/.test(js));
+  sant(k.js + ' markerar uträkningen och förklarar raderna', /jamforRadExtras\(/.test(js));
+  sant(k.html + ' har arrendeförklaringen', html.indexOf('id="mark-arrende-forklaring"') > -1);
+  sant(k.html + ' kan länkas till med #kalkylsammanstallning', html.indexOf('id="kalkylsammanstallning"') > -1);
   sant(k.js + ' kopplar länkar till flikar', /kopplaAnkareTillFlikar\(\)/.test(js));
   sant(k.html + ' har förklaring per zon', html.indexOf('id="zon-hjalp-1"') > -1 && html.indexOf('id="zon-hjalp-5"') > -1);
   ['fskatt1', 'fskattaar', 'fskatt2', 'bygdemedel', 'kommunstod'].forEach(f => sant(k.html + ' har fältet ' + f, html.indexOf('id="' + f + '"') > -1));
