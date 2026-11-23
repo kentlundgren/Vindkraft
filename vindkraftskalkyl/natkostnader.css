@@ -188,3 +188,6 @@ label.oanvand { opacity: .5; }
 .park-knapp { padding: .3rem .8rem; cursor: pointer; border: 1px solid var(--farg-primar-ljus); background: #fff; color: var(--farg-primar); border-radius: 999px; font-size: .85rem; }
 .park-knapp[aria-pressed="true"] { background: var(--farg-primar); color: #fff; border-color: var(--farg-primar); }
 .park-knapp:focus-visible { outline: 2px solid var(--farg-primar); outline-offset: 2px; }
+
+/* Kort förklaring direkt under radens namn i jämförelsetabellen. */
+.rad-not { display: block; font-weight: 400; margin: .15rem 0 0; }

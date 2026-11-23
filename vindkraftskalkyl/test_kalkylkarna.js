@@ -223,6 +223,19 @@ sant('realpristext: 0,6 × 1 = 0,6 (huvudkalkylen)', K.realpristext(0.6, 1).repl
 sant('realpristext: ändrad prisfaktor 0,8 ger 0,48', /= 0,48 kr\/kWh/.test(K.realpristext(0.6, 0.8)));
 sant('realpristext: 0,55 × 0,75 visas exakt som 0,4125', /= 0,4125 kr\/kWh/.test(K.realpristext(0.55, 0.75)));
 sant('realpristext: ogiltigt värde ger tankstreck', K.realpristext(NaN, 1) === '–');
+{
+  const neg = { natlage: 'bas', nat: { lopandeOre: { fastSumma: 2.5, energi: -3.9, summa: -1.4 }, engangPerMW: { summa: 0 } } };
+  const pos = { natlage: 'bas', nat: { lopandeOre: { fastSumma: 2.5, energi: 0.5, summa: 3 }, engangPerMW: { summa: 0 } } };
+  const ing = { natlage: 'ingen', nat: { lopandeOre: { fastSumma: 0, energi: 0, summa: 0 }, engangPerMW: { summa: 0 } } };
+  sant('natLopandeNot: negativ nätkostnad beskrivs som ersättning', /ersättning \(kredit\)/.test(K.natLopandeNot(neg)));
+  sant('natLopandeNot: positiv nätkostnad beskrivs som kostnad', /kostnad för parken/.test(K.natLopandeNot(pos)));
+  sant('natLopandeNot: läge ingen säger 0', /Läge ingen.*0/.test(K.natLopandeNot(ing)));
+  const fk = K.natLopandeForklaring(neg).replace(/\s/g, ' ');
+  sant('natLopandeForklaring: negativ förklaras med kredit, förlustersättning, avsnitt 5.3 och att anslutningsavgiften saknas', /kredit/.test(fk) && /förlusterna/.test(fk) && /5\.3/.test(fk) && /anslutningsavgiften/.test(fk));
+  sant('natLopandeForklaring: visar fast del, energi och summa', /2,50 öre\/kWh/.test(fk) && /−3,90 öre\/kWh/.test(fk) && /−1,40 öre\/kWh/.test(fk));
+  sant('natLopandeForklaring: läge ingen ger 0 och ingen kreditförklaring', /ingen/.test(K.natLopandeForklaring(ing)) && !/kredit/.test(K.natLopandeForklaring(ing)));
+  sant('JAMFOR_NAT: ingen ger 0 i båda raderna', K.JAMFOR_NAT[0].hamta(ing) === 0 && K.JAMFOR_NAT[1].hamta(ing) === 0);
+}
 sant('totalEffektText: 20 × 6,6 = 132 MW', K.totalEffektText(6.6, 20).replace(/\s/g, ' ') === '20 × 6,6 MW = 132 MW');
 sant('totalEffektText: 5 × 4 = 20 MW', K.totalEffektText(4, 5).replace(/\s/g, ' ') === '5 × 4 MW = 20 MW');
 sant('totalEffektText: ogiltigt värde ger tankstreck', K.totalEffektText(NaN, 5) === '–');
@@ -236,7 +249,7 @@ const KALKYLER = [
 const FORBJUDNA = ['annuitet', 'npv', 'irr', 'payback', 'fmt', 'tal', 'text', 'radataNat', 'lcoeAvKassaflode', 'lasNatIndata', 'natPaverkan', 'natSammanfattning',
   'beraknaNarboende', 'beraknaNarboendeZoner', 'beraknaNarboendeSchablon', 'lasNarboendeIndata', 'zonEtikett', 'realiseratPris',
   'fastighetsskattPerVerk', 'lasKommunIndata', 'kommunPoster', 'kommunSaknasText', 'arrendeForklaring', 'visaArrendeForklaring', 'jamforRadExtras',
-  'realpristext', 'visaRealiseratPris', 'totalEffektText', 'visaTotalEffekt'];
+  'realpristext', 'visaRealiseratPris', 'totalEffektText', 'visaTotalEffekt', 'natLopandeForklaring', 'natLopandeNot', 'natEngangForklaring'];
 KALKYLER.forEach(k => {
   const js = fs.readFileSync(k.js, 'utf8');
   const html = fs.readFileSync(k.html, 'utf8');
@@ -253,6 +266,7 @@ KALKYLER.forEach(k => {
   sant(k.js + ' visar det realiserade priset', /visaRealiseratPris\(/.test(js));
   sant(k.html + ' har texten för realiserat pris', html.indexOf('id="realpris-visning"') > -1);
   sant(k.js + ' visar totala effekten', /visaTotalEffekt\(/.test(js));
+  sant(k.js + ' använder JAMFOR_NAT för nätraderna i Tabell 3', /\.\.\.JAMFOR_NAT/.test(js) && !/natPanel\.lopandeOre\.summa,\s*dec/.test(js));
   // Versionsrad längst ned i varje kalkyl: nummer och datum, båda höjs när något ändras.
   sant(k.js + ' har VERSION (X.Y) och VERSIONSDATUM (ÅÅÅÅ-MM-DD)', /^const VERSION = '\d+\.\d+';/m.test(js) && /^const VERSIONSDATUM = '\d{4}-\d{2}-\d{2}';/m.test(js));
   sant(k.js + ' visar versionsraden', /visaVersionsrad\(VERSION, VERSIONSDATUM\)/.test(js));

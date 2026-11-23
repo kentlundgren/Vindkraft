@@ -31,10 +31,11 @@
 'use strict';
 
 /* Versionsraden längst ned på sidan. Höj VERSION och uppdatera VERSIONSDATUM i samma ändring som innehållet ändras.
+   UPPDATERING 2026-11-23 (senare igen 2): raderna om nätkostnad i Tabell 3 räknas på valt läge och förklarar negativ nätkostnad direkt och vid hovring. Version 1.3.
    UPPDATERING 2026-11-23 (senare igen): växel för parkens storlek (20 verk eller bara Lunnarsbo, 12 verk). Version 1.2.
    UPPDATERING 2026-11-23 (senare): nya nätfall I och J (Vattenfall 130 kV) i väljaren. Version 1.1.
    UPPDATERING 2026-11-23: versionsrad i sidfoten. Version 1.0 (Långhult har egen versionsnumrering, skild från huvudkalkylens). */
-const VERSION = '1.2';
+const VERSION = '1.3';
 const VERSIONSDATUM = '2026-11-23';
 
 /* ============================================================================
@@ -303,7 +304,7 @@ function beraknaAllt(d) {
     elmangd, totalInsats, sjalvkostnadkWh, marknadsprisAr1, besparingAr1,
     alternativkostnad, nettoAr1, aterbetalning, nuvardeAndel,
     // Nätkostnader och systemkrav
-    nat, natPanel, natEngangTillagg, natPerkWhLivs, natAndelLcoe, natChart, natLivsKr,
+    natlage: d.natlage, nat, natPanel, natEngangTillagg, natPerkWhLivs, natAndelLcoe, natChart, natLivsKr,
     // Diagram: driften utan nät och kapitalkostnaden utan nätens engångsdel, så att nätposten inte dubbelräknas
     driftAr1: driftkostnadAr1 - nat.lopandeAr1, kapitalChart: kapitalkostnadGrund
   };
@@ -625,8 +626,7 @@ const JAMFOR_NYCKELTAL = [
   { etikett: 'NPV (kr)',                           hamta: r => r.npvInvest,         dec: 0 },
   { etikett: 'IRR (%)',                            hamta: r => r.irrInvest * 100,   dec: 1 },
   { etikett: 'Närboende, snitt per bostad (kr/år)', hamta: r => r.nar.snitt,        dec: 0 },
-  { etikett: 'Nätkostnad, engång (kr/MW)',        hamta: r => r.natPanel.engangPerMW.summa,   dec: 0 },
-  { etikett: 'Nätkostnad, löpande (öre/kWh)',     hamta: r => r.natPanel.lopandeOre.summa,    dec: 2 }
+  ...JAMFOR_NAT                                        // nätkostnad engång och löpande, med förklaring (kalkylkarna.js)
 ];
 
 let senasteResultat = null;

@@ -362,6 +362,7 @@
     }
     satt('nat-t-not', lage + ', ' + n + (n === 1 ? ' verk' : ' verk') + ' om ' + fmt(d.effekt, 1) + ' MW. ' +
       (saknas ? 'Ingår inte: anslutningskostnader och nya systemkrav saknar belopp, så totalbilden är högre. ' : '') +
+      (!ingen && np.lopandeOre.summa < 0 ? 'Ett negativt belopp är en ersättning till parken, inte en kostnad (förklaring finns vid raden Nätkostnad, löpande i jämförelsetabellen). ' : '') +
       'Alla poster finns under "Visa alla nätkostnader i siffror".');
   }
 

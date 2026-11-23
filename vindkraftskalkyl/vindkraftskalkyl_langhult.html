@@ -18,6 +18,7 @@
   UPPDATERING 2026-11-23: närboendeersättningen räknas i kalkylkarna.js (delas med huvudkalkylen), kapacitetsfaktor 0,4121 (= 3 610 h / 8 760) i stället för fullasttimmar, och viktning heter prisfaktor.
   UPPDATERING 2026-11-23 (senare): indatagrupperna har samma rubriker och ordning som övriga kalkyler (INDATAGRUPPER i kalkylkarna.js), och Närboende ligger sist.
   UPPDATERING 2026-11-23 (senare igen): fastighetsskatt, bygdemedel och kommunstöd räknas i kalkylkarna.js (kommunPoster) och delas med övriga kalkyler. Långhults värden och resultat är oförändrade.
+  UPPDATERING 2026-11-23 (senare igen 11): förklaring av negativ nätkostnad i Tabell 3 (direkt och vid hovring), nätraderna där räknas på valt läge, och hänvisning till Lundgren (2026) om ersättning till närboende. Version 1.3.
   UPPDATERING 2026-11-23 (senare igen 10): växel för parkens storlek (hela parken 20 verk och 132 MW, eller bara Lunnarsbo 12 verk och 79,2 MW), och typfallet över 40 MW är fall I (Vattenfall PL1). Version 1.2.
   UPPDATERING 2026-11-23 (senare igen 9): nya nätfall I (Vattenfall PL1, ledning 130–70 kV) och J (Vattenfall PT0, 130 kV i station) i väljaren. Version 1.1.
   UPPDATERING 2026-11-23 (senare igen 8): versionsrad längst ned (Version 1.0 · 2026-11-23), egen numrering för Långhult (VERSION och VERSIONSDATUM i berakningar_langhult.js).
@@ -558,6 +559,7 @@
         <p class="hint" style="margin:0 0 .6rem">
           Kaufmann &amp; Westander (2026, s. 4, 16) anger cirka 200 bostäder men inte hur de fördelar sig på avstånd.
           Fördelningen nedan följer ytan av ringarna kring ett verk (jämn bebyggelsetäthet) och är en gissning.
+          Hur ersättningen är utformad, vad den kan ge och hur ett besked före kommunens beslut skulle kunna se ut, med Långhult/Lunnarsbo som exempel, står i <a href="#ref-lundgren-blogg">Lundgren (2026)</a> (<a href="https://kentlundgren.github.io/Studier/2026_host/Policy_i_energi_och_klimat/essa-upg2/webb/" target="_blank" rel="noopener">html-presentation</a>).
           Håll pekaren över ? vid en zon för att se vad en bostad där får per år. <a href="#Tabell2">Tabell 2</a> är tabellen över ersättning per zon, och den ligger i resultatfliken Närboende längre ned på sidan.
         </p>
 
@@ -996,6 +998,17 @@
         <a href="https://github.com/kentlundgren/Studier/blob/main/2026_host/Policy_i_energi_och_klimat/Yttre_dialog/Intaktsdelning/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf" target="_blank" rel="noopener">Kents repo Studier</a>
         (filerna är identiska, kontrollerat med SHA-256).
         <em>(Konsultpromemoria, inte ett myndighetsdokument. Den beskriver vad Fred. Olsen Renewables projekt Långhult kan ge kommun, bygd och närboende. Källa till alla uppgifter märkta Kaufmann &amp; Westander, 2026, på sidan. Sidhänvisningarna följer källans egen sidnumrering.)</em>
+      </li>
+      <li id="ref-lundgren-blogg">
+        Lundgren, K. (2026) <em>Besked före beslut: att förbättra intäktsdelningen från vindkraft till närboende.</em>
+        Controller, lärare och coach utan gränser, 11 november. Tillgänglig:
+        <a href="https://controllerutangranser.wordpress.com/2026/11/11/besked-fore-beslut-att-forbattra-intaktsdelningen-fran-vindkraft-till-narboende/" target="_blank" rel="noopener">https://controllerutangranser.wordpress.com/2026/11/11/besked-fore-beslut-att-forbattra-intaktsdelningen-fran-vindkraft-till-narboende/</a>
+        (hämtad 23 november 2026). <em>(Rapport om intäktsdelningslagen (2026:1113) som styrmedel. Använder Långhult/Lunnarsbo och Önnerup som illustrationer och föreslår besked om beräknad ersättning före kommunens beslut. Den här kalkylen anges där som verktyg för att räkna fram ett sådant besked.)</em>
+      </li>
+      <li id="ref-lundgren-web">
+        Lundgren, K. (2026) <em>Besked före beslut</em> (html-presentation av rapporten). Tillgänglig:
+        <a href="https://kentlundgren.github.io/Studier/2026_host/Policy_i_energi_och_klimat/essa-upg2/webb/" target="_blank" rel="noopener">https://kentlundgren.github.io/Studier/2026_host/Policy_i_energi_och_klimat/essa-upg2/webb/</a>
+        (hämtad 23 november 2026). <em>(Webbversionen av samma rapport, med extra innehåll på webben.)</em>
       </li>
       <li id="ref-lag">
         Lagen.nu (2026) <em>Lag (2026:1113) om intäktsdelning från vindkraftsanläggningar.</em>

@@ -50,8 +50,9 @@
    UPPDATERING 2026-11-23 (senare igen 5): det realiserade priset (spotpris × prisfaktor) räknas ut och uppdateras i texten vid prisfaktorn. Version 1.22.
    UPPDATERING 2026-11-23 (senare igen 6): totala effekten (antal verk × effekt per verk) visas under Effekt per verk, fälten i Anläggning & investering står i samma ordning i alla kalkyler, och läget ingen visar 0 kr i nätkostnadsrutorna. Version 1.23.
    UPPDATERING 2026-11-23 (senare igen 7): två nya nätfall i väljaren, I (Vattenfall PL1, ledning 130–70 kV) och J (Vattenfall PT0, 130 kV i station från stamnät), ur Vattenfalls tariff för inmatning 2026. Version 1.24.
-   UPPDATERING 2026-11-23 (senare igen 8): typfallet över 40 MW är fall I (Vattenfall PL1, ledning 130–70 kV). Version 1.25. */
-const VERSION = '1.25';
+   UPPDATERING 2026-11-23 (senare igen 8): typfallet över 40 MW är fall I (Vattenfall PL1, ledning 130–70 kV). Version 1.25.
+   UPPDATERING 2026-11-23 (senare igen 9): raderna om nätkostnad i Tabell 3 räknas på valt läge (ingen = 0) och förklarar negativ nätkostnad direkt och vid hovring. Version 1.26. */
+const VERSION = '1.26';
 const VERSIONSDATUM = '2026-11-23';
 
 /* ============================================================================
@@ -320,7 +321,7 @@ function beraknaAllt(d) {
     nar: nar1, narboendeTotalAr1,
 
     // Nätkostnader och systemkrav
-    nat, natPanel, natEngangTillagg, natPerkWhLivs, natAndelLcoe, natChart, natLivsKr,
+    natlage: d.natlage, nat, natPanel, natEngangTillagg, natPerkWhLivs, natAndelLcoe, natChart, natLivsKr,
 
     // Hjälpvärden till diagram (driftkostnaden utan nät och kapitalkostnaden
     // utan nätens engångsdel, så att nätposten inte dubbelräknas)
@@ -531,8 +532,7 @@ const JAMFOR_NYCKELTAL = [
   { etikett: 'LCOE (kr/kWh)',              hamta: r => r.lcoe,              dec: 3, suffix: '' },
   { etikett: 'NPV (kr)',                   hamta: r => r.npvInvest,         dec: 0, suffix: '' },
   { etikett: 'IRR (%)',                    hamta: r => r.irrInvest * 100,   dec: 1, suffix: '' },
-  { etikett: 'Nätkostnad, engång (kr/MW)', hamta: r => r.natPanel.engangPerMW.summa, dec: 0, suffix: '' },
-  { etikett: 'Nätkostnad, löpande (öre/kWh)', hamta: r => r.natPanel.lopandeOre.summa, dec: 2, suffix: '' }
+  ...JAMFOR_NAT                                  // nätkostnad engång och löpande, med förklaring (kalkylkarna.js)
 ];
 
 // Minnesvariabler – lever mellan omräkningarna (därav utanför funktionerna).

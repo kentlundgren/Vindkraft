@@ -25,12 +25,12 @@
    webbläsaren och exporteras som module.exports i Node, där test_kalkylkarna.js
    kör dem.
 
-   Version 1.10 (2026-11-23): visaVersionsrad för versionsraden i sidfoten. Version 1.9: totala effekten visas under Effekt per verk (visaTotalEffekt) och fälten i första gruppen har fast ordning (INDATAORDNING_ANLAGGNING). Version 1.8: realiserat pris räknas ut och uppdateras (realpristext). Version 1.7: uträkningsmarkering och förklaringar i sammanställningen, och arrendeförklaring. Version 1.6: raderna JAMFOR_OVERSKOTT för sammanställningen. Version 1.5: tabell över extra bostäder under taket, förklaring per zon och länkar till dolda flikar. Version 1.4: fastighetsskatt som första åren + därefter (fskatt2) och uppgift om när närboendetaket nås. Version 1.3: kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
+   Version 1.11 (2026-11-23): raderna om nätkostnad i sammanställningen (JAMFOR_NAT) räknas på valt läge och har kort text direkt och förklaring vid hovring, bland annat om negativ nätkostnad. Version 1.10: visaVersionsrad för versionsraden i sidfoten. Version 1.9: totala effekten visas under Effekt per verk (visaTotalEffekt) och fälten i första gruppen har fast ordning (INDATAORDNING_ANLAGGNING). Version 1.8: realiserat pris räknas ut och uppdateras (realpristext). Version 1.7: uträkningsmarkering och förklaringar i sammanställningen, och arrendeförklaring. Version 1.6: raderna JAMFOR_OVERSKOTT för sammanställningen. Version 1.5: tabell över extra bostäder under taket, förklaring per zon och länkar till dolda flikar. Version 1.4: fastighetsskatt som första åren + därefter (fskatt2) och uppgift om när närboendetaket nås. Version 1.3: kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
    berakningar.js och berakningar_langhult.js.
    ============================================================================ */
 'use strict';
 
-const KARNA_VERSION = '1.10';
+const KARNA_VERSION = '1.11';
 
 /**
  * Indatagrupperna i alla vindkraftskalkyler: rubrikerna och deras ordning är fastställda här, så att kalkylerna ser
@@ -207,6 +207,51 @@ const JAMFOR_OVERSKOTT = [
 ];
 
 /**
+ * Raderna om nätkostnad i sammanställningen (Tabell 3). Värdena gäller det valda läget: ingen = 0, annars det som ingår i resultaten.
+ * Radens förklaring visas både direkt (kort, under radens namn) och vid hovring över ? (utförlig). Resultatobjektet ska ha natlage och nat.
+ */
+function natLopandeNot(r) {
+  if (!r.nat) return '';
+  if (r.natlage === 'ingen') return 'Läge ingen: nätkostnaden räknas inte in och är 0.';
+  const s = r.nat.lopandeOre.summa;
+  if (s < 0) return 'Negativt tal = en ersättning (kredit) till parken, inte en kostnad. Förklaring vid ?.';
+  if (s > 0) return 'Positivt tal = en kostnad för parken.';
+  return '';
+}
+
+function natLopandeForklaring(r) {
+  if (!r.nat) return '';
+  const o = r.nat.lopandeOre;
+  if (r.natlage === 'ingen') {
+    return 'Läget är ingen: nätkostnaden ingår inte i resultaten och står därför som 0. Välj läge bas i gruppen Nät och systemkrav för att räkna in den.';
+  }
+  const fast = fmt(o.fastSumma, 2), en = fmt(o.energi, 2), sum = fmt(o.summa, 2);
+  const delar = 'Summan är den fasta delen (fast årsavgift, effektavgift och avståndsavgift) ' + fast + ' öre/kWh plus energiavgiften ' + en + ' öre/kWh = ' + sum + ' öre/kWh. ';
+  if (o.summa < 0) {
+    return 'Negativ nätkostnad är en ersättning (kredit) som parken får, inte en kostnad. ' + delar +
+      'Energiavgiften är negativ och större än den fasta delen. Så kan det bli: Vattenfall lämnar en negativ överföringsavgift för inmatning som minskar förlusterna i regionnätet (Vattenfall 2026, avsnitt 5.3), ' +
+      'och Svenska kraftnät har i södra Sverige en negativ överföringsavgift för inmatning (−1,5 öre/kWh 2026), eftersom el som produceras nära förbrukningen minskar förlusterna i stamnätet. Kalkylen antar att båda gäller och läggs ihop. ' +
+      'Ersättningen gäller bara om inmatningen faktiskt minskar förlusterna. Ökar den dem tar nätägaren i stället ut en avgift (avsnitt 5.4), och i norra Sverige är Svenska kraftnäts avgift positiv. ' +
+      'Utan ersättningen vore nätkostnaden ' + fast + ' öre/kWh. Detta är bara de löpande avgifterna: anslutningsavgiften (ledning, station) och nya systemkrav saknar belopp och ingår inte, så den verkliga nätkostnaden är högre.';
+  }
+  if (o.summa > 0) {
+    return 'Positiv nätkostnad: en kostnad för parken. ' + delar + 'Detta är bara de löpande avgifterna: anslutningsavgiften och nya systemkrav saknar belopp och ingår inte.';
+  }
+  return 'Nätkostnaden är 0 öre/kWh. ' + delar + 'Anslutningsavgiften och nya systemkrav saknar belopp och ingår inte.';
+}
+
+function natEngangForklaring(r) {
+  if (!r.nat) return '';
+  if (r.natlage === 'ingen') return 'Läget är ingen: engångskostnaden för nätet ingår inte och står som 0.';
+  return 'Engångskostnad för nätet i kr per MW (till exempel ledning, station och förstärkning), enligt de fält som är ifyllda i gruppen Nät och systemkrav. Står den som 0 är inga belopp ifyllda: anslutningsavgiften bestäms av en förstudie hos nätägaren och är inte känd här.';
+}
+
+const JAMFOR_NAT = [
+  { etikett: 'Nätkostnad, engång (kr/MW)', hamta: r => r.nat.engangPerMW.summa, dec: 0, suffix: '', forklara: natEngangForklaring },
+  { etikett: 'Nätkostnad, löpande (öre/kWh)', hamta: r => r.nat.lopandeOre.summa, dec: 2, suffix: '', forklara: natLopandeForklaring, visa: natLopandeNot }
+];
+
+/**
  * Markerar en rad i sammanställningen som en del av uträkningen (klassen) och lägger en förklaringsruta vid radens namn.
  * @param {HTMLElement} tr      raden
  * @param {HTMLElement} tdNamn  cellen med radens namn
@@ -221,6 +266,14 @@ function jamforRadExtras(tr, tdNamn, nt, res) {
     s.setAttribute('data-hjalp', nt.forklara(res));
     tdNamn.appendChild(document.createTextNode(' '));
     tdNamn.appendChild(s);
+  }
+  if (nt.visa && res) {
+    const t = nt.visa(res);
+    if (t) {
+      const n = document.createElement('span');
+      n.className = 'hint rad-not'; n.textContent = t;
+      tdNamn.appendChild(n);
+    }
   }
 }
 
@@ -817,7 +870,7 @@ function kommunSaknasText(poster) {
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
-    KARNA_VERSION, INDATAGRUPPER, INDATAORDNING_ANLAGGNING, totalEffektText, visaVersionsrad, JAMFOR_OVERSKOTT, arrendeForklaring, realpristext, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode,
+    KARNA_VERSION, INDATAGRUPPER, INDATAORDNING_ANLAGGNING, totalEffektText, visaVersionsrad, JAMFOR_NAT, natLopandeForklaring, natLopandeNot, natEngangForklaring, JAMFOR_OVERSKOTT, arrendeForklaring, realpristext, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode,
     natPaverkan, natEngangTillaggAv, natSammanfattning,
     lasKommunIndata, fastighetsskattPerVerk, kommunPoster, kommunSaknasText, narboendeTakniva, narboendeExtra, zonHjalpText,
     FSKATT_SCHABLON, fullastJustering, fastighetsskattSchablon,
