@@ -31,11 +31,12 @@
 'use strict';
 
 /* Versionsraden längst ned på sidan. Höj VERSION och uppdatera VERSIONSDATUM i samma ändring som innehållet ändras.
+   UPPDATERING 2026-11-23 (senare igen 3): valbara alternativ för bostäder per zon (BOSTADSALTERNATIV). Version 1.4.
    UPPDATERING 2026-11-23 (senare igen 2): raderna om nätkostnad i Tabell 3 räknas på valt läge och förklarar negativ nätkostnad direkt och vid hovring. Version 1.3.
    UPPDATERING 2026-11-23 (senare igen): växel för parkens storlek (20 verk eller bara Lunnarsbo, 12 verk). Version 1.2.
    UPPDATERING 2026-11-23 (senare): nya nätfall I och J (Vattenfall 130 kV) i väljaren. Version 1.1.
    UPPDATERING 2026-11-23: versionsrad i sidfoten. Version 1.0 (Långhult har egen versionsnumrering, skild från huvudkalkylens). */
-const VERSION = '1.3';
+const VERSION = '1.4';
 const VERSIONSDATUM = '2026-11-23';
 
 /* ============================================================================
@@ -682,9 +683,42 @@ function omrakna() {
   return res;
 }
 
+/* Alternativ för antal bostäder per zon (zon 1-5). Förvalet är en gissning efter ringarnas yta (200 bostäder, Kaufmann & Westander 2026).
+   De två andra är räknade ur ljudutredningens bostäder med bostader_ur_ljudutredning.py: 66 bostäder för alla 20 verk och 29 för bara
+   Lunnarsbo (verk 9-20), inom 9 verkshöjder (270 m). Ett urval av konsulten, inte nödvändigtvis alla bostäder som ger ersättning. */
+const BOSTADSALTERNATIV = {
+  forval:  [62, 27, 32, 37, 42],
+  ljud20:  [37, 13, 7, 2, 7],
+  ljudlun: [20, 4, 1, 0, 4]
+};
+
+function kopplaBostadsalternativ() {
+  const knappar = document.querySelectorAll('#bost-alt .park-knapp');
+  const faltIds = ['bost1', 'bost2', 'bost3', 'bost4', 'bost5'];
+  const falt = faltIds.map(id => document.getElementById(id));
+  if (!knappar.length || falt.some(f => !f)) return;
+  const markera = () => {
+    const nu = falt.map(f => Math.round(parseFloat(f.value)));
+    knappar.forEach(k => {
+      const alt = BOSTADSALTERNATIV[k.getAttribute('data-alt')];
+      k.setAttribute('aria-pressed', String(!!alt && alt.every((v, i) => v === nu[i])));
+    });
+  };
+  knappar.forEach(k => k.addEventListener('click', () => {
+    const alt = BOSTADSALTERNATIV[k.getAttribute('data-alt')];
+    if (!alt) return;
+    alt.forEach((v, i) => { falt[i].value = String(v); });
+    markera();
+    falt.forEach(f => f.dispatchEvent(new Event('input', { bubbles: true })));
+    falt[falt.length - 1].dispatchEvent(new Event('change', { bubbles: true }));
+  }));
+  falt.forEach(f => f.addEventListener('input', markera));
+  markera();
+}
+
 /* Växeln för parkens storlek: knapparna sätter antal verk (20 eller 12) och räknar om. Ett annat antal, skrivet för hand, markerar ingen knapp. */
 function kopplaParkvariant() {
-  const knappar = document.querySelectorAll('.park-knapp');
+  const knappar = document.querySelectorAll('#park-variant .park-knapp');
   const inp = document.getElementById('antalverk');
   if (!knappar.length || !inp) return;
   const markera = () => {
@@ -782,6 +816,7 @@ document.addEventListener('DOMContentLoaded', () => {
   kopplaTeknikModal();
   kopplaForklaringar();
   kopplaParkvariant();
+  kopplaBostadsalternativ();
   visaVersionsrad(VERSION, VERSIONSDATUM);
 
   senasteResultat = omrakna();

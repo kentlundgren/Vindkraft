@@ -295,6 +295,19 @@ KALKYLER.forEach(k => {
   sant(k.html + ' har rullgardinen Kalkyler', html.indexOf('class="kalkylmeny"') > -1);
 });
 
+/* ---------- Långhult: alternativ för bostäder per zon och växeln för parkens storlek ---------- */
+{
+  const lh = fs.readFileSync('berakningar_langhult.js', 'utf8'), lhHtml = fs.readFileSync('vindkraftskalkyl_langhult.html', 'utf8');
+  const alt = {};
+  const re = /(forval|ljud20|ljudlun):\s*\[([^\]]+)\]/g; let m;
+  while ((m = re.exec(lh))) alt[m[1]] = m[2].split(',').map(Number);
+  const summa = (a) => a.reduce((x, y) => x + y, 0);
+  sant('Långhult: förvalet för bostäder är 200 och står som förval i fälten', summa(alt.forval) === 200 && [62, 27, 32, 37, 42].every((v, i) => alt.forval[i] === v) && /id="bost1"[^>]*value="62"/.test(lhHtml));
+  sant('Långhult: ljudutredningens alternativ är 66 (alla 20 verk) och 29 (bara Lunnarsbo) bostäder', summa(alt.ljud20) === 66 && summa(alt.ljudlun) === 29);
+  sant('Långhult: knapparna för bostäder och för parkens storlek har egna behållare', /id="bost-alt"/.test(lhHtml) && /id="park-variant"/.test(lhHtml) && /#park-variant \.park-knapp/.test(lh));
+  sant('Långhult: ljudutredningen finns i källistan', /id="ref-ljud"/.test(lhHtml));
+}
+
 /* ---------- Delningsbilder för kalkylerna ---------- */
 [['vindkraftskalkyl_langhult.html', 'og-bild-langhult.jpg'], ['vindkraftskalkyl_Onnerup.html', 'og-bild-onnerup.jpg']].forEach(([sida, bild]) => {
   const html = fs.readFileSync(sida, 'utf8');
