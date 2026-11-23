@@ -317,6 +317,28 @@ KALKYLER.forEach(k => {
   sant('Långhult anropar skrivNarboendeStorleksordning', /skrivNarboendeStorleksordning\(res\)/.test(fs.readFileSync('berakningar_langhult.js', 'utf8')));
 }
 
+/* ---------- Källförteckningen: alfabetisk och osiffrad (Harvard, kent-referens-skill punkt 8 och 18) ---------- */
+fs.readdirSync('.').filter(f => /^vindkraftskalkyl.*\.html$/.test(f)).forEach(f => {
+  const html = fs.readFileSync(f, 'utf8');
+  const sek = html.match(/<section class="kallor"[\s\S]*?<\/section>/);
+  if (!sek) return;
+  sant(f + ': källförteckningen är inte en numrerad lista (<ol>)', !/<ol[\s>]/.test(sek[0]));
+  const poster = (sek[0].match(/<li[^>]*>[\s\S]*?<\/li>/g) || []).map(p => p.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim());
+  const nycklar = poster.map(t => { const m = t.match(/^(.+?) \((?:(\d{4})([a-z]?)|u\.å\.)/); return m ? { namn: m[1], ar: m[2] ? +m[2] : 9999, bokst: m[3] || '' } : null; });
+  sant(f + ': varje källpost börjar med författare eller titel och år (inga sammansatta stycken)', poster.length > 0 && nycklar.every(Boolean));
+  const kol = new Intl.Collator('sv');
+  let ordnad = true, forst = '';
+  for (let i = 1; i < nycklar.length && nycklar.every(Boolean); i++) {
+    const a = nycklar[i - 1], b = nycklar[i];
+    const d = kol.compare(a.namn, b.namn) || (a.ar - b.ar) || kol.compare(a.bokst, b.bokst);
+    if (d > 0) { ordnad = false; forst = forst || (a.namn + ' (' + a.ar + a.bokst + ') före ' + b.namn + ' (' + b.ar + b.bokst + ')'); }
+  }
+  if (!ordnad) console.log('  ' + f + ' är inte alfabetisk: ' + forst);
+  sant(f + ': källförteckningen är alfabetisk efter författare eller organisation, och kronologisk inom samma författare', ordnad);
+  const lika = nycklar.filter(Boolean).map(n => n.namn + n.ar + n.bokst);
+  sant(f + ': inga dubbla poster med samma författare, år och bokstav', new Set(lika).size === lika.length);
+});
+
 /* ---------- Långhult: alternativ för bostäder per zon och växeln för parkens storlek ---------- */
 {
   const lh = fs.readFileSync('berakningar_langhult.js', 'utf8'), lhHtml = fs.readFileSync('vindkraftskalkyl_langhult.html', 'utf8');

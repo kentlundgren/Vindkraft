@@ -19,6 +19,7 @@
   UPPDATERING 2026-11-23 (senare): indatagrupperna har samma rubriker och ordning som övriga kalkyler (INDATAGRUPPER i kalkylkarna.js), och Närboende ligger sist.
   UPPDATERING 2026-11-23 (senare igen): fastighetsskatt, bygdemedel och kommunstöd räknas i kalkylkarna.js (kommunPoster) och delas med övriga kalkyler. Långhults värden och resultat är oförändrade.
   UPPDATERING 2026-11-23 (senare igen 13): länken till beräkningen av bostäder pekar på nya platsen (mappen langhult/). Version 1.5.
+  UPPDATERING 2026-11-23 (senare igen 16): källförteckningen är alfabetisk och osiffrad (Harvard), varje källa en egen post, och Lundgren (2026a, 2026b) skiljs åt. Version 1.8.
   UPPDATERING 2026-11-23 (senare igen 15): raden 50 öre/kWh i Tabell 9 är markerad (2 % av 50 öre är 1 öre/kWh) med förklaring vid hovring, och BO (2026) finns i källistan. Version 1.7.
   UPPDATERING 2026-11-23 (senare igen 14): nytt avsnitt Storleksordning (#Storleksordning) med Tabell 8 och 9: närboendeersättningen i öre per kWh, taket 2 % vid olika realiserade priser och andel av överskottet. Version 1.6.
   UPPDATERING 2026-11-23 (senare igen 12): valbara alternativ för bostäder per zon (förval, eller räknat ur ljudutredningen för alla 20 verk eller bara Lunnarsbo). Version 1.4.
@@ -563,7 +564,7 @@
         <p class="hint" style="margin:0 0 .6rem">
           Kaufmann &amp; Westander (2026, s. 4, 16) anger cirka 200 bostäder men inte hur de fördelar sig på avstånd.
           Fördelningen nedan följer ytan av ringarna kring ett verk (jämn bebyggelsetäthet) och är en gissning.
-          Hur ersättningen är utformad, vad den kan ge och hur ett besked före kommunens beslut skulle kunna se ut, med Långhult/Lunnarsbo som exempel, står i <a href="#ref-lundgren-blogg">Lundgren (2026)</a> (<a href="https://kentlundgren.github.io/Studier/2026_host/Policy_i_energi_och_klimat/essa-upg2/webb/" target="_blank" rel="noopener">html-presentation</a>).
+          Hur ersättningen är utformad, vad den kan ge och hur ett besked före kommunens beslut skulle kunna se ut, med Långhult/Lunnarsbo som exempel, står i <a href="#ref-lundgren-blogg">Lundgren (2026a)</a> (<a href="https://kentlundgren.github.io/Studier/2026_host/Policy_i_energi_och_klimat/essa-upg2/webb/" target="_blank" rel="noopener">html-presentation</a>).
           Håll pekaren över ? vid en zon för att se vad en bostad där får per år. <a href="#Tabell2">Tabell 2</a> är tabellen över ersättning per zon, och den ligger i resultatfliken Närboende längre ned på sidan.
         </p>
 
@@ -1013,7 +1014,17 @@
        ==================================================================== -->
   <section class="kallor" aria-labelledby="Kallor">
     <h2 id="Kallor">Källor och antaganden<a class="ankare" href="#Kallor" aria-label="Länk till rubriken">#</a></h2>
-    <ol>
+    <ul class="kallforteckning">
+      <li id="ref-ljud">
+        Akustikkonsulten i Sverige AB (2025) <em>Ljudimmissionsberäkning av ljud från vindkraft, vindpark Långhult.</em> Dokument 10-23221 A03, 2025-05-26, beställd av Fred. Olsen Renewables. Tillgänglig:
+        <a href="https://fredolsenrenewables.com/media/gr1hts51/ljudberaekning.pdf" target="_blank" rel="noopener">https://fredolsenrenewables.com/media/gr1hts51/ljudberaekning.pdf</a>
+        (hämtad 23 november 2026). <em>(Anger verkens koordinater (20 verk, SG 6.6-170) och koordinater för ljudkänsliga punkter (bostäder) i SWEREF 99 TM. Ur dem räknas alternativen för bostäder per zon. Underlag för alternativen i gruppen Närboende.)</em>
+      </li>
+      <li id="ref-bo">
+        BO (2026) <em>Inlägg på X</em>, 23 november. Tillgänglig:
+        <a href="https://x.com/bengtxyz/status/2124776225822363881" target="_blank" rel="noopener">https://x.com/bengtxyz/status/2124776225822363881</a>
+        (hämtad 23 november 2026). <em>(Skribenten frågar om intäktsdelningen motsvarar ungefär 1 öre/kWh, som skribenten uppskattar i ett tidigare inlägg i samma tråd med ett capture price på 50 öre/kWh, och om kalkylen ger en annan siffra. Utgångspunkt för avsnittet Storleksordning och den markerade raden i Tabell 9.)</em>
+      </li>
       <li id="ref-energiforsk">
         Energiforsk (2021) <em>El från nya anläggningar 2021.</em> Rapport 2021:714. Tillgänglig:
         <a href="https://energiforsk.se/media/30970/el-fra-n-nya-anla-ggningar-energiforskrapport-2021-714.pdf" target="_blank" rel="noopener">https://energiforsk.se/media/30970/el-fra-n-nya-anla-ggningar-energiforskrapport-2021-714.pdf</a>
@@ -1041,14 +1052,6 @@
         Tillgänglig: <a href="https://fredolsenrenewables.com/all-projects/laanghult" target="_blank" rel="noopener">https://fredolsenrenewables.com/all-projects/laanghult</a>
         (hämtad 5 november 2026). <em>(Bolagets projektsida: högst 20 verk, högst 270 m totalhöjd, tillståndsansökan inlämnad i juni 2025. Bekräftar antal verk och höjd i Kaufmann &amp; Westander (2026).)</em>
       </li>
-      <li id="ref-nat">
-        Nätkostnader och systemkrav: exempelfall och regelverk redovisas på sidan <a href="natkostnader_exempel.html">Exempelfall och källor för nätkostnader</a>,
-        med Vattenfall Eldistribution (2026) <em>Tillämpningsbestämmelser och nättariffer för regionnätet</em>
-        (<a href="https://www.vattenfalleldistribution.se/globalassets/2.-foretag/abonnemang-och-avgifter/avtal-och-elnatsavgift/tillampningsbestammelser-och-nattariffer-for-vattenfall-eldistributions-regionnat-2026-01-01.pdf" target="_blank" rel="noopener">vattenfalleldistribution.se</a>)
-        och Svenska kraftnät (2026) <em>Prislista 2026 för transmissionsnätet</em>
-        (<a href="https://www.svk.se/4a909a/siteassets/aktorsportalen/anslut-till-transmissionsnatet/transmissionsnatstariff/aktuella-prislistor/prislista-transmissionsnatet-20262.pdf" target="_blank" rel="noopener">svk.se</a>)
-        (hämtade 2026-11-22). Kaufmann &amp; Westander (2026) anger inga nätkostnader för Långhult. Nätkostnaderna i den här kalkylen är antaganden.
-      </li>
       <li id="ref-pm">
         Kaufmann, W. &amp; Westander, H. (2026) <em>Intäktsdelning och ersättningar: Vindpark Långhult.</em>
         Westander Klimat och Energi, 2026-04-20. Tillgänglig (originalet, publicerat av Fred. Olsen Renewables):
@@ -1058,31 +1061,21 @@
         (filerna är identiska, kontrollerat med SHA-256).
         <em>(Konsultpromemoria, inte ett myndighetsdokument. Den beskriver vad Fred. Olsen Renewables projekt Långhult kan ge kommun, bygd och närboende. Källa till alla uppgifter märkta Kaufmann &amp; Westander, 2026, på sidan. Sidhänvisningarna följer källans egen sidnumrering.)</em>
       </li>
+      <li id="ref-lag">
+        Lagen.nu (2026) <em>Lag (2026:1113) om intäktsdelning från vindkraftsanläggningar.</em>
+        Tillgänglig: <a href="https://lagen.nu/2026:1113" target="_blank" rel="noopener">https://lagen.nu/2026:1113</a>.
+        <em>(Intäktsdelningslagen (2026:1113). Lagtexten på sidan är återgiven av Kaufmann &amp; Westander (2026), som citerar propositionen, och är inte kontrollerad mot intäktsdelningslagen (2026:1113) här.)</em>
+      </li>
       <li id="ref-lundgren-blogg">
-        Lundgren, K. (2026) <em>Besked före beslut: att förbättra intäktsdelningen från vindkraft till närboende.</em>
+        Lundgren, K. (2026a) <em>Besked före beslut: att förbättra intäktsdelningen från vindkraft till närboende.</em>
         Controller, lärare och coach utan gränser, 11 november. Tillgänglig:
         <a href="https://controllerutangranser.wordpress.com/2026/11/11/besked-fore-beslut-att-forbattra-intaktsdelningen-fran-vindkraft-till-narboende/" target="_blank" rel="noopener">https://controllerutangranser.wordpress.com/2026/11/11/besked-fore-beslut-att-forbattra-intaktsdelningen-fran-vindkraft-till-narboende/</a>
         (hämtad 23 november 2026). <em>(Rapport om intäktsdelningslagen (2026:1113) som styrmedel. Använder Långhult/Lunnarsbo och Önnerup som illustrationer och föreslår besked om beräknad ersättning före kommunens beslut. Den här kalkylen anges där som verktyg för att räkna fram ett sådant besked.)</em>
       </li>
       <li id="ref-lundgren-web">
-        Lundgren, K. (2026) <em>Besked före beslut</em> (html-presentation av rapporten). Tillgänglig:
+        Lundgren, K. (2026b) <em>Besked före beslut</em> (html-presentation av rapporten). Tillgänglig:
         <a href="https://kentlundgren.github.io/Studier/2026_host/Policy_i_energi_och_klimat/essa-upg2/webb/" target="_blank" rel="noopener">https://kentlundgren.github.io/Studier/2026_host/Policy_i_energi_och_klimat/essa-upg2/webb/</a>
         (hämtad 23 november 2026). <em>(Webbversionen av samma rapport, med extra innehåll på webben.)</em>
-      </li>
-      <li id="ref-ljud">
-        Akustikkonsulten i Sverige AB (2025) <em>Ljudimmissionsberäkning av ljud från vindkraft, vindpark Långhult.</em> Dokument 10-23221 A03, 2025-05-26, beställd av Fred. Olsen Renewables. Tillgänglig:
-        <a href="https://fredolsenrenewables.com/media/gr1hts51/ljudberaekning.pdf" target="_blank" rel="noopener">https://fredolsenrenewables.com/media/gr1hts51/ljudberaekning.pdf</a>
-        (hämtad 23 november 2026). <em>(Anger verkens koordinater (20 verk, SG 6.6-170) och koordinater för ljudkänsliga punkter (bostäder) i SWEREF 99 TM. Ur dem räknas alternativen för bostäder per zon. Dokumentet anger 74 punkter, tabellen visar 72, och 69 har läsbara koordinater i textutdraget.)</em>
-      </li>
-      <li id="ref-bo">
-        BO (2026) <em>Inlägg på X</em>, 23 november. Tillgänglig:
-        <a href="https://x.com/bengtxyz/status/2124776225822363881" target="_blank" rel="noopener">https://x.com/bengtxyz/status/2124776225822363881</a>
-        (hämtad 23 november 2026). <em>(Skribenten frågar om intäktsdelningen motsvarar ungefär 1 öre/kWh, som skribenten uppskattar i ett tidigare inlägg i samma tråd (21 mars, enligt den citerade texten vid ett capture price på 50 öre/kWh), och om kalkylen ger en annan siffra. Utgångspunkt för avsnittet Storleksordning och den markerade raden i Tabell 9. Skribenten anges med initialer.)</em>
-      </li>
-      <li id="ref-lag">
-        Lagen.nu (2026) <em>Lag (2026:1113) om intäktsdelning från vindkraftsanläggningar.</em>
-        Tillgänglig: <a href="https://lagen.nu/2026:1113" target="_blank" rel="noopener">https://lagen.nu/2026:1113</a>.
-        <em>(Intäktsdelningslagen (2026:1113). Lagtexten på sidan är återgiven av Kaufmann &amp; Westander (2026), som citerar propositionen, och är inte kontrollerad mot intäktsdelningslagen (2026:1113) här.)</em>
       </li>
       <li id="ref-prop">
         Regeringen (2026) <em>Proposition 2025/26:239 Vindkraft i kommuner.</em>
@@ -1090,13 +1083,24 @@
         <a href="https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/vindkraft-i-kommuner_hd03239/" target="_blank" rel="noopener">https://www.riksdagen.se/sv/dokument-och-lagar/dokument/proposition/vindkraft-i-kommuner_hd03239/</a>
         (hämtad 3 juli 2026). <em>(Regeringens förslag till intäktsdelning med närboende.)</em>
       </li>
+      <li id="ref-svk">
+        Svenska kraftnät (2026) <em>Prislista 2026 för transmissionsnätet.</em> Tillgänglig:
+        <a href="https://www.svk.se/4a909a/siteassets/aktorsportalen/anslut-till-transmissionsnatet/transmissionsnatstariff/aktuella-prislistor/prislista-transmissionsnatet-20262.pdf" target="_blank" rel="noopener">https://www.svk.se/4a909a/siteassets/aktorsportalen/anslut-till-transmissionsnatet/transmissionsnatstariff/aktuella-prislistor/prislista-transmissionsnatet-20262.pdf</a>
+        (hämtad 22 november 2026). <em>(Svenska kraftnäts avgifter, som förs vidare i regionnätets tariff. Underlag för energiersättningen i nätfallen.)</em>
+      </li>
       <li id="ref-nu20">
         Sveriges riksdag (2026) <em>Vindkraft i kommuner. Betänkande 2025/26:NU20.</em>
         Tillgänglig:
         <a href="https://www.riksdagen.se/sv/dokument-och-lagar/dokument/betankande/vindkraft-i-kommuner_hd01nu20/" target="_blank" rel="noopener">https://www.riksdagen.se/sv/dokument-och-lagar/dokument/betankande/vindkraft-i-kommuner_hd01nu20/</a>
         (hämtad 3 juli 2026). <em>(Näringsutskottets betänkande om propositionen.)</em>
       </li>
-    </ol>
+      <li id="ref-vattenfall">
+        Vattenfall Eldistribution (2026) <em>Tillämpningsbestämmelser och nättariffer för regionnätet</em>, 2026-01-01. Tillgänglig:
+        <a href="https://www.vattenfalleldistribution.se/globalassets/2.-foretag/abonnemang-och-avgifter/avtal-och-elnatsavgift/tillampningsbestammelser-och-nattariffer-for-vattenfall-eldistributions-regionnat-2026-01-01.pdf" target="_blank" rel="noopener">https://www.vattenfalleldistribution.se/globalassets/2.-foretag/abonnemang-och-avgifter/avtal-och-elnatsavgift/tillampningsbestammelser-och-nattariffer-for-vattenfall-eldistributions-regionnat-2026-01-01.pdf</a>
+        (hämtad 23 november 2026). <em>(Tariff för inmatning i regionnätet (bilaga 2) och villkor för anslutning. Underlag för nätfallen A, B, I och J, och mall för vilka avtal och avgifter som kan gälla vid en anslutning. Nätägaren för Långhult är inte fastställd, och Kaufmann &amp; Westander (2026) anger inga nätkostnader för Långhult. Nätkostnaderna i kalkylen är antaganden.)</em>
+      </li>
+    </ul>
+    <p class="hint">Nätkostnader och systemkrav bygger på exempelfall och regelverk som redovisas på sidan <a href="natkostnader_exempel.html">Exempelfall och källor för nätkostnader</a>. Siffrorna är hämtade ur källorna, inte kvalitetssäkrade. Kontrollera mot nätägarens gällande tariff innan något återges.</p>
     <p class="hint">
       Kalkylräntan kommer ur Energiforsk (2021). Övriga kostnadsvärden (investering, drift, arrende) är kalkylens egna standardvärden från
       <a href="https://kentlundgren.se/kalkyler/vindkraftskalkyl.html" target="_blank" rel="noopener">kentlundgren.se/kalkyler/vindkraftskalkyl.html</a>

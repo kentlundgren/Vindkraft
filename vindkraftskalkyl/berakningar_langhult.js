@@ -31,6 +31,7 @@
 'use strict';
 
 /* Versionsraden längst ned på sidan. Höj VERSION och uppdatera VERSIONSDATUM i samma ändring som innehållet ändras.
+   UPPDATERING 2026-11-23 (senare igen 7): källförteckningen alfabetisk och osiffrad. Version 1.8.
    UPPDATERING 2026-11-23 (senare igen 6): markerad rad 50 öre/kWh i Tabell 9. Version 1.7.
    UPPDATERING 2026-11-23 (senare igen 5): avsnittet Storleksordning (Tabell 8 och 9). Version 1.6.
    UPPDATERING 2026-11-23 (senare igen 4): länken till beräkningen av bostäder pekar på mappen langhult/. Version 1.5.
@@ -39,7 +40,7 @@
    UPPDATERING 2026-11-23 (senare igen): växel för parkens storlek (20 verk eller bara Lunnarsbo, 12 verk). Version 1.2.
    UPPDATERING 2026-11-23 (senare): nya nätfall I och J (Vattenfall 130 kV) i väljaren. Version 1.1.
    UPPDATERING 2026-11-23: versionsrad i sidfoten. Version 1.0 (Långhult har egen versionsnumrering, skild från huvudkalkylens). */
-const VERSION = '1.7';
+const VERSION = '1.8';
 const VERSIONSDATUM = '2026-11-23';
 
 /* ============================================================================

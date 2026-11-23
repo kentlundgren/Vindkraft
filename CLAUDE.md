@@ -6,7 +6,7 @@
 **Live (Vercel-app, Functions):** https://vindkraft-ver2.vercel.app
 **Live (Vercel-app, Next.js App Router):** https://vindkraft-ver3.vercel.app
 **Senast uppdaterad:** 2026-11-23
-**Version:** 1.12
+**Version:** 1.13
 
 ---
 
@@ -55,7 +55,8 @@ Kalkylerna i `vindkraftskalkyl/` (huvudkalkylen, Långhult och Önnerup) **delar
 2. Sidan läggs i `kalkyler` i `dokument.json`, och `python kalkylmeny.py` körs. Brödsmulorna sätts upp med `brodsmulor.py`.
 3. Delningsbild `og-bild-<fall>.jpg` (1200×630 px, under 300 kB) och taggarna för LinkedIn, X och Facebook.
 4. Mappen `<fall>/` med `README.md` för fallets underlag och verktyg.
-5. `node test_kalkylkarna.js` och `node test_natkostnader.js` ger inga fel, och sidan är provad lokalt.
+5. Källförteckningen är alfabetisk och osiffrad (`<ul class="kallforteckning">`, varje källa en egen post, en ny källa på sin alfabetiska plats). Testet kontrollerar det i varje kalkylsida.
+6. `node test_kalkylkarna.js` och `node test_natkostnader.js` ger inga fel, och sidan är provad lokalt.
 
 ---
 
@@ -141,6 +142,7 @@ den globala filen `AI\Claude\CLAUDE.md` på Kents lokala maskin.
 
 ## Uppdateringslogg
 
+- 2026-11-23 (v1.13): Källförteckningen i kalkylsidorna är alfabetisk och osiffrad, kontrollerad av testet, och ingår i checklistan för ny kalkyl.
 - 2026-11-23 (v1.12): Mappstruktur (fallmappar `langhult/` och `onnerup/`, sidorna ligger kvar), checklista för ny kalkyl eller nytt fall, och regler för nätraderna i Tabell 3, typfallet och Långhults egna val.
 - 2026-11-23 (v1.11): Fasta delar i varje kalkyl: versionsrad, total effekt och fast fältordning.
 - 2026-11-23 (v1.10): Gemensamma benämningar och metoder (kapacitetsfaktor, prisfaktor, närboendezoner) i regeln om räknekärnan.
@@ -158,4 +160,4 @@ den globala filen `AI\Claude\CLAUDE.md` på Kents lokala maskin.
 
 ---
 
-_CLAUDE.md v1.12, 2026-11-23_
+_CLAUDE.md v1.13, 2026-11-23_
