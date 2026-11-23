@@ -25,12 +25,12 @@
    webbläsaren och exporteras som module.exports i Node, där test_kalkylkarna.js
    kör dem.
 
-   Version 1.7 (2026-11-23): uträkningsmarkering och förklaringar i sammanställningen, och arrendeförklaring. Version 1.6: raderna JAMFOR_OVERSKOTT för sammanställningen. Version 1.5: tabell över extra bostäder under taket, förklaring per zon och länkar till dolda flikar. Version 1.4: fastighetsskatt som första åren + därefter (fskatt2) och uppgift om när närboendetaket nås. Version 1.3: kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
+   Version 1.8 (2026-11-23): realiserat pris räknas ut och uppdateras (realpristext). Version 1.7: uträkningsmarkering och förklaringar i sammanställningen, och arrendeförklaring. Version 1.6: raderna JAMFOR_OVERSKOTT för sammanställningen. Version 1.5: tabell över extra bostäder under taket, förklaring per zon och länkar till dolda flikar. Version 1.4: fastighetsskatt som första åren + därefter (fskatt2) och uppgift om när närboendetaket nås. Version 1.3: kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
    berakningar.js och berakningar_langhult.js.
    ============================================================================ */
 'use strict';
 
-const KARNA_VERSION = '1.7';
+const KARNA_VERSION = '1.8';
 
 /**
  * Indatagrupperna i alla vindkraftskalkyler: rubrikerna och deras ordning är fastställda här, så att kalkylerna ser
@@ -83,6 +83,21 @@ function fmt(v, dec = 0, suffix = '') {
     maximumFractionDigits: dec
   });
   return str + suffix;
+}
+
+/**
+ * Texten för det realiserade priset: spotpris × prisfaktor = realiserat pris. Visas i elementet realpris-visning och uppdateras
+ * när spotpris eller prisfaktor ändras (skrivUt anropar visaRealiseratPris vid varje omräkning).
+ */
+function realpristext(spot, prisfaktor) {
+  const tal3 = (v) => v.toLocaleString('sv-SE', { minimumFractionDigits: 0, maximumFractionDigits: 4 });
+  if (!Number.isFinite(spot) || !Number.isFinite(prisfaktor)) return '–';
+  return tal3(spot) + ' kr/kWh × ' + tal3(prisfaktor) + ' = ' + tal3(spot * prisfaktor) + ' kr/kWh';
+}
+
+function visaRealiseratPris(spot, prisfaktor) {
+  const e = document.getElementById('realpris-visning');
+  if (e) e.textContent = realpristext(spot, prisfaktor);
 }
 
 /**
@@ -764,7 +779,7 @@ function kommunSaknasText(poster) {
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
-    KARNA_VERSION, INDATAGRUPPER, JAMFOR_OVERSKOTT, arrendeForklaring, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode,
+    KARNA_VERSION, INDATAGRUPPER, JAMFOR_OVERSKOTT, arrendeForklaring, realpristext, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode,
     natPaverkan, natEngangTillaggAv, natSammanfattning,
     lasKommunIndata, fastighetsskattPerVerk, kommunPoster, kommunSaknasText, narboendeTakniva, narboendeExtra, zonHjalpText,
     FSKATT_SCHABLON, fullastJustering, fastighetsskattSchablon,

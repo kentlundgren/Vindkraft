@@ -65,6 +65,8 @@
 
   UPPDATERING 2026-11-22 (senare igen): gemensam kärna kalkylkarna.js för finansmatematik och nätkopplingen, delad med fallet Långhult, och nätformateringen i natkostnader.css. Resultaten är oförändrade. Version 1.15.
 
+  UPPDATERING 2026-11-23 (senare igen 5): det realiserade priset (spotpris × prisfaktor) räknas ut och uppdateras i texten vid prisfaktorn. Version 1.22.
+
   UPPDATERING 2026-11-23 (senare igen 4): raderna i sammanställningen är markerade som en uträkning (start, avdrag, summa) med förklaringsruta vid varje rad, och arrendet förklaras i fliken Markägare med hjälp av resultatets tal. Version 1.21.
 
   UPPDATERING 2026-11-23 (senare igen 3): sammanställningen visar överskottet före lokala poster, raderna Dras av (arrende, fastighetsskatt, bygdemedel, närboendeersättning) och överskottet efter, med förklaring, och går att länka till med #kalkylsammanstallning. Version 1.20.
@@ -150,7 +152,7 @@
         <label>Prisfaktor (realiserat pris / spotpris, 0–1)
           <abbr class="fk" tabindex="0" data-f="Prisfaktor: vindkraftens genomsnittliga intäktspris delat med genomsnittligt spotpris (0–1). Vindkraften producerar mest när elpriset är lågt, så faktorn blir ofta under 1. Kallas på engelska capture rate (EIFO, 2026: capture price som andel av genomsnittligt marknadspris). Kaufmann &amp; Westander (2026) kallar den viktning och talar om kannibalisering.">?</abbr>
           <input type="number" step="0.01" min="0" max="1" id="prisfaktor" class="indata" value="1">
-          <span class="hint">Realiserat pris = spotpris × prisfaktor. Med 1 räknas elen till spotpriset, som tidigare. På engelska capture rate (<a href="https://eifo.dk/media/s1bjgkkq/capture-rate-analysis-marts-2026.pdf" target="_blank" rel="noopener">EIFO, 2026</a>).</span>
+          <span class="hint">Realiserat pris = spotpris × prisfaktor = <strong id="realpris-visning">–</strong>. Med 1 räknas elen till spotpriset, som tidigare. På engelska capture rate (<a href="https://eifo.dk/media/s1bjgkkq/capture-rate-analysis-marts-2026.pdf" target="_blank" rel="noopener">EIFO, 2026</a>).</span>
         </label>
 
         <label>Elområde

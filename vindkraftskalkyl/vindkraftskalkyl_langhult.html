@@ -18,6 +18,7 @@
   UPPDATERING 2026-11-23: närboendeersättningen räknas i kalkylkarna.js (delas med huvudkalkylen), kapacitetsfaktor 0,4121 (= 3 610 h / 8 760) i stället för fullasttimmar, och viktning heter prisfaktor.
   UPPDATERING 2026-11-23 (senare): indatagrupperna har samma rubriker och ordning som övriga kalkyler (INDATAGRUPPER i kalkylkarna.js), och Närboende ligger sist.
   UPPDATERING 2026-11-23 (senare igen): fastighetsskatt, bygdemedel och kommunstöd räknas i kalkylkarna.js (kommunPoster) och delas med övriga kalkyler. Långhults värden och resultat är oförändrade.
+  UPPDATERING 2026-11-23 (senare igen 5): det realiserade priset (spotpris × prisfaktor) räknas ut och uppdateras i texten vid prisfaktorn.
   UPPDATERING 2026-11-23 (senare igen 4): raderna i sammanställningen är markerade som en uträkning med förklaringsruta vid varje rad, och arrendet förklaras i fliken Markägare.
   UPPDATERING 2026-11-23 (senare igen 3): sammanställningen visar överskottet före lokala poster, raderna Dras av och överskottet efter, med förklaring, och går att länka till med #kalkylsammanstallning.
   UPPDATERING 2026-11-23 (senare igen 2): förklaring per zon vid hovring, Tabell 7 över hur många bostäder till som får full ersättning innan taket nås, länkar som öppnar rätt resultatflik och ljusare länkar i sidhuvudet.
@@ -134,7 +135,7 @@
           <abbr class="fk" tabindex="0" data-f="Prisfaktor: vindkraftens genomsnittliga intäktspris delat med genomsnittligt spotpris (0–1). Vindkraften producerar mest när elpriset är lågt, så faktorn blir ofta under 1. Kallas på engelska capture rate (EIFO, 2026: capture price som andel av genomsnittligt marknadspris). Kaufmann &amp; Westander (2026) kallar den viktning och talar om kannibalisering.">?</abbr>
           <input type="number" step="0.01" id="prisfaktor" class="indata" value="0.75">
           <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=12" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, s. 12, 16</a>
-          <span class="hint">Realiserat pris = spotpris × prisfaktor = 0,375 kr/kWh med värdena i Kaufmann &amp; Westander (2026), som kallar faktorn viktning. På engelska capture rate (<a href="https://eifo.dk/media/s1bjgkkq/capture-rate-analysis-marts-2026.pdf" target="_blank" rel="noopener">EIFO, 2026</a>).</span>
+          <span class="hint">Realiserat pris = spotpris × prisfaktor = <strong id="realpris-visning">–</strong>. Kaufmann &amp; Westander (2026) kallar faktorn viktning och räknar med 0,50 × 0,75 = 0,375 kr/kWh. På engelska capture rate (<a href="https://eifo.dk/media/s1bjgkkq/capture-rate-analysis-marts-2026.pdf" target="_blank" rel="noopener">EIFO, 2026</a>).</span>
         </label>
 
         <label>Elprisbana, årlig förändring (%/år)

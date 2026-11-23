@@ -216,6 +216,14 @@ sant('arrendeförklaring: procent, intäkt och per verk', /3,5 %/.test(tA) && /3
 const tK = K.arrendeForklaring({ arrendeInfo: { modell: 'krmw', procent: 0.035, krmw: 40000 }, arrendeAr1: 160000, P_tot: 4 }).replace(/\s/g, ' ');
 sant('arrendeförklaring: kr per MW', /40 000 kr per MW och år × 4,0 MW = 160 000 kr/.test(tK));
 
+// Realiserat pris: spotpris × prisfaktor, med text som uppdateras
+lika('realiserat pris Långhult: 0,50 × 0,75', K.realiseratPris(0.5, 0, 0.75, 1), 0.375);
+sant('realpristext: 0,5 × 0,75 = 0,375', K.realpristext(0.5, 0.75).replace(/\s/g, ' ') === '0,5 kr/kWh × 0,75 = 0,375 kr/kWh');
+sant('realpristext: 0,6 × 1 = 0,6 (huvudkalkylen)', K.realpristext(0.6, 1).replace(/\s/g, ' ') === '0,6 kr/kWh × 1 = 0,6 kr/kWh');
+sant('realpristext: ändrad prisfaktor 0,8 ger 0,48', /= 0,48 kr\/kWh/.test(K.realpristext(0.6, 0.8)));
+sant('realpristext: 0,55 × 0,75 visas exakt som 0,4125', /= 0,4125 kr\/kWh/.test(K.realpristext(0.55, 0.75)));
+sant('realpristext: ogiltigt värde ger tankstreck', K.realpristext(NaN, 1) === '–');
+
 /* ---------- Alla kalkyler använder kärnan ---------- */
 const KALKYLER = [
   { html: 'vindkraftskalkyl.html', js: 'berakningar.js' },
@@ -224,7 +232,8 @@ const KALKYLER = [
 ];
 const FORBJUDNA = ['annuitet', 'npv', 'irr', 'payback', 'fmt', 'tal', 'text', 'radataNat', 'lcoeAvKassaflode', 'lasNatIndata', 'natPaverkan', 'natSammanfattning',
   'beraknaNarboende', 'beraknaNarboendeZoner', 'beraknaNarboendeSchablon', 'lasNarboendeIndata', 'zonEtikett', 'realiseratPris',
-  'fastighetsskattPerVerk', 'lasKommunIndata', 'kommunPoster', 'kommunSaknasText', 'arrendeForklaring', 'visaArrendeForklaring', 'jamforRadExtras'];
+  'fastighetsskattPerVerk', 'lasKommunIndata', 'kommunPoster', 'kommunSaknasText', 'arrendeForklaring', 'visaArrendeForklaring', 'jamforRadExtras',
+  'realpristext', 'visaRealiseratPris'];
 KALKYLER.forEach(k => {
   const js = fs.readFileSync(k.js, 'utf8');
   const html = fs.readFileSync(k.html, 'utf8');
@@ -238,6 +247,8 @@ KALKYLER.forEach(k => {
   sant(k.js + ' anropar kommunPoster', /kommunPoster\(/.test(js));
   sant(k.js + ' använder JAMFOR_OVERSKOTT i sammanställningen', /JAMFOR_OVERSKOTT/.test(js));
   sant(k.js + ' markerar uträkningen och förklarar raderna', /jamforRadExtras\(/.test(js));
+  sant(k.js + ' visar det realiserade priset', /visaRealiseratPris\(/.test(js));
+  sant(k.html + ' har texten för realiserat pris', html.indexOf('id="realpris-visning"') > -1);
   sant(k.html + ' har arrendeförklaringen', html.indexOf('id="mark-arrende-forklaring"') > -1);
   sant(k.html + ' kan länkas till med #kalkylsammanstallning', html.indexOf('id="kalkylsammanstallning"') > -1);
   sant(k.js + ' kopplar länkar till flikar', /kopplaAnkareTillFlikar\(\)/.test(js));

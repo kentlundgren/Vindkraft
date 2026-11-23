@@ -46,8 +46,9 @@
    UPPDATERING 2026-11-23 (senare igen): fastighetsskatt med fskatt2, förvalet en bostad per zon, taknivå för närboende och överskott före och efter lokala poster. Version 1.18.
    UPPDATERING 2026-11-23 (senare igen 2): förklaring per zon, Tabell 3 med extra bostäder under taket och länkar till dolda flikar (kalkylkarna.js). Version 1.19.
    UPPDATERING 2026-11-23 (senare igen 3): sammanställningen visar överskottet före lokala poster, vad som dras av (arrende, fastighetsskatt, bygdemedel, närboendeersättning) och överskottet efter, och har ankaret #kalkylsammanstallning. Version 1.20.
-   UPPDATERING 2026-11-23 (senare igen 4): raderna i sammanställningen är markerade som en uträkning (start, avdrag, summa) med förklaringsruta, och arrendet förklaras i fliken Markägare. Version 1.21. */
-const VERSION = '1.21';
+   UPPDATERING 2026-11-23 (senare igen 4): raderna i sammanställningen är markerade som en uträkning (start, avdrag, summa) med förklaringsruta, och arrendet förklaras i fliken Markägare. Version 1.21.
+   UPPDATERING 2026-11-23 (senare igen 5): det realiserade priset (spotpris × prisfaktor) räknas ut och uppdateras i texten vid prisfaktorn. Version 1.22. */
+const VERSION = '1.22';
 const VERSIONSDATUM = '2026-11-22';
 
 /* ============================================================================
@@ -338,6 +339,7 @@ function satt(id, value) {
 
 function skrivUt(res, d) {
   visaFullasttimmar(d.kapfaktor);
+  visaRealiseratPris(d.elpris, d.prisfaktor);
   /* ---- Nyckeltalsrad (alltid synlig) ---- */
   satt('nt-lcoe', fmt(res.lcoe, 2, ' kr/kWh'));
   satt('nt-overskott', fmt(res.overskott, 0, ' kr/år'));
