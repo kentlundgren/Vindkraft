@@ -25,12 +25,12 @@
    webbläsaren och exporteras som module.exports i Node, där test_kalkylkarna.js
    kör dem.
 
-   Version 1.3 (2026-11-23): kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
+   Version 1.4 (2026-11-23): fastighetsskatt som första åren + därefter (fskatt2) och uppgift om när närboendetaket nås. Version 1.3: kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
    berakningar.js och berakningar_langhult.js.
    ============================================================================ */
 'use strict';
 
-const KARNA_VERSION = '1.3';
+const KARNA_VERSION = '1.4';
 
 /**
  * Indatagrupperna i alla vindkraftskalkyler: rubrikerna och deras ordning är fastställda här, så att kalkylerna ser
@@ -423,8 +423,20 @@ function ritaNarboendeZonTabell(kroppId, nar, H) {
   rad([{ t: 'Summa' }, { t: '' }, { t: '' }, { t: fmt(nar.antal, 0), k: 'tal' }, { t: '' }, { t: '' }, { t: fmt(nar.utbetalt, 0), k: 'tal' }], 'summa');
 }
 
+/**
+ * Hur många bostäder som kan få ersättning innan taket (2 %, 14 §) nås, med samma fördelning på zoner som angetts.
+ * Fördelningen skalas upp eller ned tills summan före tak är lika med taket. Returnerar null utan bostäder eller utan zonmetod.
+ * @param {object} nar        resultat från beraknaNarboendeZoner
+ * @param {number} antalverk  antal verk i parken
+ */
+function narboendeTakniva(nar, antalverk) {
+  if (nar.metod !== 'zoner' || !(nar.fore > 0) || !(nar.antal > 0)) return null;
+  const bostader = nar.antal * nar.cap / nar.fore;
+  return { bostader, perVerk: bostader / Math.max(1, antalverk), nasRedan: nar.taketNas };
+}
+
 /** Sammanfattningsraderna under zontabellen. prefix = id-prefix, t.ex. 't2' ger t2-fore, t2-tak, t2-nas, t2-skal, t2-snitt. */
-function skrivNarboendeSummering(prefix, nar) {
+function skrivNarboendeSummering(prefix, nar, antalverk) {
   if (nar.metod !== 'zoner') return;
   const satt = (id, v) => { const e = document.getElementById(prefix + '-' + id); if (e) e.textContent = v; };
   satt('fore', fmt(nar.fore, 0, ' kr/år'));
@@ -432,6 +444,10 @@ function skrivNarboendeSummering(prefix, nar) {
   satt('skal', nar.taketNas ? fmt(nar.skal * 100, 1, ' % av beloppet före tak') : '100 % (taket nås inte)');
   satt('snitt', fmt(nar.snitt, 0, ' kr/bostad och år'));
   satt('nas', nar.taketNas ? 'Ja, taket nås och alla ersättningar sätts ned i proportion' : 'Nej, summan ligger under taket');
+  const tn = narboendeTakniva(nar, antalverk);
+  satt('takbost', tn
+    ? 'Cirka ' + fmt(tn.bostader, 0) + ' bostäder (cirka ' + fmt(tn.perVerk, 1) + ' per verk) med fördelningen i tabellen. Du har angett ' + fmt(nar.antal, 0) + '.'
+    : 'Fyll i bostäder för att se.');
 }
 
 /* ============================================================================
@@ -462,31 +478,77 @@ function realiseratPris(spotprisAr1, elprisforandring, prisfaktor, t) {
      Kommunstöd       Betalas av STATEN till kommunen, fördelat efter installerad effekt, och motsvarar fastighetsskatten.
                       Belastar inte projektet och dras därför inte från projektets resultat. Förordning är utlovad men inte
                       beslutad (anteckningarna 2026-11-19), och cirka 20 000 kr/MW anges av Kaufmann & Westander (2026, s. 7–9).
-   Modellen är Kaufmann & Westanders (2026): första åren ett belopp, därefter ett jämnt belopp så att summan över
-   livslängden blir fskattotal.
+   Modellen: första åren (fskattaar) beloppet fskatt1, därefter ett jämnt belopp fskatt2 per år. Så får modellen samma
+   form oavsett livslängd. Taxeringsvärdet skrivs ned med verkets ålder (Nvi-tabellen i Skatteverkets allmänna råd
+   SKV A 2024:11), vilket gör skatten lägre efter de första åren. Kaufmann & Westander (2026) ger för ett verk på 6,6 MW
+   i elområde 3 334 398 kr de första fyra åren och 6,64 Mkr över 30 år, alltså cirka 204 049 kr per år därefter.
    ============================================================================ */
+
+/* ---------- Schablon för fastighetsskatt för vindkraftverk (Skatteverket AFT25) ----------
+   Källa: Skatteverket (2024) SKV A 2024:11, Riktvärdeangivelser och grunderna för taxeringen och värdesättningen av
+   elproduktionsenheter vid 2025 års allmänna fastighetstaxering (finns i repot: underlag/SKV_A_2024_11.pdf), avsnitt 2.1
+   (riktvärde 8 600 kr/kW för vindkraftverk, mark och byggnad), 2.3.1 (elprisfaktorer) och 2.3.3 (fullasttimmar).
+   Fördelningen 73,5 % byggnad och 1,5 % mark, avrundningen nedåt till hela miljoner och skattesatsen 0,5 % kommer ur
+   Kaufmann & Westander (2026, bilaga 1, s. 17–18), vars exempel (6,6 MW, elområde 3, 3 609,85 fullasttimmar) ger 334 398 kr.
+   Avrundningen nedåt är hämtad ur det exemplet. Den står inte i Skatteverkets text, och för små verk ger den en lägre siffra.
+   Skatten första åren beräknas här. Åren därefter är skatten lägre eftersom taxeringsvärdet skrivs ned med verkets ålder (Nvi-tabellen,
+   bilaga 2). Kvoten mot första årens belopp, cirka 0,61, är hämtad ur Kaufmann & Westanders totalsumma (6,64 Mkr över 30 år). */
+const FSKATT_SCHABLON = {
+  riktvarde: 8600,                 // kr per kW, nybyggt vindkraftverk, mark och byggnad
+  byggandel: 0.735,                // andel av riktvärdet som avser byggnaden (verket)
+  markandel: 0.015,                // markens värde som andel av riktvärdet
+  skattesats: 0.005,               // 0,5 % av taxeringsvärdet
+  elprisfaktor: { SE1: -0.160, SE2: -0.192, SE3: 0.190, SE4: 0.348 },   // justering av riktvärdet per elområde
+  nedskrivningKvot: 204049 / 334398 // skatt åren därefter / skatt första åren
+};
+
+/** Justeringsfaktor för avvikande fullasttimmar per år (SKV A 2024:11, avsnitt 2.3.3). Faktorn adderas till 1. */
+const FULLAST_JUSTERING = [
+  [5601, 1.12], [5401, 1.04], [5201, 0.96], [5001, 0.88], [4801, 0.81], [4601, 0.73], [4401, 0.65], [4201, 0.58],
+  [4001, 0.50], [3801, 0.42], [3601, 0.35], [3401, 0.27], [3201, 0.19], [3001, 0.12], [2801, 0.04], [2400, 0.00],
+  [2200, -0.04], [2000, -0.12], [1800, -0.19], [1600, -0.27], [1400, -0.35], [1200, -0.42], [1000, -0.50], [800, -0.58], [0, -0.65]
+];
+
+function fullastJustering(timmar) {
+  for (const [fran, j] of FULLAST_JUSTERING) if (timmar >= fran) return j;
+  return FULLAST_JUSTERING[FULLAST_JUSTERING.length - 1][1];
+}
+
+/**
+ * Schablon för fastighetsskatt per verk.
+ * @param {number} kwPerVerk     installerad effekt per verk (kW)
+ * @param {string} elomrade      'SE1'..'SE4'
+ * @param {number} fullasttimmar årsproduktion / installerad effekt (kapacitetsfaktor × 8 760)
+ * @returns {{fskatt1:number, fskatt2:number, taxeringsvarde:number, elprisfaktor:number, fullastfaktor:number}}
+ */
+function fastighetsskattSchablon(kwPerVerk, elomrade, fullasttimmar) {
+  const S = FSKATT_SCHABLON;
+  const ep = 1 + (S.elprisfaktor[elomrade] !== undefined ? S.elprisfaktor[elomrade] : S.elprisfaktor.SE3);
+  const ff = 1 + fullastJustering(fullasttimmar);
+  const grund = Math.floor(S.byggandel * S.riktvarde * kwPerVerk / 1e6) * 1e6;     // avrundat nedåt till hela miljoner
+  const taxeringsvarde = grund * ep * ff + S.markandel * S.riktvarde * kwPerVerk * ep;
+  const fskatt1 = S.skattesats * taxeringsvarde;
+  return { fskatt1, fskatt2: fskatt1 * S.nedskrivningKvot, taxeringsvarde, elprisfaktor: ep, fullastfaktor: ff };
+}
 
 /** Läser kommunposterna ur formuläret. Fält som saknas i en kalkyl räknas som 0. */
 function lasKommunIndata() {
   return {
     fskatt1:    tal('fskatt1'),                          // kr per verk och år, första åren
     fskattaar:  Math.max(0, Math.round(tal('fskattaar'))), // antal år med den första nivån
-    fskattotal: tal('fskattotal'),                       // kr per verk, totalt över livslängden
+    fskatt2:    tal('fskatt2'),                          // kr per verk och år, åren därefter
     bygdemedel: tal('bygdemedel'),                       // kr per år, hela parken
     kommunstod: tal('kommunstod')                        // kr per MW och år (staten betalar)
   };
 }
 
 /**
- * Fastighetsskatt för ett verk år t (kr). Första fskattaar åren fskatt1. Därefter fördelas resten av totalsumman
- * (fskattotal − fskattaar × fskatt1) lika över årens resterande del av livslängden.
+ * Fastighetsskatt för ett verk år t (kr): fskatt1 de första fskattaar åren, därefter fskatt2.
  * @param {number} t  år 1..n
- * @param {object} d  indata: fskatt1, fskattaar, fskattotal, livslangd
+ * @param {object} d  indata: fskatt1, fskattaar, fskatt2
  */
 function fastighetsskattPerVerk(t, d) {
-  if (t <= d.fskattaar) return d.fskatt1;
-  const kvar = Math.max(1, d.livslangd - d.fskattaar);
-  return Math.max(0, (d.fskattotal - d.fskattaar * d.fskatt1) / kvar);
+  return t <= d.fskattaar ? d.fskatt1 : d.fskatt2;
 }
 
 /**
@@ -510,7 +572,7 @@ function kommunPoster(d, P_tot) {
     fskattTotal: sum(fskattAr), bygdeTotal: sum(bygdeAr),
     kommunstodAr1: d.kommunstod * P_tot,
     saknas: {
-      fskatt: !(d.fskatt1 > 0) && !(d.fskattotal > 0),
+      fskatt: !(d.fskatt1 > 0) && !(d.fskatt2 > 0),
       bygde: !(d.bygdemedel > 0),
       kommunstod: !(d.kommunstod > 0)
     }
@@ -534,7 +596,8 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     KARNA_VERSION, INDATAGRUPPER, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode,
     natPaverkan, natEngangTillaggAv, natSammanfattning,
-    lasKommunIndata, fastighetsskattPerVerk, kommunPoster, kommunSaknasText,
+    lasKommunIndata, fastighetsskattPerVerk, kommunPoster, kommunSaknasText, narboendeTakniva,
+    FSKATT_SCHABLON, fullastJustering, fastighetsskattSchablon,
     NARBOENDE_METOD, NARBOENDE_ZONER, beraknaNarboende, beraknaNarboendeZoner, beraknaNarboendeSchablon, realiseratPris
   };
 }

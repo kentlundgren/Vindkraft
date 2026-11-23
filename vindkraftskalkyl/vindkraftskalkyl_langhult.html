@@ -18,6 +18,7 @@
   UPPDATERING 2026-11-23: närboendeersättningen räknas i kalkylkarna.js (delas med huvudkalkylen), kapacitetsfaktor 0,4121 (= 3 610 h / 8 760) i stället för fullasttimmar, och viktning heter prisfaktor.
   UPPDATERING 2026-11-23 (senare): indatagrupperna har samma rubriker och ordning som övriga kalkyler (INDATAGRUPPER i kalkylkarna.js), och Närboende ligger sist.
   UPPDATERING 2026-11-23 (senare igen): fastighetsskatt, bygdemedel och kommunstöd räknas i kalkylkarna.js (kommunPoster) och delas med övriga kalkyler. Långhults värden och resultat är oförändrade.
+  UPPDATERING 2026-11-23 (senare igen): fastighetsskatten anges som första åren plus åren därefter (fskatt2 = 204 049 kr, jämnat ut ur Kaufmann & Westander 2026), uppgift om hur många bostäder som kan få ersättning innan taket nås, och tydligare rubriker på överskottsraderna. Resultaten är oförändrade (högst 0,01 %).
   ============================================================================
 -->
 <html lang="sv">
@@ -446,10 +447,10 @@
           <span class="hint">Kaufmann &amp; Westander (2026, s. 4, 9): "de första fyra åren" (2,3 Mkr för sju verk).</span>
         </label>
 
-        <label>Fastighetsskatt per verk, totalt över livslängden (kr)
-          <abbr class="fk" tabindex="0" data-f="Skatten sjunker över tid eftersom taxeringsvärdet skrivs ned med verkets ålder (nedskrivningsfaktor). Kaufmann &amp; Westander (2026, s. 18) anger 46,5 Mkr för sju verk, alltså cirka 6,64 Mkr per verk över 30 år. Här jämnas åren efter de första fyra ut till ett lika stort belopp per år.">?</abbr>
-          <input type="number" step="1000" id="fskattotal" class="indata" value="6643000">
-          <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=18" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, s. 18 (46,5 Mkr / 7)</a>
+        <label>Fastighetsskatt per verk, åren därefter (kr/år)
+          <abbr class="fk" tabindex="0" data-f="Skatten sjunker över tid eftersom taxeringsvärdet skrivs ned med verkets ålder (nedskrivningsfaktor). Kaufmann &amp; Westander (2026, s. 18) anger 46,5 Mkr för sju verk över 30 år, alltså cirka 6,64 Mkr per verk. Efter de första fyra åren (334 398 kr per år) blir det i genomsnitt (6,64 Mkr − 4 × 334 398 kr) / 26 år = cirka 204 049 kr per år.">?</abbr>
+          <input type="number" step="1000" id="fskatt2" class="indata" value="204049">
+          <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=18" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, s. 18 (46,5 Mkr / 7 verk över 30 år)</a>
           <span class="badge antagande">utjämning</span>
         </label>
 
@@ -643,6 +644,7 @@
       <div><dt>Summa före tak</dt><dd id="t2-fore">–</dd></div>
       <div><dt>Tak (2 % av parkens intäkt)</dt><dd id="t2-tak">–</dd></div>
       <div><dt>Nås taket?</dt><dd id="t2-nas" style="white-space:normal;text-align:right">–</dd></div>
+      <div><dt>Antal bostäder när taket nås (samma fördelning)</dt><dd id="t2-takbost" style="white-space:normal;text-align:right">–</dd></div>
       <div><dt>Nedsättning</dt><dd id="t2-skal">–</dd></div>
       <div class="framhavd"><dt>Genomsnitt per bostad</dt><dd id="t2-snitt">–</dd></div>
     </dl>
@@ -707,8 +709,8 @@
         <div><dt>Årlig kapitalkostnad (annuitet)</dt><dd id="inv-kapitalkostnad">–</dd></div>
         <div><dt>Årlig total kostnad (drift + kapital)</dt><dd id="inv-totalkostnad">–</dd></div>
         <div><dt>Kostnad per kWh</dt><dd id="inv-kostnadperkwh">–</dd></div>
-        <div><dt>Överskott per år (bas)</dt><dd id="inv-overskott">–</dd></div>
-        <div><dt>Överskott per år efter arrende, skatt, bygdemedel och närboende</dt><dd id="inv-overskottnetto">–</dd></div>
+        <div><dt>Överskott per år före lokala poster (intäkt − drift − kapital)</dt><dd id="inv-overskott">–</dd></div>
+        <div><dt>Överskott per år efter arrende, fastighetsskatt, bygdemedel och närboende (NPV och IRR räknas efter dessa)</dt><dd id="inv-overskottnetto">–</dd></div>
         <div><dt>Nätkostnad per kWh över livslängden</dt><dd id="inv-nat-livs">–</dd></div>
         <div><dt>Nätkostnadens andel av LCOE</dt><dd id="inv-nat-andel">–</dd></div>
         <div class="framhavd"><dt>LCOE</dt><dd id="inv-lcoe">–</dd></div>

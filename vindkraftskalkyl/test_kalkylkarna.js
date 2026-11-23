@@ -126,28 +126,54 @@ lika('realiserat pris år 1, prisfaktor 0,75', K.realiseratPris(0.5, 0, 0.75, 1)
 lika('realiserat pris år 3 med 2 %/år', K.realiseratPris(0.5, 0.02, 0.75, 3), 0.5 * 1.02 ** 2 * 0.75, 1e-12);
 
 /* ---------- Kommunposter: fastighetsskatt, bygdemedel, kommunstöd ---------- */
-// Långhult (Kaufmann & Westander, 2026): 334 398 kr per verk de första 4 åren, 6 643 000 kr per verk över 30 år.
-const dK = { fskatt1: 334398, fskattaar: 4, fskattotal: 6643000, bygdemedel: 400000, kommunstod: 20000, antalverk: 20, livslangd: 30 };
+// Långhult (Kaufmann & Westander, 2026): 334 398 kr per verk de första 4 åren, därefter cirka 204 049 kr per år (6,64 Mkr över 30 år).
+const dK = { fskatt1: 334398, fskattaar: 4, fskatt2: 204049, bygdemedel: 400000, kommunstod: 20000, antalverk: 20, livslangd: 30 };
 lika('fastighetsskatt år 1', K.fastighetsskattPerVerk(1, dK), 334398);
 lika('fastighetsskatt år 4', K.fastighetsskattPerVerk(4, dK), 334398);
-// Därefter jämnt: (6 643 000 − 4 × 334 398) / 26
-lika('fastighetsskatt år 5', K.fastighetsskattPerVerk(5, dK), (6643000 - 4 * 334398) / 26, 1e-6);
+lika('fastighetsskatt år 5', K.fastighetsskattPerVerk(5, dK), 204049);
 const kp = K.kommunPoster(dK, 132);
-lika('summa fastighetsskatt per verk över 30 år = fskattotal', kp.fskattTotal / 20, 6643000, 1e-3);
+lika('summa fastighetsskatt per verk över 30 år ≈ 6,64 Mkr', kp.fskattTotal / 20, 6643000, 1000);
 lika('fastighetsskatt år 1, hela parken', kp.fskattAr1, 334398 * 20);
 lika('bygdemedel år 1', kp.bygdeAr1, 400000);
 lika('bygdemedel totalt', kp.bygdeTotal, 400000 * 30);
 lika('kommunstöd år 1 = kr/MW × MW', kp.kommunstodAr1, 20000 * 132);
 sant('inget saknas med Långhults värden', !kp.saknas.fskatt && !kp.saknas.bygde && !kp.saknas.kommunstod && K.kommunSaknasText(kp) === '');
-// Kortare livslängd: summan över livslängden blir fortfarande fskattotal.
-const dK25 = Object.assign({}, dK, { livslangd: 25 });
-lika('summa med livslängd 25 år', K.kommunPoster(dK25, 132).fskattTotal / 20, 6643000, 1e-3);
+// Livslängd 25 år: samma belopp per år, kortare summa.
+lika('livslängd 25 år: summa = 4 × år 1 + 21 × därefter', K.kommunPoster(Object.assign({}, dK, { livslangd: 25 }), 132).fskattTotal / 20, 4 * 334398 + 21 * 204049, 1e-6);
 // Tomma värden ger varning, och posterna är 0.
-const dTom = { fskatt1: 0, fskattaar: 4, fskattotal: 0, bygdemedel: 0, kommunstod: 20000, antalverk: 3, livslangd: 25 };
+const dTom = { fskatt1: 0, fskattaar: 4, fskatt2: 0, bygdemedel: 0, kommunstod: 20000, antalverk: 3, livslangd: 25 };
 const kpTom = K.kommunPoster(dTom, 9.9);
 lika('tomma värden: fastighetsskatt 0', kpTom.fskattTotal, 0);
 sant('tomma värden: varning nämner fastighetsskatt och bygdemedel', /fastighetsskatt och bygdemedel saknar belopp/.test(K.kommunSaknasText(kpTom)));
 sant('tomma värden: kommunstöd saknas inte', !kpTom.saknas.kommunstod);
+
+// Schablonen för fastighetsskatt (kalkylkarna.js, fastighetsskattSchablon): SKV A 2024:11 och Kaufmann & Westander (2026, bilaga 1).
+const sch63 = K.fastighetsskattSchablon(6600, 'SE3', 3609.85);
+lika('schablon: 6,6 MW i elområde 3 = 334 398 kr (Kaufmann & Westander, 2026)', sch63.fskatt1, 334398, 1);
+lika('schablon: taxeringsvärde 66,9 Mkr', sch63.taxeringsvarde, 66879666, 1000);
+lika('schablon: elprisfaktor SE3', sch63.elprisfaktor, 1.19);
+lika('schablon: fullasttidsfaktor 3 610 h', sch63.fullastfaktor, 1.35);
+lika('schablon: 6,6 MW i elområde 4', K.fastighetsskattSchablon(6600, 'SE4', 3609.85).fskatt1, 378797, 1);
+lika('schablon: SE4 per MW (57 394 kr/MW)', K.fastighetsskattSchablon(6600, 'SE4', 3609.85).fskatt1 / 6.6, 57394, 1);
+lika('schablon: åren därefter ≈ 204 049 kr i SE3', sch63.fskatt2, 204049, 1);
+// Fullasttidsjustering enligt tabellen i avsnitt 2.3.3
+lika('fullasttid 2 400 h: ingen justering', K.fullastJustering(2400), 0);
+lika('fullasttid 2 800 h: ingen justering', K.fullastJustering(2800), 0);
+lika('fullasttid 2 801 h', K.fullastJustering(2801), 0.04);
+lika('fullasttid 3 241 h (huvudkalkylen)', K.fullastJustering(3241), 0.19);
+lika('fullasttid 3 610 h', K.fullastJustering(3610), 0.35);
+lika('fullasttid 2 399 h', K.fullastJustering(2399), -0.04);
+lika('fullasttid 2 293 h (Önnerup)', K.fullastJustering(2293), -0.04);
+lika('fullasttid under 800 h', K.fullastJustering(500), -0.65);
+// Önnerup: 3,3 MW i elområde 4 med 2 293 h: grundriktvärde 20 Mkr × 1,348 × 0,96 + mark, × 0,5 %
+lika('schablon: Önnerup (3,3 MW, SE4, 2 293 h)', K.fastighetsskattSchablon(3300, 'SE4', 0.2618 * 8760).fskatt1, 0.005 * (20e6 * 1.348 * 0.96 + 0.015 * 8600 * 3300 * 1.348), 1);
+
+// Taket för närboendeersättning: 10 bostäder i zon 1 ger 50 000 kr före tak mot taket 400 000 kr, alltså 80 bostäder (4 per verk vid 20 verk).
+const tn = K.narboendeTakniva(K.beraknaNarboendeZoner(1e6, 20e6, { bost: [10, 0, 0, 0, 0], verkperbostad: 2, tak: 0.02, antalverk: 20 }), 20);
+lika('taknivå: bostäder när taket nås', tn.bostader, 80);
+lika('taknivå: per verk', tn.perVerk, 4);
+sant('taknivå: taket nås inte med 10 bostäder', !tn.nasRedan);
+sant('taknivå: ingen uppgift utan bostäder', K.narboendeTakniva(K.beraknaNarboendeZoner(1e6, 20e6, { bost: [0, 0, 0, 0, 0], verkperbostad: 2, tak: 0.02, antalverk: 20 }), 20) === null);
 
 /* ---------- Alla kalkyler använder kärnan ---------- */
 const KALKYLER = [
@@ -169,7 +195,7 @@ KALKYLER.forEach(k => {
   sant(k.js + ' anropar beraknaNarboende', /beraknaNarboende\(/.test(js));
   sant(k.js + ' anropar realiseratPris', /realiseratPris\(/.test(js));
   sant(k.js + ' anropar kommunPoster', /kommunPoster\(/.test(js));
-  ['fskatt1', 'fskattaar', 'fskattotal', 'bygdemedel', 'kommunstod'].forEach(f => sant(k.html + ' har fältet ' + f, html.indexOf('id="' + f + '"') > -1));
+  ['fskatt1', 'fskattaar', 'fskatt2', 'bygdemedel', 'kommunstod'].forEach(f => sant(k.html + ' har fältet ' + f, html.indexOf('id="' + f + '"') > -1));
   sant(k.js + ' räknar produktion med kapacitetsfaktor (inte fullasttimmar)', /kapfaktor/.test(js) && !/tal\('fullasttimmar'\)/.test(js));
   sant(k.html + ' har fältet prisfaktor', html.indexOf('id="prisfaktor"') > -1);
   sant(k.html + ' har fältet kapfaktor', html.indexOf('id="kapfaktor"') > -1);

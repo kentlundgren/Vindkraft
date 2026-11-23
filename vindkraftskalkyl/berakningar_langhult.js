@@ -108,7 +108,7 @@ function lasIndata() {
     arrendekrmw:      tal('arrendekrmw'),
 
     // Kommun, bygd och skatt
-    ...lasKommunIndata(),                          // fskatt1, fskattaar, fskattotal, bygdemedel, kommunstod (kalkylkarna.js)
+    ...lasKommunIndata(),                          // fskatt1, fskattaar, fskatt2, bygdemedel, kommunstod (kalkylkarna.js)
     verkgislaved:     Math.max(0, Math.round(tal('verkgislaved'))),
     co2faktor:        tal('co2faktor'),
     co2varde:         tal('co2varde'),
@@ -378,7 +378,7 @@ function ritaTabell1(res, d) {
 function ritaTabell2(res, d) {
   // Tabellen och sammanfattningen delas med övriga kalkyler (kalkylkarna.js).
   ritaNarboendeZonTabell('t2-kropp', res.nar, d.verkshojd);
-  skrivNarboendeSummering('t2', res.nar);
+  skrivNarboendeSummering('t2', res.nar, d.antalverk);
 }
 
 function skrivUt(res, d) {

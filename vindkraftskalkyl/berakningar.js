@@ -42,8 +42,9 @@
    UPPDATERING 2026-11-22 (senare igen): rullgardinen Kalkyler (korsreferens till Långhult). Version 1.14.
    UPPDATERING 2026-11-22 (senare igen): finansmatematik, formatering och nätkopplingen flyttade till den gemensamma kärnan kalkylkarna.js (delas med Långhult). Resultaten är oförändrade. Version 1.15.
    UPPDATERING 2026-11-23: närboendeersättning enligt lagen (zoner, SFS 2026:1113) via kalkylkarna.js, prisfaktor (realiserat pris = spotpris × prisfaktor, förvalt 1) och visning av fullasttimmar. Version 1.16.
-   UPPDATERING 2026-11-23 (senare): fastighetsskatt, bygdemedel och kommunstöd via kalkylkarna.js (kommunPoster). Kommunstödet är statligt och dras inte från projektets resultat. Den gamla schablonposten Kommunal ersättning är borttagen. Version 1.17. */
-const VERSION = '1.17';
+   UPPDATERING 2026-11-23 (senare): fastighetsskatt, bygdemedel och kommunstöd via kalkylkarna.js (kommunPoster). Kommunstödet är statligt och dras inte från projektets resultat. Den gamla schablonposten Kommunal ersättning är borttagen. Version 1.17.
+   UPPDATERING 2026-11-23 (senare igen): fastighetsskatt med fskatt2, förvalet en bostad per zon, taknivå för närboende och överskott före och efter lokala poster. Version 1.18. */
+const VERSION = '1.18';
 const VERSIONSDATUM = '2026-11-22';
 
 /* ============================================================================
@@ -336,6 +337,7 @@ function skrivUt(res, d) {
   /* ---- Nyckeltalsrad (alltid synlig) ---- */
   satt('nt-lcoe', fmt(res.lcoe, 2, ' kr/kWh'));
   satt('nt-overskott', fmt(res.overskott, 0, ' kr/år'));
+  satt('nt-overskottnetto', fmt(res.overskottNetto, 0, ' kr/år'));
   satt('nt-payback', res.paybackInvest === null ? '> livslängd' : fmt(res.paybackInvest, 1, ' år'));
   satt('nt-npv', fmt(res.npvInvest, 0, ' kr'));
   satt('nt-irr', Number.isFinite(res.irrInvest) ? fmt(res.irrInvest * 100, 1, ' %') : 'ej def.');
@@ -386,7 +388,7 @@ function skrivUt(res, d) {
 
   /* ---- Närboende (tabell och summering delas med övriga kalkyler, kalkylkarna.js) ---- */
   ritaNarboendeZonTabell('nar-zon-kropp', res.nar, d.verkshojd);
-  skrivNarboendeSummering('nar', res.nar);
+  skrivNarboendeSummering('nar', res.nar, d.antalverk);
   satt('nar-total', fmt(res.narboendeTotalAr1, 0, ' kr/år'));
 
   // Rimlighetskontroll: högsta ersättning per bostad (zon 1, efter tak).
@@ -514,7 +516,8 @@ const JAMFOR_NYCKELTAL = [
   { etikett: 'Investeringsutgift (kr)',    hamta: r => r.investering,       dec: 0, suffix: '' },
   { etikett: 'Årlig kapitalkostnad (kr)',  hamta: r => r.kapitalkostnad,    dec: 0, suffix: '' },
   { etikett: 'Kostnad per kWh (kr)',       hamta: r => r.kostnadPerkWh,     dec: 3, suffix: '' },
-  { etikett: 'Överskott/år (kr)',          hamta: r => r.overskott,         dec: 0, suffix: '' },
+  { etikett: 'Överskott/år före lokala poster (kr)', hamta: r => r.overskott,   dec: 0, suffix: '' },
+  { etikett: 'Överskott/år efter lokala poster (kr)', hamta: r => r.overskottNetto, dec: 0, suffix: '' },
   { etikett: 'LCOE (kr/kWh)',              hamta: r => r.lcoe,              dec: 3, suffix: '' },
   { etikett: 'NPV (kr)',                   hamta: r => r.npvInvest,         dec: 0, suffix: '' },
   { etikett: 'IRR (%)',                    hamta: r => r.irrInvest * 100,   dec: 1, suffix: '' },
@@ -615,6 +618,26 @@ function omrakna() {
 /**
  * Kopplar händelselyssnare till alla indatafält (klassen "indata").
  */
+/* Knappen "Räkna schablon" fyller i fastighetsskatten ur verkets effekt, elområde och fullasttimmar (kalkylkarna.js, fastighetsskattSchablon). */
+function kopplaFskattSchablon() {
+  const knapp = document.getElementById('fskatt-schablon-knapp');
+  if (!knapp) return;
+  knapp.addEventListener('click', () => {
+    const d = lasIndata();
+    const sch = fastighetsskattSchablon(d.effekt * 1000, d.elomrade || 'SE3', d.kapfaktor * 8760);
+    ['fskatt1', 'fskatt2'].forEach(id => {
+      const e = document.getElementById(id);
+      e.value = Math.round(id === 'fskatt1' ? sch.fskatt1 : sch.fskatt2);
+      e.dispatchEvent(new Event('input', { bubbles: true }));
+      e.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    const info = document.getElementById('fskatt-schablon-info');
+    if (info) info.textContent = 'Schablon för ' + fmt(d.effekt, 1) + ' MW per verk i ' + (d.elomrade || 'SE3') + ' med ' + fmt(d.kapfaktor * 8760, 0) +
+      ' fullasttimmar: taxeringsvärde ' + fmt(sch.taxeringsvarde / 1e6, 1) + ' Mkr (elprisfaktor ' + fmt(sch.elprisfaktor, 3) + ', fullasttidsfaktor ' + fmt(sch.fullastfaktor, 2) +
+      '). Fastighetsskatt ' + fmt(sch.fskatt1, 0, ' kr') + ' per verk och år de första åren och ' + fmt(sch.fskatt2, 0, ' kr') + ' därefter.';
+  });
+}
+
 function kopplaLyssnare() {
   const falt = document.querySelectorAll('.indata');
 
@@ -725,6 +748,7 @@ function kopplaTeknikModal() {
    ============================================================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
+  kopplaFskattSchablon();
   kopplaLyssnare();     // reaktiva lyssnare på indatafälten
   kopplaFlikar();       // flikväxling
   kopplaTeknikModal();  // teknik-knapp + modal med originalprompten

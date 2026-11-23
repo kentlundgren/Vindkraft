@@ -53,7 +53,7 @@
       Ändra ett gult fält så räknas allt om.
     </p>
     <p class="ingress"><strong>Vad som saknas:</strong> effekt per verk (3,3 MW är en muntlig uppgift, inte ur domen), antal bostäder per avståndszon
-      (närboendeersättningen blir 0 tills du fyller i dem, och lagen gäller troligen inte så små verk), fastighetsskatt och bygdemedel (står på 0 med varning),
+      (närboendeersättningen visas med en bostad per zon som exempel, och lagen gäller troligen inte så små verk), bygdemedel (står på 0 med varning, och fastighetsskatten är en schablon),
       anslutningskostnad och nya systemkrav (se gruppen Nät och systemkrav), samt kostnader och intäkter som projektet självt inte har redovisat.</p>
   </header>
 
@@ -411,12 +411,21 @@
       <fieldset class="indata-grupp">
         <legend>Kommun &amp; samhälle</legend>
 
-        <p class="hint" style="margin:0 0 .6rem">Fastighetsskatt och bygdemedel är kostnader för projektet. Kommunstödet betalas av staten och dras inte från projektets resultat. Fastighetsskatt och bygdemedel står på 0 tills du fyller i dem, och sidan visar då att de saknas.</p>
+        <p class="hint" style="margin:0 0 .6rem">Fastighetsskatt och bygdemedel är kostnader för projektet. Kommunstödet betalas av staten och dras inte från projektets resultat. Fastighetsskatten är en schablon för tre verk om 3,3 MW i elområde 4 med 2 293 fullasttimmar (se "Schablon för fastighetsskatt: så räknas den", och knappen räknar om den om du ändrar verket). Bygdemedel står på 0 tills du fyller i det, och sidan visar då att det saknas.</p>
+        <details class="nat-detaljer">
+          <summary>Schablon för fastighetsskatt: så räknas den</summary>
+          <p class="hint">Fastighetsskatten är 0,5 % av taxeringsvärdet. Taxeringsvärdet för ett vindkraftverk är riktvärdet 8 600 kr/kW × effekten, varav 73,5 % avser verket (avrundat nedåt till hela miljoner) och 1,5 % marken. Verket justeras med en elprisfaktor per elområde (SE1 −0,160, SE2 −0,192, SE3 +0,190, SE4 +0,348) och en fullasttidsfaktor (ingen justering mellan 2 400 och 2 800 timmar, +0,35 vid 3 601–3 800 timmar, −0,04 vid 2 200–2 399 timmar), och marken justeras med elprisfaktorn.
+          Beräkningen ger Kaufmann &amp; Westanders 334 398 kr för 6,6 MW i elområde 3 (s. 17–18). Efter de första åren sjunker skatten, för att taxeringsvärdet skrivs ned med verkets ålder, till cirka 61 % av det första beloppet (kvoten är hämtad ur Kaufmann &amp; Westanders totalsumma över 30 år).
+          Ett verk på 6,6 MW med 3 610 fullasttimmar ger första åren cirka 35 765 kr/MW (SE1), 34 402 (SE2), 50 666 (SE3) och 57 394 kr/MW (SE4).
+          Källor: <a href="https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/underlag/SKV_A_2024_11.pdf" target="_blank" rel="noopener">Skatteverket (2024), SKV A 2024:11</a>, avsnitt 2.1, 2.3.1 och 2.3.3, och <a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=18" target="_blank" rel="noopener">Kaufmann &amp; Westander (2026), bilaga 1</a>.</p>
+        </details>
+        <button type="button" id="fskatt-schablon-knapp" class="nat-kopiera">Räkna schablon för fastighetsskatt</button>
+        <p class="hint" id="fskatt-schablon-info" aria-live="polite">Fyller i fälten nedan ur verkets effekt, elområde och fullasttimmar (kapacitetsfaktor × 8 760 h). Ändra gärna beloppen efteråt.</p>
 
         <label>Fastighetsskatt per verk, första åren (kr/år)
           <abbr class="fk" tabindex="0" data-f="Fastighetsskatt: 0,5 % av taxeringsvärdet. Beloppet beror på verkets storlek och elområde. För ett nytt verk på 6,6 MW i elområde 3 blir det 334 398 kr per år enligt räkneexemplet i Kaufmann &amp; Westander (2026, s. 17–18).">?</abbr>
-          <input type="number" step="100" id="fskatt1" class="indata" value="0">
-          <span class="badge antagande">uppgift saknas</span>
+          <input type="number" step="100" id="fskatt1" class="indata" value="132277">
+          <span class="badge antagande">schablon, elområde 4</span>
         </label>
 
         <label>Antal år med full fastighetsskatt
@@ -425,10 +434,10 @@
           <span class="hint">Kaufmann &amp; Westander (2026, s. 4, 9) räknar med de första fyra åren.</span>
         </label>
 
-        <label>Fastighetsskatt per verk, totalt över livslängden (kr)
-          <abbr class="fk" tabindex="0" data-f="Skatten sjunker över tid eftersom taxeringsvärdet skrivs ned med verkets ålder. Här jämnas åren efter de första ut till ett lika stort belopp per år, så att summan över livslängden blir det du anger. För Långhult (6,6 MW) är det cirka 6,64 Mkr per verk över 30 år (Kaufmann &amp; Westander, 2026, s. 18).">?</abbr>
-          <input type="number" step="1000" id="fskattotal" class="indata" value="0">
-          <span class="badge antagande">uppgift saknas</span>
+        <label>Fastighetsskatt per verk, åren därefter (kr/år)
+          <abbr class="fk" tabindex="0" data-f="Skatten sjunker över tid eftersom taxeringsvärdet skrivs ned med verkets ålder. Kaufmann &amp; Westander (2026, s. 18) ger för ett verk på 6,6 MW i elområde 3 334 398 kr per år de första fyra åren och i genomsnitt cirka 204 049 kr per år därefter, alltså cirka 61 % av det första beloppet.">?</abbr>
+          <input type="number" step="1000" id="fskatt2" class="indata" value="80715">
+          <span class="badge antagande">schablon, elområde 4</span>
         </label>
 
         <label>Bygdemedel, hela parken (kr/år)
@@ -501,26 +510,26 @@
       <!-- ---- Grupp: Närboende (NU20 / prop. 2025/26:239) ---- -->
       <fieldset class="indata-grupp">
         <legend><span class="nb-info" tabindex="0">Närboende</span> (vindkraftsersättning, SFS 2026:1113)</legend>
-        <p class="hint" style="margin:0 0 .6rem"><strong>Lagen gäller troligen inte Önnerup.</strong> Intäktsdelningslagen (SFS 2026:1113, 2 §) gäller anläggningar med tillstånd enligt 9 eller 11 kap. miljöbalken. Tillstånd krävs för minst två verk över 150 m eller minst sju verk över 120 m, och mindre anläggningar är anmälningspliktiga och omfattas inte (<a href="#ref-lundgren">Lundgren, 2026</a>, som beskriver Önnerup som ett gränsfall). Zonerna visar därför vad lagens modell hade gett om bolaget betalade ersättning frivilligt. <strong>Uppgiften saknas:</strong> hur många bostäder som ligger inom fem, sex, sju, åtta och nio verkshöjder (750–1 350 m från ett verk) finns inte i domen. Fälten står på 0, så ersättningen blir 0 tills du fyller i antalet. Zonerna står i <a href="#Tabell2">Tabell 2</a>.</p>
+        <p class="hint" style="margin:0 0 .6rem"><strong>Lagen gäller troligen inte Önnerup.</strong> Intäktsdelningslagen (SFS 2026:1113, 2 §) gäller anläggningar med tillstånd enligt 9 eller 11 kap. miljöbalken. Tillstånd krävs för minst två verk över 150 m eller minst sju verk över 120 m, och mindre anläggningar är anmälningspliktiga och omfattas inte (<a href="#ref-lundgren">Lundgren, 2026</a>, som beskriver Önnerup som ett gränsfall). Zonerna visar därför vad lagens modell hade gett om bolaget betalade ersättning frivilligt. <strong>Uppgiften saknas:</strong> hur många bostäder som ligger inom fem, sex, sju, åtta och nio verkshöjder (750–1 350 m från ett verk) finns inte i domen. Förvalet är en bostad i varje zon, ett exempel som visar vad en fastighetsägare får i varje zon, och inte en uppgift om Önnerup. Zonerna står i <a href="#Tabell2">Tabell 2</a>.</p>
 
         <label>Bostäder i zon 1 (inom 5 verkshöjder)
-          <input type="number" step="1" id="bost1" class="indata" value="0">
+          <input type="number" step="1" id="bost1" class="indata" value="1">
           <span class="badge antagande">antagande</span>
         </label>
         <label>Bostäder i zon 2 (5–6 verkshöjder)
-          <input type="number" step="1" id="bost2" class="indata" value="0">
+          <input type="number" step="1" id="bost2" class="indata" value="1">
           <span class="badge antagande">antagande</span>
         </label>
         <label>Bostäder i zon 3 (6–7 verkshöjder)
-          <input type="number" step="1" id="bost3" class="indata" value="0">
+          <input type="number" step="1" id="bost3" class="indata" value="1">
           <span class="badge antagande">antagande</span>
         </label>
         <label>Bostäder i zon 4 (7–8 verkshöjder)
-          <input type="number" step="1" id="bost4" class="indata" value="0">
+          <input type="number" step="1" id="bost4" class="indata" value="1">
           <span class="badge antagande">antagande</span>
         </label>
         <label>Bostäder i zon 5 (8–9 verkshöjder)
-          <input type="number" step="1" id="bost5" class="indata" value="0">
+          <input type="number" step="1" id="bost5" class="indata" value="1">
           <span class="badge antagande">antagande</span>
         </label>
 
@@ -548,7 +557,8 @@
     <h2 id="nyckeltal-rubrik" class="visuellt-dold">Sammanfattande nyckeltal</h2>
     <div class="nyckeltal-kort">
       <div class="kort"><span class="kort-etikett">LCOE</span><span class="kort-varde" id="nt-lcoe">–</span></div>
-      <div class="kort"><span class="kort-etikett">Överskott/år</span><span class="kort-varde" id="nt-overskott">–</span></div>
+      <div class="kort"><span class="kort-etikett">Överskott/år före lokala poster</span><span class="kort-varde" id="nt-overskott">–</span></div>
+      <div class="kort"><span class="kort-etikett">Överskott/år efter lokala poster</span><span class="kort-varde" id="nt-overskottnetto">–</span></div>
       <div class="kort"><span class="kort-etikett">Payback</span><span class="kort-varde" id="nt-payback">–</span></div>
       <div class="kort"><span class="kort-etikett">NPV</span><span class="kort-varde" id="nt-npv">–</span></div>
       <div class="kort"><span class="kort-etikett">IRR</span><span class="kort-varde" id="nt-irr">–</span></div>
@@ -611,8 +621,8 @@
         <div><dt>Årlig kapitalkostnad (annuitet)</dt><dd id="inv-kapitalkostnad">–</dd></div>
         <div><dt>Årlig total kostnad</dt><dd id="inv-totalkostnad">–</dd></div>
         <div><dt>Kostnad per kWh</dt><dd id="inv-kostnadperkwh">–</dd></div>
-        <div><dt>Överskott per år (bas)</dt><dd id="inv-overskott">–</dd></div>
-        <div><dt>Överskott per år efter lokala ersättningar</dt><dd id="inv-overskottnetto">–</dd></div>
+        <div><dt>Överskott per år före lokala poster (intäkt − drift − kapital)</dt><dd id="inv-overskott">–</dd></div>
+        <div><dt>Överskott per år efter arrende, fastighetsskatt, bygdemedel och närboende (NPV och IRR räknas efter dessa)</dt><dd id="inv-overskottnetto">–</dd></div>
         <div><dt>Nätkostnad per kWh över livslängden</dt><dd id="inv-nat-livs">–</dd></div>
         <div><dt>Nätkostnadens andel av LCOE</dt><dd id="inv-nat-andel">–</dd></div>
         <div class="framhavd"><dt>LCOE</dt><dd id="inv-lcoe">–</dd></div>
@@ -707,6 +717,7 @@
         <div><dt>Summa före tak</dt><dd id="nar-fore">–</dd></div>
         <div><dt>Tak (2 % av parkens intäkt)</dt><dd id="nar-tak">–</dd></div>
         <div><dt>Nås taket?</dt><dd id="nar-nas" style="white-space:normal;text-align:right">–</dd></div>
+        <div><dt>Antal bostäder när taket nås (samma fördelning)</dt><dd id="nar-takbost" style="white-space:normal;text-align:right">–</dd></div>
         <div><dt>Nedsättning</dt><dd id="nar-skal">–</dd></div>
         <div class="framhavd"><dt>Genomsnitt per bostad (<span class="nb-info" tabindex="0">ersättning till en enskild närboende</span>)</dt><dd id="nar-snitt">–</dd></div>
         <div class="framhavd"><dt>Total årlig ersättning (belastar verksamhetsutövaren)</dt><dd id="nar-total">–</dd></div>
@@ -859,7 +870,7 @@
         <p>Allt räknas i webbläsaren. Ingen data skickas någonstans. Diagrammen ritas med Chart.js via CDN.</p>
         <h3>Metoden</h3>
         <p>Förvalen bygger på Mark- och miljööverdomstolens dom P 14634-20: tre verk, totalhöjd 150 m, årsproduktion 22 704 MWh efter 10 % säkerhetsmarginal. Kapacitetsfaktorn 0,2618 är härledd ur den produktionen och en antagen effekt på 3,3 MW per verk. Västanby AB anger idag en annan produktion, och orsaken är inte verifierad.</p>
-        <p>Närboendeersättningen räknas enligt SFS 2026:1113, 11–14 §§ (fem zoner, de två närmaste verken, tak 2 %), men lagen gäller troligen inte så små verk. Antalet bostäder per zon saknas och står på 0. Fastighetsskatt och bygdemedel saknar belopp och står på 0 med varning. Nätkostnader finns med men är avstängda (läge Ingen). Siffrorna är hämtade ur källorna, inte kvalitetssäkrade, och ska kontrolleras mot källan.</p>
+        <p>Närboendeersättningen räknas enligt SFS 2026:1113, 11–14 §§ (fem zoner, de två närmaste verken, tak 2 %), men lagen gäller troligen inte så små verk. Antalet bostäder per zon saknas, och förvalet är en bostad i varje zon som exempel. Fastighetsskatten är en schablon (Skatteverket SKV A 2024:11 och Kaufmann & Westander, 2026), och bygdemedel saknar belopp och står på 0 med varning. Nätkostnader finns med men är avstängda (läge Ingen). Siffrorna är hämtade ur källorna, inte kvalitetssäkrade, och ska kontrolleras mot källan.</p>
       </div>
     </div>
   </div>
