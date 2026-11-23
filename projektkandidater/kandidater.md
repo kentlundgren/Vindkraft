@@ -2,6 +2,8 @@
 
 Hämtad 2026-11-23 ur [Vindbrukskollen](https://ext-webbgis.lansstyrelsen.se/vbk/) (Länsstyrelserna, i samarbete med Energimyndigheten). Källa: Länsstyrelserna. Data får användas fritt om Länsstyrelsen anges som källa ([villkor](https://www.lansstyrelsen.se/nationellt-innehall/om-oss/vara-tjanster/oppna-data.html)).
 
+**Tillbaka till kalkylerna:** riktvärdet för kapacitetsfaktorn nedan visas under fältet Kapacitetsfaktor i vindkraftskalkylerna, som räknar på hur fem parter påverkas av en vindkraftspark (investeraren, markägaren, kommunen och samhället, andelsägaren och den närboende): [huvudkalkylen](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html), [fallet Långhult](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl_langhult.html) och [fallet Önnerup](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl_Onnerup.html).
+
 ## Urval
 
 - Aktuella områden: status handläggs, beviljat eller överklagat (238 områden i Vindbrukskollen), på land.

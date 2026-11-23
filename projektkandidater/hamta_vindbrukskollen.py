@@ -248,6 +248,10 @@ def skriv_md(kandidater, referens, ofullstandiga, antal_aktuella, sokvag, args, 
     rader.append('# Kandidater för nya vindkraftskalkyler, ur Vindbrukskollen\n')
     rader.append('Hämtad %s ur [Vindbrukskollen](https://ext-webbgis.lansstyrelsen.se/vbk/) (Länsstyrelserna, i samarbete med Energimyndigheten). ' % hamtad[:10] +
                  'Källa: Länsstyrelserna. Data får användas fritt om Länsstyrelsen anges som källa ([villkor](https://www.lansstyrelsen.se/nationellt-innehall/om-oss/vara-tjanster/oppna-data.html)).\n')
+    rader.append('**Tillbaka till kalkylerna:** riktvärdet för kapacitetsfaktorn nedan visas under fältet Kapacitetsfaktor i vindkraftskalkylerna, som räknar på hur fem parter påverkas av en vindkraftspark (investeraren, markägaren, kommunen och samhället, andelsägaren och den närboende): ' +
+                 '[huvudkalkylen](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl.html), ' +
+                 '[fallet Långhult](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl_langhult.html) och ' +
+                 '[fallet Önnerup](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/vindkraftskalkyl_Onnerup.html).\n')
     rader.append('## Urval\n')
     rader.append('- Aktuella områden: status handläggs, beviljat eller överklagat (%d områden i Vindbrukskollen), på land.' % antal_aktuella)
     rader.append('- Minst %d verk och minst %d MW, och effekt och beräknad årsproduktion angivna för **alla** verk i området.' % (args.min_verk, args.min_mw))
