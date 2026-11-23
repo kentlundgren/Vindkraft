@@ -427,6 +427,19 @@ h2 { font-size: 1.25rem; color: var(--farg-primar); border-bottom: 2px solid var
   border-radius: 4px; padding: .6rem .8rem; font-size: .9rem; margin: .8rem 0;
 }
 
+/* Karta 1: två bilder man växlar mellan med flikar */
+.karta { margin: .4rem 0 .8rem; }
+.karta-flikar { display: flex; gap: .3rem; margin-bottom: .5rem; }
+.karta-flikar button {
+  font: inherit; padding: .35rem .9rem; cursor: pointer;
+  background: var(--farg-panel); color: var(--farg-primar);
+  border: 1px solid var(--farg-ram); border-radius: 6px;
+}
+.karta-flikar button[aria-selected="true"] { background: var(--farg-primar); color: #fff; border-color: var(--farg-primar); }
+.karta-flikar button:focus-visible { outline: 3px solid var(--farg-primar-ljus); outline-offset: 2px; }
+.karta img { display: block; max-width: 100%; height: auto; border: 1px solid var(--farg-ram); border-radius: 6px; }
+.karta figcaption { font-size: .85rem; margin-top: .4rem; color: #3b4846; }
+
 /* Ankare: ett litet # vid rubriker, synligt vid hovring och fokus */
 .ankare {
   margin-left: .4rem; font-size: .8em; text-decoration: none;

@@ -8,6 +8,8 @@ Den här mappen samlar underlag och verktyg som hör till fallet vindpark Långh
 
 | Fil | Ansvar |
 | --- | --- |
+| [`Langhult_karta_Vindbrukskollen_.jpg`](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/langhult/Langhult_karta_Vindbrukskollen_.jpg) | Översiktskarta (skärmdump ur Vindbrukskollen, nedskalad), visas som fliken Översikt i Karta 1 på Långhult-sidan. |
+| [`Langhult_karta_Vindbrukskollen_narbild_.jpg`](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/langhult/Langhult_karta_Vindbrukskollen_narbild_.jpg) | Närbild av de två områdena (skärmdump ur Vindbrukskollen, nedskalad), fliken Närbild i Karta 1. |
 | [`bostader_ur_ljudutredning.py`](https://github.com/kentlundgren/Vindkraft/blob/main/vindkraftskalkyl/langhult/bostader_ur_ljudutredning.py) | Räknar bostäder per ersättningszon (SFS 2026:1113, 12 §) ur koordinaterna i Fred. Olsens ljudutredning. Ger alternativen 66 bostäder (alla 20 verk) och 29 (bara Lunnarsbo) i gruppen Närboende i kalkylen. |
 
 ## Köra beräkningen av bostäder

@@ -31,6 +31,7 @@
 'use strict';
 
 /* Versionsraden längst ned på sidan. Höj VERSION och uppdatera VERSIONSDATUM i samma ändring som innehållet ändras.
+   UPPDATERING 2026-11-23 (senare igen 12): nytt avsnitt "Var ligger parken?" (#Lage) med Karta 1, två kartor som man växlar mellan (översikt och närbild, skärmdumpar ur Vindbrukskollen). Version 1.13.
    UPPDATERING 2026-11-23 (senare igen 11): startsidan index.html finns och brödsmulorna börjar med "Vindkraftens ekonomi: start". Version 1.12.
    UPPDATERING 2026-11-23 (senare igen 10): källpost för sammanställningen och hänvisning på V. Version 1.11.
    UPPDATERING 2026-11-23 (senare igen 9): blänkare om riktvärdet för kapacitetsfaktorn. Version 1.10.
@@ -44,7 +45,7 @@
    UPPDATERING 2026-11-23 (senare igen): växel för parkens storlek (20 verk eller bara Lunnarsbo, 12 verk). Version 1.2.
    UPPDATERING 2026-11-23 (senare): nya nätfall I och J (Vattenfall 130 kV) i väljaren. Version 1.1.
    UPPDATERING 2026-11-23: versionsrad i sidfoten. Version 1.0 (Långhult har egen versionsnumrering, skild från huvudkalkylens). */
-const VERSION = '1.12';
+const VERSION = '1.13';
 const VERSIONSDATUM = '2026-11-23';
 
 /* ============================================================================
@@ -726,6 +727,28 @@ function kopplaBostadsalternativ() {
 }
 
 /* Växeln för parkens storlek: knapparna sätter antal verk (20 eller 12) och räknar om. Ett annat antal, skrivet för hand, markerar ingen knapp. */
+/* Karta 1: flikarna Översikt och Närbild. Klick eller pil vänster/höger byter bild, och bara en bild visas åt gången. */
+function kopplaKartflikar() {
+  const flikar = Array.from(document.querySelectorAll('.karta-flikar [role="tab"]'));
+  if (flikar.length === 0) return;
+  const valj = (flik, fokus) => {
+    flikar.forEach(f => {
+      const aktiv = f === flik;
+      f.setAttribute('aria-selected', aktiv ? 'true' : 'false');
+      f.tabIndex = aktiv ? 0 : -1;
+      document.getElementById(f.getAttribute('aria-controls')).hidden = !aktiv;
+    });
+    if (fokus) flik.focus();
+  };
+  flikar.forEach((f, i) => {
+    f.addEventListener('click', () => valj(f, false));
+    f.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); valj(flikar[(i + 1) % flikar.length], true); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); valj(flikar[(i + flikar.length - 1) % flikar.length], true); }
+    });
+  });
+}
+
 function kopplaParkvariant() {
   const knappar = document.querySelectorAll('#park-variant .park-knapp');
   const inp = document.getElementById('antalverk');
@@ -824,6 +847,7 @@ document.addEventListener('DOMContentLoaded', () => {
   kopplaAnkareTillFlikar();
   kopplaTeknikModal();
   kopplaForklaringar();
+  kopplaKartflikar();
   kopplaParkvariant();
   kopplaBostadsalternativ();
   visaVersionsrad(VERSION, VERSIONSDATUM);

@@ -431,6 +431,17 @@ fs.readdirSync('.').filter(f => /^(vindkraftskalkyl.*|index)\.html$/.test(f)).fo
   sant('mapparna langhult och onnerup har README', fs.existsSync('langhult/README.md') && fs.existsSync('onnerup/README.md'));
 }
 
+/* ---------- Långhult: Karta 1 (Var ligger parken?) ---------- */
+{
+  const lh = fs.readFileSync('vindkraftskalkyl_langhult.html', 'utf8');
+  sant('Långhult har avsnittet Var ligger parken? (#Lage) och Karta 1 (#Karta1) med ankare', /<h2 id="Lage">/.test(lh) && /<h3 id="Karta1">Karta 1\./.test(lh) && /href="#Karta1"/.test(lh));
+  const bilder = [...lh.matchAll(/<img src="(langhult\/[^"]+)"[^>]*alt="([^"]+)"/g)];
+  sant('Karta 1 har två bilder med alt-text', bilder.length === 2 && bilder.every(m => m[2].length > 40));
+  bilder.forEach(m => sant('kartbilden ' + m[1] + ' finns och är under 200 kB', fs.existsSync(m[1]) && fs.statSync(m[1]).size < 200 * 1024));
+  sant('Karta 1 har två flikar och två paneler, och källraden länkar till Länsstyrelserna (2026)', (lh.match(/role="tab" id="karta-flik-/g) || []).length === 2 && (lh.match(/role="tabpanel" id="karta-panel-/g) || []).length === 2 && /Skärmdumpar ur Vindbrukskollen \(<a href="#ref-lst-vbk">/.test(lh));
+  sant('Lage står före Lasguide i Långhult-sidan', lh.indexOf('id="Lage"') > -1 && lh.indexOf('id="Lage"') < lh.indexOf('id="Lasguide"'));
+}
+
 /* ---------- Delningsbilder för kalkylerna ---------- */
 [['vindkraftskalkyl_langhult.html', 'og-bild-langhult.jpg'], ['vindkraftskalkyl_Onnerup.html', 'og-bild-onnerup.jpg'], ['index.html', 'og-bild-start.jpg']].forEach(([sida, bild]) => {
   const html = fs.readFileSync(sida, 'utf8');
