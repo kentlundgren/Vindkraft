@@ -4,11 +4,12 @@
    Gör två saker: fyller versionsraden och öppnar/stänger teknikmodalen.
    Sidan räknar ingenting och hämtar inga siffror: den länkar till kalkylerna.
 
+   UPPDATERING 2026-11-23 (senare): sidan fick egen delningsbild. Version 1.1.
    UPPDATERING 2026-11-23: sidan skapades. Version 1.0.
    ============================================================================ */
 'use strict';
 
-const VERSION = '1.0';
+const VERSION = '1.1';
 const VERSIONSDATUM = '2026-11-23';
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -432,8 +432,13 @@ fs.readdirSync('.').filter(f => /^(vindkraftskalkyl.*|index)\.html$/.test(f)).fo
 }
 
 /* ---------- Delningsbilder för kalkylerna ---------- */
-[['vindkraftskalkyl_langhult.html', 'og-bild-langhult.jpg'], ['vindkraftskalkyl_Onnerup.html', 'og-bild-onnerup.jpg']].forEach(([sida, bild]) => {
+[['vindkraftskalkyl_langhult.html', 'og-bild-langhult.jpg'], ['vindkraftskalkyl_Onnerup.html', 'og-bild-onnerup.jpg'], ['index.html', 'og-bild-start.jpg']].forEach(([sida, bild]) => {
   const html = fs.readFileSync(sida, 'utf8');
+  if (fs.existsSync(bild)) {
+    const b = fs.readFileSync(bild); let i = 2, bredd = 0, hojd = 0;   // JPEG: leta upp SOF-markören
+    while (i < b.length) { if (b[i] !== 0xFF) { i++; continue; } const m = b[i + 1]; if (m >= 0xC0 && m <= 0xC3) { hojd = b.readUInt16BE(i + 5); bredd = b.readUInt16BE(i + 7); break; } i += 2 + b.readUInt16BE(i + 2); }
+    sant(bild + ' är 1200×630 px', bredd === 1200 && hojd === 630);
+  }
   sant(sida + ' har og:image med absolut adress till ' + bild, html.indexOf('<meta property="og:image" content="https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/' + bild + '">') > -1);
   sant(sida + ': bilden ' + bild + ' finns och är under 300 kB', fs.existsSync(bild) && fs.statSync(bild).size < 300 * 1024);
   sant(sida + ' har og:title, og:description och twitter:card', /og:title/.test(html) && /og:description/.test(html) && /summary_large_image/.test(html));
