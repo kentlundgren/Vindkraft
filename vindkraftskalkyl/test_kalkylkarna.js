@@ -306,6 +306,10 @@ KALKYLER.forEach(k => {
   sant('Långhult: ljudutredningens alternativ är 66 (alla 20 verk) och 29 (bara Lunnarsbo) bostäder', summa(alt.ljud20) === 66 && summa(alt.ljudlun) === 29);
   sant('Långhult: knapparna för bostäder och för parkens storlek har egna behållare', /id="bost-alt"/.test(lhHtml) && /id="park-variant"/.test(lhHtml) && /#park-variant \.park-knapp/.test(lh));
   sant('Långhult: ljudutredningen finns i källistan', /id="ref-ljud"/.test(lhHtml));
+  // Länkar till filer i det här repot ska peka på filer som finns (så att en flytt inte lämnar en trasig länk).
+  const blob = /github\.com\/kentlundgren\/Vindkraft\/blob\/main\/vindkraftskalkyl\/([^"\s)]+)/g; let bm;
+  while ((bm = blob.exec(lhHtml))) sant('Långhult: länken till ' + bm[1] + ' pekar på en fil som finns', fs.existsSync(bm[1]));
+  sant('mapparna langhult och onnerup har README', fs.existsSync('langhult/README.md') && fs.existsSync('onnerup/README.md'));
 }
 
 /* ---------- Delningsbilder för kalkylerna ---------- */
