@@ -253,6 +253,10 @@ KALKYLER.forEach(k => {
   sant(k.js + ' visar det realiserade priset', /visaRealiseratPris\(/.test(js));
   sant(k.html + ' har texten för realiserat pris', html.indexOf('id="realpris-visning"') > -1);
   sant(k.js + ' visar totala effekten', /visaTotalEffekt\(/.test(js));
+  // Versionsrad längst ned i varje kalkyl: nummer och datum, båda höjs när något ändras.
+  sant(k.js + ' har VERSION (X.Y) och VERSIONSDATUM (ÅÅÅÅ-MM-DD)', /^const VERSION = '\d+\.\d+';/m.test(js) && /^const VERSIONSDATUM = '\d{4}-\d{2}-\d{2}';/m.test(js));
+  sant(k.js + ' visar versionsraden', /visaVersionsrad\(VERSION, VERSIONSDATUM\)/.test(js));
+  sant(k.html + ' har versionsrad i sidfoten', html.indexOf('id="versionsrad-nr"') > -1 && html.indexOf('id="versionsrad-datum"') > -1 && html.indexOf('id="versionsrad-nr"') > html.indexOf('<footer'));
   sant(k.html + ' har raden Total effekt', html.indexOf('id="total-effekt-visning"') > -1);
   // Fälten i första gruppen står i samma ordning i alla kalkyler (INDATAORDNING_ANLAGGNING); ett fält som saknas hoppas över.
   const grupp = html.slice(html.indexOf('<legend>Anläggning &amp; investering</legend>'));

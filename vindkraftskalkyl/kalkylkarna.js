@@ -25,12 +25,12 @@
    webbläsaren och exporteras som module.exports i Node, där test_kalkylkarna.js
    kör dem.
 
-   Version 1.9 (2026-11-23): totala effekten visas under Effekt per verk (visaTotalEffekt) och fälten i första gruppen har fast ordning (INDATAORDNING_ANLAGGNING). Version 1.8: realiserat pris räknas ut och uppdateras (realpristext). Version 1.7: uträkningsmarkering och förklaringar i sammanställningen, och arrendeförklaring. Version 1.6: raderna JAMFOR_OVERSKOTT för sammanställningen. Version 1.5: tabell över extra bostäder under taket, förklaring per zon och länkar till dolda flikar. Version 1.4: fastighetsskatt som första åren + därefter (fskatt2) och uppgift om när närboendetaket nås. Version 1.3: kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
+   Version 1.10 (2026-11-23): visaVersionsrad för versionsraden i sidfoten. Version 1.9: totala effekten visas under Effekt per verk (visaTotalEffekt) och fälten i första gruppen har fast ordning (INDATAORDNING_ANLAGGNING). Version 1.8: realiserat pris räknas ut och uppdateras (realpristext). Version 1.7: uträkningsmarkering och förklaringar i sammanställningen, och arrendeförklaring. Version 1.6: raderna JAMFOR_OVERSKOTT för sammanställningen. Version 1.5: tabell över extra bostäder under taket, förklaring per zon och länkar till dolda flikar. Version 1.4: fastighetsskatt som första åren + därefter (fskatt2) och uppgift om när närboendetaket nås. Version 1.3: kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
    berakningar.js och berakningar_langhult.js.
    ============================================================================ */
 'use strict';
 
-const KARNA_VERSION = '1.9';
+const KARNA_VERSION = '1.10';
 
 /**
  * Indatagrupperna i alla vindkraftskalkyler: rubrikerna och deras ordning är fastställda här, så att kalkylerna ser
@@ -109,6 +109,18 @@ function realpristext(spot, prisfaktor) {
 function visaRealiseratPris(spot, prisfaktor) {
   const e = document.getElementById('realpris-visning');
   if (e) e.textContent = realpristext(spot, prisfaktor);
+}
+
+/**
+ * Versionsraden längst ned på sidan ("Version 1.23 · 2026-11-23 · Kent Lundgren"). Varje kalkyl har konstanterna VERSION och
+ * VERSIONSDATUM överst i sin egen fil och anropar visaVersionsrad(VERSION, VERSIONSDATUM) vid sidstart. Sidan har elementen
+ * versionsrad-nr och versionsrad-datum i sidfoten. Båda höjs i samma ändring som innehållet (test_kalkylkarna.js kontrollerar att de finns).
+ */
+function visaVersionsrad(version, datum) {
+  const nr = document.getElementById('versionsrad-nr');
+  const dat = document.getElementById('versionsrad-datum');
+  if (nr) nr.textContent = version;
+  if (dat) dat.textContent = datum;
 }
 
 /**
@@ -805,7 +817,7 @@ function kommunSaknasText(poster) {
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
-    KARNA_VERSION, INDATAGRUPPER, INDATAORDNING_ANLAGGNING, totalEffektText, JAMFOR_OVERSKOTT, arrendeForklaring, realpristext, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode,
+    KARNA_VERSION, INDATAGRUPPER, INDATAORDNING_ANLAGGNING, totalEffektText, visaVersionsrad, JAMFOR_OVERSKOTT, arrendeForklaring, realpristext, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode,
     natPaverkan, natEngangTillaggAv, natSammanfattning,
     lasKommunIndata, fastighetsskattPerVerk, kommunPoster, kommunSaknasText, narboendeTakniva, narboendeExtra, zonHjalpText,
     FSKATT_SCHABLON, fullastJustering, fastighetsskattSchablon,

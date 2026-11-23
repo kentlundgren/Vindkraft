@@ -6,7 +6,7 @@
 **Live (Vercel-app, Functions):** https://vindkraft-ver2.vercel.app
 **Live (Vercel-app, Next.js App Router):** https://vindkraft-ver3.vercel.app
 **Senast uppdaterad:** 2026-11-23
-**Version:** 1.10
+**Version:** 1.11
 
 ---
 
@@ -33,6 +33,7 @@ Kalkylerna i `vindkraftskalkyl/` (huvudkalkylen, Långhult och Önnerup) **delar
 - **Gemensamma benämningar och metoder:** produktion = effekt × 8 760 h × **kapacitetsfaktor** (fullasttimmar är en härledd visning). Realiserat pris = spotpris × **prisfaktor** (0–1, engelska capture rate, EIFO 2026; Kaufmann & Westander (2026) säger viktning). **Närboendeersättning** räknas med zonmetoden (SFS 2026:1113, 11–14 §§) via `NARBOENDE_METOD` i `kalkylkarna.js`. Schablonen finns kvar men är inaktiv. Byte av metod görs på det stället, och metodens fält måste då finnas i formuläret.
 - **Kommunposterna är gemensamma:** fastighetsskatt och bygdemedel är kostnader för projektet, och kommunstödet betalas av staten och dras inte från projektets resultat (`kommunPoster` i `kalkylkarna.js`). Saknar en kalkyl beloppet står posten på 0 och sidan visar en varning, så att den inte glöms bort.
 - **Samma indatagrupper i alla kalkyler:** rubrikerna och ordningen står i `INDATAGRUPPER` i `kalkylkarna.js` (Anläggning & investering, Drift & livscykel, Nät och systemkrav, Markägare, Kommun & samhälle, Andelsägare, Närboende). Projektspecifika fält läggs inom en befintlig grupp, aldrig som en ny grupp med eget namn. Testet kontrollerar varje `vindkraftskalkyl*.html`.
+- **Samma fasta delar i varje kalkyl:** versionsrad längst ned (`Version X.Y · ÅÅÅÅ-MM-DD · Kent Lundgren`, via `visaVersionsrad(VERSION, VERSIONSDATUM)` i `kalkylkarna.js` och konstanterna överst i kalkylens egen fil), totala effekten under Effekt per verk (`visaTotalEffekt`) och fälten i första gruppen i ordningen `INDATAORDNING_ANLAGGNING`. Versionen och datumet höjs i samma ändring som innehållet, och testet kontrollerar att de finns.
 - Kör `node test_kalkylkarna.js` och `node test_natkostnader.js` före leverans. Det första testet fångar om en kalkyl återinför en egen kopia av en kärnfunktion.
 - Vercel-apparna (`vindkraftskalkyl_Vercel*`) har egna kopior och ingår inte än.
 
@@ -120,6 +121,7 @@ den globala filen `AI\Claude\CLAUDE.md` på Kents lokala maskin.
 
 ## Uppdateringslogg
 
+- 2026-11-23 (v1.11): Fasta delar i varje kalkyl: versionsrad, total effekt och fast fältordning.
 - 2026-11-23 (v1.10): Gemensamma benämningar och metoder (kapacitetsfaktor, prisfaktor, närboendezoner) i regeln om räknekärnan.
 - 2026-11-22 (v1.9): Regel om gemensam räknekärna (`kalkylkarna.js`) för alla kalkyler, och rullgardinen Kalkyler.
 - 2026-10-05 (v1.8): Regel om namn och struktur på anteckningsfiler (datum först, samma struktur varje gång). Äldre fil `anteckningar-2026-09-02.md` bytt till `2026-09-02-anteckningar.md`. Mötessammanfattningen 2026-10-05 lades till i `skanes-vindkraftsakademi/`.

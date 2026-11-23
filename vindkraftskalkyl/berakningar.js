@@ -763,10 +763,7 @@ document.addEventListener('DOMContentLoaded', () => {
   kopplaTeknikModal();  // teknik-knapp + modal med originalprompten
 
   // Versionsrad i sidfoten (konstanterna VERSION och VERSIONSDATUM överst i filen).
-  const vNr = document.getElementById('versionsrad-nr');
-  const vDat = document.getElementById('versionsrad-datum');
-  if (vNr) vNr.textContent = VERSION;
-  if (vDat) vDat.textContent = VERSIONSDATUM;
+  visaVersionsrad(VERSION, VERSIONSDATUM);
 
   // Första beräkningen vid sidladdning.
   senasteResultat = omrakna();   // fyller "Senaste"

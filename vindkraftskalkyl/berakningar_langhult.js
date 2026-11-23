@@ -30,6 +30,11 @@
 
 'use strict';
 
+/* Versionsraden längst ned på sidan. Höj VERSION och uppdatera VERSIONSDATUM i samma ändring som innehållet ändras.
+   UPPDATERING 2026-11-23: versionsrad i sidfoten. Version 1.0 (Långhult har egen versionsnumrering, skild från huvudkalkylens). */
+const VERSION = '1.0';
+const VERSIONSDATUM = '2026-11-23';
+
 /* ============================================================================
    DEL 0 – HJÄLPFUNKTIONER
    ============================================================================ */
@@ -755,6 +760,7 @@ document.addEventListener('DOMContentLoaded', () => {
   kopplaAnkareTillFlikar();
   kopplaTeknikModal();
   kopplaForklaringar();
+  visaVersionsrad(VERSION, VERSIONSDATUM);
 
   senasteResultat = omrakna();
   tidigareResultat = null;
