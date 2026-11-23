@@ -6,7 +6,7 @@
 **Live (Vercel-app, Functions):** https://vindkraft-ver2.vercel.app
 **Live (Vercel-app, Next.js App Router):** https://vindkraft-ver3.vercel.app
 **Senast uppdaterad:** 2026-11-23
-**Version:** 1.11
+**Version:** 1.12
 
 ---
 
@@ -34,8 +34,28 @@ Kalkylerna i `vindkraftskalkyl/` (huvudkalkylen, Långhult och Önnerup) **delar
 - **Kommunposterna är gemensamma:** fastighetsskatt och bygdemedel är kostnader för projektet, och kommunstödet betalas av staten och dras inte från projektets resultat (`kommunPoster` i `kalkylkarna.js`). Saknar en kalkyl beloppet står posten på 0 och sidan visar en varning, så att den inte glöms bort.
 - **Samma indatagrupper i alla kalkyler:** rubrikerna och ordningen står i `INDATAGRUPPER` i `kalkylkarna.js` (Anläggning & investering, Drift & livscykel, Nät och systemkrav, Markägare, Kommun & samhälle, Andelsägare, Närboende). Projektspecifika fält läggs inom en befintlig grupp, aldrig som en ny grupp med eget namn. Testet kontrollerar varje `vindkraftskalkyl*.html`.
 - **Samma fasta delar i varje kalkyl:** versionsrad längst ned (`Version X.Y · ÅÅÅÅ-MM-DD · Kent Lundgren`, via `visaVersionsrad(VERSION, VERSIONSDATUM)` i `kalkylkarna.js` och konstanterna överst i kalkylens egen fil), totala effekten under Effekt per verk (`visaTotalEffekt`) och fälten i första gruppen i ordningen `INDATAORDNING_ANLAGGNING`. Versionen och datumet höjs i samma ändring som innehållet, och testet kontrollerar att de finns.
+- **Nätraderna i Tabell 3** (`JAMFOR_NAT` i `kalkylkarna.js`) räknas på valt läge: läget ingen ger 0 i rutor, tabeller och nyckeltal, och det hypotetiska värdet visas bara som märkt "om läget vore bas". Raden "Nätkostnad, löpande" har en kort text direkt och en utförlig förklaring vid hovring (`natLopandeForklaring`), som visar de faktiska talen och att en negativ nätkostnad är en ersättning (kredit) som bara gäller om inmatningen minskar förlusterna.
+- **Typfallet** väljs ur trappan `NAT_TYPFALL.trappa` (över 40 MW är det fall I, Vattenfall PL1). Fall J (PT0, 130 kV i station från stamnät) väljs aldrig automatiskt.
+- **Långhult har två egna val:** växeln för parkens storlek (hela parken, 20 verk och 132 MW, eller bara Lunnarsbo, 12 verk och 79,2 MW) och alternativen för bostäder per zon (`BOSTADSALTERNATIV`, räknade av `langhult/bostader_ur_ljudutredning.py`). Växeln ändrar bara antal verk, inte bostäderna.
 - Kör `node test_kalkylkarna.js` och `node test_natkostnader.js` före leverans. Det första testet fångar om en kalkyl återinför en egen kopia av en kärnfunktion.
 - Vercel-apparna (`vindkraftskalkyl_Vercel*`) har egna kopior och ingår inte än.
+
+---
+
+## Regel – Mappstruktur: sidorna ligger kvar, underlag och verktyg per fall i egen mapp
+
+- **Sidor, skript, stilar och delningsbilder** för kalkylerna ligger i `vindkraftskalkyl/`. Adresserna är delade (blogg, Studier, LinkedIn) och bilderna har absoluta adresser i metataggarna, så en flytt ger trasiga länkar. Flytta dem inte utan omdirigeringssidor på de gamla adresserna.
+- **Underlag, verktyg, datafiler och anteckningar som bara hör till ett fall** ligger i `vindkraftskalkyl/<fall>/`: gemena bokstäver utan å, ä och ö, till exempel `langhult/` och `onnerup/`. Varje fallmapp har en `README.md` (Live-länk överst, `## Repo` sist, filnamn som länkar).
+- **Allmänt underlag** som flera fall använder ligger i `vindkraftskalkyl/underlag/`. Nätkostnadernas delningssida ligger i `vindkraftskalkyl/natkostnader/`.
+- **Flytta filer med `git mv`** så att historiken följer med. Uppdatera därefter länkarna på sidan och README-tabellen. Testet i `test_kalkylkarna.js` kontrollerar att repo-länkarna i Långhult-sidan pekar på filer som finns.
+
+## Regel – Ny kalkyl eller nytt fall: checklista
+
+1. Sidan laddar `kalkylkarna.js` före sin egen fil och följer `INDATAGRUPPER` och `INDATAORDNING_ANLAGGNING`. Den har totala effekten under Effekt per verk, nätraderna `JAMFOR_NAT` i Tabell 3 och versionsraden (`VERSION`, `VERSIONSDATUM`, `visaVersionsrad`).
+2. Sidan läggs i `kalkyler` i `dokument.json`, och `python kalkylmeny.py` körs. Brödsmulorna sätts upp med `brodsmulor.py`.
+3. Delningsbild `og-bild-<fall>.jpg` (1200×630 px, under 300 kB) och taggarna för LinkedIn, X och Facebook.
+4. Mappen `<fall>/` med `README.md` för fallets underlag och verktyg.
+5. `node test_kalkylkarna.js` och `node test_natkostnader.js` ger inga fel, och sidan är provad lokalt.
 
 ---
 
@@ -121,6 +141,7 @@ den globala filen `AI\Claude\CLAUDE.md` på Kents lokala maskin.
 
 ## Uppdateringslogg
 
+- 2026-11-23 (v1.12): Mappstruktur (fallmappar `langhult/` och `onnerup/`, sidorna ligger kvar), checklista för ny kalkyl eller nytt fall, och regler för nätraderna i Tabell 3, typfallet och Långhults egna val.
 - 2026-11-23 (v1.11): Fasta delar i varje kalkyl: versionsrad, total effekt och fast fältordning.
 - 2026-11-23 (v1.10): Gemensamma benämningar och metoder (kapacitetsfaktor, prisfaktor, närboendezoner) i regeln om räknekärnan.
 - 2026-11-22 (v1.9): Regel om gemensam räknekärna (`kalkylkarna.js`) för alla kalkyler, och rullgardinen Kalkyler.
@@ -137,4 +158,4 @@ den globala filen `AI\Claude\CLAUDE.md` på Kents lokala maskin.
 
 ---
 
-_CLAUDE.md v1.8, 2026-10-05_
+_CLAUDE.md v1.12, 2026-11-23_
