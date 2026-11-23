@@ -175,6 +175,23 @@ lika('taknivå: per verk', tn.perVerk, 4);
 sant('taknivå: taket nås inte med 10 bostäder', !tn.nasRedan);
 sant('taknivå: ingen uppgift utan bostäder', K.narboendeTakniva(K.beraknaNarboendeZoner(1e6, 20e6, { bost: [0, 0, 0, 0, 0], verkperbostad: 2, tak: 0.02, antalverk: 20 }), 20) === null);
 
+// Extra bostäder under taket: 10 bostäder i zon 1 (50 000 kr före tak), taket 400 000 kr, ett verks intäkt 1 000 000 kr, två verk per bostad.
+const nbx = K.beraknaNarboendeZoner(1e6, 20e6, { bost: [10, 0, 0, 0, 0], verkperbostad: 2, tak: 0.02, antalverk: 20 });
+const ex = K.narboendeExtra(nbx);
+lika('extra: kvar under taket', ex.kvar, 350000);
+lika('extra: bostäder till i zon 1 (5 000 kr per bostad)', ex.rader[0].extra, 70);
+lika('extra: bostäder till i zon 5 (1 000 kr per bostad)', ex.rader[4].extra, 350);
+lika('extra: jämnt fördelat, kostnad per omgång om fem', ex.jamnt.perOmgang, 15000);
+lika('extra: jämnt fördelat, antal omgångar', ex.jamnt.omgangar, 23);
+lika('extra: jämnt fördelat, antal bostäder', ex.jamnt.extra, 115);
+lika('extra: samma fördelning (80 − 10)', ex.sammaFordelning, 70);
+sant('extra: taket nås inte', !ex.taketNasRedan);
+const exTak = K.narboendeExtra(K.beraknaNarboendeZoner(1e6, 20e6, { bost: [100, 0, 0, 0, 0], verkperbostad: 2, tak: 0.02, antalverk: 20 }));
+sant('extra: taket nås redan, inga extra bostäder', exTak.taketNasRedan && exTak.rader[0].extra === 0 && exTak.sammaFordelning === 0);
+// Förklaring per zon
+const zt = K.zonHjalpText(K.beraknaNarboendeZoner(1e6, 20e6, { bost: [1, 1, 1, 1, 1], verkperbostad: 2, tak: 0.02, antalverk: 20 }), 0, 150);
+sant('zonförklaring nämner beloppet 5 000 kr och 2,5 ‰', /5 000 kr/.test(zt.replace(/\s/g, ' ')) && /2,5 ‰/.test(zt));
+
 /* ---------- Alla kalkyler använder kärnan ---------- */
 const KALKYLER = [
   { html: 'vindkraftskalkyl.html', js: 'berakningar.js' },
@@ -195,6 +212,8 @@ KALKYLER.forEach(k => {
   sant(k.js + ' anropar beraknaNarboende', /beraknaNarboende\(/.test(js));
   sant(k.js + ' anropar realiseratPris', /realiseratPris\(/.test(js));
   sant(k.js + ' anropar kommunPoster', /kommunPoster\(/.test(js));
+  sant(k.js + ' kopplar länkar till flikar', /kopplaAnkareTillFlikar\(\)/.test(js));
+  sant(k.html + ' har förklaring per zon', html.indexOf('id="zon-hjalp-1"') > -1 && html.indexOf('id="zon-hjalp-5"') > -1);
   ['fskatt1', 'fskattaar', 'fskatt2', 'bygdemedel', 'kommunstod'].forEach(f => sant(k.html + ' har fältet ' + f, html.indexOf('id="' + f + '"') > -1));
   sant(k.js + ' räknar produktion med kapacitetsfaktor (inte fullasttimmar)', /kapfaktor/.test(js) && !/tal\('fullasttimmar'\)/.test(js));
   sant(k.html + ' har fältet prisfaktor', html.indexOf('id="prisfaktor"') > -1);

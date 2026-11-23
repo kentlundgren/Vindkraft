@@ -65,6 +65,8 @@
 
   UPPDATERING 2026-11-22 (senare igen): gemensam kärna kalkylkarna.js för finansmatematik och nätkopplingen, delad med fallet Långhult, och nätformateringen i natkostnader.css. Resultaten är oförändrade. Version 1.15.
 
+  UPPDATERING 2026-11-23 (senare igen 2): förklaring per zon vid hovring, Tabell 3 över hur många bostäder till som får full ersättning innan taket nås, länkar som öppnar rätt resultatflik och ljusare länkar i sidhuvudet. Version 1.19.
+
   UPPDATERING 2026-11-23 (senare igen): fastighetsskatt som första åren plus åren därefter (fskatt2) med schablon per MW och elområde i hjälptexten, förvalet en bostad i varje zon, uppgift om hur många bostäder som kan få ersättning innan taket nås, och överskottet visas både före och efter lokala poster (närboendeersättningen dras efter det första). Version 1.18.
 
   UPPDATERING 2026-11-23 (senare): fastighetsskatt, bygdemedel och kommunstöd är gemensamma poster i kalkylkarna.js (som i Långhult). Kommunstödet betalas av staten och dras inte från projektets resultat, och den gamla schablonposten Kommunal ersättning (projektkostnad) är borttagen. Fastighetsskatt och bygdemedel står på 0 med varning tills de fylls i. Version 1.17.
@@ -586,25 +588,25 @@
       <!-- ---- Grupp: Närboende (NU20 / prop. 2025/26:239) ---- -->
       <fieldset class="indata-grupp">
         <legend><span class="nb-info" tabindex="0">Närboende</span> (vindkraftsersättning, SFS 2026:1113)</legend>
-        <p class="hint" style="margin:0 0 .6rem">Förvalet är <strong>en bostad i varje zon</strong>, så att Tabell 2 visar vad en fastighetsägare får i varje zon. Det är ett exempel, inte en uppgift om ett visst projekt. Ändra antalet för att se när taket (2 %) nås, och längst ned i tabellen står hur många bostäder som kan få ersättning innan den sänks. Zonerna räknas från verkets höjd (fältet Verkshöjd ovan) och står i <a href="#Tabell2">Tabell 2</a>.</p>
+        <p class="hint" style="margin:0 0 .6rem">Förvalet är <strong>en bostad i varje zon</strong>, så att Tabell 2 visar vad en fastighetsägare får i varje zon. Det är ett exempel, inte en uppgift om ett visst projekt. Ändra antalet för att se när taket (2 %) nås, och längst ned i tabellen står hur många bostäder som kan få ersättning innan den sänks. Zonerna räknas från verkets höjd (fältet Verkshöjd ovan). Håll pekaren över ? vid en zon för att se vad en bostad där får per år. <a href="#Tabell2">Tabell 2</a> är tabellen över ersättning per zon, och den ligger i resultatfliken Närboende längre ned på sidan.</p>
 
-        <label>Bostäder i zon 1 (inom 5 verkshöjder)
+        <label>Bostäder i zon 1 (inom 5 verkshöjder) <span class="hjalp" tabindex="0" id="zon-hjalp-1" data-hjalp="Fyll i antal bostäder för att se.">?</span>
           <input type="number" step="1" id="bost1" class="indata" value="1">
           <span class="badge antagande">antagande</span>
         </label>
-        <label>Bostäder i zon 2 (5–6 verkshöjder)
+        <label>Bostäder i zon 2 (5–6 verkshöjder) <span class="hjalp" tabindex="0" id="zon-hjalp-2" data-hjalp="Fyll i antal bostäder för att se.">?</span>
           <input type="number" step="1" id="bost2" class="indata" value="1">
           <span class="badge antagande">antagande</span>
         </label>
-        <label>Bostäder i zon 3 (6–7 verkshöjder)
+        <label>Bostäder i zon 3 (6–7 verkshöjder) <span class="hjalp" tabindex="0" id="zon-hjalp-3" data-hjalp="Fyll i antal bostäder för att se.">?</span>
           <input type="number" step="1" id="bost3" class="indata" value="1">
           <span class="badge antagande">antagande</span>
         </label>
-        <label>Bostäder i zon 4 (7–8 verkshöjder)
+        <label>Bostäder i zon 4 (7–8 verkshöjder) <span class="hjalp" tabindex="0" id="zon-hjalp-4" data-hjalp="Fyll i antal bostäder för att se.">?</span>
           <input type="number" step="1" id="bost4" class="indata" value="1">
           <span class="badge antagande">antagande</span>
         </label>
-        <label>Bostäder i zon 5 (8–9 verkshöjder)
+        <label>Bostäder i zon 5 (8–9 verkshöjder) <span class="hjalp" tabindex="0" id="zon-hjalp-5" data-hjalp="Fyll i antal bostäder för att se.">?</span>
           <input type="number" step="1" id="bost5" class="indata" value="1">
           <span class="badge antagande">antagande</span>
         </label>
@@ -798,6 +800,21 @@
         <div class="framhavd"><dt>Genomsnitt per bostad (<span class="nb-info" tabindex="0">ersättning till en enskild närboende</span>)</dt><dd id="nar-snitt">–</dd></div>
         <div class="framhavd"><dt>Total årlig ersättning (belastar verksamhetsutövaren)</dt><dd id="nar-total">–</dd></div>
       </dl>
+
+      <div class="tabell-rulla">
+        <table class="jamforelse-tabell" id="Tabell3">
+          <caption id="Tabell3-rubrik">Tabell 3. Hur många bostäder till som får full ersättning innan taket (2 %) nås</caption>
+          <thead>
+            <tr>
+              <th scope="col">De extra bostäderna ligger i</th>
+              <th scope="col" class="tal">Ersättning per extra bostad före tak (kr/år)</th>
+              <th scope="col" class="tal">Antal bostäder till innan taket nås</th>
+            </tr>
+          </thead>
+          <tbody id="nar-extra-kropp"></tbody>
+        </table>
+      </div>
+      <p class="hint" id="nar-extra-text"></p>
 
       <div class="regel-lista">
         <h4>Regler och vad som är vad</h4>

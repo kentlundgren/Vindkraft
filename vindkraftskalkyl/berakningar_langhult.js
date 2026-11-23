@@ -749,6 +749,7 @@ function kopplaForklaringar() {
 document.addEventListener('DOMContentLoaded', () => {
   kopplaLyssnare();
   kopplaFlikar();
+  kopplaAnkareTillFlikar();
   kopplaTeknikModal();
   kopplaForklaringar();
 

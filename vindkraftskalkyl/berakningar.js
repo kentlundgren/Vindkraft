@@ -43,8 +43,9 @@
    UPPDATERING 2026-11-22 (senare igen): finansmatematik, formatering och nätkopplingen flyttade till den gemensamma kärnan kalkylkarna.js (delas med Långhult). Resultaten är oförändrade. Version 1.15.
    UPPDATERING 2026-11-23: närboendeersättning enligt lagen (zoner, SFS 2026:1113) via kalkylkarna.js, prisfaktor (realiserat pris = spotpris × prisfaktor, förvalt 1) och visning av fullasttimmar. Version 1.16.
    UPPDATERING 2026-11-23 (senare): fastighetsskatt, bygdemedel och kommunstöd via kalkylkarna.js (kommunPoster). Kommunstödet är statligt och dras inte från projektets resultat. Den gamla schablonposten Kommunal ersättning är borttagen. Version 1.17.
-   UPPDATERING 2026-11-23 (senare igen): fastighetsskatt med fskatt2, förvalet en bostad per zon, taknivå för närboende och överskott före och efter lokala poster. Version 1.18. */
-const VERSION = '1.18';
+   UPPDATERING 2026-11-23 (senare igen): fastighetsskatt med fskatt2, förvalet en bostad per zon, taknivå för närboende och överskott före och efter lokala poster. Version 1.18.
+   UPPDATERING 2026-11-23 (senare igen 2): förklaring per zon, Tabell 3 med extra bostäder under taket och länkar till dolda flikar (kalkylkarna.js). Version 1.19. */
+const VERSION = '1.19';
 const VERSIONSDATUM = '2026-11-22';
 
 /* ============================================================================
@@ -750,7 +751,8 @@ function kopplaTeknikModal() {
 document.addEventListener('DOMContentLoaded', () => {
   kopplaFskattSchablon();
   kopplaLyssnare();     // reaktiva lyssnare på indatafälten
-  kopplaFlikar();       // flikväxling
+  kopplaFlikar();
+  kopplaAnkareTillFlikar();       // flikväxling
   kopplaTeknikModal();  // teknik-knapp + modal med originalprompten
 
   // Versionsrad i sidfoten (konstanterna VERSION och VERSIONSDATUM överst i filen).

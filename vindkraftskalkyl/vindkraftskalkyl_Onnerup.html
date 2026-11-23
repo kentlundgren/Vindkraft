@@ -53,7 +53,7 @@
       Ändra ett gult fält så räknas allt om.
     </p>
     <p class="ingress"><strong>Vad som saknas:</strong> effekt per verk (3,3 MW är en muntlig uppgift, inte ur domen), antal bostäder per avståndszon
-      (närboendeersättningen visas med en bostad per zon som exempel, och lagen gäller troligen inte så små verk), bygdemedel (står på 0 med varning, och fastighetsskatten är en schablon),
+      (närboendeersättningen blir 0 tills du fyller i dem, och lagen gäller troligen inte så små verk), bygdemedel (står på 0 med varning, och fastighetsskatten är en schablon),
       anslutningskostnad och nya systemkrav (se gruppen Nät och systemkrav), samt kostnader och intäkter som projektet självt inte har redovisat.</p>
   </header>
 
@@ -510,26 +510,26 @@
       <!-- ---- Grupp: Närboende (NU20 / prop. 2025/26:239) ---- -->
       <fieldset class="indata-grupp">
         <legend><span class="nb-info" tabindex="0">Närboende</span> (vindkraftsersättning, SFS 2026:1113)</legend>
-        <p class="hint" style="margin:0 0 .6rem"><strong>Lagen gäller troligen inte Önnerup.</strong> Intäktsdelningslagen (SFS 2026:1113, 2 §) gäller anläggningar med tillstånd enligt 9 eller 11 kap. miljöbalken. Tillstånd krävs för minst två verk över 150 m eller minst sju verk över 120 m, och mindre anläggningar är anmälningspliktiga och omfattas inte (<a href="#ref-lundgren">Lundgren, 2026</a>, som beskriver Önnerup som ett gränsfall). Zonerna visar därför vad lagens modell hade gett om bolaget betalade ersättning frivilligt. <strong>Uppgiften saknas:</strong> hur många bostäder som ligger inom fem, sex, sju, åtta och nio verkshöjder (750–1 350 m från ett verk) finns inte i domen. Förvalet är en bostad i varje zon, ett exempel som visar vad en fastighetsägare får i varje zon, och inte en uppgift om Önnerup. Zonerna står i <a href="#Tabell2">Tabell 2</a>.</p>
+        <p class="hint" style="margin:0 0 .6rem"><strong>Lagen gäller troligen inte Önnerup.</strong> Intäktsdelningslagen (SFS 2026:1113, 2 §) gäller anläggningar med tillstånd enligt 9 eller 11 kap. miljöbalken. Tillstånd krävs för minst två verk över 150 m eller minst sju verk över 120 m, och mindre anläggningar är anmälningspliktiga och omfattas inte (<a href="#ref-lundgren">Lundgren, 2026</a>, som beskriver Önnerup som ett gränsfall). Zonerna visar därför vad lagens modell hade gett om bolaget betalade ersättning frivilligt. <strong>Uppgiften saknas:</strong> hur många bostäder som ligger inom fem, sex, sju, åtta och nio verkshöjder (750–1 350 m från ett verk) finns inte i domen. Förvalet är 0 bostäder i varje zon, eftersom lagen troligen inte ger någon ersättning för så små verk och uppgiften om bostäder saknas. Skriv in ett antal för att se vad lagens modell hade gett, och hur många bostäder som får plats under taket. Håll pekaren över ? vid en zon för att se vad en bostad där får per år. <a href="#Tabell2">Tabell 2</a> är tabellen över ersättning per zon och ligger i resultatfliken Närboende längre ned på sidan.</p>
 
-        <label>Bostäder i zon 1 (inom 5 verkshöjder)
-          <input type="number" step="1" id="bost1" class="indata" value="1">
+        <label>Bostäder i zon 1 (inom 5 verkshöjder) <span class="hjalp" tabindex="0" id="zon-hjalp-1" data-hjalp="Fyll i antal bostäder för att se.">?</span>
+          <input type="number" step="1" id="bost1" class="indata" value="0">
           <span class="badge antagande">antagande</span>
         </label>
-        <label>Bostäder i zon 2 (5–6 verkshöjder)
-          <input type="number" step="1" id="bost2" class="indata" value="1">
+        <label>Bostäder i zon 2 (5–6 verkshöjder) <span class="hjalp" tabindex="0" id="zon-hjalp-2" data-hjalp="Fyll i antal bostäder för att se.">?</span>
+          <input type="number" step="1" id="bost2" class="indata" value="0">
           <span class="badge antagande">antagande</span>
         </label>
-        <label>Bostäder i zon 3 (6–7 verkshöjder)
-          <input type="number" step="1" id="bost3" class="indata" value="1">
+        <label>Bostäder i zon 3 (6–7 verkshöjder) <span class="hjalp" tabindex="0" id="zon-hjalp-3" data-hjalp="Fyll i antal bostäder för att se.">?</span>
+          <input type="number" step="1" id="bost3" class="indata" value="0">
           <span class="badge antagande">antagande</span>
         </label>
-        <label>Bostäder i zon 4 (7–8 verkshöjder)
-          <input type="number" step="1" id="bost4" class="indata" value="1">
+        <label>Bostäder i zon 4 (7–8 verkshöjder) <span class="hjalp" tabindex="0" id="zon-hjalp-4" data-hjalp="Fyll i antal bostäder för att se.">?</span>
+          <input type="number" step="1" id="bost4" class="indata" value="0">
           <span class="badge antagande">antagande</span>
         </label>
-        <label>Bostäder i zon 5 (8–9 verkshöjder)
-          <input type="number" step="1" id="bost5" class="indata" value="1">
+        <label>Bostäder i zon 5 (8–9 verkshöjder) <span class="hjalp" tabindex="0" id="zon-hjalp-5" data-hjalp="Fyll i antal bostäder för att se.">?</span>
+          <input type="number" step="1" id="bost5" class="indata" value="0">
           <span class="badge antagande">antagande</span>
         </label>
 
@@ -723,6 +723,21 @@
         <div class="framhavd"><dt>Total årlig ersättning (belastar verksamhetsutövaren)</dt><dd id="nar-total">–</dd></div>
       </dl>
 
+      <div class="tabell-rulla">
+        <table class="jamforelse-tabell" id="Tabell3">
+          <caption id="Tabell3-rubrik">Tabell 3. Hur många bostäder till som får full ersättning innan taket (2 %) nås</caption>
+          <thead>
+            <tr>
+              <th scope="col">De extra bostäderna ligger i</th>
+              <th scope="col" class="tal">Ersättning per extra bostad före tak (kr/år)</th>
+              <th scope="col" class="tal">Antal bostäder till innan taket nås</th>
+            </tr>
+          </thead>
+          <tbody id="nar-extra-kropp"></tbody>
+        </table>
+      </div>
+      <p class="hint" id="nar-extra-text"></p>
+
       <div class="regel-lista">
         <h4>Regler och vad som är vad</h4>
         <ul>
@@ -870,7 +885,7 @@
         <p>Allt räknas i webbläsaren. Ingen data skickas någonstans. Diagrammen ritas med Chart.js via CDN.</p>
         <h3>Metoden</h3>
         <p>Förvalen bygger på Mark- och miljööverdomstolens dom P 14634-20: tre verk, totalhöjd 150 m, årsproduktion 22 704 MWh efter 10 % säkerhetsmarginal. Kapacitetsfaktorn 0,2618 är härledd ur den produktionen och en antagen effekt på 3,3 MW per verk. Västanby AB anger idag en annan produktion, och orsaken är inte verifierad.</p>
-        <p>Närboendeersättningen räknas enligt SFS 2026:1113, 11–14 §§ (fem zoner, de två närmaste verken, tak 2 %), men lagen gäller troligen inte så små verk. Antalet bostäder per zon saknas, och förvalet är en bostad i varje zon som exempel. Fastighetsskatten är en schablon (Skatteverket SKV A 2024:11 och Kaufmann & Westander, 2026), och bygdemedel saknar belopp och står på 0 med varning. Nätkostnader finns med men är avstängda (läge Ingen). Siffrorna är hämtade ur källorna, inte kvalitetssäkrade, och ska kontrolleras mot källan.</p>
+        <p>Närboendeersättningen räknas enligt SFS 2026:1113, 11–14 §§ (fem zoner, de två närmaste verken, tak 2 %), men lagen gäller troligen inte så små verk. Antalet bostäder per zon saknas, och förvalet är 0 bostäder. Fastighetsskatten är en schablon (Skatteverket SKV A 2024:11 och Kaufmann & Westander, 2026), och bygdemedel saknar belopp och står på 0 med varning. Nätkostnader finns med men är avstängda (läge Ingen). Siffrorna är hämtade ur källorna, inte kvalitetssäkrade, och ska kontrolleras mot källan.</p>
       </div>
     </div>
   </div>

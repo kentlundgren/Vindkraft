@@ -428,3 +428,9 @@ h2 { font-size: 1.25rem; color: var(--farg-primar); border-bottom: 2px solid var
   background: rgba(255, 255, 255, .22);
   outline-color: #fff;
 }
+
+/* Länkar i sidhuvudet: ljusa mot den mörka bakgrunden så att de går att läsa */
+.sidhuvud a { color: #ffffff; text-decoration: underline; text-underline-offset: 2px; }
+.sidhuvud a:visited { color: #e3f3f1; }
+.sidhuvud a:hover { background: rgba(255, 255, 255, .2); }
+.sidhuvud a:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }

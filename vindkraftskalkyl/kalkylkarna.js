@@ -25,12 +25,12 @@
    webbläsaren och exporteras som module.exports i Node, där test_kalkylkarna.js
    kör dem.
 
-   Version 1.4 (2026-11-23): fastighetsskatt som första åren + därefter (fskatt2) och uppgift om när närboendetaket nås. Version 1.3: kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
+   Version 1.5 (2026-11-23): tabell över extra bostäder under taket, förklaring per zon och länkar till dolda flikar. Version 1.4: fastighetsskatt som första åren + därefter (fskatt2) och uppgift om när närboendetaket nås. Version 1.3: kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
    berakningar.js och berakningar_langhult.js.
    ============================================================================ */
 'use strict';
 
-const KARNA_VERSION = '1.4';
+const KARNA_VERSION = '1.5';
 
 /**
  * Indatagrupperna i alla vindkraftskalkyler: rubrikerna och deras ordning är fastställda här, så att kalkylerna ser
@@ -346,7 +346,7 @@ function beraknaNarboendeZoner(verkIntakt, parkIntakt, d) {
   return {
     metod: 'zoner',
     perBostadFore, perBostadEfter, zonFore, zonEfter,
-    bostPerZon: d.bost.slice(), verkPerBostad,
+    bostPerZon: d.bost.slice(), verkPerBostad, verkIntakt,
     fore, cap, utbetalt, skal, antal,
     taketNas: fore > cap,
     snitt: antal > 0 ? utbetalt / antal : 0
@@ -396,6 +396,7 @@ function zonEtikett(z, H) {
 function ritaNarboendeZonTabell(kroppId, nar, H) {
   const k = document.getElementById(kroppId);
   if (!k || nar.metod !== 'zoner') return;
+  skrivZonHjalp(nar, H);
   k.innerHTML = '';
   const rad = (celler, klass) => {
     const tr = document.createElement('tr');
@@ -435,6 +436,97 @@ function narboendeTakniva(nar, antalverk) {
   return { bostader, perVerk: bostader / Math.max(1, antalverk), nasRedan: nar.taketNas };
 }
 
+/**
+ * Hur många bostäder till som får full ersättning innan taket (2 %, 14 §) nås.
+ * Taket är cap kr per år. De bostäder som redan är angivna får fore kr före tak. Det som är kvar under taket är cap − fore.
+ * En extra bostad i zon i kostar perBostadFore[i] kr per år, så antalet extra bostäder är kvarvarande belopp delat på det,
+ * avrundat nedåt. Tre fall räknas: alla extra bostäder i en viss zon, extra bostäder jämnt fördelade (lika många i varje zon)
+ * och extra bostäder med samma fördelning som de angivna.
+ * @param {object} nar  resultat från beraknaNarboendeZoner
+ */
+function narboendeExtra(nar) {
+  if (nar.metod !== 'zoner') return null;
+  const kvar = nar.cap - nar.fore;
+  const golv = (x) => Math.floor(x + 1e-9);
+  const rader = nar.perBostadFore.map((p, i) => ({ zon: i + 1, perBostad: p, extra: kvar > 0 && p > 0 ? golv(kvar / p) : 0 }));
+  const summa = nar.perBostadFore.reduce((a, b) => a + b, 0);
+  const omgangar = kvar > 0 && summa > 0 ? golv(kvar / summa) : 0;
+  const samma = nar.antal > 0 && nar.fore > 0 ? Math.max(0, golv(nar.antal * nar.cap / nar.fore - nar.antal)) : null;
+  return { kvar: Math.max(0, kvar), taketNasRedan: kvar <= 0, cap: nar.cap, fore: nar.fore, rader,
+           jamnt: { omgangar, extra: omgangar * NARBOENDE_ZONER.length, perOmgang: summa }, sammaFordelning: samma };
+}
+
+/** Förklaringstext för en zon: vad en bostad i zonen får per år och hur det räknas. */
+function zonHjalpText(nar, i, H) {
+  if (nar.metod !== 'zoner') return '';
+  const z = NARBOENDE_ZONER[i];
+  let t = 'Zon ' + (i + 1) + ' (' + z.fran + '–' + z.till + ' verkshöjder, ' + zonEtikett(z, H) + '): en bostad här får ' +
+    fmt(nar.perBostadEfter[i], 0) + ' kr per år. Beräkning: ' + fmt(z.promille, 1) + ' ‰ av ett verks intäkt (' +
+    fmt(nar.verkIntakt, 0) + ' kr per år) × ' + nar.verkPerBostad + ' verk.';
+  if (nar.taketNas) t += ' Taket (2 %) har nåtts, så beloppet är sänkt från ' + fmt(nar.perBostadFore[i], 0) + ' kr.';
+  return t;
+}
+
+/** Skriver förklaringen i elementen zon-hjalp-1..5 (attributet data-hjalp), så att den visas vid hovring, fokus och tryck. */
+function skrivZonHjalp(nar, H) {
+  for (let i = 0; i < NARBOENDE_ZONER.length; i++) {
+    const e = document.getElementById('zon-hjalp-' + (i + 1));
+    if (e) e.setAttribute('data-hjalp', zonHjalpText(nar, i, H) || 'Fyll i antal bostäder för att se.');
+  }
+}
+
+/** Fyller tabellen med extra bostäder (kropp prefix-extra-kropp) och förklarande text (prefix-extra-text). */
+function ritaNarboendeExtra(prefix, nar) {
+  const kropp = document.getElementById(prefix + '-extra-kropp');
+  const text = document.getElementById(prefix + '-extra-text');
+  const x = narboendeExtra(nar);
+  if (!kropp || !x) return;
+  kropp.innerHTML = '';
+  const rad = (a, b, c2, klass) => {
+    const tr = document.createElement('tr');
+    if (klass) tr.className = klass;
+    [a, b, c2].forEach((v, i) => { const td = document.createElement(i === 0 ? 'th' : 'td'); if (i === 0) td.scope = 'row'; else td.className = 'tal'; td.textContent = v; tr.appendChild(td); });
+    kropp.appendChild(tr);
+  };
+  x.rader.forEach(r => rad('Zon ' + r.zon, r.perBostad > 0 ? fmt(r.perBostad, 0) : '–', r.perBostad > 0 ? fmt(r.extra, 0) : '–'));
+  rad('Jämnt fördelade, lika många i varje zon', x.jamnt.perOmgang > 0 ? fmt(x.jamnt.perOmgang, 0) + ' per omgång om fem' : '–', x.jamnt.perOmgang > 0 ? fmt(x.jamnt.extra, 0) : '–');
+  rad('Med samma fördelning som du angett', '–', x.sammaFordelning === null ? '–' : fmt(x.sammaFordelning, 0), 'summa');
+  if (text) {
+    text.textContent = 'Så räknas det: taket är 2 % av parkens intäkt år 1, alltså ' + fmt(x.cap, 0, ' kr') + ' per år. De bostäder du angett får ' +
+      fmt(x.fore, 0, ' kr') + ' före tak. ' +
+      (x.taketNasRedan
+        ? 'Taket nås redan, så fler bostäder får inte full ersättning: alla ersättningar sänks i proportion. '
+        : 'Det som är kvar under taket är ' + fmt(x.kvar, 0, ' kr') + '. ') +
+      'En extra bostad i en zon kostar den zonens belopp per år, så antalet extra bostäder är det som är kvar delat på beloppet, avrundat nedåt. ' +
+      'Bostäder närmast verket kostar mest, så färre får plats där.';
+  }
+}
+
+/**
+ * Öppnar den resultatflik som innehåller ett element, om fliken är dold, och rullar dit. Länkar till en tabell eller rubrik
+ * inne i en dold flik fungerar därför. Anropas en gång när sidan är byggd.
+ */
+function kopplaAnkareTillFlikar() {
+  const oppna = (id) => {
+    const el = document.getElementById(id);
+    const panel = el && el.closest ? el.closest('.flik-panel') : null;
+    if (!panel) return false;
+    if (panel.hidden) {
+      const knapp = document.querySelector('.flik-knapp[data-flik="' + panel.id.replace(/^panel-/, '') + '"]');
+      if (knapp) knapp.click();
+    }
+    el.scrollIntoView();
+    return true;
+  };
+  document.addEventListener('click', (ev) => {
+    const a = ev.target.closest ? ev.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    const id = decodeURIComponent(a.getAttribute('href').slice(1));
+    if (id && oppna(id)) { ev.preventDefault(); try { history.replaceState(null, '', '#' + id); } catch (e) { /* ingen länkuppdatering */ } }
+  });
+  if (location.hash.length > 1) oppna(decodeURIComponent(location.hash.slice(1)));
+}
+
 /** Sammanfattningsraderna under zontabellen. prefix = id-prefix, t.ex. 't2' ger t2-fore, t2-tak, t2-nas, t2-skal, t2-snitt. */
 function skrivNarboendeSummering(prefix, nar, antalverk) {
   if (nar.metod !== 'zoner') return;
@@ -444,6 +536,7 @@ function skrivNarboendeSummering(prefix, nar, antalverk) {
   satt('skal', nar.taketNas ? fmt(nar.skal * 100, 1, ' % av beloppet före tak') : '100 % (taket nås inte)');
   satt('snitt', fmt(nar.snitt, 0, ' kr/bostad och år'));
   satt('nas', nar.taketNas ? 'Ja, taket nås och alla ersättningar sätts ned i proportion' : 'Nej, summan ligger under taket');
+  ritaNarboendeExtra(prefix, nar);
   const tn = narboendeTakniva(nar, antalverk);
   satt('takbost', tn
     ? 'Cirka ' + fmt(tn.bostader, 0) + ' bostäder (cirka ' + fmt(tn.perVerk, 1) + ' per verk) med fördelningen i tabellen. Du har angett ' + fmt(nar.antal, 0) + '.'
@@ -596,7 +689,7 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     KARNA_VERSION, INDATAGRUPPER, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode,
     natPaverkan, natEngangTillaggAv, natSammanfattning,
-    lasKommunIndata, fastighetsskattPerVerk, kommunPoster, kommunSaknasText, narboendeTakniva,
+    lasKommunIndata, fastighetsskattPerVerk, kommunPoster, kommunSaknasText, narboendeTakniva, narboendeExtra, zonHjalpText,
     FSKATT_SCHABLON, fullastJustering, fastighetsskattSchablon,
     NARBOENDE_METOD, NARBOENDE_ZONER, beraknaNarboende, beraknaNarboendeZoner, beraknaNarboendeSchablon, realiseratPris
   };

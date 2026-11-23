@@ -18,6 +18,7 @@
   UPPDATERING 2026-11-23: närboendeersättningen räknas i kalkylkarna.js (delas med huvudkalkylen), kapacitetsfaktor 0,4121 (= 3 610 h / 8 760) i stället för fullasttimmar, och viktning heter prisfaktor.
   UPPDATERING 2026-11-23 (senare): indatagrupperna har samma rubriker och ordning som övriga kalkyler (INDATAGRUPPER i kalkylkarna.js), och Närboende ligger sist.
   UPPDATERING 2026-11-23 (senare igen): fastighetsskatt, bygdemedel och kommunstöd räknas i kalkylkarna.js (kommunPoster) och delas med övriga kalkyler. Långhults värden och resultat är oförändrade.
+  UPPDATERING 2026-11-23 (senare igen 2): förklaring per zon vid hovring, Tabell 7 över hur många bostäder till som får full ersättning innan taket nås, länkar som öppnar rätt resultatflik och ljusare länkar i sidhuvudet.
   UPPDATERING 2026-11-23 (senare igen): fastighetsskatten anges som första åren plus åren därefter (fskatt2 = 204 049 kr, jämnat ut ur Kaufmann & Westander 2026), uppgift om hur många bostäder som kan få ersättning innan taket nås, och tydligare rubriker på överskottsraderna. Resultaten är oförändrade (högst 0,01 %).
   ============================================================================
 -->
@@ -525,26 +526,26 @@
         <p class="hint" style="margin:0 0 .6rem">
           Kaufmann &amp; Westander (2026, s. 4, 16) anger cirka 200 bostäder men inte hur de fördelar sig på avstånd.
           Fördelningen nedan följer ytan av ringarna kring ett verk (jämn bebyggelsetäthet) och är en gissning.
-          Zonerna står i <a href="#Tabell2">Tabell 2</a>.
+          Håll pekaren över ? vid en zon för att se vad en bostad där får per år. <a href="#Tabell2">Tabell 2</a> är tabellen över ersättning per zon, och den ligger i resultatfliken Närboende längre ned på sidan.
         </p>
 
-        <label>Bostäder i zon 1 (inom 5 verkshöjder)
+        <label>Bostäder i zon 1 (inom 5 verkshöjder) <span class="hjalp" tabindex="0" id="zon-hjalp-1" data-hjalp="Fyll i antal bostäder för att se.">?</span>
           <input type="number" step="1" id="bost1" class="indata" value="62">
           <span class="badge antagande">antagande</span>
         </label>
-        <label>Bostäder i zon 2 (5–6 verkshöjder)
+        <label>Bostäder i zon 2 (5–6 verkshöjder) <span class="hjalp" tabindex="0" id="zon-hjalp-2" data-hjalp="Fyll i antal bostäder för att se.">?</span>
           <input type="number" step="1" id="bost2" class="indata" value="27">
           <span class="badge antagande">antagande</span>
         </label>
-        <label>Bostäder i zon 3 (6–7 verkshöjder)
+        <label>Bostäder i zon 3 (6–7 verkshöjder) <span class="hjalp" tabindex="0" id="zon-hjalp-3" data-hjalp="Fyll i antal bostäder för att se.">?</span>
           <input type="number" step="1" id="bost3" class="indata" value="32">
           <span class="badge antagande">antagande</span>
         </label>
-        <label>Bostäder i zon 4 (7–8 verkshöjder)
+        <label>Bostäder i zon 4 (7–8 verkshöjder) <span class="hjalp" tabindex="0" id="zon-hjalp-4" data-hjalp="Fyll i antal bostäder för att se.">?</span>
           <input type="number" step="1" id="bost4" class="indata" value="37">
           <span class="badge antagande">antagande</span>
         </label>
-        <label>Bostäder i zon 5 (8–9 verkshöjder)
+        <label>Bostäder i zon 5 (8–9 verkshöjder) <span class="hjalp" tabindex="0" id="zon-hjalp-5" data-hjalp="Fyll i antal bostäder för att se.">?</span>
           <input type="number" step="1" id="bost5" class="indata" value="42">
           <span class="badge antagande">antagande</span>
         </label>
@@ -648,6 +649,20 @@
       <div><dt>Nedsättning</dt><dd id="t2-skal">–</dd></div>
       <div class="framhavd"><dt>Genomsnitt per bostad</dt><dd id="t2-snitt">–</dd></div>
     </dl>
+      <div class="tabell-ruta">
+        <table class="data-tabell" id="Tabell7">
+          <caption id="Tabell7-rubrik">Tabell 7. Hur många bostäder till som får full ersättning innan taket (2 %) nås</caption>
+          <thead>
+            <tr>
+              <th scope="col">De extra bostäderna ligger i</th>
+              <th scope="col" class="tal">Ersättning per extra bostad före tak (kr/år)</th>
+              <th scope="col" class="tal">Antal bostäder till innan taket nås</th>
+            </tr>
+          </thead>
+          <tbody id="t2-extra-kropp"></tbody>
+        </table>
+      </div>
+      <p class="hint" id="t2-extra-text"></p>
     <p class="notering">
       <a href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=4" target="_blank" rel="noopener">Kaufmann &amp; Westander (2026, s. 4, 16)</a> anger att taket nås och att genomsnittet då blir "drygt 18 000" kronor per bostad och år.
       Det går inte att kontrollera utan bostädernas verkliga avstånd. Zonfördelningen här är en gissning,
