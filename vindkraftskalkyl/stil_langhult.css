@@ -549,3 +549,8 @@ a.badge.pm:hover, a.badge.pm:focus { text-decoration: underline; }
 /* Länkar i sidhuvudet (mörk bakgrund): vita och understrukna, så de går att läsa */
 .sidhuvud a { color: #fff; text-decoration: underline; }
 .sidhuvud a:hover, .sidhuvud a:focus { text-decoration-thickness: 2px; }
+
+/* Schablonnotis under Spotpris och Fastighetsskatt: visar om värdet är schablonen eller ett eget värde för kalkylen. Blått = notering. */
+.schablon-notis { display: block; margin-top: .15rem; font-size: .82rem; color: #5a6a67; }
+.schablon-notis:empty { display: none; }
+.schablon-notis[data-tillstand="avviker"] { color: #0b4f8a; font-weight: 600; border-left: 3px solid #5b9bd5; padding-left: .4rem; }

@@ -434,3 +434,24 @@ h2 { font-size: 1.25rem; color: var(--farg-primar); border-bottom: 2px solid var
 .sidhuvud a:visited { color: #e3f3f1; }
 .sidhuvud a:hover { background: rgba(255, 255, 255, .2); }
 .sidhuvud a:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+
+/* Förklaringar vid hovring, fokus och tryck (abbr.fk, texten ur data-f) */
+abbr.fk {
+  text-decoration: underline dotted currentColor;
+  cursor: help; position: relative; outline: none;
+}
+abbr.fk::after {
+  content: attr(data-f);
+  position: absolute; left: 0; top: 100%; z-index: 50;
+  width: max-content; max-width: 20rem;
+  background: #1c2321; color: #fff; font-size: .8rem; font-weight: 400;
+  line-height: 1.35; padding: .45rem .6rem; border-radius: 6px;
+  box-shadow: 0 3px 10px rgba(0,0,0,.3);
+  display: none; white-space: normal; text-align: left;
+}
+abbr.fk:hover::after, abbr.fk:focus::after { display: block; }
+
+/* Schablonnotis under Spotpris och Fastighetsskatt: visar om värdet är schablonen eller ett eget värde för kalkylen. Blått = notering. */
+.schablon-notis { display: block; margin-top: .15rem; font-size: .82rem; color: #5a6a67; }
+.schablon-notis:empty { display: none; }
+.schablon-notis[data-tillstand="avviker"] { color: #0b4f8a; font-weight: 600; border-left: 3px solid #5b9bd5; padding-left: .4rem; }

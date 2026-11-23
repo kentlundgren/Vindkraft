@@ -19,6 +19,7 @@
   UPPDATERING 2026-11-23 (senare): indatagrupperna har samma rubriker och ordning som övriga kalkyler (INDATAGRUPPER i kalkylkarna.js), och Närboende ligger sist.
   UPPDATERING 2026-11-23 (senare igen): fastighetsskatt, bygdemedel och kommunstöd räknas i kalkylkarna.js (kommunPoster) och delas med övriga kalkyler. Långhults värden och resultat är oförändrade.
   UPPDATERING 2026-11-23 (senare igen 13): länken till beräkningen av bostäder pekar på nya platsen (mappen langhult/). Version 1.5.
+  UPPDATERING 2026-11-24 (senare): elområdet är ett fält även i Långhult (SE3, med Kaufmann & Westanders spotpris 0,50 som avviker från schablonen 0,55), med förklaring vid rubriken och schablonnotis under Spotpris och Fastighetsskatt. Version 1.16.
   UPPDATERING 2026-11-24: elområdet står som text vid Spotpris (SE3, Kaufmann & Westander 2026, s. 17–18) i stället för som fält: inget i Långhult-kalkylen beror på det. Version 1.15.
   UPPDATERING 2026-11-23 (senare igen 22): Karta 1: delområdena Långhult (norr, 8 verk) och Lunnarsbo (söder, 12 verk) i texten och bildtexterna, uppgifterna visas vid hovring, fokus och tryck, och man byter bild genom att svepa (touch, mus och styrplatta) eller med pilknapparna. Version 1.14.
   UPPDATERING 2026-11-23 (senare igen 21): nytt avsnitt "Var ligger parken?" (#Lage) med Karta 1, två kartor som man växlar mellan (översikt och närbild, skärmdumpar ur Vindbrukskollen). Version 1.13.
@@ -218,11 +219,24 @@
           <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=3" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, s. 3, 16</a>
         </label>
 
+        <label>Elområde
+          <abbr class="fk" id="elomrade-hjalp" tabindex="0" data-f="">?</abbr>
+          <select id="elomrade" class="indata">
+            <option value="SE1">SE1 (norra)</option>
+            <option value="SE2">SE2</option>
+            <option value="SE3" selected>SE3 (mellersta)</option>
+            <option value="SE4">SE4 (södra)</option>
+          </select>
+          <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=17" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, s. 17–18</a>
+          <span class="hint">Verken ligger i elområde 3. Här används Kaufmann &amp; Westanders eget spotpris (0,50 kr/kWh) i stället för schablonpriset för området. Byte av område fyller i schablonpriset.</span>
+        </label>
+
         <label>Spotpris (kr/kWh)
           <abbr class="fk" tabindex="0" data-f="Spotpris: elens börspris för varje timme. Här ett medelvärde för hela livslängden.">?</abbr>
           <input type="number" step="0.01" id="elpris" class="indata" value="0.5">
           <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=12" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, s. 12, 16</a>
-          <span class="hint">Kaufmann &amp; Westander (2026, s. 12, 16) utgår från 50 öre/kWh och visar 30–70 öre. Verken ligger enligt samma källa (s. 17–18) i elområde 3 (SE3). Elområdet är ingen indata här: det ändrar ingen beräkning, eftersom fastighetsskatten är hämtad ur källan och spotpriset anges direkt.</span>
+          <span class="hint">Kaufmann &amp; Westander (2026, s. 12, 16) utgår från 50 öre/kWh och visar 30–70 öre.</span>
+          <span class="schablon-notis" id="elpris-schablon" aria-live="polite"></span>
         </label>
 
         <label>Prisfaktor (realiserat pris / spotpris, 0–1)
@@ -537,6 +551,7 @@
           <abbr class="fk" tabindex="0" data-f="Fastighetsskatt: 0,5 % av taxeringsvärdet. För ett nytt verk på 6,6 MW i elområde 3 blir det 334 398 kr per år enligt räkneexemplet i Kaufmann &amp; Westander (2026, s. 17–18).">?</abbr>
           <input type="number" step="100" id="fskatt1" class="indata" value="334398">
           <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=1" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, bilaga 1, s. 18</a>
+          <span class="schablon-notis" id="fskatt1-schablon" aria-live="polite"></span>
         </label>
 
         <label>Antal år med full fastighetsskatt
@@ -550,6 +565,7 @@
           <input type="number" step="1000" id="fskatt2" class="indata" value="204049">
           <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=18" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, s. 18 (46,5 Mkr / 7 verk över 30 år)</a>
           <span class="badge antagande">utjämning</span>
+          <span class="schablon-notis" id="fskatt2-schablon" aria-live="polite"></span>
         </label>
 
         <label>Bygdemedel, hela parken (kr/år)

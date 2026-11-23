@@ -65,6 +65,8 @@
 
   UPPDATERING 2026-11-22 (senare igen): gemensam kärna kalkylkarna.js för finansmatematik och nätkopplingen, delad med fallet Långhult, och nätformateringen i natkostnader.css. Resultaten är oförändrade. Version 1.15.
 
+  UPPDATERING 2026-11-24: fältet Elområde finns i alla tre kalkylerna (före Spotpris), med en förklaring vid rubriken av vad det styr (schablonpris för Spotpris och elprisfaktor i fastighetsskattens schablon), och en schablonnotis under Spotpris och Fastighetsskatt som visar om värdet är schablonen eller avviker från den (kalkylkarna.js). Förklaringarna (abbr.fk) fungerar nu även i huvudkalkylen och Önnerup. Förvalt elområde är SE4 (schablonpriset 0,60 kr/kWh är det spotpris som alltid har stått här, så resultaten är oförändrade). Version 1.34.
+
   UPPDATERING 2026-11-23 (senare igen 14): startsidan index.html finns och brödsmulorna börjar med "Vindkraftens ekonomi: start". Version 1.31.
 
   UPPDATERING 2026-11-23 (senare igen 13): Sammanställningen kandidater.md är en egen källpost (Lundgren, 2026) och Vindbrukskollen har en hänvisning på V (se Länsstyrelserna (2026)). Version 1.30.
@@ -189,17 +191,19 @@
         </label>
 
         <label>Elområde
+          <abbr class="fk" id="elomrade-hjalp" tabindex="0" data-f="">?</abbr>
           <select id="elomrade" class="indata">
             <option value="SE1">SE1 (norra)</option>
             <option value="SE2">SE2</option>
-            <option value="SE3" selected>SE3 (mellersta)</option>
-            <option value="SE4">SE4 (södra)</option>
+            <option value="SE3">SE3 (mellersta)</option>
+            <option value="SE4" selected>SE4 (södra)</option>
           </select>
           <span class="hint">Byte fyller i ett schablonpris för området (kan ändras).</span>
         </label>
 
         <label>Spotpris (kr/kWh)
           <input type="number" step="0.01" id="elpris" class="indata" value="0.6">
+          <span class="schablon-notis" id="elpris-schablon" aria-live="polite"></span>
         </label>
 
         <label>Prisfaktor (realiserat pris / spotpris, 0–1)
@@ -533,6 +537,7 @@
           <abbr class="fk" tabindex="0" data-f="Fastighetsskatt: 0,5 % av taxeringsvärdet. Beloppet beror på verkets storlek och elområde. För ett nytt verk på 6,6 MW i elområde 3 blir det 334 398 kr per år enligt räkneexemplet i Kaufmann &amp; Westander (2026, s. 17–18).">?</abbr>
           <input type="number" step="100" id="fskatt1" class="indata" value="0">
           <span class="badge antagande">uppgift saknas</span>
+          <span class="schablon-notis" id="fskatt1-schablon" aria-live="polite"></span>
         </label>
 
         <label>Antal år med full fastighetsskatt
@@ -545,6 +550,7 @@
           <abbr class="fk" tabindex="0" data-f="Skatten sjunker över tid eftersom taxeringsvärdet skrivs ned med verkets ålder. Kaufmann &amp; Westander (2026, s. 18) ger för ett verk på 6,6 MW i elområde 3 334 398 kr per år de första fyra åren och i genomsnitt cirka 204 049 kr per år därefter, alltså cirka 61 % av det första beloppet.">?</abbr>
           <input type="number" step="1000" id="fskatt2" class="indata" value="0">
           <span class="badge antagande">uppgift saknas</span>
+          <span class="schablon-notis" id="fskatt2-schablon" aria-live="polite"></span>
         </label>
 
         <label>Bygdemedel, hela parken (kr/år)

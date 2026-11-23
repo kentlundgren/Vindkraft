@@ -921,6 +921,101 @@ function fastighetsskattSchablon(kwPerVerk, elomrade, fullasttimmar) {
   return { fskatt1, fskatt2: fskatt1 * S.nedskrivningKvot, taxeringsvarde, elprisfaktor: ep, fullastfaktor: ff };
 }
 
+/* ============================================================================
+   ELOMRÅDE, SCHABLONER OCH AVVIKELSER
+   ----------------------------------------------------------------------------
+   Alla kalkyler har fältet Elområde (SE1–SE4) i samma ordning (före Spotpris). Elområdet styr två saker och inget annat:
+   1) när det byts fylls Spotpris i med schablonpriset ELOMRADE_PRIS (fyllElomradePris), och 2) fastighetsskattens schablon
+   (fastighetsskattSchablon) räknas med områdets elprisfaktor. Förklaringen vid rubriken (elomradeForklaring) bygger på
+   samma konstanter, så att texten och räkningen alltid stämmer. Står ett värde på sidan som avviker från schablonen
+   (till exempel Kaufmann & Westanders spotpris i Långhult) skriver schablonnotisen det under fältet, så att läsaren ser vad som är
+   ett eget, aktuellt värde. Notisen räknas om vid varje ändring (kopplaElomradeOchSchablon).
+   ============================================================================ */
+
+/** Schablonpriser per elområde (kr/kWh) som fylls i Spotpris när området byts. */
+const ELOMRADE_PRIS = { SE1: 0.30, SE2: 0.35, SE3: 0.55, SE4: 0.60 };
+
+/** Förklaringen vid rubriken Elområde: vad uppgiften styr. */
+function elomradeForklaring() {
+  const pris = ['SE1', 'SE2', 'SE3', 'SE4'].map(o => o + ' ' + fmt(ELOMRADE_PRIS[o], 2)).join(', ');
+  const fakt = ['SE1', 'SE2', 'SE3', 'SE4'].map(o => {
+    const f = FSKATT_SCHABLON.elprisfaktor[o];
+    return o + ' ' + (f > 0 ? '+' : '−') + fmt(Math.abs(f), 3);
+  }).join(', ');
+  return 'Elområdet (SE1–SE4) styr två saker och inget annat. ' +
+    '1) När du byter område fylls Spotpris i med ett schablonpris för området (kr/kWh: ' + pris + '). Du kan ändra priset efteråt. ' +
+    '2) Schablonen för fastighetsskatt räknas med områdets elprisfaktor (' + fakt + '). ' +
+    'Avviker ett värde på sidan från schablonen står det under fältet: då är det ett eget, aktuellt värde för just den här kalkylen.';
+}
+
+/** Skriver förklaringen i elementet elomrade-hjalp (attributet data-f, som ritas vid hovring, fokus och tryck). */
+function visaElomradeForklaring() {
+  const e = document.getElementById('elomrade-hjalp');
+  if (e) e.setAttribute('data-f', elomradeForklaring());
+}
+
+/** Fyller Spotpris med schablonpriset för valt elområde. Anropas av kalkylens change-lyssnare innan den räknar om. */
+function fyllElomradePris() {
+  const p = ELOMRADE_PRIS[text('elomrade')];
+  const e = document.getElementById('elpris');
+  if (p !== undefined && e) e.value = p;
+}
+
+/**
+ * Jämför ett värde med schablonen. Returnerar { tillstand, text }, där tillstand är 'schablon', 'avviker' eller 'saknas'.
+ * @param {number} varde      fältets värde (NaN om tomt)
+ * @param {number} schablon   schablonvärdet för valt område
+ * @param {string} omrade     'SE1'..'SE4'
+ * @param {number} dec        decimaler i texten
+ * @param {string} enhet      enhet i texten
+ * @param {boolean} nollSaknas  sant om 0 betyder att uppgift saknas (fastighetsskatt)
+ * @param {number} tol        tolerans för att värdet räknas som schablonen
+ */
+function schablonnotis(varde, schablon, omrade, dec, enhet, nollSaknas, tol) {
+  const sch = fmt(schablon, dec) + ' ' + enhet;
+  if (!Number.isFinite(varde) || (nollSaknas && varde === 0)) {
+    return { tillstand: 'saknas', text: 'Uppgift saknas. Schablonen för ' + omrade + ' är ' + sch + '.' };
+  }
+  if (Math.abs(varde - schablon) <= tol) return { tillstand: 'schablon', text: 'Schablonvärdet för ' + omrade + '.' };
+  return { tillstand: 'avviker', text: 'Avviker från schablonen för ' + omrade + ' (' + sch + '): ett eget värde för den här kalkylen.' };
+}
+
+/** Skriver schablonnotiserna under Spotpris och Fastighetsskatt (element elpris-schablon, fskatt1-schablon, fskatt2-schablon). */
+function uppdateraSchablonnotiser() {
+  const o = text('elomrade');
+  if (ELOMRADE_PRIS[o] === undefined) return;
+  const varde = (id) => { const e = document.getElementById(id); return e ? parseFloat(e.value) : NaN; };
+  const satt = (id, n) => {
+    const e = document.getElementById(id);
+    if (!e) return;
+    e.textContent = n.text;
+    e.setAttribute('data-tillstand', n.tillstand);
+  };
+  satt('elpris-schablon', schablonnotis(varde('elpris'), ELOMRADE_PRIS[o], o, 2, 'kr/kWh', false, 0.005));
+  const sch = fastighetsskattSchablon(tal('effekt') * 1000, o, tal('kapfaktor') * 8760);
+  satt('fskatt1-schablon', schablonnotis(varde('fskatt1'), sch.fskatt1, o, 0, 'kr per verk och år', true, 1));
+  satt('fskatt2-schablon', schablonnotis(varde('fskatt2'), sch.fskatt2, o, 0, 'kr per verk och år', true, 1));
+}
+
+/** Kopplar förklaringen och notiserna. Anropas en gång vid sidstart, efter kalkylens egna lyssnare. */
+function kopplaElomradeOchSchablon() {
+  visaElomradeForklaring();
+  ['elomrade', 'elpris', 'effekt', 'kapfaktor', 'fskatt1', 'fskatt2'].forEach(id => {
+    const e = document.getElementById(id);
+    if (!e) return;
+    e.addEventListener('input', uppdateraSchablonnotiser);
+    e.addEventListener('change', () => setTimeout(uppdateraSchablonnotiser, 0));
+  });
+  uppdateraSchablonnotiser();
+}
+
+/** Förklaringar (abbr.fk) visas vid hovring och fokus (CSS ur data-f). Ett tryck på pekskärm ger fokus, och rutan visas. */
+function kopplaForklaringar() {
+  document.querySelectorAll('abbr.fk').forEach(el => {
+    el.addEventListener('click', (e) => { e.preventDefault(); el.focus(); });
+  });
+}
+
 /** Läser kommunposterna ur formuläret. Fält som saknas i en kalkyl räknas som 0. */
 function lasKommunIndata() {
   return {
@@ -988,6 +1083,7 @@ if (typeof module !== 'undefined' && module.exports) {
     natPaverkan, natEngangTillaggAv, natSammanfattning,
     lasKommunIndata, fastighetsskattPerVerk, kommunPoster, kommunSaknasText, narboendeTakniva, narboendeExtra, zonHjalpText,
     FSKATT_SCHABLON, fullastJustering, fastighetsskattSchablon,
+    ELOMRADE_PRIS, elomradeForklaring, schablonnotis,
     NARBOENDE_METOD, NARBOENDE_ZONER, beraknaNarboende, beraknaNarboendeZoner, beraknaNarboendeSchablon, realiseratPris
   };
 }

@@ -5,8 +5,8 @@
 **Live (Vercel-app, statisk):** https://vindkraft-rosy.vercel.app
 **Live (Vercel-app, Functions):** https://vindkraft-ver2.vercel.app
 **Live (Vercel-app, Next.js App Router):** https://vindkraft-ver3.vercel.app
-**Senast uppdaterad:** 2026-11-23
-**Version:** 1.18
+**Senast uppdaterad:** 2026-11-24
+**Version:** 1.19
 
 ---
 
@@ -63,6 +63,17 @@ En analys som gäller flera projekt, som kandidatlistan ur Vindbrukskollen, hör
 - **Nya kalkyler** läggs som ett nytt kort under "Tre kalkyler" (och i `dokument.json`).
 - Startsidan har egen källförteckning, alfabetisk och osiffrad, och samma hörnpar som kalkylerna.
 
+## Regel – Mallen: samma fält och standardvärden, och det unika syns
+
+Alla kalkyler har samma indatafält i samma ordning (`INDATAORDNING_ANLAGGNING`) och samma standardvärden. Huvudkalkylen är mallen. Ett fall får ha egna, aktuella värden som passar just det, men läsaren ska se vilka värden som avviker från mallen eller schablonen.
+- **Elområde finns i varje kalkyl** (fältet `elomrade`, SE1–SE4, klass `indata`, direkt före Spotpris), också när fallet inte räknar med schabloner. Det styr två saker och inget annat: (1) vid byte fylls Spotpris med schablonpriset `ELOMRADE_PRIS` (kalkylens change-lyssnare anropar `fyllElomradePris()` före omräkningen), och (2) schablonen för fastighetsskatt (`fastighetsskattSchablon`) räknas med områdets elprisfaktor. Elområdet ändrar ingen annan beräkning.
+- **Förklaringen vid rubriken:** `<abbr class="fk" id="elomrade-hjalp" tabindex="0" data-f="">?</abbr>` direkt efter etiketten Elområde. Kärnan skriver texten (`elomradeForklaring()`, byggd på samma konstanter som räkningen) vid hovring, fokus och tryck. Ändra texten bara där.
+- **Mallens Spotpris är schablonpriset för valt område.** Huvudkalkylen har SE4 och 0,60 kr/kWh.
+- **Schablonnotis under Spotpris, Fastighetsskatt första åren och åren därefter** (`elpris-schablon`, `fskatt1-schablon`, `fskatt2-schablon`). Sidans init anropar `kopplaForklaringar()` och `kopplaElomradeOchSchablon()` (kärnan) efter sina egna lyssnare. Notisen säger "Schablonvärdet för SE4", "Avviker från schablonen för SE3 (0,55 kr/kWh): ett eget värde för den här kalkylen" (blå) eller "Uppgift saknas". Ett fall som har ett eget värde, till exempel Långhults spotpris 0,50 ur Kaufmann & Westander, behåller det och får märkningen automatiskt. Fallet anger dessutom källan vid fältet (`badge pm` för en källa, `badge antagande` för ett antagande) och en mening vid elområdet om att fallet använder sitt eget värde.
+- **Kalkylränta:** standard för en ny kalkyl är real kalkylränta 0,052 (5,2 %, Energiforsk 2021, s. 18, spann 2,6–7,5 %, tolv projekt under byggnation 2020), märkt `antagande`, med texten om källan, att Energimyndigheten (2016) använde 6,8 % (5–8 %) och att räntans utveckling efter 2020 inte är med, och med `ref-energiforsk` och `ref-er2016` i källförteckningen (som Långhult och Önnerup). Etiketten är "Kalkylränta, real (0–1)" med förklaring av vad real betyder. Huvudkalkylen har kalkylräntan 0,1215 (Kents ursprungliga värde) och saknar den texten.
+- **Egna värden märks, aldrig tyst:** ett värde som avviker från mallen (antal verk, effekt, kapacitetsfaktor, investeringskostnad, ränta, spotpris, skatt) har en källmärkning vid fältet och en mening om varför det avviker. Gäller det Spotpris eller fastighetsskatt tillkommer schablonnotisen automatiskt.
+- **Förklaringarna `abbr.fk`** ritas av CSS (`stil.css` och `stil_langhult.css`) och får fokus vid tryck via `kopplaForklaringar()` i kärnan. Egen kopia av någon av funktionerna ovan i en kalkyls fil fångas av testet.
+
 ## Regel – Ny kalkyl eller nytt fall: checklista
 
 1. Sidan laddar `kalkylkarna.js` före sin egen fil och följer `INDATAGRUPPER` och `INDATAORDNING_ANLAGGNING`. Den har totala effekten under Effekt per verk, nätraderna `JAMFOR_NAT` i jämförelsetabellen och versionsraden (`VERSION`, `VERSIONSDATUM`, `visaVersionsrad`).
@@ -72,7 +83,9 @@ En analys som gäller flera projekt, som kandidatlistan ur Vindbrukskollen, hör
 5. Tjänster och databaser som är kända under ett eget namn (till exempel Vindbrukskollen, utgiven av Länsstyrelserna) har en hänvisningspost på namnets plats i källförteckningen ("Vindbrukskollen: se Länsstyrelserna (2026)."), och blänkaren om riktvärdet hänvisar med `Lundgren (år och bokstav)` till sammanställningen `kandidater.md`, som är en egen källpost. Testet kontrollerar att hänvisningen pekar på en post som finns.
 6. Tabellerna är numrerade 1, 2, 3 … i läsordning utan luckor och dubbletter, och nättabellen i panelen heter Nättabell 1. Ett nytt avsnitt med tabeller placeras sist, eller så numreras alla om i läsordning. Källornas egna tabellnummer ändras aldrig. Testet kontrollerar numrering, `id` och länkar.
 7. Källförteckningen är alfabetisk och osiffrad (`<ul class="kallforteckning">`, varje källa en egen post, en ny källa på sin alfabetiska plats). Testet kontrollerar det i varje kalkylsida.
-8. `node test_kalkylkarna.js` och `node test_natkostnader.js` ger inga fel, och sidan är provad lokalt.
+8. Fältet Elområde med förklaring och schablonnotiser enligt regeln om mallen. Spotpris är schablonpriset för valt område, eller ett eget värde med källa och en mening om varför. Real kalkylränta 0,052 med texten och de två källorna, om fallet inte har ett eget värde med källa.
+9. Varje värde som avviker från mallen har källmärkning vid fältet och en mening om varför.
+10. `node test_kalkylkarna.js` och `node test_natkostnader.js` ger inga fel, och sidan är provad lokalt.
 
 ---
 
@@ -158,6 +171,7 @@ den globala filen `AI\Claude\CLAUDE.md` på Kents lokala maskin.
 
 ## Uppdateringslogg
 
+- 2026-11-24 (v1.19): Regeln om mallen (elområde i varje kalkyl med förklaring och schablonnotiser, kalkylränta som standard, egna värden märks) och checklistan utökad.
 - 2026-11-23 (v1.18): Startsidan `index.html` med regel om att texten och siffrorna följer kalkylerna, och brödsmulor som börjar med den.
 - 2026-11-23 (v1.17): Hänvisningspost för Vindbrukskollen i källförteckningarna och sammanställningen kandidater.md som egen källpost.
 - 2026-11-23 (v1.16): Blänkare om riktvärdet för kapacitetsfaktorn i kalkylerna, och `projektkandidater/riktvarden.json` som testet jämför mot.
@@ -181,4 +195,4 @@ den globala filen `AI\Claude\CLAUDE.md` på Kents lokala maskin.
 
 ---
 
-_CLAUDE.md v1.18, 2026-11-23_
+_CLAUDE.md v1.19, 2026-11-24_

@@ -58,8 +58,9 @@
    UPPDATERING 2026-11-23 (senare igen 13): källpost för sammanställningen (Lundgren) och hänvisning på V. Version 1.30.
    UPPDATERING 2026-11-23 (senare igen 14): startsidan index.html finns och brödsmulorna börjar med "Vindkraftens ekonomi: start". Version 1.31.
    UPPDATERING 2026-11-23 (senare igen 15): knapparna Ett verk och Fem verk uppdaterar nu också Kalkylsammanställningen (natkostnader_ui.js skickar change efter input). Version 1.32.
-   UPPDATERING 2026-11-24: Önnerup har nya förval (kapacitetsfaktor 0,37, 10 000 kkr/MW, real kalkylränta 5,2 %, nätläge Bas), som bara står i Önnerups HTML. Texten om engångskostnaden i panelen nämner inte längre ett fast tal. Version 1.33. */
-const VERSION = '1.33';
+   UPPDATERING 2026-11-24: Önnerup har nya förval (kapacitetsfaktor 0,37, 10 000 kkr/MW, real kalkylränta 5,2 %, nätläge Bas), som bara står i Önnerups HTML. Texten om engångskostnaden i panelen nämner inte längre ett fast tal. Version 1.33.
+   UPPDATERING 2026-11-24 (senare): fältet Elområde finns i alla tre kalkylerna (före Spotpris), med en förklaring vid rubriken av vad det styr (schablonpris för Spotpris och elprisfaktor i fastighetsskattens schablon), och en schablonnotis under Spotpris och Fastighetsskatt som visar om värdet är schablonen eller avviker från den (kalkylkarna.js). Förklaringarna (abbr.fk) fungerar nu även i huvudkalkylen och Önnerup. Huvudkalkylens förvalda elområde är SE4, vars schablonpris (0,60 kr/kWh) är det spotpris som alltid har stått där, så resultaten är oförändrade. Version 1.34. */
+const VERSION = '1.34';
 const VERSIONSDATUM = '2026-11-24';
 
 /* ============================================================================
@@ -74,9 +75,6 @@ const VERSIONSDATUM = '2026-11-24';
    Samlar alla indatafält i ett objekt. En central funktion så att övriga
    beräkningar alltid arbetar mot samma, färska ögonblicksbild av indata.
    ============================================================================ */
-
-/** Schablonpriser per elområde (kr/kWh) som fylls i när området byts. */
-const ELOMRADE_PRIS = { SE1: 0.30, SE2: 0.35, SE3: 0.55, SE4: 0.60 };
 
 function lasIndata() {
   return {
@@ -667,12 +665,7 @@ function kopplaLyssnare() {
     // 2) BEKRÄFTAD ändring när fältet lämnas → uppdatera jämförelsetabellen.
     el.addEventListener('change', () => {
       // Specialfall: om elområde ändras fyller vi i schablonpris (redigerbart).
-      if (el.id === 'elomrade') {
-        const nyttPris = ELOMRADE_PRIS[el.value];
-        if (nyttPris !== undefined) {
-          document.getElementById('elpris').value = nyttPris;
-        }
-      }
+      if (el.id === 'elomrade') fyllElomradePris();   // kalkylkarna.js
 
       // MINNESLOGIK: flytta "Senaste" → "Tidigare", beräkna nytt "Senaste".
       tidigareResultat = senasteResultat;   // det gamla blir tidigare
@@ -767,6 +760,8 @@ function kopplaTeknikModal() {
 document.addEventListener('DOMContentLoaded', () => {
   kopplaFskattSchablon();
   kopplaLyssnare();     // reaktiva lyssnare på indatafälten
+  kopplaForklaringar(); // förklaringar (abbr.fk), kalkylkarna.js
+  kopplaElomradeOchSchablon(); // förklaring vid Elområde och schablonnotiser, kalkylkarna.js
   kopplaFlikar();
   kopplaAnkareTillFlikar();       // flikväxling
   kopplaTeknikModal();  // teknik-knapp + modal med originalprompten

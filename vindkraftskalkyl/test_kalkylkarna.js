@@ -249,7 +249,7 @@ const KALKYLER = [
 const FORBJUDNA = ['annuitet', 'npv', 'irr', 'payback', 'fmt', 'tal', 'text', 'radataNat', 'lcoeAvKassaflode', 'lasNatIndata', 'natPaverkan', 'natSammanfattning',
   'beraknaNarboende', 'beraknaNarboendeZoner', 'beraknaNarboendeSchablon', 'lasNarboendeIndata', 'zonEtikett', 'realiseratPris',
   'fastighetsskattPerVerk', 'lasKommunIndata', 'kommunPoster', 'kommunSaknasText', 'arrendeForklaring', 'visaArrendeForklaring', 'jamforRadExtras',
-  'realpristext', 'visaRealiseratPris', 'totalEffektText', 'visaTotalEffekt', 'natLopandeForklaring', 'natLopandeNot', 'natEngangForklaring', 'narboendeStorleksordning', 'skrivNarboendeStorleksordning', 'takOrePerKWh'];
+  'realpristext', 'visaRealiseratPris', 'totalEffektText', 'visaTotalEffekt', 'elomradeForklaring', 'visaElomradeForklaring', 'fyllElomradePris', 'schablonnotis', 'uppdateraSchablonnotiser', 'kopplaElomradeOchSchablon', 'kopplaForklaringar', 'natLopandeForklaring', 'natLopandeNot', 'natEngangForklaring', 'narboendeStorleksordning', 'skrivNarboendeStorleksordning', 'takOrePerKWh'];
 KALKYLER.forEach(k => {
   const js = fs.readFileSync(k.js, 'utf8');
   const html = fs.readFileSync(k.html, 'utf8');
@@ -429,6 +429,32 @@ fs.readdirSync('.').filter(f => /^(vindkraftskalkyl.*|index)\.html$/.test(f)).fo
   const blob = /github\.com\/kentlundgren\/Vindkraft\/blob\/main\/vindkraftskalkyl\/([^"\s)]+)/g; let bm;
   while ((bm = blob.exec(lhHtml))) sant('Långhult: länken till ' + bm[1] + ' pekar på en fil som finns', fs.existsSync(bm[1]));
   sant('mapparna langhult och onnerup har README', fs.existsSync('langhult/README.md') && fs.existsSync('onnerup/README.md'));
+}
+
+/* ---------- Elområde och schablonnotiser i alla kalkyler ---------- */
+{
+  const SIDOR = [['vindkraftskalkyl.html', 'berakningar.js'], ['vindkraftskalkyl_langhult.html', 'berakningar_langhult.js'], ['vindkraftskalkyl_Onnerup.html', 'berakningar.js']];
+  SIDOR.forEach(([h, j]) => {
+    const html = fs.readFileSync(h, 'utf8'), js = fs.readFileSync(j, 'utf8');
+    const opt = (html.match(/<select id="elomrade" class="indata">([\s\S]*?)<\/select>/) || [, ''])[1];
+    sant(h + ': elområde med SE1–SE4 och ett valt', ['SE1', 'SE2', 'SE3', 'SE4'].every(o => opt.indexOf('value="' + o + '"') > -1) && (opt.match(/selected/g) || []).length === 1);
+    sant(h + ': förklaring vid rubriken Elområde (elomrade-hjalp)', /<abbr class="fk" id="elomrade-hjalp" tabindex="0" data-f="">\?<\/abbr>/.test(html));
+    sant(h + ': schablonnotis under Spotpris och Fastighetsskatt', ['elpris-schablon', 'fskatt1-schablon', 'fskatt2-schablon'].every(id => html.indexOf('id="' + id + '"') > -1));
+    sant(h + ': ' + j + ' kopplar elområde och schablonnotiser via kärnan', /kopplaElomradeOchSchablon\(\)/.test(js) && /fyllElomradePris\(\)/.test(js) && /kopplaForklaringar\(\)/.test(js));
+    sant(j + ': ingen egen ELOMRADE_PRIS', !/const ELOMRADE_PRIS/.test(js));
+  });
+  // Mallen: schablonpriset för valt område är Spotpris i huvudkalkylen, så att den inte avviker från sin egen schablon.
+  const mh = fs.readFileSync('vindkraftskalkyl.html', 'utf8');
+  const om = /<option value="(SE[1-4])" selected>/.exec(mh)[1];
+  lika('huvudkalkylens Spotpris är schablonpriset för ' + om, parseFloat(/id="elpris" class="indata" value="([^"]+)"/.exec(mh)[1]), K.ELOMRADE_PRIS[om]);
+  const fk = K.elomradeForklaring();
+  sant('förklaringen nämner alla områdens schablonpris och elprisfaktor', ['0,30', '0,35', '0,55', '0,60', '−0,160', '−0,192', '+0,190', '+0,348'].every(t => fk.indexOf(t) > -1));
+  sant('schablonnotis: lika med schablonen', K.schablonnotis(0.55, 0.55, 'SE3', 2, 'kr/kWh', false, 0.005).tillstand === 'schablon');
+  sant('schablonnotis: avviker', K.schablonnotis(0.5, 0.55, 'SE3', 2, 'kr/kWh', false, 0.005).tillstand === 'avviker' && /Avviker från schablonen för SE3 \(0,55 kr\/kWh\)/.test(K.schablonnotis(0.5, 0.55, 'SE3', 2, 'kr/kWh', false, 0.005).text));
+  sant('schablonnotis: 0 eller tomt är uppgift saknas för fastighetsskatt', K.schablonnotis(0, 163281, 'SE4', 0, 'kr', true, 1).tillstand === 'saknas' && K.schablonnotis(NaN, 1, 'SE4', 0, 'kr', true, 1).tillstand === 'saknas');
+  // Långhults spotpris 0,50 avviker från schablonen (0,55); fastighetsskatten är schablonen för 6,6 MW och 3 610 h.
+  sant('Långhult: spotpris 0,50 avviker från SE3-schablonen', K.schablonnotis(0.5, K.ELOMRADE_PRIS.SE3, 'SE3', 2, 'kr/kWh', false, 0.005).tillstand === 'avviker');
+  sant('Långhult: fastighetsskatten 334 398 är schablonen', K.schablonnotis(334398, K.fastighetsskattSchablon(6600, 'SE3', 0.4121 * 8760).fskatt1, 'SE3', 0, 'kr', true, 1).tillstand === 'schablon');
 }
 
 /* ---------- Önnerup: förvalen ---------- */
