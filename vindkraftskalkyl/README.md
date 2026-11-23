@@ -1,5 +1,7 @@
 # Vindkraftskalkyl – fem perspektiv
 
+- **Live:** [https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/) (startsidan, med länkar till de tre kalkylerna)
+
 Ett interaktivt webbaserat verktyg som beräknar och visualiserar vindkraftens
 ekonomi **samtidigt ur fem perspektiv**: investeraren, markägaren,
 kommunen/samhället, andelsägaren och den närboende.
@@ -64,6 +66,7 @@ Projektet består av tre huvudfiler i denna mapp, plus en förklaringsruta och e
 
 | Fil | Ansvar |
 | --- | --- |
+| [`index.html`](https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/) | Startsidan: presenterar poängen med kalkylerna (en park, fem parter) och länkar till dem. Formateringen ligger i `index.css` och versionsraden och teknikmodalen i `index.js`. Siffrorna på sidan kontrolleras av `test_kalkylkarna.js` mot riktvärdet och mot `projektkandidater/kandidater.md`. |
 | `vindkraftskalkyl.html` | Struktur och innehåll (semantisk HTML5), inklusive delningstaggarna (Open Graph). |
 | `stil.css` | All formatering (responsiv design, gula indatafält, flikar, förklaringsrutan). |
 | `berakningar.js` | All beräknings- och interaktionslogik. |

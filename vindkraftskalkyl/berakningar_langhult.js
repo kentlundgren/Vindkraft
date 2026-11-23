@@ -31,6 +31,7 @@
 'use strict';
 
 /* Versionsraden längst ned på sidan. Höj VERSION och uppdatera VERSIONSDATUM i samma ändring som innehållet ändras.
+   UPPDATERING 2026-11-23 (senare igen 11): startsidan index.html finns och brödsmulorna börjar med "Vindkraftens ekonomi: start". Version 1.12.
    UPPDATERING 2026-11-23 (senare igen 10): källpost för sammanställningen och hänvisning på V. Version 1.11.
    UPPDATERING 2026-11-23 (senare igen 9): blänkare om riktvärdet för kapacitetsfaktorn. Version 1.10.
    UPPDATERING 2026-11-23 (senare igen 8): tabellerna numrerade i läsordning (1–9). Version 1.9.
@@ -43,7 +44,7 @@
    UPPDATERING 2026-11-23 (senare igen): växel för parkens storlek (20 verk eller bara Lunnarsbo, 12 verk). Version 1.2.
    UPPDATERING 2026-11-23 (senare): nya nätfall I och J (Vattenfall 130 kV) i väljaren. Version 1.1.
    UPPDATERING 2026-11-23: versionsrad i sidfoten. Version 1.0 (Långhult har egen versionsnumrering, skild från huvudkalkylens). */
-const VERSION = '1.11';
+const VERSION = '1.12';
 const VERSIONSDATUM = '2026-11-23';
 
 /* ============================================================================

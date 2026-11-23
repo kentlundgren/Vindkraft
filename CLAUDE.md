@@ -6,7 +6,7 @@
 **Live (Vercel-app, Functions):** https://vindkraft-ver2.vercel.app
 **Live (Vercel-app, Next.js App Router):** https://vindkraft-ver3.vercel.app
 **Senast uppdaterad:** 2026-11-23
-**Version:** 1.17
+**Version:** 1.18
 
 ---
 
@@ -16,7 +16,7 @@ Samlar vindkraftsrelaterat innehåll:
 
 | Mapp | Innehåll |
 | ---- | -------- |
-| `vindkraftskalkyl/` | Interaktivt beräkningsverktyg (HTML/CSS/JS) – GitHub Pages-version. Fallmapparna `langhult/` och `onnerup/` ligger i den. |
+| `vindkraftskalkyl/` | Interaktivt beräkningsverktyg (HTML/CSS/JS) – GitHub Pages-version, med startsidan `index.html` (adressen `…/vindkraftskalkyl/`). Fallmapparna `langhult/` och `onnerup/` ligger i den. |
 | `projektkandidater/` | Analys över många projekt: kandidater för nya kalkyler ur Vindbrukskollen (skript, test, `kandidater.csv` och `kandidater.md`). Rådata i `data_raw/` ingår inte i git. |
 | `vindkraftskalkyl_Vercel/` | Samma kalkyl som statisk Vercel-app (projektet "vindkraft", https://vindkraft-rosy.vercel.app). |
 | `vindkraftskalkyl_Vercel_ver2/` | Vercel-anpassad kalkyl med Functions (`/api/elpris`, `/api/scenario`). Nytt projekt i teamet Effektiv (`effektiv1`), inte en ersättning för den statiska appen. Live: https://vindkraft-ver2.vercel.app. Token till spotpris: `Hur-skaffa-nyckel-hos-ENTSO-E.md`. |
@@ -54,6 +54,14 @@ Kalkylerna i `vindkraftskalkyl/` (huvudkalkylen, Långhult och Önnerup) **delar
 ## Regel – Analyser över många projekt ligger i egen mapp i repots rot
 
 En analys som gäller flera projekt, som kandidatlistan ur Vindbrukskollen, hör inte hemma i ett fall (`vindkraftskalkyl/langhult/`) och inte bland kalkylsidorna. Den får en egen mapp i repots rot, namngiven efter syftet (`projektkandidater/`), med `README.md`, skript, test och små resultatfiler. Rådata läggs i `data_raw/` och ignoreras av git, och skriptet hämtar den på nytt. Börja platt. Dela upp i `skript/`, `data/` och `rapporter/` först när mappen har minst tre analyser. Ett eget repo för vindkraftsdata övervägs när datan återanvänds av flera repon. **När jag lägger in något nytt redovisar jag var det hamnar och vilka alternativ som fanns** (global `CLAUDE.md`, skillen `kent-projektstruktur`).
+
+## Regel – Startsidan index.html
+
+`vindkraftskalkyl/index.html` (med `index.css` och `index.js`) är mappens startsida och presenterar poängen med kalkylerna: en park, fem parter. Kalkylsidornas brödsmulor börjar med den (`start` i `dokument.json`, och `brodsmulor.py` skriver blocket).
+- **Texten följer kalkylerna.** Beskrivningarna av de fem parterna och de tre kalkylkorten ska stämma med vad kalkylerna visar. Ändras en kalkyl på ett sätt som syns för parterna uppdateras startsidan.
+- **Siffror på startsidan** (riktvärdet 37 % och 3 241 timmar, 22 projekt, och antalet kandidater 27 och 9) kontrolleras av `test_kalkylkarna.js` mot `KAPACITETSFAKTOR_RIKTVARDE` och `projektkandidater/kandidater.md`. En ny körning av skriptet som ändrar dem kräver att startsidan uppdateras.
+- **Nya kalkyler** läggs som ett nytt kort under "Tre kalkyler" (och i `dokument.json`).
+- Startsidan har egen källförteckning, alfabetisk och osiffrad, och samma hörnpar som kalkylerna.
 
 ## Regel – Ny kalkyl eller nytt fall: checklista
 
@@ -150,6 +158,7 @@ den globala filen `AI\Claude\CLAUDE.md` på Kents lokala maskin.
 
 ## Uppdateringslogg
 
+- 2026-11-23 (v1.18): Startsidan `index.html` med regel om att texten och siffrorna följer kalkylerna, och brödsmulor som börjar med den.
 - 2026-11-23 (v1.17): Hänvisningspost för Vindbrukskollen i källförteckningarna och sammanställningen kandidater.md som egen källpost.
 - 2026-11-23 (v1.16): Blänkare om riktvärdet för kapacitetsfaktorn i kalkylerna, och `projektkandidater/riktvarden.json` som testet jämför mot.
 - 2026-11-23 (v1.15): Mappen `projektkandidater/` och regeln om analyser över många projekt, och att jag redovisar var nya filer hamnar och vilka alternativ som fanns.
@@ -172,4 +181,4 @@ den globala filen `AI\Claude\CLAUDE.md` på Kents lokala maskin.
 
 ---
 
-_CLAUDE.md v1.17, 2026-11-23_
+_CLAUDE.md v1.18, 2026-11-23_

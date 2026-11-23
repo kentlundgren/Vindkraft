@@ -7,6 +7,7 @@
 
    VERSION och VERSIONSDATUM ska höjas vid varje ändring av sidan eller dess
    skript (regel 19 i kent-bygg-sidor).
+   UPPDATERING 2026-11-23: startsidan index.html finns och brödsmulorna börjar med "Vindkraftens ekonomi: start". Version 1.11.
    UPPDATERING 2026-11-22: sidan skapades. Version 1.0.
    UPPDATERING 2026-11-22 (senare igen): länk "Visa i kalkylen" vid varje fall. Version 1.2.
    UPPDATERING 2026-11-22 (senare igen): Tabell 4 (parkeffekt och nätfall) med markering av vald storlek. Version 1.8.
@@ -19,7 +20,7 @@
    ============================================================================ */
 'use strict';
 
-const VERSION = '1.10';
+const VERSION = '1.11';
 const VERSIONSDATUM = '2026-11-23';
 
 (function () {

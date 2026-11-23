@@ -1,5 +1,6 @@
 {
   "titel": "Vindkraftskalkyl, fem perspektiv",
+  "start": {"namn": "Vindkraftens ekonomi: start", "href": "index.html"},
   "dokument": [
     {
       "fil": "vindkraftskalkyl.html",

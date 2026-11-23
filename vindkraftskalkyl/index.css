@@ -1,0 +1,139 @@
+/* ==========================================================================
+   index.css – formatering för startsidan index.html (Vindkraftens ekonomi: vem får vad?)
+   --------------------------------------------------------------------------
+   Egen css med samma basnamn som sidan. Färgerna följer kalkylernas tema (stil.css),
+   men filen är fristående så att startsidan inte laddar kalkylernas formatering.
+   Gult används inte här: det är reserverat för inmatningsfält i kalkylerna.
+   ========================================================================== */
+
+:root {
+  --farg-primar: #1b5e5a;
+  --farg-primar-ljus: #2e8b84;
+  --farg-bakgrund: #f4f6f7;
+  --farg-panel: #ffffff;
+  --farg-text: #1c2321;
+  --farg-ram: #d5dbdb;
+  --farg-framhavd: #eef7f6;
+  --farg-lank: #1b5e5a;
+  --skugga: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.08);
+  /* En färg per part (ljusa toner, ingen gul) */
+  --part-investerare: #e3f3e8;
+  --part-markagare: #eaf3fb;
+  --part-kommun: #eef7f6;
+  --part-andelsagare: #f1eafb;
+  --part-narboende: #fdebe0;
+}
+:root[data-tema="morkt"] { color-scheme: dark; }
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  color: var(--farg-text);
+  background: var(--farg-bakgrund);
+  line-height: 1.55;
+}
+a { color: var(--farg-lank); }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--farg-primar-ljus); outline-offset: 2px; }
+
+/* ---- Sidhuvud ---- */
+.hero {
+  background: linear-gradient(135deg, var(--farg-primar), var(--farg-primar-ljus));
+  color: #fff;
+  padding: 2rem 1.25rem 1.5rem;
+}
+.hero-inre { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 1.5rem; align-items: center; }
+.hero h1 { margin: 0 0 .6rem; font-size: 2.2rem; line-height: 1.15; }
+.hero .ingress { margin: 0 0 1.1rem; max-width: 62ch; font-size: 1.05rem; opacity: .97; }
+.hero .knappar { display: flex; flex-wrap: wrap; gap: .6rem; }
+.knapp {
+  display: inline-block; padding: .6rem 1.1rem; border-radius: 999px; font-weight: 600;
+  text-decoration: none; border: 2px solid #fff; color: #fff; background: transparent;
+}
+.knapp:hover { background: rgba(255,255,255,.15); }
+.knapp.primar { background: #fff; color: var(--farg-primar); }
+.knapp.primar:hover { background: var(--farg-framhavd); }
+.hero svg { width: 100%; height: auto; max-height: 340px; }
+.hero svg text { font-family: inherit; }
+
+/* ---- Innehåll ---- */
+main { padding-bottom: 4rem; }
+section { padding: 1.4rem 1.25rem; max-width: 1100px; margin: 0 auto; }
+h2 { font-size: 1.45rem; color: var(--farg-primar); border-bottom: 2px solid var(--farg-ram); padding-bottom: .3rem; margin: 1rem 0 .8rem; }
+h3 { font-size: 1.1rem; margin: 0 0 .35rem; }
+.ankare { margin-left: .4rem; font-size: .85em; text-decoration: none; opacity: 0; transition: opacity .15s; }
+h2:hover .ankare, h3:hover .ankare, .ankare:focus-visible { opacity: .8; }
+.hint { font-size: .85rem; color: #4d5c59; }
+.lead { max-width: 72ch; }
+
+/* ---- Fem parter ---- */
+.parter { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: .9rem; margin-top: 1rem; }
+.part { border-radius: 10px; padding: .9rem 1rem 1rem; box-shadow: var(--skugga); border-top: 5px solid var(--farg-primar-ljus); display: flex; flex-direction: column; }
+.part p { margin: 0 0 .6rem; font-size: .93rem; }
+.part .lank { margin-top: auto; font-size: .85rem; }
+.part.investerare { background: var(--part-investerare); border-top-color: #2f8f4e; }
+.part.markagare { background: var(--part-markagare); border-top-color: #3b7fb6; }
+.part.kommun { background: var(--part-kommun); border-top-color: var(--farg-primar-ljus); }
+.part.andelsagare { background: var(--part-andelsagare); border-top-color: #7a56b6; }
+.part.narboende { background: var(--part-narboende); border-top-color: #c9672a; }
+
+/* ---- Kalkylkort ---- */
+.kalkyler { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1rem; margin-top: 1rem; }
+.kalkylkort { background: var(--farg-panel); border: 1px solid var(--farg-ram); border-radius: 10px; padding: 1rem 1.1rem; box-shadow: var(--skugga); display: flex; flex-direction: column; }
+.kalkylkort p { margin: 0 0 .7rem; font-size: .95rem; }
+.kalkylkort .etikett { font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: var(--farg-primar); font-weight: 700; margin-bottom: .2rem; }
+.kalkylkort .oppna { margin-top: auto; align-self: flex-start; padding: .5rem .9rem; border-radius: 999px; background: var(--farg-primar); color: #fff; text-decoration: none; font-weight: 600; font-size: .9rem; }
+.kalkylkort .oppna:hover { background: var(--farg-primar-ljus); }
+
+/* ---- Så läser du ---- */
+.lasguide { background: var(--farg-panel); border: 1px solid var(--farg-ram); border-left: 5px solid var(--farg-primar-ljus); border-radius: 8px; padding: .8rem 1.1rem; }
+.lasguide ul { margin: .3rem 0; padding-left: 1.2rem; }
+.lasguide li { margin-bottom: .45rem; }
+.riktvarde { background: var(--farg-framhavd); border-radius: 8px; padding: .7rem 1rem; margin-top: .8rem; }
+
+/* ---- Källor ---- */
+.kallor ul.kallforteckning { list-style: none; padding-left: 0; margin-left: 0; }
+.kallor ul.kallforteckning li { padding-left: 1.5rem; text-indent: -1.5rem; margin-bottom: .6rem; }
+.kallor a { word-break: break-word; }
+
+/* ---- Fot ---- */
+.sidfot { max-width: 1100px; margin: 0 auto; padding: 1rem 1.25rem 3.5rem; color: #4d5c59; font-size: .85rem; border-top: 1px solid var(--farg-ram); }
+.sidfot p { margin: .2rem 0; }
+.versionsrad { color: #5a6a67; }
+
+/* ---- Hörnparet (GitHub nere till vänster, teknik nere till höger) ---- */
+.corner {
+  position: fixed; bottom: 14px; z-index: 1000;
+  font-family: "Courier New", Courier, monospace; font-size: .78rem;
+  color: var(--farg-text); background: #fff; border: 1px solid var(--farg-ram);
+  border-radius: 999px; padding: .3rem .7rem; text-decoration: none; cursor: pointer;
+  opacity: .55; transition: opacity .2s ease;
+}
+.corner:hover, .corner:focus-visible { opacity: 1; }
+.corner-left { left: 14px; }
+.corner-right { right: 14px; }
+
+/* ---- Teknikmodalen ---- */
+.modal-overlay { position: fixed; inset: 0; z-index: 1001; background: rgba(0,0,0,.55); display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.modal-overlay[hidden] { display: none; }
+.modal-ruta { background: var(--farg-panel); border-radius: 10px; max-width: 760px; width: 100%; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,.35); overflow: hidden; }
+.modal-huvud { display: flex; align-items: center; justify-content: space-between; padding: .9rem 1.2rem; background: var(--farg-primar); color: #fff; }
+.modal-huvud h2 { margin: 0; font-size: 1.15rem; color: #fff; border: none; padding: 0; }
+.modal-stang { background: transparent; border: none; color: #fff; font-size: 1.8rem; line-height: 1; cursor: pointer; padding: 0 .3rem; }
+.modal-innehall { padding: 1.1rem 1.3rem; overflow-y: auto; }
+.modal-delrubrik { margin: 1rem 0 .5rem; color: var(--farg-primar); font-size: 1.05rem; }
+.tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: .7rem; }
+.tech-card { background: var(--farg-framhavd); border-radius: 8px; padding: .65rem .85rem; }
+.tech-card h4 { margin: 0 0 .25rem; font-size: .95rem; }
+.tech-card p { margin: 0; font-size: .88rem; }
+
+/* ---- Smal skärm ---- */
+@media (max-width: 800px) {
+  .hero-inre { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 1.7rem; }
+  .corner { bottom: 10px; }
+  .corner-left { left: 10px; }
+  .corner-right { right: 10px; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }

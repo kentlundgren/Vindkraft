@@ -55,8 +55,9 @@
    UPPDATERING 2026-11-23 (senare igen 10): källförteckningen är alfabetisk och osiffrad (Harvard), varje källa en egen post. Version 1.27.
    UPPDATERING 2026-11-23 (senare igen 11): tabellerna numrerade i läsordning utan dubbletter (nättabellen heter Nättabell 1). Version 1.28.
    UPPDATERING 2026-11-23 (senare igen 12): blänkare under Kapacitetsfaktor med riktvärdet 37 % (3 241 fullasttimmar). Version 1.29.
-   UPPDATERING 2026-11-23 (senare igen 13): källpost för sammanställningen (Lundgren) och hänvisning på V. Version 1.30. */
-const VERSION = '1.30';
+   UPPDATERING 2026-11-23 (senare igen 13): källpost för sammanställningen (Lundgren) och hänvisning på V. Version 1.30.
+   UPPDATERING 2026-11-23 (senare igen 14): startsidan index.html finns och brödsmulorna börjar med "Vindkraftens ekonomi: start". Version 1.31. */
+const VERSION = '1.31';
 const VERSIONSDATUM = '2026-11-23';
 
 /* ============================================================================

@@ -354,8 +354,40 @@ fs.readdirSync('.').filter(f => /^vindkraftskalkyl.*\.html$/.test(f)).forEach(f 
   });
 }
 
+/* ---------- Startsidan index.html ---------- */
+{
+  const idx = fs.readFileSync('index.html', 'utf8'), idxJs = fs.readFileSync('index.js', 'utf8');
+  sant('startsidan har hörnparet (GitHub och teknik) och teknikmodalen', /id="github-lank"/.test(idx) && /id="teknik-knapp"/.test(idx) && /id="teknik-modal"/.test(idx) && /<h3 class="modal-delrubrik">Tekniken/.test(idx) && /<h3 class="modal-delrubrik">Metoden/.test(idx));
+  sant('startsidan har versionsrad och VERSION/VERSIONSDATUM i index.js', /id="versionsrad-nr"/.test(idx) && /^const VERSION = '\d+\.\d+';/m.test(idxJs) && /^const VERSIONSDATUM = '\d{4}-\d{2}-\d{2}';/m.test(idxJs));
+  sant('startsidan har delningstaggar (og:image med absolut adress, twitter:card)', /<meta property="og:image" content="https:\/\/kentlundgren\.github\.io\/Vindkraft\/vindkraftskalkyl\//.test(idx) && /summary_large_image/.test(idx));
+  sant('startsidan är inte en AI-märkt sida', !/AI-stöd|AI-assisterad|framtagen med/i.test(idx));
+  const rubriker = (idx.match(/<h[123] id="(?!teknik-modal-rubrik)[^"]+"/g) || []).length;   // modalens rubrik har id för aria-labelledby, inget ankare
+  sant('startsidan har ankare (#-länk) på varje rubrik', rubriker > 0 && (idx.match(/<a class="ankare"/g) || []).length === rubriker);
+  ['vindkraftskalkyl.html', 'vindkraftskalkyl_langhult.html', 'vindkraftskalkyl_Onnerup.html'].forEach(f => {
+    sant('startsidan länkar till ' + f, idx.indexOf('href="' + f + '"') > -1);
+    sant(f + ' har brödsmulan Vindkraftens ekonomi: start som länkar till index.html', /<a href="index\.html">Vindkraftens ekonomi: start<\/a>/.test(fs.readFileSync(f, 'utf8')));
+  });
+  // Alla interna länkar leder till en fil som finns, och ankare till ett id som finns.
+  const lankar = [...idx.matchAll(/href="([^"#:]*)(#[^"]*)?"/g)].map(m => ({ fil: m[1], id: m[2] ? m[2].slice(1) : '' })).filter(l => !/^https?/.test(l.fil));
+  lankar.forEach(l => {
+    const fil = l.fil || 'index.html';
+    const finns = fs.existsSync(fil);
+    const idFinns = !l.id || (finns && fs.readFileSync(fil, 'utf8').indexOf('id="' + l.id + '"') > -1);
+    sant('startsidans länk ' + fil + (l.id ? '#' + l.id : '') + ' pekar på något som finns', finns && idFinns);
+  });
+  // Siffrorna på startsidan stämmer med riktvärdet och med kandidatlistan.
+  const R = K.KAPACITETSFAKTOR_RIKTVARDE;
+  const idxText = idx.replace(/\s+/g, ' ');
+  const timmarText = String(R.fullasttimmar).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  sant('startsidans riktvärde (' + R.procent + ' % och ' + timmarText + ' fullasttimmar) stämmer med kalkylkärnan', idxText.indexOf('Riktvärde för kapacitetsfaktorn: ' + R.procent + ' %') > -1 && idxText.indexOf('motsvarande ' + timmarText + ' fullasttimmar') > -1);
+  sant('startsidan nämner ' + R.antal + ' aktuella projekt', idx.indexOf(R.antal + ' aktuella projekt') > -1);
+  const kmd = fs.readFileSync('../projektkandidater/kandidater.md', 'utf8');
+  const antalKand = (kmd.match(/\*\*(\d+) kandidater\*\*/) || [])[1], antalSyd = (kmd.match(/(\d+) av kandidaterna ligger i SE3 eller SE4/) || [])[1];
+  sant('startsidans antal kandidater (' + antalKand + ') och i SE3/SE4 (' + antalSyd + ') stämmer med kandidater.md', !!antalKand && !!antalSyd && idx.indexOf(antalKand + ' aktuella projekt uppfyller urvalet') > -1 && idx.indexOf(antalSyd + ' av dem ligger i elområde SE3 eller SE4') > -1);
+}
+
 /* ---------- Källförteckningen: alfabetisk och osiffrad (Harvard, kent-referens-skill punkt 8 och 18) ---------- */
-fs.readdirSync('.').filter(f => /^vindkraftskalkyl.*\.html$/.test(f)).forEach(f => {
+fs.readdirSync('.').filter(f => /^(vindkraftskalkyl.*|index)\.html$/.test(f)).forEach(f => {
   const html = fs.readFileSync(f, 'utf8');
   const sek = html.match(/<section class="kallor"[\s\S]*?<\/section>/);
   if (!sek) return;
