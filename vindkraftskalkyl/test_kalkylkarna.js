@@ -262,6 +262,14 @@ KALKYLER.forEach(k => {
   sant(k.html + ' har rullgardinen Kalkyler', html.indexOf('class="kalkylmeny"') > -1);
 });
 
+/* ---------- Delningsbilder för kalkylerna ---------- */
+[['vindkraftskalkyl_langhult.html', 'og-bild-langhult.jpg'], ['vindkraftskalkyl_Onnerup.html', 'og-bild-onnerup.jpg']].forEach(([sida, bild]) => {
+  const html = fs.readFileSync(sida, 'utf8');
+  sant(sida + ' har og:image med absolut adress till ' + bild, html.indexOf('<meta property="og:image" content="https://kentlundgren.github.io/Vindkraft/vindkraftskalkyl/' + bild + '">') > -1);
+  sant(sida + ': bilden ' + bild + ' finns och är under 300 kB', fs.existsSync(bild) && fs.statSync(bild).size < 300 * 1024);
+  sant(sida + ' har og:title, og:description och twitter:card', /og:title/.test(html) && /og:description/.test(html) && /summary_large_image/.test(html));
+});
+
 /* ---------- Rubriker och ordning på indatagrupperna, och att varje kalkylsida är med i rullgardinen ---------- */
 const dokument = JSON.parse(fs.readFileSync('dokument.json', 'utf8'));
 const medMeny = dokument.kalkyler.map(x => x.fil);
