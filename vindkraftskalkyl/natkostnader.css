@@ -178,3 +178,6 @@ details.nat-dela[open] > summary { margin-bottom: .4rem; }
 .jamforelse-tabell tr.rak-summa td:first-child { border-left: 4px solid var(--farg-primar); }
 /* Fält som inte används med vald modell */
 label.oanvand { opacity: .5; }
+
+/* Totala effekten under Effekt per verk: en diskret beräknad rad i samma stil som övriga hjälptexter (klassen hint). */
+.total-effekt-rad { margin: 0 0 .9rem; }

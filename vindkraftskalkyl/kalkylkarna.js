@@ -25,12 +25,12 @@
    webbläsaren och exporteras som module.exports i Node, där test_kalkylkarna.js
    kör dem.
 
-   Version 1.8 (2026-11-23): realiserat pris räknas ut och uppdateras (realpristext). Version 1.7: uträkningsmarkering och förklaringar i sammanställningen, och arrendeförklaring. Version 1.6: raderna JAMFOR_OVERSKOTT för sammanställningen. Version 1.5: tabell över extra bostäder under taket, förklaring per zon och länkar till dolda flikar. Version 1.4: fastighetsskatt som första åren + därefter (fskatt2) och uppgift om när närboendetaket nås. Version 1.3: kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
+   Version 1.9 (2026-11-23): totala effekten visas under Effekt per verk (visaTotalEffekt) och fälten i första gruppen har fast ordning (INDATAORDNING_ANLAGGNING). Version 1.8: realiserat pris räknas ut och uppdateras (realpristext). Version 1.7: uträkningsmarkering och förklaringar i sammanställningen, och arrendeförklaring. Version 1.6: raderna JAMFOR_OVERSKOTT för sammanställningen. Version 1.5: tabell över extra bostäder under taket, förklaring per zon och länkar till dolda flikar. Version 1.4: fastighetsskatt som första åren + därefter (fskatt2) och uppgift om när närboendetaket nås. Version 1.3: kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
    berakningar.js och berakningar_langhult.js.
    ============================================================================ */
 'use strict';
 
-const KARNA_VERSION = '1.8';
+const KARNA_VERSION = '1.9';
 
 /**
  * Indatagrupperna i alla vindkraftskalkyler: rubrikerna och deras ordning är fastställda här, så att kalkylerna ser
@@ -46,6 +46,17 @@ const INDATAGRUPPER = [
   'Kommun & samhälle',
   'Andelsägare (kooperativ)',
   'Närboende (vindkraftsersättning, SFS 2026:1113)'
+];
+
+/**
+ * Ordningen på fälten i den första gruppen (Anläggning & investering) i alla vindkraftskalkyler. Samma ordning gör att man
+ * kan läsa två kalkyler bredvid varandra och jämföra värdena rad för rad. Totala effekten (id total-effekt) är en beräknad
+ * rad som visas direkt under Effekt per verk. Ett fält som en kalkyl saknar hoppas över, men de som finns står i denna ordning.
+ * Ett nytt fält läggs in här och i varje kalkylsida. test_kalkylkarna.js kontrollerar ordningen i varje sida.
+ */
+const INDATAORDNING_ANLAGGNING = [
+  'antalverk', 'effekt', 'total-effekt', 'kapfaktor', 'verkshojd', 'livslangd',
+  'elomrade', 'elpris', 'prisfaktor', 'elprisforandring', 'degradering', 'specinv', 'kalkylranta'
 ];
 
 /* ============================================================================
@@ -98,6 +109,21 @@ function realpristext(spot, prisfaktor) {
 function visaRealiseratPris(spot, prisfaktor) {
   const e = document.getElementById('realpris-visning');
   if (e) e.textContent = realpristext(spot, prisfaktor);
+}
+
+/**
+ * Texten för totala effekten: antal verk × effekt per verk = total effekt, till exempel "20 × 6,6 MW = 132 MW".
+ * Visas i elementet total-effekt-visning och uppdateras vid varje omräkning (skrivUt anropar visaTotalEffekt).
+ */
+function totalEffektText(effekt, antalverk) {
+  const t = (v) => v.toLocaleString('sv-SE', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  if (!Number.isFinite(effekt) || !Number.isFinite(antalverk)) return '–';
+  return t(antalverk) + ' × ' + t(effekt) + ' MW = ' + t(antalverk * effekt) + ' MW';
+}
+
+function visaTotalEffekt(effekt, antalverk) {
+  const e = document.getElementById('total-effekt-visning');
+  if (e) e.textContent = totalEffektText(effekt, antalverk);
 }
 
 /**
@@ -779,7 +805,7 @@ function kommunSaknasText(poster) {
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
-    KARNA_VERSION, INDATAGRUPPER, JAMFOR_OVERSKOTT, arrendeForklaring, realpristext, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode,
+    KARNA_VERSION, INDATAGRUPPER, INDATAORDNING_ANLAGGNING, totalEffektText, JAMFOR_OVERSKOTT, arrendeForklaring, realpristext, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode,
     natPaverkan, natEngangTillaggAv, natSammanfattning,
     lasKommunIndata, fastighetsskattPerVerk, kommunPoster, kommunSaknasText, narboendeTakniva, narboendeExtra, zonHjalpText,
     FSKATT_SCHABLON, fullastJustering, fastighetsskattSchablon,

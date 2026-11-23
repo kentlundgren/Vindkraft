@@ -223,6 +223,9 @@ sant('realpristext: 0,6 × 1 = 0,6 (huvudkalkylen)', K.realpristext(0.6, 1).repl
 sant('realpristext: ändrad prisfaktor 0,8 ger 0,48', /= 0,48 kr\/kWh/.test(K.realpristext(0.6, 0.8)));
 sant('realpristext: 0,55 × 0,75 visas exakt som 0,4125', /= 0,4125 kr\/kWh/.test(K.realpristext(0.55, 0.75)));
 sant('realpristext: ogiltigt värde ger tankstreck', K.realpristext(NaN, 1) === '–');
+sant('totalEffektText: 20 × 6,6 = 132 MW', K.totalEffektText(6.6, 20).replace(/\s/g, ' ') === '20 × 6,6 MW = 132 MW');
+sant('totalEffektText: 5 × 4 = 20 MW', K.totalEffektText(4, 5).replace(/\s/g, ' ') === '5 × 4 MW = 20 MW');
+sant('totalEffektText: ogiltigt värde ger tankstreck', K.totalEffektText(NaN, 5) === '–');
 
 /* ---------- Alla kalkyler använder kärnan ---------- */
 const KALKYLER = [
@@ -233,7 +236,7 @@ const KALKYLER = [
 const FORBJUDNA = ['annuitet', 'npv', 'irr', 'payback', 'fmt', 'tal', 'text', 'radataNat', 'lcoeAvKassaflode', 'lasNatIndata', 'natPaverkan', 'natSammanfattning',
   'beraknaNarboende', 'beraknaNarboendeZoner', 'beraknaNarboendeSchablon', 'lasNarboendeIndata', 'zonEtikett', 'realiseratPris',
   'fastighetsskattPerVerk', 'lasKommunIndata', 'kommunPoster', 'kommunSaknasText', 'arrendeForklaring', 'visaArrendeForklaring', 'jamforRadExtras',
-  'realpristext', 'visaRealiseratPris'];
+  'realpristext', 'visaRealiseratPris', 'totalEffektText', 'visaTotalEffekt'];
 KALKYLER.forEach(k => {
   const js = fs.readFileSync(k.js, 'utf8');
   const html = fs.readFileSync(k.html, 'utf8');
@@ -249,6 +252,18 @@ KALKYLER.forEach(k => {
   sant(k.js + ' markerar uträkningen och förklarar raderna', /jamforRadExtras\(/.test(js));
   sant(k.js + ' visar det realiserade priset', /visaRealiseratPris\(/.test(js));
   sant(k.html + ' har texten för realiserat pris', html.indexOf('id="realpris-visning"') > -1);
+  sant(k.js + ' visar totala effekten', /visaTotalEffekt\(/.test(js));
+  sant(k.html + ' har raden Total effekt', html.indexOf('id="total-effekt-visning"') > -1);
+  // Fälten i första gruppen står i samma ordning i alla kalkyler (INDATAORDNING_ANLAGGNING); ett fält som saknas hoppas över.
+  const grupp = html.slice(html.indexOf('<legend>Anläggning &amp; investering</legend>'));
+  const gruppSlut = grupp.slice(0, grupp.indexOf('</fieldset>'));
+  const idn = [];
+  const reId = /<(?:input|select|div|p)[^>]*\bid="([^"]+)"/g;
+  let mi;
+  while ((mi = reId.exec(gruppSlut))) if (K.INDATAORDNING_ANLAGGNING.indexOf(mi[1]) > -1) idn.push(mi[1]);
+  const forvantat = K.INDATAORDNING_ANLAGGNING.filter(i => idn.indexOf(i) > -1);
+  if (JSON.stringify(idn) !== JSON.stringify(forvantat)) console.log('  ' + k.html + ' har ordningen: ' + idn.join(', '));
+  sant(k.html + ' har fälten i Anläggning & investering i fast ordning', idn.length >= 11 && JSON.stringify(idn) === JSON.stringify(forvantat));
   sant(k.html + ' har arrendeförklaringen', html.indexOf('id="mark-arrende-forklaring"') > -1);
   sant(k.html + ' kan länkas till med #kalkylsammanstallning', html.indexOf('id="kalkylsammanstallning"') > -1);
   sant(k.js + ' kopplar länkar till flikar', /kopplaAnkareTillFlikar\(\)/.test(js));

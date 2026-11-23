@@ -15,6 +15,7 @@
   domen och är märkta som antagande eller saknas.
 
   UPPDATERING 2026-11-23: sidan skapades. Version delas med huvudkalkylen (berakningar.js).
+  UPPDATERING 2026-11-23 (senare igen 6): totala effekten visas under Effekt per verk, fälten i Anläggning & investering står i samma ordning som i övriga kalkyler (INDATAORDNING_ANLAGGNING i kalkylkarna.js), och läget ingen visar 0 kr i nätkostnadsrutorna. Version 1.23.
   ============================================================================
 -->
 <html lang="sv">
@@ -86,15 +87,33 @@
       <fieldset class="indata-grupp">
         <legend>Anläggning &amp; investering</legend>
 
-        <label>Spotpris (kr/kWh)
-          <input type="number" step="0.01" id="elpris" class="indata" value="0.6">
+        <label>Antal verk
+          <input type="number" step="1" id="antalverk" class="indata" value="3">
+          <span class="badge pm">Mark- och miljööverdomstolen, P 14634-20</span>
         </label>
 
-        <label>Prisfaktor (realiserat pris / spotpris, 0–1)
-          <abbr class="fk" tabindex="0" data-f="Prisfaktor: vindkraftens genomsnittliga intäktspris delat med genomsnittligt spotpris (0–1). Vindkraften producerar mest när elpriset är lågt, så faktorn blir ofta under 1. Kallas på engelska capture rate (EIFO, 2026: capture price som andel av genomsnittligt marknadspris). Kaufmann &amp; Westander (2026) kallar den viktning och talar om kannibalisering.">?</abbr>
-          <input type="number" step="0.01" min="0" max="1" id="prisfaktor" class="indata" value="0.75">
+        <label>Effekt per verk (MW)
+          <input type="number" step="0.1" id="effekt" class="indata" value="3.3">
           <span class="badge antagande">antagande</span>
-          <span class="hint">Realiserat pris = spotpris × prisfaktor = <strong id="realpris-visning">–</strong>. 0,75 är värdet som Kaufmann &amp; Westander (2026) använder för Långhult (SE3) och ligger i den försiktiga delen av vad timpriser 2022–2025 ger för SE3 och SE4 (ungefärligt, inte belagt för Önnerup). På engelska capture rate (<a href="https://eifo.dk/media/s1bjgkkq/capture-rate-analysis-marts-2026.pdf" target="_blank" rel="noopener">EIFO, 2026</a>).</span>
+          <span class="hint">3,3 MW per verk är en uppgift från en samtalspartner (3 × 3,3 MW = strax under 10 MW). Den står inte i domen.</span>
+        </label>
+
+        <p class="hint total-effekt-rad" id="total-effekt">Total effekt = <strong id="total-effekt-visning">–</strong></p>
+
+        <label>Kapacitetsfaktor (0–1)
+          <input type="number" step="0.0001" id="kapfaktor" class="indata" value="0.2618">
+          <span class="badge pm">härledd ur domen</span>
+          <span class="hint">22 704 MWh/år (efter 10 % säkerhetsmarginal) / (3 verk × 3,3 MW × 8 760 h) = 0,2618. Västanby AB anger idag cirka 39 000 MWh/år för 10 MW (cirka 0,45), och orsaken till skillnaden är inte verifierad. <span id="kf-timmar">–</span></span>
+        </label>
+
+        <label>Verkshöjd (m)
+          <input type="number" step="1" id="verkshojd" class="indata" value="150">
+          <span class="badge pm">Mark- och miljööverdomstolen, P 14634-20</span>
+          <span class="hint">Högsta totalhöjd 150 m enligt domen (navhöjd 100 m). Används för närboendes avståndszoner (5 och 9 verkshöjder).</span>
+        </label>
+
+        <label>Livslängd (år)
+          <input type="number" step="1" id="livslangd" class="indata" value="25">
         </label>
 
         <label>Elområde
@@ -107,36 +126,20 @@
           <span class="hint">Byte fyller i ett schablonpris för området (kan ändras).</span>
         </label>
 
+        <label>Spotpris (kr/kWh)
+          <input type="number" step="0.01" id="elpris" class="indata" value="0.6">
+        </label>
+
+        <label>Prisfaktor (realiserat pris / spotpris, 0–1)
+          <abbr class="fk" tabindex="0" data-f="Prisfaktor: vindkraftens genomsnittliga intäktspris delat med genomsnittligt spotpris (0–1). Vindkraften producerar mest när elpriset är lågt, så faktorn blir ofta under 1. Kallas på engelska capture rate (EIFO, 2026: capture price som andel av genomsnittligt marknadspris). Kaufmann &amp; Westander (2026) kallar den viktning och talar om kannibalisering.">?</abbr>
+          <input type="number" step="0.01" min="0" max="1" id="prisfaktor" class="indata" value="0.75">
+          <span class="badge antagande">antagande</span>
+          <span class="hint">Realiserat pris = spotpris × prisfaktor = <strong id="realpris-visning">–</strong>. 0,75 är värdet som Kaufmann &amp; Westander (2026) använder för Långhult (SE3) och ligger i den försiktiga delen av vad timpriser 2022–2025 ger för SE3 och SE4 (ungefärligt, inte belagt för Önnerup). På engelska capture rate (<a href="https://eifo.dk/media/s1bjgkkq/capture-rate-analysis-marts-2026.pdf" target="_blank" rel="noopener">EIFO, 2026</a>).</span>
+        </label>
+
         <label>Elprisbana – årlig förändring (%/år)
           <input type="number" step="0.1" id="elprisforandring" class="indata" value="0">
           <span class="hint">0 = platt elprisbana.</span>
-        </label>
-
-        <label>Kapacitetsfaktor (0–1)
-          <input type="number" step="0.0001" id="kapfaktor" class="indata" value="0.2618">
-          <span class="badge pm">härledd ur domen</span>
-          <span class="hint">22 704 MWh/år (efter 10 % säkerhetsmarginal) / (3 verk × 3,3 MW × 8 760 h) = 0,2618. Västanby AB anger idag cirka 39 000 MWh/år för 10 MW (cirka 0,45), och orsaken till skillnaden är inte verifierad. <span id="kf-timmar">–</span></span>
-        </label>
-
-        <label>Livslängd (år)
-          <input type="number" step="1" id="livslangd" class="indata" value="25">
-        </label>
-
-        <label>Effekt per verk (MW)
-          <input type="number" step="0.1" id="effekt" class="indata" value="3.3">
-          <span class="badge antagande">antagande</span>
-          <span class="hint">3,3 MW per verk är en uppgift från en samtalspartner (3 × 3,3 MW = strax under 10 MW). Den står inte i domen.</span>
-        </label>
-
-        <label>Antal verk
-          <input type="number" step="1" id="antalverk" class="indata" value="3">
-          <span class="badge pm">Mark- och miljööverdomstolen, P 14634-20</span>
-        </label>
-
-        <label>Verkshöjd (m)
-          <input type="number" step="1" id="verkshojd" class="indata" value="150">
-          <span class="badge pm">Mark- och miljööverdomstolen, P 14634-20</span>
-          <span class="hint">Högsta totalhöjd 150 m enligt domen (navhöjd 100 m). Används för närboendes avståndszoner (5 och 9 verkshöjder).</span>
         </label>
 
         <label>Degradering (%/år)

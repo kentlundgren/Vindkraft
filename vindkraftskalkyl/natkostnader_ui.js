@@ -327,13 +327,16 @@
   function uppdateraTopp(res, d) {
     const np = res.natPanel;
     const n = Math.max(1, d.antalverk);
-    satt('nat-t-ore', fmt(np.lopandeOre.summa, 2, ' öre/kWh'));
+    const ingen = d.natlage === 'ingen';
+    // Läget ingen: nätkostnaden ingår inte i resultaten och rutorna visar därför 0. Vad den skulle vara i läget bas
+    // (panelen räknar alltid fram det) står i noten under rutorna.
+    satt('nat-t-ore', ingen ? '0 öre/kWh' : fmt(np.lopandeOre.summa, 2, ' öre/kWh'));
     const park = np.lopande.summa;
     // Huvudvärdet står på en rad och uppdelningen per verk på en rad under, så att långa texter inte spiller över rutan.
     const kr = el('nat-t-kr');
     if (kr) {
-      kr.textContent = fmt(park, 0, ' kr/år');
-      if (n > 1) {
+      kr.textContent = ingen ? '0 kr/år' : fmt(park, 0, ' kr/år');
+      if (n > 1 && !ingen) {
         const del = document.createElement('span');
         del.className = 'nat-t-del';
         del.textContent = 'för parken (' + fmt(park / n, 0, ' kr/år') + ' per verk)';
@@ -342,7 +345,9 @@
     }
     const t = d.natTomma || {};
     const saknas = ['natavstand', 'natledning', 'natstation', 'natforstark', 'natutredning', 'natengangschablon', 'natsyseng', 'natsyslop', 'natsysbortfall'].every(k => t[k]);
-    const lage = d.natlage === 'ingen' ? 'Om nätkostnaderna togs med (läge bas)' : 'Läge ' + LAGE_TEXT[d.natlage];
+    const lage = ingen ? 'Läge ingen: nätkostnaden räknas inte in, så den är 0 kr i resultaten. Med läge bas skulle den vara ' +
+      fmt(np.lopandeOre.summa, 2, ' öre/kWh') + ' (' + fmt(park, 0, ' kr/år') + ' för parken)'
+      : 'Läge ' + LAGE_TEXT[d.natlage];
     // Engångskostnaden: visas bara när något är ifyllt. Annars står den som saknad i raden Ingår inte.
     const engangFalt = ['natavstand', 'natledning', 'natstation', 'natforstark', 'natutredning', 'natengangschablon', 'natsyseng'];
     const engangSaknas = engangFalt.every(k => t[k]);
@@ -351,7 +356,7 @@
     const eng = el('nat-t-engang');
     if (eng) {
       eng.hidden = engangSaknas;
-      eng.textContent = engangSaknas ? '' : 'Engångskostnad: ' + fmt(pe.summa, 0, ' kr/MW') +
+      eng.textContent = engangSaknas ? '' : ingen ? 'Engångskostnad: 0 kr/MW i resultaten (läge ingen). Med läge bas: ' + fmt(pe.summa, 0, ' kr/MW') + '.' : 'Engångskostnad: ' + fmt(pe.summa, 0, ' kr/MW') +
         (inv > 0 ? ' (' + fmt(pe.summa / inv * 100, 1, ' % av investeringsutgiften per MW') + ')' : '') +
         (d.natengangingar === 'ja' ? ', antas ingå i investeringsutgiften.' : ', läggs till investeringsutgiften.');
     }

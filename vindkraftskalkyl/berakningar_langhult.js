@@ -385,6 +385,7 @@ function ritaTabell2(res, d) {
 function skrivUt(res, d) {
   visaFullasttimmar(d.kapfaktor);
   visaRealiseratPris(d.elpris, d.prisfaktor);
+  visaTotalEffekt(d.effekt, d.antalverk);
   /* ---- Nyckeltalsrad ---- */
   satt('nt-lcoe', fmt(res.lcoe, 2, ' kr/kWh'));
   satt('nt-overskott', fmtMkr(res.overskottNetto) + '/år');
