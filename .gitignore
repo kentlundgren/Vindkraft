@@ -21,3 +21,7 @@ Desktop.ini
 # Om projektet i framtiden får ett byggsteg (t.ex. Vite)
 node_modules/
 dist/
+
+# Rådata som skapas av skript (projektkandidater/) och Pythons cache
+projektkandidater/data_raw/
+__pycache__/
