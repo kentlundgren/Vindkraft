@@ -31,6 +31,7 @@
 'use strict';
 
 /* Versionsraden längst ned på sidan. Höj VERSION och uppdatera VERSIONSDATUM i samma ändring som innehållet ändras.
+   UPPDATERING 2026-11-23 (senare igen 8): tabellerna numrerade i läsordning (1–9). Version 1.9.
    UPPDATERING 2026-11-23 (senare igen 7): källförteckningen alfabetisk och osiffrad. Version 1.8.
    UPPDATERING 2026-11-23 (senare igen 6): markerad rad 50 öre/kWh i Tabell 9. Version 1.7.
    UPPDATERING 2026-11-23 (senare igen 5): avsnittet Storleksordning (Tabell 8 och 9). Version 1.6.
@@ -40,7 +41,7 @@
    UPPDATERING 2026-11-23 (senare igen): växel för parkens storlek (20 verk eller bara Lunnarsbo, 12 verk). Version 1.2.
    UPPDATERING 2026-11-23 (senare): nya nätfall I och J (Vattenfall 130 kV) i väljaren. Version 1.1.
    UPPDATERING 2026-11-23: versionsrad i sidfoten. Version 1.0 (Långhult har egen versionsnumrering, skild från huvudkalkylens). */
-const VERSION = '1.8';
+const VERSION = '1.9';
 const VERSIONSDATUM = '2026-11-23';
 
 /* ============================================================================
@@ -73,7 +74,7 @@ const ZONER = NARBOENDE_ZONER;
     är tillagt som ett högt scenario (antagande, inte ur Kaufmann & Westander (2026)). */
 const PRISER = [0.30, 0.40, 0.50, 0.60, 0.70, 1.00];
 
-/** Talen i Kaufmann & Westander (2026), för kontrolltabellen (Tabell 6). Enhet kr om inget annat. */
+/** Talen i Kaufmann & Westander (2026), för kontrolltabellen (Tabell 7). Enhet kr om inget annat. */
 const PM_REF = {
   produktionVerkGWh: 23.8,                         // s. 11, 16
   zonVerk50: [22300, 17900, 13400, 8900, 4500],    // Tabell 2 i Kaufmann & Westander (2026), s. 16, 50 öre
@@ -469,13 +470,13 @@ function skrivUt(res, d) {
   /* ---- Nätkostnader i siffror (panel, investerarrader, exempelinfo) ---- */
   if (typeof skrivUtNat === 'function') skrivUtNat(res, d);
 
-  /* ---- Tabell 4–6 och diagram ---- */
+  /* ---- Tabell 5–7 och diagram ---- */
   ritaKanslighet(d);
   ritaKontroll(res, d);
   uppdateraDiagram(res, d);
 }
 
-/* ---- Tabell 4: ett verk, zon × elpris (motsvarar Tabell 2 i Kaufmann & Westander (2026)) ---- */
+/* ---- Tabell 5: ett verk, zon × elpris (motsvarar Tabell 2 i Kaufmann & Westander (2026)) ---- */
 function ritaKanslighet(d) {
   const k4 = document.getElementById('t4-kropp');
   const k5 = document.getElementById('t5-kropp');
@@ -491,7 +492,7 @@ function ritaKanslighet(d) {
       laggRad(k4, celler);
     });
   }
-  /* ---- Tabell 5: hela projektet vid olika elpris ---- */
+  /* ---- Tabell 6: hela projektet vid olika elpris ---- */
   if (k5) {
     k5.innerHTML = '';
     const rader = [
@@ -512,7 +513,7 @@ function ritaKanslighet(d) {
   }
 }
 
-/* ---- Tabell 6: kontroll mot talen i Kaufmann & Westander (2026) ---- */
+/* ---- Tabell 7: kontroll mot talen i Kaufmann & Westander (2026) ---- */
 function ritaKontroll(res, d) {
   const k = document.getElementById('t6-kropp');
   if (!k) return;
@@ -617,7 +618,7 @@ function uppdateraDiagram(res, d) {
 }
 
 /* ============================================================================
-   DEL 6 – JÄMFÖRELSETABELL (Tabell 3): Senaste / Tidigare / Förändring
+   DEL 6 – JÄMFÖRELSETABELL (Tabell 4): Senaste / Tidigare / Förändring
    ----------------------------------------------------------------------------
    Minneslogik: vid varje bekräftad ändring (händelsen "change", alltså när
    fältet lämnas) flyttas "Senaste" till "Tidigare", nya värden beräknas och

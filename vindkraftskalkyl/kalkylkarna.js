@@ -283,7 +283,7 @@ const JAMFOR_OVERSKOTT = [
 ];
 
 /**
- * Raderna om nätkostnad i sammanställningen (Tabell 3). Värdena gäller det valda läget: ingen = 0, annars det som ingår i resultaten.
+ * Raderna om nätkostnad i sammanställningen (jämförelsetabellen). Värdena gäller det valda läget: ingen = 0, annars det som ingår i resultaten.
  * Radens förklaring visas både direkt (kort, under radens namn) och vid hovring över ? (utförlig). Resultatobjektet ska ha natlage och nat.
  */
 function natLopandeNot(r) {

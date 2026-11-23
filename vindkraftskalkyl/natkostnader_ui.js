@@ -366,7 +366,7 @@
       'Alla poster finns under "Visa alla nätkostnader i siffror".');
   }
 
-  /* Tabell 1 (panelen): löpande nätkostnad i kronor, per verk och för parken.
+  /* Nättabell 1 (panelen): löpande nätkostnad i kronor, per verk och för parken.
      Kolumnen per verk är parkens belopp delat med antalet verk. En fast årsavgift
      gäller anslutningen, så uppdelningen per verk är en fördelning. Med ett verk
      är kolumnerna lika, och då visas bara en. */

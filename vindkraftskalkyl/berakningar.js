@@ -52,8 +52,9 @@
    UPPDATERING 2026-11-23 (senare igen 7): två nya nätfall i väljaren, I (Vattenfall PL1, ledning 130–70 kV) och J (Vattenfall PT0, 130 kV i station från stamnät), ur Vattenfalls tariff för inmatning 2026. Version 1.24.
    UPPDATERING 2026-11-23 (senare igen 8): typfallet över 40 MW är fall I (Vattenfall PL1, ledning 130–70 kV). Version 1.25.
    UPPDATERING 2026-11-23 (senare igen 9): raderna om nätkostnad i Tabell 3 räknas på valt läge (ingen = 0) och förklarar negativ nätkostnad direkt och vid hovring. Version 1.26.
-   UPPDATERING 2026-11-23 (senare igen 10): källförteckningen är alfabetisk och osiffrad (Harvard), varje källa en egen post. Version 1.27. */
-const VERSION = '1.27';
+   UPPDATERING 2026-11-23 (senare igen 10): källförteckningen är alfabetisk och osiffrad (Harvard), varje källa en egen post. Version 1.27.
+   UPPDATERING 2026-11-23 (senare igen 11): tabellerna numrerade i läsordning utan dubbletter (nättabellen heter Nättabell 1). Version 1.28. */
+const VERSION = '1.28';
 const VERSIONSDATUM = '2026-11-23';
 
 /* ============================================================================

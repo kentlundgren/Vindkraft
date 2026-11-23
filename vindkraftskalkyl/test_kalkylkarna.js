@@ -266,7 +266,7 @@ KALKYLER.forEach(k => {
   sant(k.js + ' visar det realiserade priset', /visaRealiseratPris\(/.test(js));
   sant(k.html + ' har texten för realiserat pris', html.indexOf('id="realpris-visning"') > -1);
   sant(k.js + ' visar totala effekten', /visaTotalEffekt\(/.test(js));
-  sant(k.js + ' använder JAMFOR_NAT för nätraderna i Tabell 3', /\.\.\.JAMFOR_NAT/.test(js) && !/natPanel\.lopandeOre\.summa,\s*dec/.test(js));
+  sant(k.js + ' använder JAMFOR_NAT för nätraderna i jämförelsetabellen', /\.\.\.JAMFOR_NAT/.test(js) && !/natPanel\.lopandeOre\.summa,\s*dec/.test(js));
   // Versionsrad längst ned i varje kalkyl: nummer och datum, båda höjs när något ändras.
   sant(k.js + ' har VERSION (X.Y) och VERSIONSDATUM (ÅÅÅÅ-MM-DD)', /^const VERSION = '\d+\.\d+';/m.test(js) && /^const VERSIONSDATUM = '\d{4}-\d{2}-\d{2}';/m.test(js));
   sant(k.js + ' visar versionsraden', /visaVersionsrad\(VERSION, VERSIONSDATUM\)/.test(js));
@@ -316,6 +316,20 @@ KALKYLER.forEach(k => {
   sant('Långhult har källan BO (2026) med adress utan spårningsparametrar', /id="ref-bo"[\s\S]*?https:\/\/x\.com\/bengtxyz\/status\/2124776225822363881"/.test(lhHtml2));
   sant('Långhult anropar skrivNarboendeStorleksordning', /skrivNarboendeStorleksordning\(res\)/.test(fs.readFileSync('berakningar_langhult.js', 'utf8')));
 }
+
+/* ---------- Tabellernas nummer: i läsordning, utan luckor och dubbletter (nättabellen i panelen är en egen serie, Nättabell 1) ---------- */
+fs.readdirSync('.').filter(f => /^vindkraftskalkyl.*\.html$/.test(f)).forEach(f => {
+  const html = fs.readFileSync(f, 'utf8');
+  const nr = (html.match(/<caption[^>]*>\s*Tabell (\d+)\./g) || []).map(t => +t.match(/Tabell (\d+)\./)[1]);
+  const vantat = nr.map((_, i) => i + 1);
+  if (JSON.stringify(nr) !== JSON.stringify(vantat)) console.log('  ' + f + ' har tabellerna i ordningen: ' + nr.join(', '));
+  sant(f + ': tabellerna är numrerade 1, 2, 3 … i läsordning, utan dubbletter', nr.length > 0 && JSON.stringify(nr) === JSON.stringify(vantat));
+  sant(f + ': nättabellen i panelen heter Nättabell 1', /<caption id="NatTabell1">Nättabell 1\./.test(html));
+  const ider = (html.match(/<table[^>]*id="Tabell(\d+)"/g) || []).map(t => +t.match(/Tabell(\d+)"/)[1]);
+  sant(f + ': tabellernas id följer rubrikernas nummer', JSON.stringify(ider) === JSON.stringify(nr));
+  const lank = [...html.matchAll(/<a href="#Tabell(\d+)">Tabell (\d+)<\/a>/g)];
+  sant(f + ': varje länk till en tabell har samma nummer i adress och text, och tabellen finns', lank.every(m => m[1] === m[2] && nr.indexOf(+m[1]) > -1));
+});
 
 /* ---------- Källförteckningen: alfabetisk och osiffrad (Harvard, kent-referens-skill punkt 8 och 18) ---------- */
 fs.readdirSync('.').filter(f => /^vindkraftskalkyl.*\.html$/.test(f)).forEach(f => {

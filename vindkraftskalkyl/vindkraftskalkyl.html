@@ -65,6 +65,8 @@
 
   UPPDATERING 2026-11-22 (senare igen): gemensam kärna kalkylkarna.js för finansmatematik och nätkopplingen, delad med fallet Långhult, och nätformateringen i natkostnader.css. Resultaten är oförändrade. Version 1.15.
 
+  UPPDATERING 2026-11-23 (senare igen 11): tabellerna är numrerade i läsordning utan dubbletter (nättabellen heter Nättabell 1, närboende per zon Tabell 1 och bostäder till Tabell 2). Version 1.28.
+
   UPPDATERING 2026-11-23 (senare igen 10): källförteckningen är alfabetisk och osiffrad (Harvard) och varje källa en egen post. Version 1.27.
 
   UPPDATERING 2026-11-23 (senare igen 9): förklaring av negativ nätkostnad i Tabell 3 (direkt och vid hovring), och nätraderna där räknas på valt läge. Version 1.26.
@@ -458,7 +460,7 @@
             <p class="hint" id="nat-kronor-info">–</p>
             <div class="tabell-rulla">
               <table class="nat-tabell" id="nat-kronor-tabell">
-                <caption id="NatTabell1">Tabell 1. Löpande nätkostnad i kronor, år 1 och över livslängden</caption>
+                <caption id="NatTabell1">Nättabell 1. Löpande nätkostnad i kronor, år 1 och över livslängden</caption>
                 <thead><tr><th scope="col">Post</th><th scope="col" class="kol-verk">Per verk</th><th scope="col" class="kol-park" id="nat-kol-park">Hela parken</th></tr></thead>
                 <tbody>
                   <tr><th scope="row">Produktion år 1 (kWh)</th><td class="tal kol-verk" id="nat-k-prod-verk">–</td><td class="tal kol-park" id="nat-k-prod-park">–</td></tr>
@@ -608,7 +610,7 @@
       <!-- ---- Grupp: Närboende (NU20 / prop. 2025/26:239) ---- -->
       <fieldset class="indata-grupp">
         <legend><span class="nb-info" tabindex="0">Närboende</span> (vindkraftsersättning, SFS 2026:1113)</legend>
-        <p class="hint" style="margin:0 0 .6rem">Förvalet är <strong>en bostad i varje zon</strong>, så att Tabell 2 visar vad en fastighetsägare får i varje zon. Det är ett exempel, inte en uppgift om ett visst projekt. Ändra antalet för att se när taket (2 %) nås, och längst ned i tabellen står hur många bostäder som kan få ersättning innan den sänks. Zonerna räknas från verkets höjd (fältet Verkshöjd ovan). Håll pekaren över ? vid en zon för att se vad en bostad där får per år. <a href="#Tabell2">Tabell 2</a> är tabellen över ersättning per zon, och den ligger i resultatfliken Närboende längre ned på sidan.</p>
+        <p class="hint" style="margin:0 0 .6rem">Förvalet är <strong>en bostad i varje zon</strong>, så att Tabell 1 visar vad en fastighetsägare får i varje zon. Det är ett exempel, inte en uppgift om ett visst projekt. Ändra antalet för att se när taket (2 %) nås, och längst ned i tabellen står hur många bostäder som kan få ersättning innan den sänks. Zonerna räknas från verkets höjd (fältet Verkshöjd ovan). Håll pekaren över ? vid en zon för att se vad en bostad där får per år. <a href="#Tabell1">Tabell 1</a> är tabellen över ersättning per zon, och den ligger i resultatfliken Närboende längre ned på sidan.</p>
 
         <label>Bostäder i zon 1 (inom 5 verkshöjder) <span class="hjalp" tabindex="0" id="zon-hjalp-1" data-hjalp="Fyll i antal bostäder för att se.">?</span>
           <input type="number" step="1" id="bost1" class="indata" value="1">
@@ -802,8 +804,8 @@
         Räknesättet delas med fallet Långhult (<a href="vindkraftskalkyl_langhult.html">Långhult-kalkylen</a>) via kalkylkarna.js.
       </p>
       <div class="tabell-rulla">
-        <table class="jamforelse-tabell" id="Tabell2">
-          <caption id="Tabell2-rubrik">Tabell 2. Närboendeersättning per avståndszon, hela parken, år 1</caption>
+        <table class="jamforelse-tabell" id="Tabell1">
+          <caption id="Tabell1-rubrik">Tabell 1. Närboendeersättning per avståndszon, hela parken, år 1</caption>
           <thead>
             <tr>
               <th scope="col">Zon</th>
@@ -829,8 +831,8 @@
       </dl>
 
       <div class="tabell-rulla">
-        <table class="jamforelse-tabell" id="Tabell3">
-          <caption id="Tabell3-rubrik">Tabell 3. Hur många bostäder till som får full ersättning innan taket (2 %) nås</caption>
+        <table class="jamforelse-tabell" id="Tabell2">
+          <caption id="Tabell2-rubrik">Tabell 2. Hur många bostäder till som får full ersättning innan taket (2 %) nås</caption>
           <thead>
             <tr>
               <th scope="col">De extra bostäderna ligger i</th>
