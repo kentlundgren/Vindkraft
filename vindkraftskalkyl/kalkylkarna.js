@@ -19,17 +19,18 @@
         Metoden 'schablon' är den äldre förenklingen (linjär avtrappning 5–9 verkshöjder).
         Den är kvar men inaktiv, så att ett byte av metod görs på ett ställe.
      5. Pris: realiserat pris = spotpris × prisfaktor (realiseratPris).
+     6. Kommunposter: fastighetsskatt och bygdemedel (projektkostnader) och kommunstöd (statligt).
 
    Filen laddas före respektive kalkyls egen fil. Funktionerna är globala i
    webbläsaren och exporteras som module.exports i Node, där test_kalkylkarna.js
    kör dem.
 
-   Version 1.2 (2026-11-23): fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
+   Version 1.3 (2026-11-23): kommunposter (fastighetsskatt, bygdemedel, kommunstöd). Version 1.2: fastställda grupprubriker (INDATAGRUPPER). Version 1.1: närboendeersättning och prisfaktor. Version 1.0: skapad. Funktionerna flyttades oförändrade ur
    berakningar.js och berakningar_langhult.js.
    ============================================================================ */
 'use strict';
 
-const KARNA_VERSION = '1.2';
+const KARNA_VERSION = '1.3';
 
 /**
  * Indatagrupperna i alla vindkraftskalkyler: rubrikerna och deras ordning är fastställda här, så att kalkylerna ser
@@ -450,10 +451,90 @@ function realiseratPris(spotprisAr1, elprisforandring, prisfaktor, t) {
 }
 
 
+/* ============================================================================
+   6. KOMMUN OCH LOKALA POSTER: fastighetsskatt, bygdemedel och kommunstöd
+   Tre poster som finns i de flesta vindkraftsprojekt, och som därför ska finnas i alla kalkyler:
+     Fastighetsskatt  Kostnad för projektet, per verk och år. 0,5 % av taxeringsvärdet. Beloppet beror på verkets
+                      storlek och elområde. Skatten är högre de första åren och sjunker när taxeringsvärdet skrivs ned
+                      med verkets ålder (Kaufmann & Westander, 2026, bilaga 1, s. 17–18).
+     Bygdemedel       Kostnad för projektet, kr per år för hela parken. Frivilligt: regleras inte av intäktsdelningslagen
+                      (SFS 2026:1113), men betalas i de flesta projekt (Green Power Sweden, enligt anteckningarna 2026-11-19).
+     Kommunstöd       Betalas av STATEN till kommunen, fördelat efter installerad effekt, och motsvarar fastighetsskatten.
+                      Belastar inte projektet och dras därför inte från projektets resultat. Förordning är utlovad men inte
+                      beslutad (anteckningarna 2026-11-19), och cirka 20 000 kr/MW anges av Kaufmann & Westander (2026, s. 7–9).
+   Modellen är Kaufmann & Westanders (2026): första åren ett belopp, därefter ett jämnt belopp så att summan över
+   livslängden blir fskattotal.
+   ============================================================================ */
+
+/** Läser kommunposterna ur formuläret. Fält som saknas i en kalkyl räknas som 0. */
+function lasKommunIndata() {
+  return {
+    fskatt1:    tal('fskatt1'),                          // kr per verk och år, första åren
+    fskattaar:  Math.max(0, Math.round(tal('fskattaar'))), // antal år med den första nivån
+    fskattotal: tal('fskattotal'),                       // kr per verk, totalt över livslängden
+    bygdemedel: tal('bygdemedel'),                       // kr per år, hela parken
+    kommunstod: tal('kommunstod')                        // kr per MW och år (staten betalar)
+  };
+}
+
+/**
+ * Fastighetsskatt för ett verk år t (kr). Första fskattaar åren fskatt1. Därefter fördelas resten av totalsumman
+ * (fskattotal − fskattaar × fskatt1) lika över årens resterande del av livslängden.
+ * @param {number} t  år 1..n
+ * @param {object} d  indata: fskatt1, fskattaar, fskattotal, livslangd
+ */
+function fastighetsskattPerVerk(t, d) {
+  if (t <= d.fskattaar) return d.fskatt1;
+  const kvar = Math.max(1, d.livslangd - d.fskattaar);
+  return Math.max(0, (d.fskattotal - d.fskattaar * d.fskatt1) / kvar);
+}
+
+/**
+ * Projektets kommunposter per år. Fastighetsskatt och bygdemedel är kostnader för projektet. Kommunstödet betalas av
+ * staten och ingår inte i projektets resultat, men visas för kommunen.
+ * @param {object} d      indata (kommunfälten, antalverk, livslangd)
+ * @param {number} P_tot  parkens effekt (MW)
+ */
+function kommunPoster(d, P_tot) {
+  const n = d.livslangd;
+  const fskattAr = [];       // hela parken, kr/år
+  const bygdeAr = [];
+  for (let t = 1; t <= n; t++) {
+    fskattAr.push(fastighetsskattPerVerk(t, d) * d.antalverk);
+    bygdeAr.push(d.bygdemedel);
+  }
+  const sum = (a) => a.reduce((x, y) => x + y, 0);
+  return {
+    fskattAr, bygdeAr,
+    fskattAr1: fskattAr[0] || 0, bygdeAr1: bygdeAr[0] || 0,
+    fskattTotal: sum(fskattAr), bygdeTotal: sum(bygdeAr),
+    kommunstodAr1: d.kommunstod * P_tot,
+    saknas: {
+      fskatt: !(d.fskatt1 > 0) && !(d.fskattotal > 0),
+      bygde: !(d.bygdemedel > 0),
+      kommunstod: !(d.kommunstod > 0)
+    }
+  };
+}
+
+/** Text om vilka kommunposter som saknar belopp, eller tom sträng. Visas så att en saknad post inte glöms bort. */
+function kommunSaknasText(poster) {
+  const s = poster.saknas, lista = [];
+  if (s.fskatt) lista.push('fastighetsskatt');
+  if (s.bygde) lista.push('bygdemedel');
+  if (s.kommunstod) lista.push('kommunstöd');
+  if (!lista.length) return '';
+  const och = lista.length > 1 ? lista.slice(0, -1).join(', ') + ' och ' + lista[lista.length - 1] : lista[0];
+  return 'Ingår inte: ' + och + ' saknar belopp (0 kr). ' +
+    (s.fskatt || s.bygde ? 'Projektets kostnader är då lägre än i verkligheten. ' : '') +
+    'Fyll i beloppen i gruppen Kommun & samhälle.';
+}
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     KARNA_VERSION, INDATAGRUPPER, fmt, annuitet, npv, irr, payback, lcoeAvKassaflode,
     natPaverkan, natEngangTillaggAv, natSammanfattning,
+    lasKommunIndata, fastighetsskattPerVerk, kommunPoster, kommunSaknasText,
     NARBOENDE_METOD, NARBOENDE_ZONER, beraknaNarboende, beraknaNarboendeZoner, beraknaNarboendeSchablon, realiseratPris
   };
 }

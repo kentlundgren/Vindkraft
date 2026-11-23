@@ -17,6 +17,7 @@
   gemensam kärna kalkylkarna.js för finansmatematik och nätkoppling, delad med huvudkalkylen.
   UPPDATERING 2026-11-23: närboendeersättningen räknas i kalkylkarna.js (delas med huvudkalkylen), kapacitetsfaktor 0,4121 (= 3 610 h / 8 760) i stället för fullasttimmar, och viktning heter prisfaktor.
   UPPDATERING 2026-11-23 (senare): indatagrupperna har samma rubriker och ordning som övriga kalkyler (INDATAGRUPPER i kalkylkarna.js), och Närboende ligger sist.
+  UPPDATERING 2026-11-23 (senare igen): fastighetsskatt, bygdemedel och kommunstöd räknas i kalkylkarna.js (kommunPoster) och delas med övriga kalkyler. Långhults värden och resultat är oförändrade.
   ============================================================================
 -->
 <html lang="sv">
@@ -445,8 +446,8 @@
           <span class="hint">Kaufmann &amp; Westander (2026, s. 4, 9): "de första fyra åren" (2,3 Mkr för sju verk).</span>
         </label>
 
-        <label>Fastighetsskatt per verk över 30 år (kr)
-          <abbr class="fk" tabindex="0" data-f="Skatten sjunker över tid eftersom taxeringsvärdet skrivs ned med verkets ålder (nedskrivningsfaktor). Kaufmann &amp; Westander (2026, s. 18) anger 46,5 Mkr för sju verk, alltså cirka 6,64 Mkr per verk. Här jämnas åren efter de första fyra ut till ett lika stort belopp per år.">?</abbr>
+        <label>Fastighetsskatt per verk, totalt över livslängden (kr)
+          <abbr class="fk" tabindex="0" data-f="Skatten sjunker över tid eftersom taxeringsvärdet skrivs ned med verkets ålder (nedskrivningsfaktor). Kaufmann &amp; Westander (2026, s. 18) anger 46,5 Mkr för sju verk, alltså cirka 6,64 Mkr per verk över 30 år. Här jämnas åren efter de första fyra ut till ett lika stort belopp per år.">?</abbr>
           <input type="number" step="1000" id="fskattotal" class="indata" value="6643000">
           <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=18" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, s. 18 (46,5 Mkr / 7)</a>
           <span class="badge antagande">utjämning</span>

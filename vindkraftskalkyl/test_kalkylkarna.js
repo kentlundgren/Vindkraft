@@ -125,6 +125,30 @@ lika('realiserat pris år 1, prisfaktor 1', K.realiseratPris(0.6, 0, 1, 1), 0.6)
 lika('realiserat pris år 1, prisfaktor 0,75', K.realiseratPris(0.5, 0, 0.75, 1), 0.375);
 lika('realiserat pris år 3 med 2 %/år', K.realiseratPris(0.5, 0.02, 0.75, 3), 0.5 * 1.02 ** 2 * 0.75, 1e-12);
 
+/* ---------- Kommunposter: fastighetsskatt, bygdemedel, kommunstöd ---------- */
+// Långhult (Kaufmann & Westander, 2026): 334 398 kr per verk de första 4 åren, 6 643 000 kr per verk över 30 år.
+const dK = { fskatt1: 334398, fskattaar: 4, fskattotal: 6643000, bygdemedel: 400000, kommunstod: 20000, antalverk: 20, livslangd: 30 };
+lika('fastighetsskatt år 1', K.fastighetsskattPerVerk(1, dK), 334398);
+lika('fastighetsskatt år 4', K.fastighetsskattPerVerk(4, dK), 334398);
+// Därefter jämnt: (6 643 000 − 4 × 334 398) / 26
+lika('fastighetsskatt år 5', K.fastighetsskattPerVerk(5, dK), (6643000 - 4 * 334398) / 26, 1e-6);
+const kp = K.kommunPoster(dK, 132);
+lika('summa fastighetsskatt per verk över 30 år = fskattotal', kp.fskattTotal / 20, 6643000, 1e-3);
+lika('fastighetsskatt år 1, hela parken', kp.fskattAr1, 334398 * 20);
+lika('bygdemedel år 1', kp.bygdeAr1, 400000);
+lika('bygdemedel totalt', kp.bygdeTotal, 400000 * 30);
+lika('kommunstöd år 1 = kr/MW × MW', kp.kommunstodAr1, 20000 * 132);
+sant('inget saknas med Långhults värden', !kp.saknas.fskatt && !kp.saknas.bygde && !kp.saknas.kommunstod && K.kommunSaknasText(kp) === '');
+// Kortare livslängd: summan över livslängden blir fortfarande fskattotal.
+const dK25 = Object.assign({}, dK, { livslangd: 25 });
+lika('summa med livslängd 25 år', K.kommunPoster(dK25, 132).fskattTotal / 20, 6643000, 1e-3);
+// Tomma värden ger varning, och posterna är 0.
+const dTom = { fskatt1: 0, fskattaar: 4, fskattotal: 0, bygdemedel: 0, kommunstod: 20000, antalverk: 3, livslangd: 25 };
+const kpTom = K.kommunPoster(dTom, 9.9);
+lika('tomma värden: fastighetsskatt 0', kpTom.fskattTotal, 0);
+sant('tomma värden: varning nämner fastighetsskatt och bygdemedel', /fastighetsskatt och bygdemedel saknar belopp/.test(K.kommunSaknasText(kpTom)));
+sant('tomma värden: kommunstöd saknas inte', !kpTom.saknas.kommunstod);
+
 /* ---------- Alla kalkyler använder kärnan ---------- */
 const KALKYLER = [
   { html: 'vindkraftskalkyl.html', js: 'berakningar.js' },
@@ -132,7 +156,8 @@ const KALKYLER = [
   { html: 'vindkraftskalkyl_Onnerup.html', js: 'berakningar.js' }
 ];
 const FORBJUDNA = ['annuitet', 'npv', 'irr', 'payback', 'fmt', 'tal', 'text', 'radataNat', 'lcoeAvKassaflode', 'lasNatIndata', 'natPaverkan', 'natSammanfattning',
-  'beraknaNarboende', 'beraknaNarboendeZoner', 'beraknaNarboendeSchablon', 'lasNarboendeIndata', 'zonEtikett', 'realiseratPris'];
+  'beraknaNarboende', 'beraknaNarboendeZoner', 'beraknaNarboendeSchablon', 'lasNarboendeIndata', 'zonEtikett', 'realiseratPris',
+  'fastighetsskattPerVerk', 'lasKommunIndata', 'kommunPoster', 'kommunSaknasText'];
 KALKYLER.forEach(k => {
   const js = fs.readFileSync(k.js, 'utf8');
   const html = fs.readFileSync(k.html, 'utf8');
@@ -143,6 +168,8 @@ KALKYLER.forEach(k => {
   sant(k.js + ' anropar natPaverkan', /natPaverkan\(/.test(js));
   sant(k.js + ' anropar beraknaNarboende', /beraknaNarboende\(/.test(js));
   sant(k.js + ' anropar realiseratPris', /realiseratPris\(/.test(js));
+  sant(k.js + ' anropar kommunPoster', /kommunPoster\(/.test(js));
+  ['fskatt1', 'fskattaar', 'fskattotal', 'bygdemedel', 'kommunstod'].forEach(f => sant(k.html + ' har fältet ' + f, html.indexOf('id="' + f + '"') > -1));
   sant(k.js + ' räknar produktion med kapacitetsfaktor (inte fullasttimmar)', /kapfaktor/.test(js) && !/tal\('fullasttimmar'\)/.test(js));
   sant(k.html + ' har fältet prisfaktor', html.indexOf('id="prisfaktor"') > -1);
   sant(k.html + ' har fältet kapfaktor', html.indexOf('id="kapfaktor"') > -1);

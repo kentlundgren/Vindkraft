@@ -53,10 +53,6 @@ function fmtMkr(v, dec = 1) {
    Sidhänvisningar följer sidnumreringen i Kaufmann & Westander (2026), sidnummer längst upp.
    ============================================================================ */
 
-/** Livslängd som Kaufmann & Westander (2026, s. 3, 17–18) räknar med. Används för fastighetsskattens
-    jämnade slutperiod, se fastighetsskattPerVerk(). */
-const PM_LIVSLANGD = 30;
-
 /* De fem avståndszonerna (NARBOENDE_ZONER, 12 §) och närboendemetoden ligger i kalkylkarna.js. */
 const ZONER = NARBOENDE_ZONER;
 
@@ -112,11 +108,7 @@ function lasIndata() {
     arrendekrmw:      tal('arrendekrmw'),
 
     // Kommun, bygd och skatt
-    fskatt1:          tal('fskatt1'),                  // kr/verk/år, första åren
-    fskattaar:        Math.max(0, Math.round(tal('fskattaar'))),
-    fskattotal:       tal('fskattotal'),               // kr/verk över 30 år
-    bygdemedel:       tal('bygdemedel'),               // kr/år, hela parken
-    kommunstod:       tal('kommunstod'),               // kr/MW/år (staten betalar)
+    ...lasKommunIndata(),                          // fskatt1, fskattaar, fskattotal, bygdemedel, kommunstod (kalkylkarna.js)
     verkgislaved:     Math.max(0, Math.round(tal('verkgislaved'))),
     co2faktor:        tal('co2faktor'),
     co2varde:         tal('co2varde'),
@@ -143,18 +135,7 @@ function lasIndata() {
    DEL 3 – BERÄKNINGAR
    ============================================================================ */
 
-/**
- * Fastighetsskatt per verk och år (kr).
- * Kaufmann & Westander (2026) anger (bilaga 1): 334 398 kr per verk de första fyra åren och 46,5 Mkr
- * för sju verk över 30 år, alltså cirka 6,64 Mkr per verk. Tabellen med
- * nedskrivningsfaktorer ger sänkningen i steg; den här kalkylen FÖRENKLAR genom
- * att jämna ut resten: (totalsumma − första åren) fördelas lika över övriga år.
- */
-function fastighetsskattPerVerk(t, d) {
-  if (t <= d.fskattaar) return d.fskatt1;
-  const kvar = Math.max(1, PM_LIVSLANGD - d.fskattaar);
-  return Math.max(0, (d.fskattotal - d.fskattaar * d.fskatt1) / kvar);
-}
+/* Fastighetsskatt, bygdemedel och kommunstöd (fastighetsskattPerVerk, kommunPoster) ligger i kalkylkarna.js. */
 
 function beraknaAllt(d) {
   const r = d.kalkylranta;
@@ -208,14 +189,11 @@ function beraknaAllt(d) {
   const arrendeNuvarde = arrendeAr.reduce((s, v, i) => s + v / Math.pow(1 + r, i + 1), 0);
 
   /* ---------- 3.4 Fastighetsskatt och bygdemedel (projektkostnader) ---- */
-  const fskattAr = [];     // hela parken, kr/år
-  const bygdeAr = [];
-  for (let t = 1; t <= n; t++) {
-    fskattAr.push(fastighetsskattPerVerk(t, d) * d.antalverk);
-    bygdeAr.push(d.bygdemedel);
-  }
-  const fskattAr1 = fskattAr[0] || 0;
-  const bygdeAr1 = bygdeAr[0] || 0;
+  const kp = kommunPoster(d, P_tot);                    // kalkylkarna.js
+  const fskattAr = kp.fskattAr;     // hela parken, kr/år
+  const bygdeAr = kp.bygdeAr;
+  const fskattAr1 = kp.fskattAr1;
+  const bygdeAr1 = kp.bygdeAr1;
 
   /* ---------- 3.5 Kommunstöd (betalas av staten, ingen projektkostnad) ----- */
   const kommunstodGisl = d.kommunstod * d.effekt * d.verkgislaved;
@@ -307,7 +285,7 @@ function beraknaAllt(d) {
     // Markägare
     arrendeAr1, arrendeTotal, arrendeNuvarde,
     // Skatt och bygd
-    fskattAr1, bygdeAr1,
+    fskattAr1, bygdeAr1, kommunPoster: kp,
     // Kommun
     kommunstodGisl, kommunstodJonk, fskattGislAr1, fskattGislTotal,
     lokalaAr1, lokalaTotal, co2Ton, samhallsnytta,

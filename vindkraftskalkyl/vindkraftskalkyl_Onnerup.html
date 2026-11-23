@@ -53,8 +53,8 @@
       Ändra ett gult fält så räknas allt om.
     </p>
     <p class="ingress"><strong>Vad som saknas:</strong> effekt per verk (3,3 MW är en muntlig uppgift, inte ur domen), antal bostäder per avståndszon
-      (närboendeersättningen blir 0 tills du fyller i dem), anslutningskostnad och nya systemkrav (se gruppen Nät och systemkrav),
-      samt kostnader och intäkter som projektet självt inte har redovisat.</p>
+      (närboendeersättningen blir 0 tills du fyller i dem, och lagen gäller troligen inte så små verk), fastighetsskatt och bygdemedel (står på 0 med varning),
+      anslutningskostnad och nya systemkrav (se gruppen Nät och systemkrav), samt kostnader och intäkter som projektet självt inte har redovisat.</p>
   </header>
 
   <!-- ========================================================================
@@ -411,9 +411,38 @@
       <fieldset class="indata-grupp">
         <legend>Kommun &amp; samhälle</legend>
 
-        <label>Kommunal ersättning (kr/MW/år)
-          <input type="number" step="1000" id="kommunersattning" class="indata" value="15000">
-          <span class="badge antagande">schablon</span>
+        <p class="hint" style="margin:0 0 .6rem">Fastighetsskatt och bygdemedel är kostnader för projektet. Kommunstödet betalas av staten och dras inte från projektets resultat. Fastighetsskatt och bygdemedel står på 0 tills du fyller i dem, och sidan visar då att de saknas.</p>
+
+        <label>Fastighetsskatt per verk, första åren (kr/år)
+          <abbr class="fk" tabindex="0" data-f="Fastighetsskatt: 0,5 % av taxeringsvärdet. Beloppet beror på verkets storlek och elområde. För ett nytt verk på 6,6 MW i elområde 3 blir det 334 398 kr per år enligt räkneexemplet i Kaufmann &amp; Westander (2026, s. 17–18).">?</abbr>
+          <input type="number" step="100" id="fskatt1" class="indata" value="0">
+          <span class="badge antagande">uppgift saknas</span>
+        </label>
+
+        <label>Antal år med full fastighetsskatt
+          <input type="number" step="1" id="fskattaar" class="indata" value="4">
+          <span class="badge antagande">antagande</span>
+          <span class="hint">Kaufmann &amp; Westander (2026, s. 4, 9) räknar med de första fyra åren.</span>
+        </label>
+
+        <label>Fastighetsskatt per verk, totalt över livslängden (kr)
+          <abbr class="fk" tabindex="0" data-f="Skatten sjunker över tid eftersom taxeringsvärdet skrivs ned med verkets ålder. Här jämnas åren efter de första ut till ett lika stort belopp per år, så att summan över livslängden blir det du anger. För Långhult (6,6 MW) är det cirka 6,64 Mkr per verk över 30 år (Kaufmann &amp; Westander, 2026, s. 18).">?</abbr>
+          <input type="number" step="1000" id="fskattotal" class="indata" value="0">
+          <span class="badge antagande">uppgift saknas</span>
+        </label>
+
+        <label>Bygdemedel, hela parken (kr/år)
+          <abbr class="fk" tabindex="0" data-f="Bygdemedel (bygdepeng): pengar som bolaget avsätter till föreningsliv, näringsliv och infrastruktur i bygden. Frivilligt och inte reglerat av intäktsdelningslagen (SFS 2026:1113), men betalas i de flesta projekt. Det är inte samma sak som ersättningen till närboende.">?</abbr>
+          <input type="number" step="10000" id="bygdemedel" class="indata" value="0">
+          <span class="badge antagande">uppgift saknas</span>
+          <span class="hint">Kaufmann &amp; Westander (2026, s. 4, 12) anger minst 400 000 kr/år för Långhult (132 MW).</span>
+        </label>
+
+        <label>Kommunstöd (kr per MW och år)
+          <abbr class="fk" tabindex="0" data-f="Kommunstöd: staten fördelar ett belopp motsvarande fastighetsskatten på vindkraft till kommunerna efter installerad effekt, cirka 20 000 kr per MW. Det betalas av staten och belastar inte projektet. Förordning är utlovad men inte beslutad.">?</abbr>
+          <input type="number" step="100" id="kommunstod" class="indata" value="20000">
+          <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=7" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, s. 7–9</a>
+          <span class="hint">Cirka. Ingen förordning är beslutad än.</span>
         </label>
 
         <label>CO₂-faktor, undviken (kg/kWh)
@@ -472,7 +501,7 @@
       <!-- ---- Grupp: Närboende (NU20 / prop. 2025/26:239) ---- -->
       <fieldset class="indata-grupp">
         <legend><span class="nb-info" tabindex="0">Närboende</span> (vindkraftsersättning, SFS 2026:1113)</legend>
-        <p class="hint" style="margin:0 0 .6rem"><strong>Uppgiften saknas:</strong> hur många bostäder som ligger inom fem, sex, sju, åtta och nio verkshöjder (750–1 350 m från ett verk) finns inte i domen. Fälten står på 0, så ersättningen blir 0 tills du fyller i antalet. Zonerna räknas från verkets höjd (150 m). Zonerna står i <a href="#Tabell2">Tabell 2</a>.</p>
+        <p class="hint" style="margin:0 0 .6rem"><strong>Lagen gäller troligen inte Önnerup.</strong> Intäktsdelningslagen (SFS 2026:1113, 2 §) gäller anläggningar med tillstånd enligt 9 eller 11 kap. miljöbalken. Tillstånd krävs för minst två verk över 150 m eller minst sju verk över 120 m, och mindre anläggningar är anmälningspliktiga och omfattas inte (<a href="#ref-lundgren">Lundgren, 2026</a>, som beskriver Önnerup som ett gränsfall). Zonerna visar därför vad lagens modell hade gett om bolaget betalade ersättning frivilligt. <strong>Uppgiften saknas:</strong> hur många bostäder som ligger inom fem, sex, sju, åtta och nio verkshöjder (750–1 350 m från ett verk) finns inte i domen. Fälten står på 0, så ersättningen blir 0 tills du fyller i antalet. Zonerna står i <a href="#Tabell2">Tabell 2</a>.</p>
 
         <label>Bostäder i zon 1 (inom 5 verkshöjder)
           <input type="number" step="1" id="bost1" class="indata" value="0">
@@ -610,10 +639,18 @@
     <!-- ---- Flik: Kommun/samhälle ---- -->
     <div class="flik-panel" id="panel-kommun" role="tabpanel" hidden>
       <h3>Kommun- och samhällsperspektivet</h3>
+      <p class="hint">
+        Fastighetsskatt och bygdemedel är kostnader för projektet. Kommunstödet betalas av staten till kommunen, motsvarar fastighetsskatten och belastar inte projektet
+        (<a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=7" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, s. 7–9</a>).
+        Det visas därför här, men dras inte från projektets resultat.
+      </p>
+      <p class="hint nat-saknas" id="kom-saknas" hidden></p>
       <dl class="resultatlista">
-        <div><dt>Lokala intäkter år 1 (arrende + kommun + <span class="nb-info" tabindex="0">närboende</span>)</dt><dd id="kom-lokala-ar">–</dd></div>
-        <div><dt>Lokala intäkter totalt (hela livslängden)</dt><dd id="kom-lokala-total">–</dd></div>
-        <div><dt>Kommunal ersättning år 1</dt><dd id="kom-kommun-ar">–</dd></div>
+        <div><dt>Lokala betalningar från projektet år 1 (arrende + bygdemedel + <span class="nb-info" tabindex="0">närboende</span>)</dt><dd id="kom-lokala-ar">–</dd></div>
+        <div><dt>Lokala betalningar från projektet, hela livslängden</dt><dd id="kom-lokala-total">–</dd></div>
+        <div><dt>Fastighetsskatt år 1 (kostnad för projektet)</dt><dd id="kom-fskatt">–</dd></div>
+        <div><dt>Bygdemedel år 1 (kostnad för projektet)</dt><dd id="kom-bygde">–</dd></div>
+        <div class="framhavd"><dt>Kommunstöd till kommunen år 1 (statligt)</dt><dd id="kom-stod">–</dd></div>
         <div><dt>Undviken CO₂ per år</dt><dd id="kom-co2-ton">–</dd></div>
         <div class="framhavd"><dt>Värderad samhällsnytta (undviken CO₂)</dt><dd id="kom-samhallsnytta">–</dd></div>
       </dl>
@@ -707,6 +744,12 @@
         (<a href="https://vastanby.se/vindkraftsprojekt/" target="_blank" rel="noopener">vastanby.se</a>).
         Anger idag 10 MW vindkraft och batterilager 10 MW / 40 MWh med årsproduktion cirka 39 000 MWh, vilket avviker från domens 22 704 MWh.
         Uppgiften är hämtad ur anteckningarna i repot (<a href="https://github.com/kentlundgren/Vindkraft/blob/main/skanes-vindkraftsakademi/2026-09-02-anteckningar.md" target="_blank" rel="noopener">2026-09-02, avsnitt 10</a>), inte läst på Västanbys sida.
+      </li>
+      <li id="ref-lundgren">
+        Lundgren, K. (2026) <em>Besked före beslut: att förbättra intäktsdelningen från vindkraft till närboende</em>, Controller utan gränser, 2026-11-11
+        (<a href="https://controllerutangranser.wordpress.com/2026/11/11/besked-fore-beslut-att-forbattra-intaktsdelningen-fran-vindkraft-till-narboende/" target="_blank" rel="noopener">controllerutangranser.wordpress.com</a>).
+        Anger att intäktsdelningslagen gäller anläggningar med tillstånd enligt 9 eller 11 kap. miljöbalken och inte anmälningspliktiga, att Önnerups tre verk om högst 150 m därför faller utanför lagen,
+        och att stödet till kommuner och bygdemedlen inte regleras av lagen. Hämtad 2026-11-23.
       </li>
       <li>
         Regeringen (2026) <em>Proposition 2025/26:239 Vindkraft i kommuner.</em>
@@ -816,7 +859,7 @@
         <p>Allt räknas i webbläsaren. Ingen data skickas någonstans. Diagrammen ritas med Chart.js via CDN.</p>
         <h3>Metoden</h3>
         <p>Förvalen bygger på Mark- och miljööverdomstolens dom P 14634-20: tre verk, totalhöjd 150 m, årsproduktion 22 704 MWh efter 10 % säkerhetsmarginal. Kapacitetsfaktorn 0,2618 är härledd ur den produktionen och en antagen effekt på 3,3 MW per verk. Västanby AB anger idag en annan produktion, och orsaken är inte verifierad.</p>
-        <p>Närboendeersättningen räknas enligt SFS 2026:1113, 11–14 §§ (fem zoner, de två närmaste verken, tak 2 %). Antalet bostäder per zon saknas och står på 0. Nätkostnader finns med men är avstängda (läge Ingen). Siffrorna är hämtade ur källorna, inte kvalitetssäkrade, och ska kontrolleras mot källan.</p>
+        <p>Närboendeersättningen räknas enligt SFS 2026:1113, 11–14 §§ (fem zoner, de två närmaste verken, tak 2 %), men lagen gäller troligen inte så små verk. Antalet bostäder per zon saknas och står på 0. Fastighetsskatt och bygdemedel saknar belopp och står på 0 med varning. Nätkostnader finns med men är avstängda (läge Ingen). Siffrorna är hämtade ur källorna, inte kvalitetssäkrade, och ska kontrolleras mot källan.</p>
       </div>
     </div>
   </div>

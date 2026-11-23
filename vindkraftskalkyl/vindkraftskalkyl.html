@@ -65,6 +65,8 @@
 
   UPPDATERING 2026-11-22 (senare igen): gemensam kärna kalkylkarna.js för finansmatematik och nätkopplingen, delad med fallet Långhult, och nätformateringen i natkostnader.css. Resultaten är oförändrade. Version 1.15.
 
+  UPPDATERING 2026-11-23 (senare): fastighetsskatt, bygdemedel och kommunstöd är gemensamma poster i kalkylkarna.js (som i Långhult). Kommunstödet betalas av staten och dras inte från projektets resultat, och den gamla schablonposten Kommunal ersättning (projektkostnad) är borttagen. Fastighetsskatt och bygdemedel står på 0 med varning tills de fylls i. Version 1.17.
+
   UPPDATERING 2026-11-23: närboendeersättning enligt lagen (fem zoner, tak 2 %, SFS 2026:1113 11–14 §§), delad med Långhult via kalkylkarna.js. Fältet Spotpris och nytt fält Prisfaktor (förvalt 1, så pris och intäkt är oförändrade). Fullasttimmar visas under kapacitetsfaktorn. Version 1.16.
   ============================================================================
 -->
@@ -483,9 +485,38 @@
       <fieldset class="indata-grupp">
         <legend>Kommun &amp; samhälle</legend>
 
-        <label>Kommunal ersättning (kr/MW/år)
-          <input type="number" step="1000" id="kommunersattning" class="indata" value="15000">
-          <span class="badge antagande">schablon</span>
+        <p class="hint" style="margin:0 0 .6rem">Fastighetsskatt och bygdemedel är kostnader för projektet. Kommunstödet betalas av staten och dras inte från projektets resultat. Fastighetsskatt och bygdemedel står på 0 tills du fyller i dem, och sidan visar då att de saknas.</p>
+
+        <label>Fastighetsskatt per verk, första åren (kr/år)
+          <abbr class="fk" tabindex="0" data-f="Fastighetsskatt: 0,5 % av taxeringsvärdet. Beloppet beror på verkets storlek och elområde. För ett nytt verk på 6,6 MW i elområde 3 blir det 334 398 kr per år enligt räkneexemplet i Kaufmann &amp; Westander (2026, s. 17–18).">?</abbr>
+          <input type="number" step="100" id="fskatt1" class="indata" value="0">
+          <span class="badge antagande">uppgift saknas</span>
+        </label>
+
+        <label>Antal år med full fastighetsskatt
+          <input type="number" step="1" id="fskattaar" class="indata" value="4">
+          <span class="badge antagande">antagande</span>
+          <span class="hint">Kaufmann &amp; Westander (2026, s. 4, 9) räknar med de första fyra åren.</span>
+        </label>
+
+        <label>Fastighetsskatt per verk, totalt över livslängden (kr)
+          <abbr class="fk" tabindex="0" data-f="Skatten sjunker över tid eftersom taxeringsvärdet skrivs ned med verkets ålder. Här jämnas åren efter de första ut till ett lika stort belopp per år, så att summan över livslängden blir det du anger. För Långhult (6,6 MW) är det cirka 6,64 Mkr per verk över 30 år (Kaufmann &amp; Westander, 2026, s. 18).">?</abbr>
+          <input type="number" step="1000" id="fskattotal" class="indata" value="0">
+          <span class="badge antagande">uppgift saknas</span>
+        </label>
+
+        <label>Bygdemedel, hela parken (kr/år)
+          <abbr class="fk" tabindex="0" data-f="Bygdemedel (bygdepeng): pengar som bolaget avsätter till föreningsliv, näringsliv och infrastruktur i bygden. Frivilligt och inte reglerat av intäktsdelningslagen (SFS 2026:1113), men betalas i de flesta projekt. Det är inte samma sak som ersättningen till närboende.">?</abbr>
+          <input type="number" step="10000" id="bygdemedel" class="indata" value="0">
+          <span class="badge antagande">uppgift saknas</span>
+          <span class="hint">Kaufmann &amp; Westander (2026, s. 4, 12) anger minst 400 000 kr/år för Långhult (132 MW).</span>
+        </label>
+
+        <label>Kommunstöd (kr per MW och år)
+          <abbr class="fk" tabindex="0" data-f="Kommunstöd: staten fördelar ett belopp motsvarande fastighetsskatten på vindkraft till kommunerna efter installerad effekt, cirka 20 000 kr per MW. Det betalas av staten och belastar inte projektet. Förordning är utlovad men inte beslutad.">?</abbr>
+          <input type="number" step="100" id="kommunstod" class="indata" value="20000">
+          <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=7" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, s. 7–9</a>
+          <span class="hint">Cirka. Ingen förordning är beslutad än.</span>
         </label>
 
         <label>CO₂-faktor, undviken (kg/kWh)
@@ -682,10 +713,18 @@
     <!-- ---- Flik: Kommun/samhälle ---- -->
     <div class="flik-panel" id="panel-kommun" role="tabpanel" hidden>
       <h3>Kommun- och samhällsperspektivet</h3>
+      <p class="hint">
+        Fastighetsskatt och bygdemedel är kostnader för projektet. Kommunstödet betalas av staten till kommunen, motsvarar fastighetsskatten och belastar inte projektet
+        (<a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=7" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, s. 7–9</a>).
+        Det visas därför här, men dras inte från projektets resultat.
+      </p>
+      <p class="hint nat-saknas" id="kom-saknas" hidden></p>
       <dl class="resultatlista">
-        <div><dt>Lokala intäkter år 1 (arrende + kommun + <span class="nb-info" tabindex="0">närboende</span>)</dt><dd id="kom-lokala-ar">–</dd></div>
-        <div><dt>Lokala intäkter totalt (hela livslängden)</dt><dd id="kom-lokala-total">–</dd></div>
-        <div><dt>Kommunal ersättning år 1</dt><dd id="kom-kommun-ar">–</dd></div>
+        <div><dt>Lokala betalningar från projektet år 1 (arrende + bygdemedel + <span class="nb-info" tabindex="0">närboende</span>)</dt><dd id="kom-lokala-ar">–</dd></div>
+        <div><dt>Lokala betalningar från projektet, hela livslängden</dt><dd id="kom-lokala-total">–</dd></div>
+        <div><dt>Fastighetsskatt år 1 (kostnad för projektet)</dt><dd id="kom-fskatt">–</dd></div>
+        <div><dt>Bygdemedel år 1 (kostnad för projektet)</dt><dd id="kom-bygde">–</dd></div>
+        <div class="framhavd"><dt>Kommunstöd till kommunen år 1 (statligt)</dt><dd id="kom-stod">–</dd></div>
         <div><dt>Undviken CO₂ per år</dt><dd id="kom-co2-ton">–</dd></div>
         <div class="framhavd"><dt>Värderad samhällsnytta (undviken CO₂)</dt><dd id="kom-samhallsnytta">–</dd></div>
       </dl>

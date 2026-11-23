@@ -41,8 +41,9 @@
    UPPDATERING 2026-11-22 (senare igen): radbrytning i sammanfattningen (kr per år för parken på en rad, per verk på raden under). Version 1.13.
    UPPDATERING 2026-11-22 (senare igen): rullgardinen Kalkyler (korsreferens till Långhult). Version 1.14.
    UPPDATERING 2026-11-22 (senare igen): finansmatematik, formatering och nätkopplingen flyttade till den gemensamma kärnan kalkylkarna.js (delas med Långhult). Resultaten är oförändrade. Version 1.15.
-   UPPDATERING 2026-11-23: närboendeersättning enligt lagen (zoner, SFS 2026:1113) via kalkylkarna.js, prisfaktor (realiserat pris = spotpris × prisfaktor, förvalt 1) och visning av fullasttimmar. Version 1.16. */
-const VERSION = '1.16';
+   UPPDATERING 2026-11-23: närboendeersättning enligt lagen (zoner, SFS 2026:1113) via kalkylkarna.js, prisfaktor (realiserat pris = spotpris × prisfaktor, förvalt 1) och visning av fullasttimmar. Version 1.16.
+   UPPDATERING 2026-11-23 (senare): fastighetsskatt, bygdemedel och kommunstöd via kalkylkarna.js (kommunPoster). Kommunstödet är statligt och dras inte från projektets resultat. Den gamla schablonposten Kommunal ersättning är borttagen. Version 1.17. */
+const VERSION = '1.17';
 const VERSIONSDATUM = '2026-11-22';
 
 /* ============================================================================
@@ -88,8 +89,8 @@ function lasIndata() {
     arrendeprocent:   tal('arrendeprocent') / 100,     // % → andel
     arrendekrmw:      tal('arrendekrmw'),              // kr/MW/år
 
-    // Kommun/samhälle
-    kommunersattning: tal('kommunersattning'),         // kr/MW/år
+    // Kommun/samhälle: fastighetsskatt, bygdemedel och kommunstöd (kalkylkarna.js, lasKommunIndata)
+    ...lasKommunIndata(),
     co2faktor:        tal('co2faktor'),                // kg CO2/kWh
     co2varde:         tal('co2varde'),                 // kr/kg
 
@@ -198,8 +199,14 @@ function beraknaAllt(d) {
   // Nuvärde av arrendet (diskonterat med kalkylräntan).
   const arrendeNuvarde = arrendeAr.reduce((s, v, i) => s + v / Math.pow(1 + r, i + 1), 0);
 
-  /* ---------- 3.4 Kommunal ersättning (schablon) --------------------------- */
-  const kommunAr = d.kommunersattning * P_tot;        // kr/år, konstant
+  /* ---------- 3.4 Fastighetsskatt och bygdemedel (projektkostnader) och kommunstöd (statligt) ----
+     Räknas i kalkylkarna.js (kommunPoster) och delas med övriga kalkyler. Kommunstödet betalas av staten
+     och dras inte från projektets resultat. -------------------------------------------------------- */
+  const kp = kommunPoster(d, P_tot);
+  const fskattAr = kp.fskattAr;
+  const bygdeAr = kp.bygdeAr;
+  const fskattAr1 = kp.fskattAr1;
+  const bygdeAr1 = kp.bygdeAr1;
 
   /* ---------- 3.5 Närboende – beräknas här eftersom både närboende- och
      investerarperspektivet behöver den totala ersättningen. Räknesättet ligger i
@@ -214,7 +221,7 @@ function beraknaAllt(d) {
   const narboendeTotalAr1 = nar1.utbetalt;
 
   /* ---------- 3.6 Investerarens kassaflöde, LCOE, NPV, IRR, payback ---------
-     Netto per år = intäkt − drift − arrende − kommunal ersättning − närboende.
+     Netto per år = intäkt − drift − arrende − fastighetsskatt − bygdemedel − närboende.
      Vi kopplar alltså tillbaka närboendeersättningen som en KOSTNADSPOST.
   */
   const nedmonteringTot = d.nedmontering * 1000 * P_tot;  // kr, i slutet
@@ -222,7 +229,7 @@ function beraknaAllt(d) {
 
   const cf = [-investering];                          // år 0: investeringen ut
   for (let t = 0; t < n; t++) {
-    let netto = intaktAr[t] - driftAr[t] - arrendeAr[t] - kommunAr - narboendeTotalAr[t];
+    let netto = intaktAr[t] - driftAr[t] - arrendeAr[t] - fskattAr[t] - bygdeAr[t] - narboendeTotalAr[t];
     if (t === n - 1) {
       // Sista året: nedmontering (kostnad) och eventuellt restvärde (intäkt).
       netto += restvardeTot - nedmonteringTot;
@@ -235,7 +242,7 @@ function beraknaAllt(d) {
   const paybackInvest = payback(cf);
 
   // Överskott efter lokala ersättningar (år 1) – jämförelse mot basöverskottet.
-  const overskottNetto = intaktAr1 - totalkostnad - arrendeAr1 - kommunAr - narboendeTotalAr1;
+  const overskottNetto = intaktAr1 - totalkostnad - arrendeAr1 - fskattAr1 - bygdeAr1 - narboendeTotalAr1;
 
   /* LCOE (gemensam definition, kalkylkarna.js: lcoeAvKassaflode). Nätkostnad per kWh över livslängden och
      dess andel av LCOE, nätens löpande kostnad i kronor och diagrammets nätpost: natSammanfattning. */
@@ -245,10 +252,12 @@ function beraknaAllt(d) {
   });
 
   /* ---------- 3.7 Kommun/samhälle: sammanställning ------------------------- */
-  const lokalaIntakterAr1 = arrendeAr1 + kommunAr + narboendeTotalAr1;
+  // Lokala betalningar från projektet: arrende, bygdemedel och närboendeersättning. Fastighetsskatten går till
+  // staten, och kommunstödet betalas av staten till kommunen (visas separat).
+  const lokalaIntakterAr1 = arrendeAr1 + bygdeAr1 + narboendeTotalAr1;
   let lokalaIntakterTotal = 0;
   for (let t = 0; t < n; t++) {
-    lokalaIntakterTotal += arrendeAr[t] + kommunAr + narboendeTotalAr[t];
+    lokalaIntakterTotal += arrendeAr[t] + bygdeAr[t] + narboendeTotalAr[t];
   }
   const co2Ton = produktionkWh_ar1 * d.co2faktor / 1000;   // kg → ton
   const samhallsnytta = produktionkWh_ar1 * d.co2faktor * d.co2varde; // kr/år
@@ -292,7 +301,7 @@ function beraknaAllt(d) {
     arrendeAr1, arrendeTotal, arrendeNuvarde,
 
     // Kommun/samhälle
-    lokalaIntakterAr1, lokalaIntakterTotal, kommunAr, co2Ton, samhallsnytta,
+    lokalaIntakterAr1, lokalaIntakterTotal, fskattAr1, bygdeAr1, kommunPoster: kp, co2Ton, samhallsnytta,
 
     // Andelsägare
     elmangd, totalInsats, sjalvkostnadkWh, marknadsprisAr1, besparingAr1,
@@ -307,7 +316,7 @@ function beraknaAllt(d) {
     // Hjälpvärden till diagram (driftkostnaden utan nät och kapitalkostnaden
     // utan nätens engångsdel, så att nätposten inte dubbelräknas)
     driftAr1: driftkostnadAr1 - nat.lopandeAr1, kapitalChart: kapitalkostnadGrund,
-    arrendeChart: arrendeAr1, kommunChart: kommunAr,
+    arrendeChart: arrendeAr1,
     narboendeChart: narboendeTotalAr1
   };
 }
@@ -356,7 +365,11 @@ function skrivUt(res, d) {
   /* ---- Kommun/samhälle ---- */
   satt('kom-lokala-ar', fmt(res.lokalaIntakterAr1, 0, ' kr/år'));
   satt('kom-lokala-total', fmt(res.lokalaIntakterTotal, 0, ' kr'));
-  satt('kom-kommun-ar', fmt(res.kommunAr, 0, ' kr/år'));
+  satt('kom-fskatt', fmt(res.fskattAr1, 0, ' kr/år'));
+  satt('kom-bygde', fmt(res.bygdeAr1, 0, ' kr/år'));
+  satt('kom-stod', fmt(res.kommunPoster.kommunstodAr1, 0, ' kr/år'));
+  const kSaknas = document.getElementById('kom-saknas');
+  if (kSaknas) { const tx = kommunSaknasText(res.kommunPoster); kSaknas.textContent = tx; kSaknas.hidden = !tx; }
   satt('kom-co2-ton', fmt(res.co2Ton, 0, ' ton/år'));
   satt('kom-samhallsnytta', fmt(res.samhallsnytta, 0, ' kr/år'));
 
@@ -441,8 +454,8 @@ function uppdateraDiagram(res, d) {
   // Nätposten = löpande nätkostnad år 1 + annuiteten på nätens engångsdel. Ett
   // cirkeldiagram kan inte visa en negativ post, så en nätersättning visas som 0
   // (värdet finns i panelen Nätkostnader i siffror).
-  const kostLabels = ['Kapitalkostnad', 'Driftskostnad', 'Arrende', 'Kommunal ersättning', 'Närboendeersättning', 'Nät och systemkrav'];
-  const kostData = [res.kapitalChart, res.driftAr1, res.arrendeChart, res.kommunChart, res.narboendeChart, Math.max(0, res.natChart)];
+  const kostLabels = ['Kapitalkostnad', 'Driftskostnad', 'Arrende', 'Fastighetsskatt', 'Bygdemedel', 'Närboendeersättning', 'Nät och systemkrav'];
+  const kostData = [res.kapitalChart, res.driftAr1, res.arrendeChart, res.fskattAr1, res.bygdeAr1, res.narboendeChart, Math.max(0, res.natChart)];
   const ctx2 = document.getElementById('diagram-kostnader');
   if (ctx2) {
     if (diagramKostnader) {
@@ -455,7 +468,7 @@ function uppdateraDiagram(res, d) {
           labels: kostLabels,
           datasets: [{
             data: kostData,
-            backgroundColor: ['#1b5e5a', '#2e8b84', '#e0c93a', '#c77f2e', '#b3261e', '#5b6fb3']
+            backgroundColor: ['#1b5e5a', '#2e8b84', '#e0c93a', '#c77f2e', '#7a5ca8', '#b3261e', '#5b6fb3']
           }]
         },
         options: {
