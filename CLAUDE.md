@@ -6,7 +6,7 @@
 **Live (Vercel-app, Functions):** https://vindkraft-ver2.vercel.app
 **Live (Vercel-app, Next.js App Router):** https://vindkraft-ver3.vercel.app
 **Senast uppdaterad:** 2026-11-24
-**Version:** 1.19
+**Version:** 1.20
 
 ---
 
@@ -66,11 +66,12 @@ En analys som gäller flera projekt, som kandidatlistan ur Vindbrukskollen, hör
 ## Regel – Mallen: samma fält och standardvärden, och det unika syns
 
 Alla kalkyler har samma indatafält i samma ordning (`INDATAORDNING_ANLAGGNING`) och samma standardvärden. Huvudkalkylen är mallen. Ett fall får ha egna, aktuella värden som passar just det, men läsaren ska se vilka värden som avviker från mallen eller schablonen.
-- **Elområde finns i varje kalkyl** (fältet `elomrade`, SE1–SE4, klass `indata`, direkt före Spotpris), också när fallet inte räknar med schabloner. Det styr två saker och inget annat: (1) vid byte fylls Spotpris med schablonpriset `ELOMRADE_PRIS` (kalkylens change-lyssnare anropar `fyllElomradePris()` före omräkningen), och (2) schablonen för fastighetsskatt (`fastighetsskattSchablon`) räknas med områdets elprisfaktor. Elområdet ändrar ingen annan beräkning.
+- **Elområde finns i varje kalkyl** (fältet `elomrade`, SE1–SE4, klass `indata`, direkt före Spotpris), också när fallet inte räknar med schabloner. Det styr fyra saker och inget annat: när området väljs i rullgardinen fylls tre fält med områdets standardvärden (kalkylens change-lyssnare anropar `fyllElomradeStandard()` före omräkningen): Spotpris (`ELOMRADE_PRIS`, SE1 0,30, SE2 0,35, SE3 0,55, SE4 0,60 kr/kWh), Prisfaktor (`ELOMRADE_PRISFAKTOR`, SE1 0,68, SE2 0,69, SE3 0,75, SE4 0,66) och Kalkylränta (`KALKYLRANTA_STANDARD`, 0,052 real i alla områden). Det fjärde är schablonen för fastighetsskatt (`fastighetsskattSchablon`), som räknas med områdets elprisfaktor. Elområdet ändrar ingen annan beräkning. Väljer man samma område igen sker inget (rullgardinen skickar ingen händelse), och ett val skriver över fältens värden, också ett eget värde i ett fall.
 - **Förklaringen vid rubriken:** `<abbr class="fk" id="elomrade-hjalp" tabindex="0" data-f="">?</abbr>` direkt efter etiketten Elområde. Kärnan skriver texten (`elomradeForklaring()`, byggd på samma konstanter som räkningen) vid hovring, fokus och tryck. Ändra texten bara där.
-- **Mallens Spotpris är schablonpriset för valt område.** Huvudkalkylen har SE4 och 0,60 kr/kWh.
-- **Schablonnotis under Spotpris, Fastighetsskatt första åren och åren därefter** (`elpris-schablon`, `fskatt1-schablon`, `fskatt2-schablon`). Sidans init anropar `kopplaForklaringar()` och `kopplaElomradeOchSchablon()` (kärnan) efter sina egna lyssnare. Notisen säger "Schablonvärdet för SE4", "Avviker från schablonen för SE3 (0,55 kr/kWh): ett eget värde för den här kalkylen" (blå) eller "Uppgift saknas". Ett fall som har ett eget värde, till exempel Långhults spotpris 0,50 ur Kaufmann & Westander, behåller det och får märkningen automatiskt. Fallet anger dessutom källan vid fältet (`badge pm` för en källa, `badge antagande` för ett antagande) och en mening vid elområdet om att fallet använder sitt eget värde.
-- **Kalkylränta:** standard för en ny kalkyl är real kalkylränta 0,052 (5,2 %, Energiforsk 2021, s. 18, spann 2,6–7,5 %, tolv projekt under byggnation 2020), märkt `antagande`, med texten om källan, att Energimyndigheten (2016) använde 6,8 % (5–8 %) och att räntans utveckling efter 2020 inte är med, och med `ref-energiforsk` och `ref-er2016` i källförteckningen (som Långhult och Önnerup). Etiketten är "Kalkylränta, real (0–1)" med förklaring av vad real betyder. Huvudkalkylen har kalkylräntan 0,1215 (Kents ursprungliga värde) och saknar den texten.
+- **Mallens Spotpris är schablonpriset för valt område.** Huvudkalkylen har SE4 och 0,60 kr/kWh. Dess Prisfaktor (1) och Kalkylränta (0,1215) är de gamla värdena från tidigare kalkyler och står kvar för jämförelse, så schablonnotisen visar att de avviker.
+- **Källor till standardvärdena:** prisfaktorn för SE1, SE2 och SE4 är kvoten mellan vindkraftens capture price och basprisen i KYOS (2025), prognos 2026–2035 (SE1 16,8/24,6, SE2 18,5/26,8, SE4 40,9/62,4), och SE3 är Kaufmann & Westander (2026), som KYOS 0,77 ligger nära. EIFO (2026) visar att utfallet i SE2 var 0,50 år 2025. Prognosvärdena är försiktiga utgångspunkter, inte utfall, och ingen källa ger olika kalkylränta per område. Båda källorna (`ref-kyos`, `ref-eifo`) står i varje kalkyls källförteckning. Ändras ett standardvärde ändras konstanten i `kalkylkarna.js`, källposten och testet.
+- **Schablonnotis under Spotpris, Prisfaktor, Kalkylränta, Fastighetsskatt första åren och åren därefter** (`elpris-schablon`, `prisfaktor-schablon`, `kalkylranta-schablon`, `fskatt1-schablon`, `fskatt2-schablon`). Sidans init anropar `kopplaForklaringar()` och `kopplaElomradeOchSchablon()` (kärnan) efter sina egna lyssnare. Notisen säger "Schablonvärdet för SE4", "Avviker från schablonen för SE3 (0,55 kr/kWh): ett eget värde för den här kalkylen" (blå) eller "Uppgift saknas". Ett fall som har ett eget värde, till exempel Långhults spotpris 0,50 ur Kaufmann & Westander eller Önnerups prisfaktor 0,75, behåller det och får märkningen automatiskt. Fallet anger dessutom källan vid fältet (`badge pm` för en källa, `badge antagande` för ett antagande) och en mening vid elområdet om att fallet använder sitt eget värde.
+- **Kalkylränta:** standard för en ny kalkyl är real kalkylränta 0,052 (5,2 %, Energiforsk 2021, s. 18, spann 2,6–7,5 %, tolv projekt under byggnation 2020), märkt `antagande`, med texten om källan, att Energimyndigheten (2016) använde 6,8 % (5–8 %) och att räntans utveckling efter 2020 inte är med, och med `ref-energiforsk` och `ref-er2016` i källförteckningen (som Långhult och Önnerup). Etiketten är "Kalkylränta, real (0–1)" med förklaring av vad real betyder. Huvudkalkylen har texten och källorna men behåller kalkylräntan 0,1215 (Kents ursprungliga värde) för jämförelse med de tidigare kalkylerna.
 - **Egna värden märks, aldrig tyst:** ett värde som avviker från mallen (antal verk, effekt, kapacitetsfaktor, investeringskostnad, ränta, spotpris, skatt) har en källmärkning vid fältet och en mening om varför det avviker. Gäller det Spotpris eller fastighetsskatt tillkommer schablonnotisen automatiskt.
 - **Förklaringarna `abbr.fk`** ritas av CSS (`stil.css` och `stil_langhult.css`) och får fokus vid tryck via `kopplaForklaringar()` i kärnan. Egen kopia av någon av funktionerna ovan i en kalkyls fil fångas av testet.
 
@@ -171,6 +172,7 @@ den globala filen `AI\Claude\CLAUDE.md` på Kents lokala maskin.
 
 ## Uppdateringslogg
 
+- 2026-11-24 (v1.20): Elområdet fyller också Prisfaktor och Kalkylränta (standard per område med källor KYOS och EIFO), och notiser under dem.
 - 2026-11-24 (v1.19): Regeln om mallen (elområde i varje kalkyl med förklaring och schablonnotiser, kalkylränta som standard, egna värden märks) och checklistan utökad.
 - 2026-11-23 (v1.18): Startsidan `index.html` med regel om att texten och siffrorna följer kalkylerna, och brödsmulor som börjar med den.
 - 2026-11-23 (v1.17): Hänvisningspost för Vindbrukskollen i källförteckningarna och sammanställningen kandidater.md som egen källpost.
@@ -195,4 +197,4 @@ den globala filen `AI\Claude\CLAUDE.md` på Kents lokala maskin.
 
 ---
 
-_CLAUDE.md v1.19, 2026-11-24_
+_CLAUDE.md v1.20, 2026-11-24_

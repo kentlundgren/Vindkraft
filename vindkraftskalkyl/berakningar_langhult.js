@@ -31,6 +31,7 @@
 'use strict';
 
 /* Versionsraden längst ned på sidan. Höj VERSION och uppdatera VERSIONSDATUM i samma ändring som innehållet ändras.
+   UPPDATERING 2026-11-24 (senare 3): områdets standardvärden för Prisfaktor (SE1 0,68, SE2 0,69, SE3 0,75, SE4 0,66; KYOS 2025 och Kaufmann & Westander 2026) och Kalkylränta (5,2 % real, lika i alla områden) fylls nu i tillsammans med Spotpris när elområdet väljs (rullgardinen), med schablonnotis under Prisfaktor och Kalkylränta, och KYOS (2025) och EIFO (2026) som källor. Version 1.17.
    UPPDATERING 2026-11-24 (senare): elområdet är ett fält även i Långhult (SE3, med Kaufmann & Westanders spotpris 0,50 som avviker från schablonen 0,55), med förklaring vid rubriken och schablonnotis under Spotpris och Fastighetsskatt. Version 1.16.
    UPPDATERING 2026-11-24: elområdet står som text vid Spotpris (SE3, Kaufmann & Westander 2026, s. 17–18) i stället för som fält: inget i Långhult-kalkylen beror på det. Version 1.15.
    UPPDATERING 2026-11-23 (senare igen 13): Karta 1: delområdena Långhult (norr, 8 verk) och Lunnarsbo (söder, 12 verk) i texten och bildtexterna, uppgifterna visas vid hovring, fokus och tryck, och man byter bild genom att svepa (touch, mus och styrplatta) eller med pilknapparna. Version 1.14.
@@ -48,7 +49,7 @@
    UPPDATERING 2026-11-23 (senare igen): växel för parkens storlek (20 verk eller bara Lunnarsbo, 12 verk). Version 1.2.
    UPPDATERING 2026-11-23 (senare): nya nätfall I och J (Vattenfall 130 kV) i väljaren. Version 1.1.
    UPPDATERING 2026-11-23: versionsrad i sidfoten. Version 1.0 (Långhult har egen versionsnumrering, skild från huvudkalkylens). */
-const VERSION = '1.16';
+const VERSION = '1.17';
 const VERSIONSDATUM = '2026-11-24';
 
 /* ============================================================================
@@ -824,7 +825,7 @@ function kopplaLyssnare() {
   document.querySelectorAll('.indata').forEach(el => {
     el.addEventListener('input', () => { omrakna(); });
     el.addEventListener('change', () => {
-      if (el.id === 'elomrade') fyllElomradePris();   // kalkylkarna.js
+      if (el.id === 'elomrade') fyllElomradeStandard();   // kalkylkarna.js
       tidigareResultat = senasteResultat;
       senasteResultat = omrakna();
       ritaJamforelse();

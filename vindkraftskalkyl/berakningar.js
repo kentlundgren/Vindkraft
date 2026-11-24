@@ -59,8 +59,10 @@
    UPPDATERING 2026-11-23 (senare igen 14): startsidan index.html finns och brödsmulorna börjar med "Vindkraftens ekonomi: start". Version 1.31.
    UPPDATERING 2026-11-23 (senare igen 15): knapparna Ett verk och Fem verk uppdaterar nu också Kalkylsammanställningen (natkostnader_ui.js skickar change efter input). Version 1.32.
    UPPDATERING 2026-11-24: Önnerup har nya förval (kapacitetsfaktor 0,37, 10 000 kkr/MW, real kalkylränta 5,2 %, nätläge Bas), som bara står i Önnerups HTML. Texten om engångskostnaden i panelen nämner inte längre ett fast tal. Version 1.33.
-   UPPDATERING 2026-11-24 (senare): fältet Elområde finns i alla tre kalkylerna (före Spotpris), med en förklaring vid rubriken av vad det styr (schablonpris för Spotpris och elprisfaktor i fastighetsskattens schablon), och en schablonnotis under Spotpris och Fastighetsskatt som visar om värdet är schablonen eller avviker från den (kalkylkarna.js). Förklaringarna (abbr.fk) fungerar nu även i huvudkalkylen och Önnerup. Huvudkalkylens förvalda elområde är SE4, vars schablonpris (0,60 kr/kWh) är det spotpris som alltid har stått där, så resultaten är oförändrade. Version 1.34. */
-const VERSION = '1.34';
+   UPPDATERING 2026-11-24 (senare): fältet Elområde finns i alla tre kalkylerna (före Spotpris), med en förklaring vid rubriken av vad det styr (schablonpris för Spotpris och elprisfaktor i fastighetsskattens schablon), och en schablonnotis under Spotpris och Fastighetsskatt som visar om värdet är schablonen eller avviker från den (kalkylkarna.js). Förklaringarna (abbr.fk) fungerar nu även i huvudkalkylen och Önnerup. Huvudkalkylens förvalda elområde är SE4, vars schablonpris (0,60 kr/kWh) är det spotpris som alltid har stått där, så resultaten är oförändrade. Version 1.34.
+   UPPDATERING 2026-11-24 (senare igen): huvudkalkylen har fått texten om den normala kalkylräntan (5,2 % real, Energiforsk 2021; Energimyndigheten 2016 använde 6,8 %) vid fältet Kalkylränta, med källorna i förteckningen. Räntan står kvar på 0,1215 så att resultaten går att jämföra med de tidigare kalkylerna. Version 1.35.
+   UPPDATERING 2026-11-24 (senare 3): områdets standardvärden för Prisfaktor (SE1 0,68, SE2 0,69, SE3 0,75, SE4 0,66; KYOS 2025 och Kaufmann & Westander 2026) och Kalkylränta (5,2 % real, lika i alla områden) fylls nu i tillsammans med Spotpris när elområdet väljs (rullgardinen), med schablonnotis under Prisfaktor och Kalkylränta, och KYOS (2025) och EIFO (2026) som källor. Version 1.36. */
+const VERSION = '1.36';
 const VERSIONSDATUM = '2026-11-24';
 
 /* ============================================================================
@@ -665,7 +667,7 @@ function kopplaLyssnare() {
     // 2) BEKRÄFTAD ändring när fältet lämnas → uppdatera jämförelsetabellen.
     el.addEventListener('change', () => {
       // Specialfall: om elområde ändras fyller vi i schablonpris (redigerbart).
-      if (el.id === 'elomrade') fyllElomradePris();   // kalkylkarna.js
+      if (el.id === 'elomrade') fyllElomradeStandard();   // kalkylkarna.js
 
       // MINNESLOGIK: flytta "Senaste" → "Tidigare", beräkna nytt "Senaste".
       tidigareResultat = senasteResultat;   // det gamla blir tidigare

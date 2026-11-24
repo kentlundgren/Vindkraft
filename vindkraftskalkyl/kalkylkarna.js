@@ -924,28 +924,36 @@ function fastighetsskattSchablon(kwPerVerk, elomrade, fullasttimmar) {
 /* ============================================================================
    ELOMRÅDE, SCHABLONER OCH AVVIKELSER
    ----------------------------------------------------------------------------
-   Alla kalkyler har fältet Elområde (SE1–SE4) i samma ordning (före Spotpris). Elområdet styr två saker och inget annat:
-   1) när det byts fylls Spotpris i med schablonpriset ELOMRADE_PRIS (fyllElomradePris), och 2) fastighetsskattens schablon
-   (fastighetsskattSchablon) räknas med områdets elprisfaktor. Förklaringen vid rubriken (elomradeForklaring) bygger på
+   Alla kalkyler har fältet Elområde (SE1–SE4) i samma ordning (före Spotpris). Elområdet styr fyra saker och inget annat:
+   när det väljs fylls Spotpris (ELOMRADE_PRIS), Prisfaktor (ELOMRADE_PRISFAKTOR) och Kalkylränta (KALKYLRANTA_STANDARD) i med områdets
+   standardvärden (fyllElomradeStandard), och fastighetsskattens schablon (fastighetsskattSchablon) räknas med områdets elprisfaktor. Förklaringen vid rubriken (elomradeForklaring) bygger på
    samma konstanter, så att texten och räkningen alltid stämmer. Står ett värde på sidan som avviker från schablonen
    (till exempel Kaufmann & Westanders spotpris i Långhult) skriver schablonnotisen det under fältet, så att läsaren ser vad som är
    ett eget, aktuellt värde. Notisen räknas om vid varje ändring (kopplaElomradeOchSchablon).
    ============================================================================ */
 
-/** Schablonpriser per elområde (kr/kWh) som fylls i Spotpris när området byts. */
-const ELOMRADE_PRIS = { SE1: 0.30, SE2: 0.35, SE3: 0.55, SE4: 0.60 };
+/** Standardvärden per elområde. Fylls i Spotpris, Prisfaktor och Kalkylränta när området väljs (fyllElomradeStandard). */
+const ELOMRADE_PRIS = { SE1: 0.30, SE2: 0.35, SE3: 0.55, SE4: 0.60 };            // schablonpris, kr/kWh
+/* Prisfaktor (realiserat pris / spotpris) per område. SE1, SE2 och SE4: KYOS (2025), prognos 2026–2035, kvoten mellan vindkraftens capture price
+   och basprisen (16,8/24,6, 18,5/26,8 och 40,9/62,4). SE3: Kaufmann & Westander (2026), som KYOS prognos (0,77) ligger nära. EIFO (2026) visar att utfallet
+   i SE2 redan var 0,50 år 2025, så värdena är försiktigt valda utgångspunkter och inte säkra. */
+const ELOMRADE_PRISFAKTOR = { SE1: 0.68, SE2: 0.69, SE3: 0.75, SE4: 0.66 };
+/** Real kalkylränta, lika i alla områden: medelvärdet för landbaserad vindkraft i Energiforsk (2021), s. 18. Ingen källa har olika ränta per område. */
+const KALKYLRANTA_STANDARD = 0.052;
 
 /** Förklaringen vid rubriken Elområde: vad uppgiften styr. */
 function elomradeForklaring() {
-  const pris = ['SE1', 'SE2', 'SE3', 'SE4'].map(o => o + ' ' + fmt(ELOMRADE_PRIS[o], 2)).join(', ');
+  const lista = (o, f) => ['SE1', 'SE2', 'SE3', 'SE4'].map(x => x + ' ' + f(o[x])).join(', ');
   const fakt = ['SE1', 'SE2', 'SE3', 'SE4'].map(o => {
     const f = FSKATT_SCHABLON.elprisfaktor[o];
     return o + ' ' + (f > 0 ? '+' : '−') + fmt(Math.abs(f), 3);
   }).join(', ');
-  return 'Elområdet (SE1–SE4) styr två saker och inget annat. ' +
-    '1) När du byter område fylls Spotpris i med ett schablonpris för området (kr/kWh: ' + pris + '). Du kan ändra priset efteråt. ' +
-    '2) Schablonen för fastighetsskatt räknas med områdets elprisfaktor (' + fakt + '). ' +
-    'Avviker ett värde på sidan från schablonen står det under fältet: då är det ett eget, aktuellt värde för just den här kalkylen.';
+  return 'Elområdet (SE1–SE4) styr fyra saker och inget annat. ' +
+    'När du väljer område fylls tre fält i med områdets standardvärden: Spotpris (kr/kWh: ' + lista(ELOMRADE_PRIS, v => fmt(v, 2)) + '), ' +
+    'Prisfaktor (' + lista(ELOMRADE_PRISFAKTOR, v => fmt(v, 2)) + ') och Kalkylränta (' + fmt(KALKYLRANTA_STANDARD * 100, 1) + ' % real, lika i alla områden). ' +
+    'Du kan ändra dem efteråt. Det fjärde är schablonen för fastighetsskatt, som räknas med områdets elprisfaktor (' + fakt + '). ' +
+    'Källorna till standardvärdena finns i källförteckningen (KYOS 2025, Kaufmann & Westander 2026, Energiforsk 2021). ' +
+    'Avviker ett värde på sidan från standarden står det under fältet: då är det ett eget, aktuellt värde för just den här kalkylen.';
 }
 
 /** Skriver förklaringen i elementet elomrade-hjalp (attributet data-f, som ritas vid hovring, fokus och tryck). */
@@ -954,11 +962,14 @@ function visaElomradeForklaring() {
   if (e) e.setAttribute('data-f', elomradeForklaring());
 }
 
-/** Fyller Spotpris med schablonpriset för valt elområde. Anropas av kalkylens change-lyssnare innan den räknar om. */
-function fyllElomradePris() {
-  const p = ELOMRADE_PRIS[text('elomrade')];
-  const e = document.getElementById('elpris');
-  if (p !== undefined && e) e.value = p;
+/** Fyller Spotpris, Prisfaktor och Kalkylränta med standardvärdena för valt elområde. Anropas av kalkylens change-lyssnare innan den räknar om. */
+function fyllElomradeStandard() {
+  const o = text('elomrade');
+  if (ELOMRADE_PRIS[o] === undefined) return;
+  const satt = (id, v) => { const e = document.getElementById(id); if (e) e.value = v; };
+  satt('elpris', ELOMRADE_PRIS[o]);
+  satt('prisfaktor', ELOMRADE_PRISFAKTOR[o]);
+  satt('kalkylranta', KALKYLRANTA_STANDARD);
 }
 
 /**
@@ -972,7 +983,7 @@ function fyllElomradePris() {
  * @param {number} tol        tolerans för att värdet räknas som schablonen
  */
 function schablonnotis(varde, schablon, omrade, dec, enhet, nollSaknas, tol) {
-  const sch = fmt(schablon, dec) + ' ' + enhet;
+  const sch = fmt(schablon, dec) + (enhet ? ' ' + enhet : '');
   if (!Number.isFinite(varde) || (nollSaknas && varde === 0)) {
     return { tillstand: 'saknas', text: 'Uppgift saknas. Schablonen för ' + omrade + ' är ' + sch + '.' };
   }
@@ -980,7 +991,7 @@ function schablonnotis(varde, schablon, omrade, dec, enhet, nollSaknas, tol) {
   return { tillstand: 'avviker', text: 'Avviker från schablonen för ' + omrade + ' (' + sch + '): ett eget värde för den här kalkylen.' };
 }
 
-/** Skriver schablonnotiserna under Spotpris och Fastighetsskatt (element elpris-schablon, fskatt1-schablon, fskatt2-schablon). */
+/** Skriver schablonnotiserna under Spotpris, Prisfaktor, Kalkylränta och Fastighetsskatt (element elpris-schablon, prisfaktor-schablon, kalkylranta-schablon, fskatt1-schablon, fskatt2-schablon). */
 function uppdateraSchablonnotiser() {
   const o = text('elomrade');
   if (ELOMRADE_PRIS[o] === undefined) return;
@@ -992,6 +1003,8 @@ function uppdateraSchablonnotiser() {
     e.setAttribute('data-tillstand', n.tillstand);
   };
   satt('elpris-schablon', schablonnotis(varde('elpris'), ELOMRADE_PRIS[o], o, 2, 'kr/kWh', false, 0.005));
+  satt('prisfaktor-schablon', schablonnotis(varde('prisfaktor'), ELOMRADE_PRISFAKTOR[o], o, 2, '', false, 0.005));
+  satt('kalkylranta-schablon', schablonnotis(varde('kalkylranta'), KALKYLRANTA_STANDARD, o, 3, '', false, 0.0005));
   const sch = fastighetsskattSchablon(tal('effekt') * 1000, o, tal('kapfaktor') * 8760);
   satt('fskatt1-schablon', schablonnotis(varde('fskatt1'), sch.fskatt1, o, 0, 'kr per verk och år', true, 1));
   satt('fskatt2-schablon', schablonnotis(varde('fskatt2'), sch.fskatt2, o, 0, 'kr per verk och år', true, 1));
@@ -1000,7 +1013,7 @@ function uppdateraSchablonnotiser() {
 /** Kopplar förklaringen och notiserna. Anropas en gång vid sidstart, efter kalkylens egna lyssnare. */
 function kopplaElomradeOchSchablon() {
   visaElomradeForklaring();
-  ['elomrade', 'elpris', 'effekt', 'kapfaktor', 'fskatt1', 'fskatt2'].forEach(id => {
+  ['elomrade', 'elpris', 'prisfaktor', 'kalkylranta', 'effekt', 'kapfaktor', 'fskatt1', 'fskatt2'].forEach(id => {
     const e = document.getElementById(id);
     if (!e) return;
     e.addEventListener('input', uppdateraSchablonnotiser);
@@ -1083,7 +1096,7 @@ if (typeof module !== 'undefined' && module.exports) {
     natPaverkan, natEngangTillaggAv, natSammanfattning,
     lasKommunIndata, fastighetsskattPerVerk, kommunPoster, kommunSaknasText, narboendeTakniva, narboendeExtra, zonHjalpText,
     FSKATT_SCHABLON, fullastJustering, fastighetsskattSchablon,
-    ELOMRADE_PRIS, elomradeForklaring, schablonnotis,
+    ELOMRADE_PRIS, ELOMRADE_PRISFAKTOR, KALKYLRANTA_STANDARD, elomradeForklaring, schablonnotis,
     NARBOENDE_METOD, NARBOENDE_ZONER, beraknaNarboende, beraknaNarboendeZoner, beraknaNarboendeSchablon, realiseratPris
   };
 }

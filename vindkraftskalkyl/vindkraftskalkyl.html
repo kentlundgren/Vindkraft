@@ -65,6 +65,10 @@
 
   UPPDATERING 2026-11-22 (senare igen): gemensam kärna kalkylkarna.js för finansmatematik och nätkopplingen, delad med fallet Långhult, och nätformateringen i natkostnader.css. Resultaten är oförändrade. Version 1.15.
 
+  UPPDATERING 2026-11-24 (senare 3): områdets standardvärden för Prisfaktor (SE1 0,68, SE2 0,69, SE3 0,75, SE4 0,66; KYOS 2025 och Kaufmann & Westander 2026) och Kalkylränta (5,2 % real, lika i alla områden) fylls nu i tillsammans med Spotpris när elområdet väljs (rullgardinen), med schablonnotis under Prisfaktor och Kalkylränta, och KYOS (2025) och EIFO (2026) som källor. Version 1.36.
+
+  UPPDATERING 2026-11-24 (senare igen): huvudkalkylen har fått texten om den normala kalkylräntan (5,2 % real, Energiforsk 2021; Energimyndigheten 2016 använde 6,8 %) vid fältet Kalkylränta, med källorna i förteckningen. Räntan står kvar på 0,1215 så att resultaten går att jämföra med de tidigare kalkylerna. Version 1.35.
+
   UPPDATERING 2026-11-24: fältet Elområde finns i alla tre kalkylerna (före Spotpris), med en förklaring vid rubriken av vad det styr (schablonpris för Spotpris och elprisfaktor i fastighetsskattens schablon), och en schablonnotis under Spotpris och Fastighetsskatt som visar om värdet är schablonen eller avviker från den (kalkylkarna.js). Förklaringarna (abbr.fk) fungerar nu även i huvudkalkylen och Önnerup. Förvalt elområde är SE4 (schablonpriset 0,60 kr/kWh är det spotpris som alltid har stått här, så resultaten är oförändrade). Version 1.34.
 
   UPPDATERING 2026-11-23 (senare igen 14): startsidan index.html finns och brödsmulorna börjar med "Vindkraftens ekonomi: start". Version 1.31.
@@ -198,7 +202,7 @@
             <option value="SE3">SE3 (mellersta)</option>
             <option value="SE4" selected>SE4 (södra)</option>
           </select>
-          <span class="hint">Byte fyller i ett schablonpris för området (kan ändras).</span>
+          <span class="hint">Byte fyller i områdets standardvärden för Spotpris, Prisfaktor och Kalkylränta (kan ändras).</span>
         </label>
 
         <label>Spotpris (kr/kWh)
@@ -210,6 +214,7 @@
           <abbr class="fk" tabindex="0" data-f="Prisfaktor: vindkraftens genomsnittliga intäktspris delat med genomsnittligt spotpris (0–1). Vindkraften producerar mest när elpriset är lågt, så faktorn blir ofta under 1. Kallas på engelska capture rate (EIFO, 2026: capture price som andel av genomsnittligt marknadspris). Kaufmann &amp; Westander (2026) kallar den viktning och talar om kannibalisering.">?</abbr>
           <input type="number" step="0.01" min="0" max="1" id="prisfaktor" class="indata" value="1">
           <span class="hint">Realiserat pris = spotpris × prisfaktor = <strong id="realpris-visning">–</strong>. Med 1 räknas elen till spotpriset, som tidigare. På engelska capture rate (<a href="https://eifo.dk/media/s1bjgkkq/capture-rate-analysis-marts-2026.pdf" target="_blank" rel="noopener">EIFO, 2026</a>).</span>
+          <span class="schablon-notis" id="prisfaktor-schablon" aria-live="polite"></span>
         </label>
 
         <label>Elprisbana – årlig förändring (%/år)
@@ -229,6 +234,8 @@
 
         <label>Kalkylränta (0–1)
           <input type="number" step="0.0001" id="kalkylranta" class="indata" value="0.1215">
+          <span class="hint">Förvalet 0,1215 är räntan i de tidigare kalkylerna och står kvar så att resultaten går att jämföra med dem. Normalt värde enligt litteraturen: 5,2 % är medelvärdet för landbaserad vindkraft i <a href="#ref-energiforsk">Energiforsk (2021)</a>, s. 18 (spann 2,6–7,5 %, realränta, tolv projekt under byggnation 2020). Energimyndigheten (<a href="#ref-er2016">2016</a>) använde 6,8 % (5–8 %). Räntelägets utveckling efter 2020 är inte med. Fallen <a href="vindkraftskalkyl_langhult.html">Långhult</a> och <a href="vindkraftskalkyl_Onnerup.html">Önnerup</a> räknar med 5,2 %.</span>
+          <span class="schablon-notis" id="kalkylranta-schablon" aria-live="polite"></span>
         </label>
       </fieldset>
 
@@ -884,6 +891,11 @@
         <a href="https://svenskvindkraft.com/vindkraftens-ekonomi-handlar-om-mer-an-elpriset/" target="_blank" rel="noopener">https://svenskvindkraft.com/vindkraftens-ekonomi-handlar-om-mer-an-elpriset/</a>
         (hämtad 22 november 2026). <em>(Ledare som pekar ut nätavgifter, anslutningskostnader och nya systemkrav som svåra att förutse och som inte anger några belopp. Utgångspunkt för analysen av nätkostnader. Återgiven av Svensk Vindkraft i ett LinkedIn-inlägg 19 november: <a href="https://www.linkedin.com/posts/svensk-vindkraft_i-senaste-numret-av-v%C3%A5r-tidning-svensk-vindkraft-activity-7529084415403253761-pt5K" target="_blank" rel="noopener">https://www.linkedin.com/posts/svensk-vindkraft_i-senaste-numret-av-v%C3%A5r-tidning-svensk-vindkraft-activity-7529084415403253761-pt5K</a>.)</em>
       </li>
+      <li id="ref-eifo">
+        EIFO (2026) <em>Capture rate analysis.</em> Mars 2026. Tillgänglig:
+        <a href="https://eifo.dk/media/s1bjgkkq/capture-rate-analysis-marts-2026.pdf" target="_blank" rel="noopener">https://eifo.dk/media/s1bjgkkq/capture-rate-analysis-marts-2026.pdf</a>
+        (hämtad 24 november 2026). <em>(Utfall för vindkraft i SE2: capture rate sjönk från 97 % år 2019 till 50 % år 2025, och 2025 var ett svagt vindår. Av de svenska områdena omfattar analysen bara SE2. Visar att prisfaktorn kan ligga långt under standardvärdet 0,69 för SE2.)</em>
+      </li>
       <li>
         Ellag (1997:857), 4 kap. Tillgänglig:
         <a href="https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/ellag-1997857_sfs-1997-857/" target="_blank" rel="noopener">https://www.riksdagen.se/sv/dokument-och-lagar/dokument/svensk-forfattningssamling/ellag-1997857_sfs-1997-857/</a>
@@ -894,10 +906,20 @@
         <a href="https://data.riksdagen.se/dokument/sfs-2026-1281.html" target="_blank" rel="noopener">https://data.riksdagen.se/dokument/sfs-2026-1281.html</a>
         (hämtad 22 november 2026). <em>(Regler om anslutning till elnätet från 2027. Regelverk för nätkostnaderna.)</em>
       </li>
+      <li id="ref-energiforsk">
+        Energiforsk (2021) <em>El från nya anläggningar 2021.</em> Rapport 2021:714. Tillgänglig:
+        <a href="https://energiforsk.se/media/30970/el-fra-n-nya-anla-ggningar-energiforskrapport-2021-714.pdf" target="_blank" rel="noopener">https://energiforsk.se/media/30970/el-fra-n-nya-anla-ggningar-energiforskrapport-2021-714.pdf</a>
+        (hämtad 5 november 2026). <em>(Källa till kalkylräntan 5,2 % real, s. 18, Tabell 5: lågt 2,6, medel 5,2, högt 7,5 % för landbaserad vindkraft. Texten anger "cirka 5 %" som genomsnitt för tolv projekt från sju bolag under byggnation 2020. Energiforsk anger där också investeringskostnad 9,8–13,2 Mkr/MW, medel 10,9.)</em>
+      </li>
       <li>
         Energimarknadsinspektionen (2026) <em>EIFS 2026:10, föreskrifter och allmänna råd om anslutningsavgifter för elektriska anläggningar</em>, beslutad 2026-08-03, gäller från 2027-01-01. Tillgänglig:
         <a href="https://ei.se/download/18.85fb75b19ed45a9d5148405/1786425499922/EIFS-2026-10-om-anslutningsavgifter-f%C3%B6r-elektriska-anl%C3%A4ggningar.pdf" target="_blank" rel="noopener">https://ei.se/download/18.85fb75b19ed45a9d5148405/1786425499922/EIFS-2026-10-om-anslutningsavgifter-f%C3%B6r-elektriska-anl%C3%A4ggningar.pdf</a>
         (hämtad 22 november 2026). <em>(Hur anslutningsavgiften bestäms. Anger inga belopp.)</em>
+      </li>
+      <li id="ref-er2016">
+        Energimyndigheten (2016) <em>Produktionskostnader för vindkraft i Sverige.</em> ER 2016:17. Tillgänglig:
+        <a href="https://www.energimyndigheten.se/contentassets/9f658fbcc1d24014bbe6fbeb70f80cba/er-2016_17-produktionskostnader-for-vindkraft-i-sverige.pdf" target="_blank" rel="noopener">https://www.energimyndigheten.se/contentassets/9f658fbcc1d24014bbe6fbeb70f80cba/er-2016_17-produktionskostnader-for-vindkraft-i-sverige.pdf</a>
+        (hämtad 5 november 2026). <em>(Jämförelse: referensfallet använder 6,8 % (5 % vid låga och 8 % vid höga kostnader), medelvärdet av avkastningskrav i intervjuer med aktörer, s. 33. Äldre än Energiforsk.)</em>
       </li>
       <li>
         Energimyndigheten (2024) <em>Kostnaden för att bygga vindkraft fortsätter att öka.</em>
@@ -910,6 +932,11 @@
         Tillgänglig:
         <a href="https://www.energimyndigheten.se/fornybart/vindkraft/" target="_blank" rel="noopener">https://www.energimyndigheten.se/fornybart/vindkraft/</a>
         (hämtad 3 juli 2026). Allmänt underlag om produktion och kapacitetsfaktorer.
+      </li>
+      <li id="ref-kyos">
+        KYOS (2025) <em>PPA Insights: Price and market developments in Europe.</em> Issue 14, juni 2025. Tillgänglig:
+        <a href="https://www.kyos.com/app/uploads/2025/09/KYOS-PPA-Report-June-2025-No14.pdf" target="_blank" rel="noopener">https://www.kyos.com/app/uploads/2025/09/KYOS-PPA-Report-June-2025-No14.pdf</a>
+        (hämtad 24 november 2026). <em>(Prognos 2026–2035 av basprisen och vindkraftens capture price (landbaserad) per elområde, EUR/MWh: SE1 24,6 och 16,8, SE2 26,8 och 18,5, SE3 52,8 och 40,6, SE4 62,4 och 40,9. Kvoten, som jag har räknat ut, är 0,68, 0,69, 0,77 och 0,66 och är standard för Prisfaktor i SE1, SE2 och SE4. Det är en modellerad prognos, inte utfall.)</em>
       </li>
       <li id="ref-lundgren-kandidater">
         Lundgren, K. (2026) <em>Kandidater för nya vindkraftskalkyler, ur Vindbrukskollen.</em> Tillgänglig:
