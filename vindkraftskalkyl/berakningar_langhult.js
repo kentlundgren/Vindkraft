@@ -31,6 +31,7 @@
 'use strict';
 
 /* Versionsraden längst ned på sidan. Höj VERSION och uppdatera VERSIONSDATUM i samma ändring som innehållet ändras.
+   UPPDATERING 2026-11-24 (senare 4): knappen Använd standardvärden vid Elområde byter kalkylens värden på Spotpris, Prisfaktor, Kalkylränta och fastighetsskatt mot områdets standard utan att området ändras (samma väg som ett områdesbyte), och ett områdesbyte byter nu också fastighetsskatten (schablonen för verkets effekt och fullasttimmar). Standard för Prisfaktor är antaganden: SE1 0,80, SE2 0,75, SE3 0,85, SE4 0,90. KYOS (2025) och EIFO (2026) står kvar som försiktigare jämförelser. Version 1.18.
    UPPDATERING 2026-11-24 (senare 3): områdets standardvärden för Prisfaktor (SE1 0,68, SE2 0,69, SE3 0,75, SE4 0,66; KYOS 2025 och Kaufmann & Westander 2026) och Kalkylränta (5,2 % real, lika i alla områden) fylls nu i tillsammans med Spotpris när elområdet väljs (rullgardinen), med schablonnotis under Prisfaktor och Kalkylränta, och KYOS (2025) och EIFO (2026) som källor. Version 1.17.
    UPPDATERING 2026-11-24 (senare): elområdet är ett fält även i Långhult (SE3, med Kaufmann & Westanders spotpris 0,50 som avviker från schablonen 0,55), med förklaring vid rubriken och schablonnotis under Spotpris och Fastighetsskatt. Version 1.16.
    UPPDATERING 2026-11-24: elområdet står som text vid Spotpris (SE3, Kaufmann & Westander 2026, s. 17–18) i stället för som fält: inget i Långhult-kalkylen beror på det. Version 1.15.
@@ -49,7 +50,7 @@
    UPPDATERING 2026-11-23 (senare igen): växel för parkens storlek (20 verk eller bara Lunnarsbo, 12 verk). Version 1.2.
    UPPDATERING 2026-11-23 (senare): nya nätfall I och J (Vattenfall 130 kV) i väljaren. Version 1.1.
    UPPDATERING 2026-11-23: versionsrad i sidfoten. Version 1.0 (Långhult har egen versionsnumrering, skild från huvudkalkylens). */
-const VERSION = '1.17';
+const VERSION = '1.18';
 const VERSIONSDATUM = '2026-11-24';
 
 /* ============================================================================

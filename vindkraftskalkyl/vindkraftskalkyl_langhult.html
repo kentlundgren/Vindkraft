@@ -19,6 +19,7 @@
   UPPDATERING 2026-11-23 (senare): indatagrupperna har samma rubriker och ordning som övriga kalkyler (INDATAGRUPPER i kalkylkarna.js), och Närboende ligger sist.
   UPPDATERING 2026-11-23 (senare igen): fastighetsskatt, bygdemedel och kommunstöd räknas i kalkylkarna.js (kommunPoster) och delas med övriga kalkyler. Långhults värden och resultat är oförändrade.
   UPPDATERING 2026-11-23 (senare igen 13): länken till beräkningen av bostäder pekar på nya platsen (mappen langhult/). Version 1.5.
+  UPPDATERING 2026-11-24 (senare 4): knappen Använd standardvärden vid Elområde byter kalkylens värden på Spotpris, Prisfaktor, Kalkylränta och fastighetsskatt mot områdets standard utan att området ändras (samma väg som ett områdesbyte), och ett områdesbyte byter nu också fastighetsskatten (schablonen för verkets effekt och fullasttimmar). Standard för Prisfaktor är antaganden: SE1 0,80, SE2 0,75, SE3 0,85, SE4 0,90. KYOS (2025) och EIFO (2026) står kvar som försiktigare jämförelser. Version 1.18.
   UPPDATERING 2026-11-24 (senare 3): områdets standardvärden för Prisfaktor (SE1 0,68, SE2 0,69, SE3 0,75, SE4 0,66; KYOS 2025 och Kaufmann & Westander 2026) och Kalkylränta (5,2 % real, lika i alla områden) fylls nu i tillsammans med Spotpris när elområdet väljs (rullgardinen), med schablonnotis under Prisfaktor och Kalkylränta, och KYOS (2025) och EIFO (2026) som källor. Version 1.17.
   UPPDATERING 2026-11-24 (senare): elområdet är ett fält även i Långhult (SE3, med Kaufmann & Westanders spotpris 0,50 som avviker från schablonen 0,55), med förklaring vid rubriken och schablonnotis under Spotpris och Fastighetsskatt. Version 1.16.
   UPPDATERING 2026-11-24: elområdet står som text vid Spotpris (SE3, Kaufmann & Westander 2026, s. 17–18) i stället för som fält: inget i Långhult-kalkylen beror på det. Version 1.15.
@@ -229,7 +230,8 @@
             <option value="SE4">SE4 (södra)</option>
           </select>
           <a class="badge pm" href="https://fredolsenrenewables.com/media/1gpjqw0l/pm-intaektsdelning-vindpark-laanghult_gislaved.pdf#page=17" target="_blank" rel="noopener">Kaufmann &amp; Westander, 2026, s. 17–18</a>
-          <span class="hint">Verken ligger i elområde 3. Här används Kaufmann &amp; Westanders eget spotpris (0,50 kr/kWh) i stället för schablonpriset för området. Byte av område fyller i områdets standardvärden för Spotpris, Prisfaktor och Kalkylränta.</span>
+          <span class="hint">Verken ligger i elområde 3. Här används Kaufmann &amp; Westanders eget spotpris (0,50 kr/kWh) i stället för schablonpriset för området. Ett byte av område, eller knappen, byter Spotpris, Prisfaktor, Kalkylränta och fastighetsskatt mot områdets standard.</span>
+          <button type="button" class="knapp-standard" id="elomrade-standard">Använd standardvärden</button>
         </label>
 
         <label>Spotpris (kr/kWh)
@@ -1106,7 +1108,7 @@
       <li id="ref-eifo">
         EIFO (2026) <em>Capture rate analysis.</em> Mars 2026. Tillgänglig:
         <a href="https://eifo.dk/media/s1bjgkkq/capture-rate-analysis-marts-2026.pdf" target="_blank" rel="noopener">https://eifo.dk/media/s1bjgkkq/capture-rate-analysis-marts-2026.pdf</a>
-        (hämtad 24 november 2026). <em>(Utfall för vindkraft i SE2: capture rate sjönk från 97 % år 2019 till 50 % år 2025, och 2025 var ett svagt vindår. Av de svenska områdena omfattar analysen bara SE2. Visar att prisfaktorn kan ligga långt under standardvärdet 0,69 för SE2.)</em>
+        (hämtad 24 november 2026). <em>(Utfall för vindkraft i SE2: capture rate sjönk från 97 % år 2019 till 50 % år 2025, och 2025 var ett svagt vindår. Av de svenska områdena omfattar analysen bara SE2. Visar att prisfaktorn kan ligga långt under standardvärdet 0,75 för SE2.)</em>
       </li>
       <li id="ref-energiforsk">
         Energiforsk (2021) <em>El från nya anläggningar 2021.</em> Rapport 2021:714. Tillgänglig:
@@ -1147,7 +1149,7 @@
       <li id="ref-kyos">
         KYOS (2025) <em>PPA Insights: Price and market developments in Europe.</em> Issue 14, juni 2025. Tillgänglig:
         <a href="https://www.kyos.com/app/uploads/2025/09/KYOS-PPA-Report-June-2025-No14.pdf" target="_blank" rel="noopener">https://www.kyos.com/app/uploads/2025/09/KYOS-PPA-Report-June-2025-No14.pdf</a>
-        (hämtad 24 november 2026). <em>(Prognos 2026–2035 av basprisen och vindkraftens capture price (landbaserad) per elområde, EUR/MWh: SE1 24,6 och 16,8, SE2 26,8 och 18,5, SE3 52,8 och 40,6, SE4 62,4 och 40,9. Kvoten, som jag har räknat ut, är 0,68, 0,69, 0,77 och 0,66 och är standard för Prisfaktor i SE1, SE2 och SE4. Det är en modellerad prognos, inte utfall.)</em>
+        (hämtad 24 november 2026). <em>(Prognos 2026–2035 av basprisen och vindkraftens capture price (landbaserad) per elområde, EUR/MWh: SE1 24,6 och 16,8, SE2 26,8 och 18,5, SE3 52,8 och 40,6, SE4 62,4 och 40,9. Kvoten, som jag har räknat ut, är 0,68, 0,69, 0,77 och 0,66. Den är lägre än kalkylernas standardvärden för Prisfaktor (0,80, 0,75, 0,85 och 0,90, som är antaganden) och används som försiktigare jämförelse. Det är en modellerad prognos, inte utfall.)</em>
       </li>
       <li id="ref-lag">
         Lagen.nu (2026) <em>Lag (2026:1113) om intäktsdelning från vindkraftsanläggningar.</em>

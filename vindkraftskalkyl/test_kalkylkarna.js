@@ -440,6 +440,7 @@ fs.readdirSync('.').filter(f => /^(vindkraftskalkyl.*|index)\.html$/.test(f)).fo
     sant(h + ': elområde med SE1–SE4 och ett valt', ['SE1', 'SE2', 'SE3', 'SE4'].every(o => opt.indexOf('value="' + o + '"') > -1) && (opt.match(/selected/g) || []).length === 1);
     sant(h + ': förklaring vid rubriken Elområde (elomrade-hjalp)', /<abbr class="fk" id="elomrade-hjalp" tabindex="0" data-f="">\?<\/abbr>/.test(html));
     sant(h + ': schablonnotis under Spotpris, Prisfaktor, Kalkylränta och Fastighetsskatt', ['elpris-schablon', 'prisfaktor-schablon', 'kalkylranta-schablon', 'fskatt1-schablon', 'fskatt2-schablon'].every(id => html.indexOf('id="' + id + '"') > -1));
+    sant(h + ': knappen Använd standardvärden finns vid Elområde', /<button type="button" class="knapp-standard" id="elomrade-standard">/.test(html));
     sant(h + ': KYOS (2025) och EIFO (2026) finns som källor', /<li id="ref-kyos">/.test(html) && /<li id="ref-eifo">/.test(html));
     sant(h + ': ' + j + ' kopplar elområde och schablonnotiser via kärnan', /kopplaElomradeOchSchablon\(\)/.test(js) && /fyllElomradeStandard\(\)/.test(js) && /kopplaForklaringar\(\)/.test(js));
     sant(j + ': ingen egen ELOMRADE_PRIS', !/const ELOMRADE_PRIS/.test(js));
@@ -448,12 +449,12 @@ fs.readdirSync('.').filter(f => /^(vindkraftskalkyl.*|index)\.html$/.test(f)).fo
   const mh = fs.readFileSync('vindkraftskalkyl.html', 'utf8');
   const om = /<option value="(SE[1-4])" selected>/.exec(mh)[1];
   lika('huvudkalkylens Spotpris är schablonpriset för ' + om, parseFloat(/id="elpris" class="indata" value="([^"]+)"/.exec(mh)[1]), K.ELOMRADE_PRIS[om]);
-  sant('standardvärden: prisfaktor per område och real ränta 5,2 %', K.ELOMRADE_PRISFAKTOR.SE1 === 0.68 && K.ELOMRADE_PRISFAKTOR.SE2 === 0.69 && K.ELOMRADE_PRISFAKTOR.SE3 === 0.75 && K.ELOMRADE_PRISFAKTOR.SE4 === 0.66 && K.KALKYLRANTA_STANDARD === 0.052);
-  // KYOS (2025): kvoten capture price / baspris, avrundad till två decimaler, för SE1, SE2 och SE4.
-  [['SE1', 16.8, 24.6], ['SE2', 18.5, 26.8], ['SE4', 40.9, 62.4]].forEach(([o, w, b]) => lika('prisfaktor ' + o + ' = KYOS-kvoten ' + w + '/' + b, K.ELOMRADE_PRISFAKTOR[o], w / b, 0.005));
+  sant('standardvärden: prisfaktor per område och real ränta 5,2 %', K.ELOMRADE_PRISFAKTOR.SE1 === 0.80 && K.ELOMRADE_PRISFAKTOR.SE2 === 0.75 && K.ELOMRADE_PRISFAKTOR.SE3 === 0.85 && K.ELOMRADE_PRISFAKTOR.SE4 === 0.90 && K.KALKYLRANTA_STANDARD === 0.052);
+  // KYOS (2025) och EIFO (2026) är försiktigare jämförelser: standardvärdena ligger över KYOS-kvoterna 16,8/24,6, 18,5/26,8 och 40,9/62,4.
+  [['SE1', 16.8, 24.6], ['SE2', 18.5, 26.8], ['SE4', 40.9, 62.4]].forEach(([o, w, b]) => sant('prisfaktorn för ' + o + ' ligger över KYOS-kvoten', K.ELOMRADE_PRISFAKTOR[o] > w / b));
   const fk = K.elomradeForklaring();
-  sant('förklaringen nämner prisfaktor per område och kalkylräntan', ['0,68', '0,69', '0,75', '0,66', '5,2 %'].every(t => fk.indexOf(t) > -1));
-  sant('schablonnotis: prisfaktor 0,75 mot SE4-standarden 0,66 avviker', K.schablonnotis(0.75, K.ELOMRADE_PRISFAKTOR.SE4, 'SE4', 2, '', false, 0.005).tillstand === 'avviker' && !/ \)/.test(K.schablonnotis(0.75, 0.66, 'SE4', 2, '', false, 0.005).text));
+  sant('förklaringen nämner prisfaktor per område och kalkylräntan', ['0,80', '0,75', '0,85', '0,90', '5,2 %', 'fastighetsskatt'].every(t => fk.indexOf(t) > -1));
+  sant('schablonnotis: prisfaktor 0,75 mot SE4-standarden 0,90 avviker', K.schablonnotis(0.75, K.ELOMRADE_PRISFAKTOR.SE4, 'SE4', 2, '', false, 0.005).tillstand === 'avviker' && !/ \)/.test(K.schablonnotis(0.75, 0.9, 'SE4', 2, '', false, 0.005).text));
   sant('förklaringen nämner alla områdens schablonpris och elprisfaktor', ['0,30', '0,35', '0,55', '0,60', '−0,160', '−0,192', '+0,190', '+0,348'].every(t => fk.indexOf(t) > -1));
   sant('schablonnotis: lika med schablonen', K.schablonnotis(0.55, 0.55, 'SE3', 2, 'kr/kWh', false, 0.005).tillstand === 'schablon');
   sant('schablonnotis: avviker', K.schablonnotis(0.5, 0.55, 'SE3', 2, 'kr/kWh', false, 0.005).tillstand === 'avviker' && /Avviker från schablonen för SE3 \(0,55 kr\/kWh\)/.test(K.schablonnotis(0.5, 0.55, 'SE3', 2, 'kr/kWh', false, 0.005).text));

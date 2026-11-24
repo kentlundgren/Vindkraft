@@ -554,3 +554,7 @@ a.badge.pm:hover, a.badge.pm:focus { text-decoration: underline; }
 .schablon-notis { display: block; margin-top: .15rem; font-size: .82rem; color: #5a6a67; }
 .schablon-notis:empty { display: none; }
 .schablon-notis[data-tillstand="avviker"] { color: #0b4f8a; font-weight: 600; border-left: 3px solid #5b9bd5; padding-left: .4rem; }
+
+/* Knappen Använd standardvärden vid Elområde */
+.knapp-standard { font: inherit; font-size: .85rem; margin-top: .3rem; padding: .25rem .7rem; cursor: pointer; background: var(--farg-panel, #fff); color: var(--farg-primar, #1d5c52); border: 1px solid var(--farg-primar, #1d5c52); border-radius: 6px; }
+.knapp-standard:hover, .knapp-standard:focus-visible { background: var(--farg-primar, #1d5c52); color: #fff; }

@@ -934,10 +934,10 @@ function fastighetsskattSchablon(kwPerVerk, elomrade, fullasttimmar) {
 
 /** Standardvärden per elområde. Fylls i Spotpris, Prisfaktor och Kalkylränta när området väljs (fyllElomradeStandard). */
 const ELOMRADE_PRIS = { SE1: 0.30, SE2: 0.35, SE3: 0.55, SE4: 0.60 };            // schablonpris, kr/kWh
-/* Prisfaktor (realiserat pris / spotpris) per område. SE1, SE2 och SE4: KYOS (2025), prognos 2026–2035, kvoten mellan vindkraftens capture price
-   och basprisen (16,8/24,6, 18,5/26,8 och 40,9/62,4). SE3: Kaufmann & Westander (2026), som KYOS prognos (0,77) ligger nära. EIFO (2026) visar att utfallet
-   i SE2 redan var 0,50 år 2025, så värdena är försiktigt valda utgångspunkter och inte säkra. */
-const ELOMRADE_PRISFAKTOR = { SE1: 0.68, SE2: 0.69, SE3: 0.75, SE4: 0.66 };
+/* Prisfaktor (realiserat pris / spotpris) per område: ett antagande (0,80, 0,75, 0,85 och 0,90 för SE1–SE4). Det stöds av att vindkraftens capture rate
+   2021–2023 låg mellan 0,68 och 0,92 i områdena (egen beräkning av öppna timdata, inte publicerad), och KYOS (2025) och EIFO (2026) är försiktigare jämförelser:
+   KYOS prognostiserar 0,68, 0,69, 0,77 och 0,66, och EIFO visar utfallet 0,50 i SE2 år 2025. Kaufmann & Westander (2026) använder 0,75 för Långhult (SE3). */
+const ELOMRADE_PRISFAKTOR = { SE1: 0.80, SE2: 0.75, SE3: 0.85, SE4: 0.90 };
 /** Real kalkylränta, lika i alla områden: medelvärdet för landbaserad vindkraft i Energiforsk (2021), s. 18. Ingen källa har olika ränta per område. */
 const KALKYLRANTA_STANDARD = 0.052;
 
@@ -949,10 +949,10 @@ function elomradeForklaring() {
     return o + ' ' + (f > 0 ? '+' : '−') + fmt(Math.abs(f), 3);
   }).join(', ');
   return 'Elområdet (SE1–SE4) styr fyra saker och inget annat. ' +
-    'När du väljer område fylls tre fält i med områdets standardvärden: Spotpris (kr/kWh: ' + lista(ELOMRADE_PRIS, v => fmt(v, 2)) + '), ' +
-    'Prisfaktor (' + lista(ELOMRADE_PRISFAKTOR, v => fmt(v, 2)) + ') och Kalkylränta (' + fmt(KALKYLRANTA_STANDARD * 100, 1) + ' % real, lika i alla områden). ' +
-    'Du kan ändra dem efteråt. Det fjärde är schablonen för fastighetsskatt, som räknas med områdets elprisfaktor (' + fakt + '). ' +
-    'Källorna till standardvärdena finns i källförteckningen (KYOS 2025, Kaufmann & Westander 2026, Energiforsk 2021). ' +
+    'När du väljer område, eller klickar på knappen Använd standardvärden, byts kalkylens värden mot områdets standard: Spotpris (kr/kWh: ' + lista(ELOMRADE_PRIS, v => fmt(v, 2)) + '), ' +
+    'Prisfaktor (' + lista(ELOMRADE_PRISFAKTOR, v => fmt(v, 2)) + '), Kalkylränta (' + fmt(KALKYLRANTA_STANDARD * 100, 1) + ' % real, lika i alla områden) ' +
+    'och rätt fastighetsskatt: schablonen för verkens effekt och fullasttimmar, räknad med områdets elprisfaktor (' + fakt + '). ' +
+    'Du kan ändra värdena efteråt. Prisfaktorerna är antaganden, och källorna till övrigt finns i källförteckningen. ' +
     'Avviker ett värde på sidan från standarden står det under fältet: då är det ett eget, aktuellt värde för just den här kalkylen.';
 }
 
@@ -962,7 +962,11 @@ function visaElomradeForklaring() {
   if (e) e.setAttribute('data-f', elomradeForklaring());
 }
 
-/** Fyller Spotpris, Prisfaktor och Kalkylränta med standardvärdena för valt elområde. Anropas av kalkylens change-lyssnare innan den räknar om. */
+/**
+ * Byter Spotpris, Prisfaktor, Kalkylränta och fastighetsskatt (år 1 och därefter) mot standardvärdena för valt elområde. Fastighetsskatten är
+ * schablonen för verkets effekt och fullasttimmar. Anropas av kalkylens change-lyssnare innan den räknar om, både vid områdesbyte och
+ * när knappen Använd standardvärden skickar change på elområdet.
+ */
 function fyllElomradeStandard() {
   const o = text('elomrade');
   if (ELOMRADE_PRIS[o] === undefined) return;
@@ -970,6 +974,9 @@ function fyllElomradeStandard() {
   satt('elpris', ELOMRADE_PRIS[o]);
   satt('prisfaktor', ELOMRADE_PRISFAKTOR[o]);
   satt('kalkylranta', KALKYLRANTA_STANDARD);
+  const sch = fastighetsskattSchablon(tal('effekt') * 1000, o, tal('kapfaktor') * 8760);
+  satt('fskatt1', Math.round(sch.fskatt1));
+  satt('fskatt2', Math.round(sch.fskatt2));
 }
 
 /**
@@ -995,6 +1002,8 @@ function schablonnotis(varde, schablon, omrade, dec, enhet, nollSaknas, tol) {
 function uppdateraSchablonnotiser() {
   const o = text('elomrade');
   if (ELOMRADE_PRIS[o] === undefined) return;
+  const kn = document.getElementById('elomrade-standard');
+  if (kn) kn.textContent = 'Använd standardvärden för ' + o;
   const varde = (id) => { const e = document.getElementById(id); return e ? parseFloat(e.value) : NaN; };
   const satt = (id, n) => {
     const e = document.getElementById(id);
@@ -1013,6 +1022,10 @@ function uppdateraSchablonnotiser() {
 /** Kopplar förklaringen och notiserna. Anropas en gång vid sidstart, efter kalkylens egna lyssnare. */
 function kopplaElomradeOchSchablon() {
   visaElomradeForklaring();
+  // Knappen Använd standardvärden: samma väg som ett områdesbyte (change på elområdet), så att kalkylen räknar om och flyttar Senaste till Tidigare.
+  const knapp = document.getElementById('elomrade-standard');
+  const sel = document.getElementById('elomrade');
+  if (knapp && sel) knapp.addEventListener('click', () => sel.dispatchEvent(new Event('change', { bubbles: true })));
   ['elomrade', 'elpris', 'prisfaktor', 'kalkylranta', 'effekt', 'kapfaktor', 'fskatt1', 'fskatt2'].forEach(id => {
     const e = document.getElementById(id);
     if (!e) return;
