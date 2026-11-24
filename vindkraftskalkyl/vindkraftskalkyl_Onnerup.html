@@ -23,6 +23,8 @@
   UPPDATERING 2026-11-23 (senare igen 9): förklaring av negativ nätkostnad i Tabell 3. Version 1.26.
   UPPDATERING 2026-11-23 (senare igen 8): typfallet över 40 MW är fall I. Version 1.25.
   UPPDATERING 2026-11-23 (senare igen 7): nya nätfall I och J i väljaren. Version 1.24.
+  UPPDATERING 2026-11-24 (senare 6): Önnerups förvalda Prisfaktor är SE4-standarden 0,90 (var 0,75), så Önnerup inte längre avviker från standarden. Version 1.39.
+  UPPDATERING 2026-11-24 (senare 5): standard för Prisfaktor i SE1 är 0,75, lika med SE2 (SE1 och SE2 är i praktiken samma marknad): SE1 0,75, SE2 0,75, SE3 0,85, SE4 0,90. Version 1.38.
   UPPDATERING 2026-11-24 (senare 4): knappen Använd standardvärden vid Elområde byter kalkylens värden på Spotpris, Prisfaktor, Kalkylränta och fastighetsskatt mot områdets standard utan att området ändras (samma väg som ett områdesbyte), och ett områdesbyte byter nu också fastighetsskatten (schablonen för verkets effekt och fullasttimmar). Standard för Prisfaktor är antaganden: SE1 0,80, SE2 0,75, SE3 0,85, SE4 0,90. KYOS (2025) och EIFO (2026) står kvar som försiktigare jämförelser. Version 1.37.
   UPPDATERING 2026-11-24 (senare 3): områdets standardvärden för Prisfaktor (SE1 0,68, SE2 0,69, SE3 0,75, SE4 0,66; KYOS 2025 och Kaufmann & Westander 2026) och Kalkylränta (5,2 % real, lika i alla områden) fylls nu i tillsammans med Spotpris när elområdet väljs (rullgardinen), med schablonnotis under Prisfaktor och Kalkylränta, och KYOS (2025) och EIFO (2026) som källor. Version 1.36.
   UPPDATERING 2026-11-24 (senare): fältet Elområde finns i alla tre kalkylerna (före Spotpris), med en förklaring vid rubriken av vad det styr (schablonpris för Spotpris och elprisfaktor i fastighetsskattens schablon), och en schablonnotis under Spotpris och Fastighetsskatt som visar om värdet är schablonen eller avviker från den (kalkylkarna.js). Förklaringarna (abbr.fk) fungerar nu även i huvudkalkylen och Önnerup. Version 1.34.
@@ -148,9 +150,9 @@
 
         <label>Prisfaktor (realiserat pris / spotpris, 0–1)
           <abbr class="fk" tabindex="0" data-f="Prisfaktor: vindkraftens genomsnittliga intäktspris delat med genomsnittligt spotpris (0–1). Vindkraften producerar mest när elpriset är lågt, så faktorn blir ofta under 1. Kallas på engelska capture rate (EIFO, 2026: capture price som andel av genomsnittligt marknadspris). Kaufmann &amp; Westander (2026) kallar den viktning och talar om kannibalisering.">?</abbr>
-          <input type="number" step="0.01" min="0" max="1" id="prisfaktor" class="indata" value="0.75">
+          <input type="number" step="0.01" min="0" max="1" id="prisfaktor" class="indata" value="0.9">
           <span class="badge antagande">antagande</span>
-          <span class="hint">Realiserat pris = spotpris × prisfaktor = <strong id="realpris-visning">–</strong>. 0,75 är värdet som Kaufmann &amp; Westander (2026) använder för Långhult (SE3) och ligger i den försiktiga delen av vad timpriser 2022–2025 ger för SE3 och SE4 (ungefärligt, inte belagt för Önnerup). Standardvärdet för SE4 är 0,90 (antagande). KYOS (2025) prognostiserar 0,66 för SE4, så Önnerups 0,75 ligger mellan de två. På engelska capture rate (<a href="https://eifo.dk/media/s1bjgkkq/capture-rate-analysis-marts-2026.pdf" target="_blank" rel="noopener">EIFO, 2026</a>).</span>
+          <span class="hint">Realiserat pris = spotpris × prisfaktor = <strong id="realpris-visning">–</strong>. 0,90 är standardvärdet för SE4 (antagande, samma som i alla kalkyler). Det är högre än de försiktigare jämförelserna: KYOS (2025) prognostiserar 0,66 för SE4, och Kaufmann &amp; Westander (2026) använder 0,75 för Långhult (SE3). Önnerup har inget eget värde. På engelska capture rate (<a href="https://eifo.dk/media/s1bjgkkq/capture-rate-analysis-marts-2026.pdf" target="_blank" rel="noopener">EIFO, 2026</a>).</span>
           <span class="schablon-notis" id="prisfaktor-schablon" aria-live="polite"></span>
         </label>
 
@@ -860,7 +862,7 @@
       <li id="ref-kyos">
         KYOS (2025) <em>PPA Insights: Price and market developments in Europe.</em> Issue 14, juni 2025. Tillgänglig:
         <a href="https://www.kyos.com/app/uploads/2025/09/KYOS-PPA-Report-June-2025-No14.pdf" target="_blank" rel="noopener">https://www.kyos.com/app/uploads/2025/09/KYOS-PPA-Report-June-2025-No14.pdf</a>
-        (hämtad 24 november 2026). <em>(Prognos 2026–2035 av basprisen och vindkraftens capture price (landbaserad) per elområde, EUR/MWh: SE1 24,6 och 16,8, SE2 26,8 och 18,5, SE3 52,8 och 40,6, SE4 62,4 och 40,9. Kvoten, som jag har räknat ut, är 0,68, 0,69, 0,77 och 0,66. Den är lägre än kalkylernas standardvärden för Prisfaktor (0,80, 0,75, 0,85 och 0,90, som är antaganden) och används som försiktigare jämförelse. Det är en modellerad prognos, inte utfall.)</em>
+        (hämtad 24 november 2026). <em>(Prognos 2026–2035 av basprisen och vindkraftens capture price (landbaserad) per elområde, EUR/MWh: SE1 24,6 och 16,8, SE2 26,8 och 18,5, SE3 52,8 och 40,6, SE4 62,4 och 40,9. Kvoten, som jag har räknat ut, är 0,68, 0,69, 0,77 och 0,66. Den är lägre än kalkylernas standardvärden för Prisfaktor (0,75, 0,75, 0,85 och 0,90, som är antaganden) och används som försiktigare jämförelse. Det är en modellerad prognos, inte utfall.)</em>
       </li>
       <li id="ref-lundgren">
         Lundgren, K. (2026a) <em>Besked före beslut: att förbättra intäktsdelningen från vindkraft till närboende</em>, Controller utan gränser, 2026-11-11

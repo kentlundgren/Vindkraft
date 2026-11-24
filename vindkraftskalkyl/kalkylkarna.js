@@ -934,10 +934,10 @@ function fastighetsskattSchablon(kwPerVerk, elomrade, fullasttimmar) {
 
 /** Standardvärden per elområde. Fylls i Spotpris, Prisfaktor och Kalkylränta när området väljs (fyllElomradeStandard). */
 const ELOMRADE_PRIS = { SE1: 0.30, SE2: 0.35, SE3: 0.55, SE4: 0.60 };            // schablonpris, kr/kWh
-/* Prisfaktor (realiserat pris / spotpris) per område: ett antagande (0,80, 0,75, 0,85 och 0,90 för SE1–SE4). Det stöds av att vindkraftens capture rate
+/* Prisfaktor (realiserat pris / spotpris) per område: ett antagande (0,75, 0,75, 0,85 och 0,90 för SE1–SE4; SE1 och SE2 är i praktiken samma marknad och har lika värde). Det stöds av att vindkraftens capture rate
    2021–2023 låg mellan 0,68 och 0,92 i områdena (egen beräkning av öppna timdata, inte publicerad), och KYOS (2025) och EIFO (2026) är försiktigare jämförelser:
    KYOS prognostiserar 0,68, 0,69, 0,77 och 0,66, och EIFO visar utfallet 0,50 i SE2 år 2025. Kaufmann & Westander (2026) använder 0,75 för Långhult (SE3). */
-const ELOMRADE_PRISFAKTOR = { SE1: 0.80, SE2: 0.75, SE3: 0.85, SE4: 0.90 };
+const ELOMRADE_PRISFAKTOR = { SE1: 0.75, SE2: 0.75, SE3: 0.85, SE4: 0.90 };
 /** Real kalkylränta, lika i alla områden: medelvärdet för landbaserad vindkraft i Energiforsk (2021), s. 18. Ingen källa har olika ränta per område. */
 const KALKYLRANTA_STANDARD = 0.052;
 

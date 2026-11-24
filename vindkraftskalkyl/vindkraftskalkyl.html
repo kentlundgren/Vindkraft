@@ -65,6 +65,8 @@
 
   UPPDATERING 2026-11-22 (senare igen): gemensam kärna kalkylkarna.js för finansmatematik och nätkopplingen, delad med fallet Långhult, och nätformateringen i natkostnader.css. Resultaten är oförändrade. Version 1.15.
 
+  UPPDATERING 2026-11-24 (senare 5): standard för Prisfaktor i SE1 är 0,75, lika med SE2 (SE1 och SE2 är i praktiken samma marknad): SE1 0,75, SE2 0,75, SE3 0,85, SE4 0,90. Version 1.38.
+
   UPPDATERING 2026-11-24 (senare 4): knappen Använd standardvärden vid Elområde byter kalkylens värden på Spotpris, Prisfaktor, Kalkylränta och fastighetsskatt mot områdets standard utan att området ändras (samma väg som ett områdesbyte), och ett områdesbyte byter nu också fastighetsskatten (schablonen för verkets effekt och fullasttimmar). Standard för Prisfaktor är antaganden: SE1 0,80, SE2 0,75, SE3 0,85, SE4 0,90. KYOS (2025) och EIFO (2026) står kvar som försiktigare jämförelser. Version 1.37.
 
   UPPDATERING 2026-11-24 (senare 3): områdets standardvärden för Prisfaktor (SE1 0,68, SE2 0,69, SE3 0,75, SE4 0,66; KYOS 2025 och Kaufmann & Westander 2026) och Kalkylränta (5,2 % real, lika i alla områden) fylls nu i tillsammans med Spotpris när elområdet väljs (rullgardinen), med schablonnotis under Prisfaktor och Kalkylränta, och KYOS (2025) och EIFO (2026) som källor. Version 1.36.
@@ -939,7 +941,7 @@
       <li id="ref-kyos">
         KYOS (2025) <em>PPA Insights: Price and market developments in Europe.</em> Issue 14, juni 2025. Tillgänglig:
         <a href="https://www.kyos.com/app/uploads/2025/09/KYOS-PPA-Report-June-2025-No14.pdf" target="_blank" rel="noopener">https://www.kyos.com/app/uploads/2025/09/KYOS-PPA-Report-June-2025-No14.pdf</a>
-        (hämtad 24 november 2026). <em>(Prognos 2026–2035 av basprisen och vindkraftens capture price (landbaserad) per elområde, EUR/MWh: SE1 24,6 och 16,8, SE2 26,8 och 18,5, SE3 52,8 och 40,6, SE4 62,4 och 40,9. Kvoten, som jag har räknat ut, är 0,68, 0,69, 0,77 och 0,66. Den är lägre än kalkylernas standardvärden för Prisfaktor (0,80, 0,75, 0,85 och 0,90, som är antaganden) och används som försiktigare jämförelse. Det är en modellerad prognos, inte utfall.)</em>
+        (hämtad 24 november 2026). <em>(Prognos 2026–2035 av basprisen och vindkraftens capture price (landbaserad) per elområde, EUR/MWh: SE1 24,6 och 16,8, SE2 26,8 och 18,5, SE3 52,8 och 40,6, SE4 62,4 och 40,9. Kvoten, som jag har räknat ut, är 0,68, 0,69, 0,77 och 0,66. Den är lägre än kalkylernas standardvärden för Prisfaktor (0,75, 0,75, 0,85 och 0,90, som är antaganden) och används som försiktigare jämförelse. Det är en modellerad prognos, inte utfall.)</em>
       </li>
       <li id="ref-lundgren-kandidater">
         Lundgren, K. (2026) <em>Kandidater för nya vindkraftskalkyler, ur Vindbrukskollen.</em> Tillgänglig:
